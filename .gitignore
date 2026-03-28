@@ -1,3 +1,7 @@
+# ==========================================
+# C/C++ Base
+# ==========================================
+
 # Prerequisites
 *.d
 
@@ -30,3 +34,50 @@
 *.exe
 *.out
 *.app
+
+# ==========================================
+# CMake
+# ==========================================
+
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# Ignore standard CMake out-of-source build folders
+/build/
+/out/
+/bin/
+
+# ==========================================
+# Microsoft Visual Studio
+# ==========================================
+
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.ncb
+*.sdf
+*.db
+*.ipch
+
+# Debug & Profiling artifacts
+*.ilk
+*.pdb
+*.idb
+*.exp
+*.pgc
+*.pgd
+
+# ==========================================
+# ANTLR4 Generator Artifacts
+# ==========================================
+
+/generated/
+*.tokens
+*.interp
