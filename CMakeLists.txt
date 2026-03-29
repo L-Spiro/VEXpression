@@ -72,6 +72,12 @@ set(APP_HEADERS
     src/Ast/AstNode.h
     src/Ast/ConstantNode.h
     src/Compiler/AstBuilderVisitor.h
+	src/Foundation/Character.h
+	src/Foundation/LargeMath.h
+	src/Foundation/Math.h
+	src/Foundation/System.h
+	src/Foundation/Text.h
+	src/Foundation/TextPolicy.h
     src/Engine/Errors.h
     src/Engine/ExecutionContext.h
 	src/Engine/Result.h
