@@ -1,7 +1,7 @@
 # HOW TO BUILD
 
-## Generate a Visual Studio Project
-Open a Visual Studio Developer Command Prompt (`Visual Studio` -> `Tools` -> `Command Line` -> `Developer Command Prompt`)
+## Generate a Microsoft® Visual Studio® Project
+Open a Microsoft® Visual Studio® Developer Command Prompt (`Microsoft® Visual Studio®` -> `Tools` -> `Command Line` -> `Developer Command Prompt`)
 
 Go to the project:
 ```bash
@@ -29,7 +29,7 @@ To generate a 32-bit project:
 cmake -B build32 -G "Visual Studio 17 2022" -A Win32
 ```
 
-`"Visual Studio 18 2026"` is another option.
+`"Visual Studio 18 2026"` is another option, or you may select a different version of Microsoft® Visual Studio®.
 
 The `build64` or `build32` directories will contain the generated solution (`VEXpression.sln`).
 Once loaded, right-click the `VEXpression` project and select `Set as Startup Project`.
