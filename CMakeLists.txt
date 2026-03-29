@@ -1,6 +1,31 @@
 cmake_minimum_required(VERSION 3.15)
 project(VEXpression CXX)
 
+### Detect if we are building for 32-bit or 64-bit.
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARCH_DIR "x64")
+    message(STATUS "Configuring for 64-bit architecture.")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(ARCH_DIR "x86")
+    message(STATUS "Configuring for 32-bit architecture.")
+else()
+    set(ARCH_DIR "Unknown")
+    message(WARNING "Unknown architecture size!")
+endif()
+
+### Route output files to architecture-specific directories so they don't clash.
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${ARCH_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${ARCH_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${ARCH_DIR})
+
+### For multi-configuration generators such as Visual Studio, append the config type (Debug/Release).
+foreach(config ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${config} config_upper)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${config_upper} ${CMAKE_BINARY_DIR}/lib/${ARCH_DIR}/${config})
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${config_upper} ${CMAKE_BINARY_DIR}/bin/${ARCH_DIR}/${config})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${config_upper} ${CMAKE_BINARY_DIR}/bin/${ARCH_DIR}/${config})
+endforeach()
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

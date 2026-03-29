@@ -49,6 +49,8 @@ compile_commands.json
 
 # Ignore standard CMake out-of-source build folders
 /build/
+/build32/
+/build64/
 /out/
 /bin/
 
