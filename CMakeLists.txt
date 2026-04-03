@@ -133,3 +133,8 @@ target_compile_features(VEXpression PRIVATE cxx_std_23)
 
 ### Link the ANTLR Runtime.
 target_link_libraries(VEXpression PRIVATE antlr4_static)
+
+### Link macOS frameworks for Power & Display Management
+if(APPLE)
+    target_link_libraries(VEXpression PRIVATE "-framework CoreFoundation -framework IOKit")
+endif()
