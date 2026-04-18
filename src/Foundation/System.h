@@ -162,7 +162,6 @@ namespace ve {
 		// =========================================================================
 		// Filesystem & Paths
 		// =========================================================================
-
 		/**
 		 * Helper function to safely retrieve the current user's home directory on POSIX systems.
 		 * Must be called within a try/catch block.

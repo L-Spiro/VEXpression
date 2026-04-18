@@ -29,6 +29,9 @@ endforeach()
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+### Global Compile Definitions
+add_compile_definitions(_USE_MATH_DEFINES)
+
 ### Locate the Java Runtime.
 find_package(Java 11 COMPONENTS Runtime REQUIRED)
 
@@ -103,6 +106,7 @@ set(APP_HEADERS
     src/Ast/ConstantNode.h
 	src/Ast/DivNode.h
 	src/Ast/EqNode.h
+	src/Ast/FunctionCallNode.h
 	src/Ast/GeNode.h
 	src/Ast/GtNode.h
 	src/Ast/LeNode.h
@@ -135,7 +139,11 @@ set(APP_HEADERS
 	src/Foundation/TextPolicy.h
     src/Engine/Errors.h
     src/Engine/ExecutionContext.h
+	src/Engine/FunctionDef.h
+	src/Engine/IntrinsicBridges.h
 	src/Engine/Result.h
+	src/Strings/Strings.h
+	src/Strings/StringEnum.inl
 )
 
 set(APP_SOURCES

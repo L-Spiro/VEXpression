@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Engine/Errors.h"
 #include "../Engine/ExecutionContext.h"
 #include "../Engine/Result.h"
 #include "AstNode.h"
@@ -22,6 +23,7 @@ namespace ve {
 		 * 
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns the original result before incrementing.
+		 * \throws			ErrorCode::Unknown_Numeric_Type if the resolved common type is not supported.
 		 **/
 		Result						evaluate(ExecutionContext& context) const override {
 			Result val = context.getVariable(varIndex);
@@ -37,7 +39,7 @@ namespace ve {
 				val.value.uintVal += 1;
 			}
 			else {
-				assert(false);
+				throw ErrorCode::Unknown_Numeric_Type;
 			}
 
 			context.getVariable(varIndex) = val;

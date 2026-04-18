@@ -9,8 +9,19 @@ namespace ve {
 	enum class ErrorCode {
 		Success,
 
+		// == Internal Errors.
 		Out_Of_Memory,
 		Fail_To_Allocate_Node_For_Ast,
+
+		// == Compilation Errors.
+		Invalid_LValue,
+		Unknown_Operator,
+		Invalid_Function_Target,
+		Unknown_Function,
+		Invalid_Argument_Count,
+
+		// == Runtime Errors.
+		Unknown_Numeric_Type
 	};
 
 }	// namespace ve

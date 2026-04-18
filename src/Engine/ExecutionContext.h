@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../Ast/AstArena.h"
+#include "FunctionDef.h"
 #include "Result.h"
 
+#include <map>
 #include <string>
 
 namespace ve {
@@ -34,6 +36,11 @@ namespace ve {
 		Result							execute();
 
 		/**
+		 * Resets the object back to scratch.
+		 **/
+		void							reset();
+
+		/**
 		 * Determines the promotion type between two given numeric types.
 		 * 
 		 * \param left			The left operand type.
@@ -50,6 +57,16 @@ namespace ve {
 		 * \return				Returns a new Result converted to the target type.
 		 **/
 		Result							convertResult(const Result& res, NumericConstant target);
+
+		/**
+		 * Casts a raw evaluated Result into the specific C-type expected by a function parameter.
+		 * Applies standard C-truncation (e.g., 64-bit to 8-bit) and precision loss (double to float).
+		 * 
+		 * \param rawVal		The original 64-bit evaluated result.
+		 * \param targetType	The explicit C data type to cast into.
+		 * \return				Returns a newly formatted Result containing the truncated/casted value.
+		 **/
+		Result							castArgument(const Result& rawVal, DataType targetType) const;
 		
 		/**
 		 * Provides access to the AstArena where nodes are allocated.
@@ -98,12 +115,107 @@ namespace ve {
 			return variables[index];
 		}
 
+		/**
+		 * Registers a custom constant with the execution context.
+		 * 
+		 * \param name		The string identifier for the constant.
+		 * \param value		The resolved Result value.
+		 **/
+		void							registerConstant(const std::string& name, const Result& value) {
+			registeredConstants[name] = value;
+		}
+
+		/**
+		 * Checks if a constant is registered and retrieves its value.
+		 * 
+		 * \param name		The string identifier to check.
+		 * \param outVal	Output parameter to store the Result if found.
+		 * \return			True if the constant exists, false otherwise.
+		 **/
+		bool							getConstant(const std::string& name, Result& outVal) const {
+			auto it = registeredConstants.find(name);
+			if (it != registeredConstants.end()) {
+				outVal = it->second;
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Checks if an identifier is a registers constant without getting the value of it.
+		 * 
+		 * \param name		The string identifier to check.
+		 * \return			True if the constant exists, false otherwise.
+		 **/
+		bool							isConstant(const std::string& name) const {
+			auto it = registeredConstants.find(name);
+			if (it != registeredConstants.end()) {
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Registers a new built-in function to the execution context.
+		 * 
+		 * \param name			The string identifier used in the script.
+		 * \param params		A vector defining the expected type, name, and description of each argument.
+		 * \param callback		The C++ function pointer to execute at runtime.
+		 **/
+		void							registerFunction(const char* name, const std::vector<ParameterDef>& params, IntrinsicCallback callback) {
+			try {
+				FunctionDef def;
+				def.name = name;
+				def.description = StringId::VE_STR_NONE;
+				def.parameters = params;
+				def.callback = callback;
+
+				registeredFunctions[name] = def;
+			}
+			catch (...) { throw ErrorCode::Out_Of_Memory; }
+		}
+
+		/**
+		 * Checks if a function is registered and retrieves its definition.
+		 * 
+		 * \param name		The string identifier to check.
+		 * \param outDef	Output parameter to store the FunctionDef if found.
+		 * \return			True if the function exists, false otherwise.
+		 **/
+		bool							getFunction(const std::string& name, FunctionDef& outDef) const {
+			auto it = registeredFunctions.find(name);
+			if (it != registeredFunctions.end()) {
+				outDef = it->second;
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * Checks if a function is registered.
+		 * 
+		 * \param name		The string identifier to check.
+		 * \return			True if the function exists, false otherwise.
+		 **/
+		bool							isFunction(const std::string& name) const {
+			auto it = registeredFunctions.find(name);
+			if (it != registeredFunctions.end()) {
+				return true;
+			}
+			return false;
+		}
+
 	protected :
 		// == Members.
 		/** The central storage arena containing all allocated AST nodes. **/
 		AstArena						arena;
 		/** The array of registered variables. */
 		std::vector<Result>				variables;
+		/** A map of built-in and user-registered constants (e.g., M_PI). **/
+		std::map<std::string, Result>	registeredConstants;
+		/** A map of user-registered and built-in function definitions. **/
+		std::map<std::string, FunctionDef>
+										registeredFunctions;
 		/** The arena index of the root AST node to execute. **/
 		size_t							rootIndex = 0;
 		/** Treat standard integers as hex? */
@@ -111,6 +223,19 @@ namespace ve {
 
 
 	private :
+		// == Types.
+		/** A list of built-in constants. */
+		struct BuiltInConstant {
+			const char*					name;						/**< The name of the constant. */
+			Result						result;						/**< The constant value. */
+		};
+
+
+		// == Members.
+		/** A list of built-in constants. */
+		static BuiltInConstant			builtInConsts[];
+		/** The static list of built-in functions. */
+		static const FunctionDef		builtInFunctions[];
 	};
 
 }	// namespace ve

@@ -12,6 +12,7 @@
 #include "../Ast/ConstantNode.h"
 #include "../Ast/DivNode.h"
 #include "../Ast/EqNode.h"
+#include "../Ast/FunctionCallNode.h"
 #include "../Ast/GeNode.h"
 #include "../Ast/GtNode.h"
 #include "../Ast/LeNode.h"
@@ -168,19 +169,23 @@ namespace ve {
 		 * 
 		 * \param ctx		The ANTLR parser context for the postfix operation.
 		 * \return			Returns an std::any containing the size_t index of the allocated node.
+		 * \throws			ErrorCode::Invalid_LValue if the target is a constant or an undeclared variable.
+		 * \throws			ErrorCode::Unknown_Operator if the operator is not recognized.
 		 **/
 		virtual std::any			visitPostfix(ExprParser::PostfixContext* ctx) override {
 			std::string varName = ctx->IDENTIFIER()->getText();
-			size_t varId = getOrCreateVariable(varName);
-
-			if (ctx->op->getType() == ExprLexer::INC) {
-				return context.addNode<PostIncNode>(varId);
-			}
-			else if (ctx->op->getType() == ExprLexer::DEC) {
-				return context.addNode<PostDecNode>(varId);
+			size_t varId = getVariable(varName);
+			if (size_t(-1) != varId) {
+				if (ctx->op->getType() == ExprLexer::INC) {
+					return context.addNode<PostIncNode>(varId);
+				}
+				else if (ctx->op->getType() == ExprLexer::DEC) {
+					return context.addNode<PostDecNode>(varId);
+				}
+				throw ErrorCode::Unknown_Operator;
 			}
 			
-			return static_cast<size_t>(0);
+			throw ErrorCode::Invalid_LValue;
 		}
 
 		/**
@@ -188,19 +193,73 @@ namespace ve {
 		 * 
 		 * \param ctx		The ANTLR parser context for the prefix increment/decrement operation.
 		 * \return			Returns an std::any containing the size_t index of the allocated node.
+		 * \throws			ErrorCode::Invalid_LValue if the target is a constant or an undeclared variable.
+		 * \throws			ErrorCode::Unknown_Operator if the operator is not recognized.
 		 **/
 		virtual std::any			visitPrefixIncDec(ExprParser::PrefixIncDecContext* ctx) override {
 			std::string varName = ctx->IDENTIFIER()->getText();
-			size_t varId = getOrCreateVariable(varName);
-
-			if (ctx->op->getType() == ExprLexer::INC) {
-				return context.addNode<PreIncNode>(varId);
-			}
-			else if (ctx->op->getType() == ExprLexer::DEC) {
-				return context.addNode<PreDecNode>(varId);
+			size_t varId = getVariable(varName);
+			if (size_t(-1) != varId) {
+				if (ctx->op->getType() == ExprLexer::INC) {
+					return context.addNode<PreIncNode>(varId);
+				}
+				else if (ctx->op->getType() == ExprLexer::DEC) {
+					return context.addNode<PreDecNode>(varId);
+				}
+				throw ErrorCode::Unknown_Operator;
 			}
 			
-			return static_cast<size_t>(0);
+			throw ErrorCode::Invalid_LValue;
+		}
+
+		/**
+		 * Visits a comma-separated list of expressions and compiles each one into the arena.
+		 * * \param ctx		The ANTLR parser context for the expression list.
+		 * \return			Returns an std::any containing a std::vector<size_t> of allocated node indices.
+		 **/
+		virtual std::any			visitExprList(ExprParser::ExprListContext* ctx) override {
+			std::vector<size_t> args;
+			
+			for (auto* exprCtx : ctx->expr()) {
+				args.push_back(std::any_cast<size_t>(visit(exprCtx)));
+			}
+			
+			return args;
+		}
+
+		/**
+		 * Visits a function call node in the parse tree and allocates the FunctionCallNode.
+		 * Resolves the function name at compile-time and verifies argument counts.
+		 * 
+		 * \param ctx		The ANTLR parser context for the function call.
+		 * \return			Returns an std::any containing the size_t index of the allocated node.
+		 * \throws			ErrorCode::Invalid_Function_Target if the target expression is not an identifier.
+		 * \throws			ErrorCode::Unknown_Function if the function is not registered.
+		 * \throws			ErrorCode::Invalid_Argument_Count if arity does not match the definition.
+		 **/
+		virtual std::any			visitFunctionCall(ExprParser::FunctionCallContext* ctx) override {
+			auto* idCtx = dynamic_cast<ExprParser::IdentifierContext*>(ctx->expr());
+			if (!idCtx) {
+				throw ErrorCode::Invalid_Function_Target;
+			}
+
+			std::string funcName = idCtx->IDENTIFIER()->getText();
+
+			FunctionDef funcDef;
+			if (!context.getFunction(funcName, funcDef)) {
+				throw ErrorCode::Unknown_Function;
+			}
+
+			std::vector<size_t> args;
+			if (ctx->exprList()) {
+				args = std::any_cast<std::vector<size_t>>(visit(ctx->exprList()));
+			}
+
+			if (args.size() != funcDef.parameters.size()) {
+				throw ErrorCode::Invalid_Argument_Count;
+			}
+
+			return context.addNode<FunctionCallNode>(funcDef, args);
 		}
 
 		/**
@@ -221,6 +280,7 @@ namespace ve {
 		 * 
 		 * \param ctx		The ANTLR parser context for the unary operation.
 		 * \return			Returns an std::any containing the size_t index of the allocated node.
+		 * \throws			ErrorCode::Unknown_Operator if the unary operator is not recognized.
 		 **/
 		virtual std::any			visitUnary(ExprParser::UnaryContext* ctx) override {
 			size_t childIndex = std::any_cast<size_t>(visit(ctx->expr()));
@@ -238,7 +298,7 @@ namespace ve {
 				return context.addNode<LogNotNode>(childIndex);
 			}
 			
-			return static_cast<size_t>(0);
+			throw ErrorCode::Unknown_Operator;
 		}
 
 		/**
@@ -289,6 +349,7 @@ namespace ve {
 		 * 
 		 * \param ctx		The ANTLR parser context for the bit shift operation.
 		 * \return			Returns an std::any containing the size_t index of the allocated node.
+		 * \throws			ErrorCode::Unknown_Operator if the shift operator is not recognized.
 		 **/
 		virtual std::any			visitBitShift(ExprParser::BitShiftContext* ctx) override {
 			size_t leftIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
@@ -301,7 +362,7 @@ namespace ve {
 				return context.addNode<ShrNode>(leftIndex, rightIndex);
 			}
 			
-			return static_cast<size_t>(0);
+			throw ErrorCode::Unknown_Operator;
 		}
 
 		/**
@@ -322,6 +383,7 @@ namespace ve {
 		 * 
 		 * \param ctx		The ANTLR parser context for the relational operation.
 		 * \return			Returns an std::any containing the size_t index of the allocated node.
+		 * \throws			ErrorCode::Unknown_Operator if the relational operator is not recognized.
 		 **/
 		virtual std::any			visitRelational(ExprParser::RelationalContext* ctx) override {
 			size_t leftIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
@@ -340,7 +402,7 @@ namespace ve {
 				return context.addNode<GeNode>(leftIndex, rightIndex);
 			}
 			
-			return static_cast<size_t>(0);
+			throw ErrorCode::Unknown_Operator;
 		}
 
 		/**
@@ -348,6 +410,7 @@ namespace ve {
 		 * 
 		 * \param ctx		The ANTLR parser context for the equality operation.
 		 * \return			Returns an std::any containing the size_t index of the allocated node.
+		 * \throws			ErrorCode::Unknown_Operator if the equality operator is not recognized.
 		 **/
 		virtual std::any			visitEquality(ExprParser::EqualityContext* ctx) override {
 			size_t leftIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
@@ -360,7 +423,7 @@ namespace ve {
 				return context.addNode<NeNode>(leftIndex, rightIndex);
 			}
 			
-			return static_cast<size_t>(0);
+			throw ErrorCode::Unknown_Operator;
 		}
 
 		/**
@@ -444,17 +507,46 @@ namespace ve {
 
 		/**
 		 * Visits an assignment node in the parse tree and allocates the AssignNode.
+		 * Supports compound assignments (e.g., +=, -=) by desugaring them into an underlying binary operation.
 		 * 
 		 * \param ctx		The ANTLR parser context for the assignment operation.
-		 * \return			Returns an std::any containing the size_t index of the allocated node.
+		 * \return			Returns an std::any containing the size_t index of the allocated AssignNode.
+		 * \throws			ErrorCode::Invalid_LValue if attempting to assign to a registered constant.
 		 **/
 		virtual std::any			visitAssignment(ExprParser::AssignmentContext* ctx) override {
 			std::string varName = ctx->IDENTIFIER()->getText();
-			size_t varId = getOrCreateVariable(varName);
-			
-			size_t exprIndex = std::any_cast<size_t>(visit(ctx->expr()));
+			int opType = ctx->op->getType();
 
-			return context.addNode<AssignNode>(varId, exprIndex);
+			if (context.isConstant(varName) || context.isFunction(varName)) {
+				throw ErrorCode::Invalid_LValue;
+			}
+
+			size_t varId = (opType == ExprLexer::ASSIGN) ? getOrCreateVariable(varName) : getVariable(varName);
+			if (size_t(-1) != varId) {
+				size_t rightIndex = std::any_cast<size_t>(visit(ctx->expr()));
+				size_t finalExprIndex = rightIndex;
+
+			
+
+				// If it is a compound assignment, synthesize the mathematical subtree (e.g., A = A + B).
+				if (opType != ExprLexer::ASSIGN) {
+					size_t leftIndex = context.addNode<VarNode>(varId);
+
+					if (opType == ExprLexer::ADD_ASSIGN) { finalExprIndex = context.addNode<AddNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::SUB_ASSIGN) { finalExprIndex = context.addNode<SubNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::MUL_ASSIGN) { finalExprIndex = context.addNode<MulNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::DIV_ASSIGN) { finalExprIndex = context.addNode<DivNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::MOD_ASSIGN) { finalExprIndex = context.addNode<ModNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::AND_ASSIGN) { finalExprIndex = context.addNode<BitAndNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::XOR_ASSIGN) { finalExprIndex = context.addNode<BitXorNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::OR_ASSIGN)  { finalExprIndex = context.addNode<BitOrNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::SHL_ASSIGN) { finalExprIndex = context.addNode<ShlNode>(leftIndex, rightIndex); }
+					else if (opType == ExprLexer::SHR_ASSIGN) { finalExprIndex = context.addNode<ShrNode>(leftIndex, rightIndex); }
+				}
+
+				return context.addNode<AssignNode>(varId, finalExprIndex);
+			}
+			throw ErrorCode::Invalid_LValue;
 		}
 
 		/**
@@ -468,16 +560,26 @@ namespace ve {
 		}
 
 		/**
-		 * Visits an identifier node in the parse tree and allocates the VarNode for reading.
+		 * Visits an identifier node. If the identifier is a registered constant, 
+		 * it compiles down to a literal ConstantNode. Otherwise, it compiles as a VarNode.
 		 * 
 		 * \param ctx		The ANTLR parser context for the identifier.
 		 * \return			Returns an std::any containing the size_t index of the allocated node.
 		 **/
 		virtual std::any			visitIdentifier(ExprParser::IdentifierContext* ctx) override {
 			std::string varName = ctx->IDENTIFIER()->getText();
-			size_t varId = getOrCreateVariable(varName);
 
-			return context.addNode<VarNode>(varId);
+			Result constVal;
+			if (context.getConstant(varName, constVal)) {
+				return context.addNode<ConstantNode>(constVal);
+			}
+
+			size_t varId = getVariable(varName);
+			if (size_t(-1) != varId) {
+				return context.addNode<VarNode>(varId);
+			}
+
+			return static_cast<size_t>(0);
 		}
 
 
@@ -656,6 +758,22 @@ namespace ve {
 			size_t newId = context.allocateVariable();
 			variableMap[name] = newId;
 			return newId;
+		}
+
+		/**
+		 * Checks if a variable name exists in the compiler's map.
+		 * If it does, returns its ID. If not, size_t(-1) is returned
+		 *
+		 * \param name		The string identifier of the variable to look up or create.
+		 * \return			Returns the runtime index (ID) of the variable ir size_t(-1).
+		 **/
+		size_t						getVariable(const std::string& name) {
+			auto it = variableMap.find(name);
+			if (it != variableMap.end()) {
+				return it->second;
+			}
+			
+			return size_t(-1);
 		}
 	};
 

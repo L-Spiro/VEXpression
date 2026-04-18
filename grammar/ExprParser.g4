@@ -20,9 +20,14 @@ statement
     | SEMI                                                          # emptyStmt
     ;
 
+exprList
+    : expr (',' expr)*
+    ;
+	
 expr
     : IDENTIFIER op=(INC | DEC)                                     # postfix
     | op=(INC | DEC) IDENTIFIER                                     # prefixIncDec
+    | expr '(' exprList? ')'                                        # functionCall
     | op=(ADD | SUB | LOG_NOT | BIT_NOT) expr                       # unary
     | expr op=(MUL | DIV | MOD) expr                                # mulDiv
     | expr op=(ADD | SUB) expr                                      # addSub
@@ -36,7 +41,7 @@ expr
     | expr op=LOG_AND expr                                          # logAnd
     | expr op=LOG_OR expr                                           # logOr
     | <assoc=right> expr '?' expr ':' expr                          # ternary
-    | <assoc=right> IDENTIFIER ASSIGN expr                          # assignment
+    | <assoc=right> IDENTIFIER op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # assignment
     | '(' expr ')'                                                  # parens
     | IDENTIFIER                                                    # identifier
     | constant                                                      # constValue

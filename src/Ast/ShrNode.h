@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Engine/Errors.h"
 #include "../Engine/ExecutionContext.h"
 #include "../Engine/Result.h"
 #include "AstNode.h"
@@ -23,6 +24,7 @@ namespace ve {
 		 * 
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns the shifted result based on the left node's original type.
+		 * \throws			ErrorCode::Unknown_Numeric_Type if either of the resolved common types is not supported.
 		 **/
 		Result						evaluate(ExecutionContext& context) const override {
 			Result leftVal = context.getArena().nodes[leftIndex]->evaluate(context);
@@ -39,7 +41,7 @@ namespace ve {
 				shift = rightVal.value.uintVal;
 			}
 			else {
-				assert(false);
+				throw ErrorCode::Unknown_Numeric_Type;
 			}
 
 			Result out;
@@ -62,7 +64,7 @@ namespace ve {
 				out.value.uintVal = leftVal.value.uintVal >> shift;
 			}
 			else {
-				assert(false);
+				throw ErrorCode::Unknown_Numeric_Type;
 			}
 
 			return out;

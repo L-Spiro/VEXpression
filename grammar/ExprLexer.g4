@@ -79,6 +79,8 @@ FLOAT_CONSTANT      : D+ E FS?
                     ;
 
 WS                  : [ \t\u000B\r\n\f]+ -> skip ;
+LINE_COMMENT        : '//' ~[\r\n]* -> skip ;
+BLOCK_COMMENT       : '/*' .*? '*/' -> skip ;
 
 // ==========================================
 // 2. FRAGMENTS

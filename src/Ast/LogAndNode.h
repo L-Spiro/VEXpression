@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Engine/Errors.h"
 #include "../Engine/ExecutionContext.h"
 #include "../Engine/Result.h"
 #include "AstNode.h"
@@ -22,6 +23,7 @@ namespace ve {
 		 * 
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns a Signed Result of 1 if true, 0 if false.
+		 * \throws			ErrorCode::Unknown_Numeric_Type if euther of the the resolved common types is not supported.
 		 **/
 		Result						evaluate(ExecutionContext& context) const override {
 			Result leftVal = context.getArena().nodes[leftIndex]->evaluate(context);
@@ -37,7 +39,7 @@ namespace ve {
 				leftBool = (leftVal.value.uintVal != 0);
 			}
 			else {
-				assert(false);
+				throw ErrorCode::Unknown_Numeric_Type;
 			}
 
 			Result out;
@@ -62,7 +64,7 @@ namespace ve {
 				rightBool = (rightVal.value.uintVal != 0);
 			}
 			else {
-				assert(false);
+				throw ErrorCode::Unknown_Numeric_Type;
 			}
 
 			out.value.intVal = int64_t(rightBool);

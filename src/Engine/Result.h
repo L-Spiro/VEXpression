@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <type_traits>
 
 namespace ve {
 
@@ -32,6 +33,37 @@ namespace ve {
 			double		doubleVal;
 			void *		objectVal;
 		}				value;
+
+
+		// == Functions.
+		/**
+		 * Creates a Result object directly from a C++ arithmetic type.
+		 * Resolves the underlying NumericConstant type and union assignment at compile time.
+		 * 
+		 * \param val	The numeric constant to wrap.
+		 * \return		Returns a properly initialized Result.
+		 **/
+		template <typename T>
+		static Result	make(T val) {
+			static_assert(std::is_arithmetic_v<T>, "Result::make requires an arithmetic type.");
+
+			Result out;
+
+			if constexpr (std::is_floating_point_v<T>) {
+				out.type = NumericConstant::Floating;
+				out.value.doubleVal = static_cast<double>(val);
+			}
+			else if constexpr (std::is_integral_v<T> && std::is_signed_v<T>) {
+				out.type = NumericConstant::Signed;
+				out.value.intVal = static_cast<int64_t>(val);
+			}
+			else if constexpr (std::is_integral_v<T> && std::is_unsigned_v<T>) {
+				out.type = NumericConstant::Unsigned;
+				out.value.uintVal = static_cast<uint64_t>(val);
+			}
+
+			return out;
+		}
 	};
 
 }	// namespace ve

@@ -39,10 +39,11 @@ int main() {
 	std::cout << "--- VEXpression Engine Test ---\n\n";
 
 	ve::ExecutionContext context;
-	auto Cool = ((0xBadBeefBull << 1ULL) + 36) / 500;;
-	auto Cool2 = --Cool;
+	auto Cool = 3600 / 500;
+	auto Cool2 = Cool / 1;
+	auto Cool3 = Cool2 + 89.05;
 	
-	std::string testExpr = "Cool = ((0xBadBeefBull << 1ULL) + 36) / 500;;\r\n--Cool / 1";
+	std::string testExpr = "B = powf(A = M_E, 2);\r\nB + A // Expected: 10.1073379273896950536482108873315155506134033203125";
 	std::cout << "Evaluating: " << testExpr << "\n";
 	
 	context.compile(testExpr);
