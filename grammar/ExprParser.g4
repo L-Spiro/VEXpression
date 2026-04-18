@@ -4,20 +4,60 @@ parser grammar ExprParser;
 options { tokenVocab=ExprLexer; }
 
 // The entry point.
-prog: expr EOF ;
+prog: statement_list EOF ;
+
+// Evaluates the sequential blocks similar to traditional compound statements.
+statement_list
+    : statement+ expr                                               # listWithExpr
+    | statement+                                                    # listStatements
+    | expr                                                          # listExpr
+    | /* empty */                                                   # listEmpty
+    ;
+
+// A statement strictly demands a semicolon, terminating the greedy loops above.
+statement
+    : expr SEMI                                                     # exprStmt
+    | SEMI                                                          # emptyStmt
+    ;
 
 expr
-    : expr op=(MUL | DIV) expr      # mulDiv
-    | expr op=(ADD | SUB) expr      # addSub
-    | '(' expr ')'                  # parens
-    | constant                      # constValue
+    : IDENTIFIER op=(INC | DEC)                                     # postfix
+    | op=(INC | DEC) IDENTIFIER                                     # prefixIncDec
+    | op=(ADD | SUB | LOG_NOT | BIT_NOT) expr                       # unary
+    | expr op=(MUL | DIV | MOD) expr                                # mulDiv
+    | expr op=(ADD | SUB) expr                                      # addSub
+    | expr op=(SHL | SHR) expr                                      # bitShift
+    | expr op=SPACESHIP expr                                        # spaceship
+    | expr op=(LT | LE | GT | GE) expr                              # relational
+    | expr op=(EQ | NE) expr                                        # equality
+    | expr op=BIT_AND expr                                          # bitAnd
+    | expr op=BIT_XOR expr                                          # bitXor
+    | expr op=BIT_OR expr                                           # bitOr
+    | expr op=LOG_AND expr                                          # logAnd
+    | expr op=LOG_OR expr                                           # logOr
+    | <assoc=right> expr '?' expr ':' expr                          # ternary
+    | <assoc=right> IDENTIFIER ASSIGN expr                          # assignment
+    | '(' expr ')'                                                  # parens
+    | IDENTIFIER                                                    # identifier
+    | constant                                                      # constValue
     ;
 
+// =========================================================================
+// Constant Rules
+// =========================================================================
+
 constant
-    : PUREDEC_CONSTANT
-    | BIN_CONSTANT
-    | OCT_CONSTANT
-    | HEX_CONSTANT
-    | DEC_CONSTANT
-    | FLOAT_CONSTANT
+    : puredec_constant
+    | bin_constant
+    | oct_constant
+    | hex_constant
+    | dec_constant
+    | float_constant
     ;
+
+puredec_constant : PUREDEC_CONSTANT ;
+bin_constant     : BIN_CONSTANT ;
+oct_constant     : OCT_CONSTANT ;
+hex_constant     : HEX_CONSTANT ;
+dec_constant     : DEC_CONSTANT ;
+float_constant   : FLOAT_CONSTANT ;

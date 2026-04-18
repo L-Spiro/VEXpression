@@ -4,22 +4,24 @@
 #include "../Engine/Result.h"
 #include "AstNode.h"
 
+#include <cassert>
+
 namespace ve {
 
 	/**
-	 * Represents an addition operation between two child nodes.
+	 * Represents a bitwise XOR operation between two child nodes.
 	 **/
-	class AddNode : public AstNode {
+	class BitXorNode : public AstNode {
 	public :
-		AddNode(size_t left, size_t right) : leftIndex(left), rightIndex(right) {}
+		BitXorNode(size_t left, size_t right) : leftIndex(left), rightIndex(right) {}
 
 		
 		// == Functions.
 		/**
-		 * Evaluates the addition of the left and right child nodes.
+		 * Evaluates the bitwise XOR of the left and right child nodes.
 		 * 
 		 * \param context	The execution context containing variables and runtime states.
-		 * \return			Returns the sum of the evaluated left and right nodes.
+		 * \return			Returns the bitwise exclusive OR.
 		 **/
 		Result						evaluate(ExecutionContext& context) const override {
 			Result leftVal = context.getArena().nodes[leftIndex]->evaluate(context);
@@ -30,16 +32,18 @@ namespace ve {
 			Result r = context.convertResult(rightVal, common);
 
 			Result out;
-			out.type = common;
-
 			if (common == NumericConstant::Floating) {
-				out.value.doubleVal = l.value.doubleVal + r.value.doubleVal;
+				/*out.type = NumericConstant::Signed;
+				out.value.intVal = static_cast<int64_t>(l.value.doubleVal) ^ static_cast<int64_t>(r.value.doubleVal);*/
+				out.type = NumericConstant::Invalid;
 			}
 			else if (common == NumericConstant::Signed) {
-				out.value.intVal = l.value.intVal + r.value.intVal;
+				out.type = NumericConstant::Signed;
+				out.value.intVal = l.value.intVal ^ r.value.intVal;
 			}
 			else if (common == NumericConstant::Unsigned) {
-				out.value.uintVal = l.value.uintVal + r.value.uintVal;
+				out.type = NumericConstant::Unsigned;
+				out.value.uintVal = l.value.uintVal ^ r.value.uintVal;
 			}
 			else {
 				assert(false);

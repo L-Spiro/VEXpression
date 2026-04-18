@@ -93,9 +93,39 @@ add_custom_command(
 ### Hand-written Source and Header Files.
 set(APP_HEADERS
     src/Ast/AddNode.h
+	src/Ast/AssignNode.h
     src/Ast/AstArena.h
     src/Ast/AstNode.h
+	src/Ast/BitAndNode.h
+	src/Ast/BitNotNode.h
+	src/Ast/BitOrNode.h
+	src/Ast/BitXorNode.h
     src/Ast/ConstantNode.h
+	src/Ast/DivNode.h
+	src/Ast/EqNode.h
+	src/Ast/GeNode.h
+	src/Ast/GtNode.h
+	src/Ast/LeNode.h
+	src/Ast/LogAndNode.h
+	src/Ast/LogNotNode.h
+	src/Ast/LogOrNode.h
+	src/Ast/LtNode.h
+	src/Ast/ModNode.h
+	src/Ast/MulNode.h
+	src/Ast/NeNode.h
+	src/Ast/PostDecNode.h
+	src/Ast/PostIncNode.h
+	src/Ast/PreDecNode.h
+	src/Ast/PreIncNode.h
+	src/Ast/SequenceNode.h
+	src/Ast/ShlNode.h
+	src/Ast/ShrNode.h
+	src/Ast/SpaceshipNode.h
+	src/Ast/SubNode.h
+	src/Ast/TernaryNode.h
+	src/Ast/UnaryMinusNode.h
+	src/Ast/UnaryPlusNode.h
+	src/Ast/VarNode.h
     src/Compiler/AstBuilderVisitor.h
 	src/Foundation/Character.h
 	src/Foundation/LargeMath.h
@@ -110,6 +140,7 @@ set(APP_HEADERS
 
 set(APP_SOURCES
 	src/Engine/ExecutionContext.cpp
+	src/Foundation/Text.cpp
     src/main.cpp
 )
 

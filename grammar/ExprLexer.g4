@@ -6,10 +6,52 @@ lexer grammar ExprLexer;
 
 LPAREN              : '(' ;
 RPAREN              : ')' ;
+LBRACKET            : '[' | '<:' ;
+RBRACKET            : ']' | ':>' ;
+LBRACE              : '{' | '<%' ;
+RBRACE              : '}' | '%>' ;
+MOD                 : '%' ;
 MUL                 : '*' ;
 DIV                 : '/' ;
 ADD                 : '+' ;
 SUB                 : '-' ;
+
+SHL                 : '<<' ;
+SHR                 : '>>' ;
+SPACESHIP           : '<=>' ;
+GE                  : '>=' ;
+GT                  : '>' ;
+LE                  : '<=' ;
+LT                  : '<' ;
+EQ                  : '==' ;
+NE                  : '!=' ;
+BIT_AND             : '&' ;
+BIT_XOR             : '^' ;
+BIT_OR              : '|' ;
+LOG_AND             : '&&' ;
+LOG_OR              : '||' ;
+INC                 : '++' ;
+DEC                 : '--' ;
+DOT                 : '.' ;
+COMMA               : ',' ;
+LOG_NOT             : '!' ;
+BIT_NOT             : '~' ;
+QUESTION            : '?' ;
+COLON               : ':' ;
+SEMI                : ';' ;
+ASSIGN              : '=' ;
+ADD_ASSIGN          : '+=' ;
+SUB_ASSIGN          : '-=' ;
+MUL_ASSIGN          : '*=' ;
+MOD_ASSIGN          : '%=' ;
+DIV_ASSIGN          : '/=' ;
+XOR_ASSIGN          : '^=' ;
+SHL_ASSIGN          : '<<=' ;
+SHR_ASSIGN          : '>>=' ;
+OR_ASSIGN           : '|=' ;
+AND_ASSIGN          : '&=' ;
+
+IDENTIFIER          : L (L | D)* ;
 
 PUREDEC_CONSTANT    : '#' D+ IS? ;
 BIN_CONSTANT        : '0' [bB] B+ IS? ;
@@ -52,6 +94,6 @@ fragment E  : [Ee] [+-]? D+ ;
 fragment P  : [Pp] [+-]? D+ ;
 fragment FS : [fFlL] ;
 
-fragment IS : [uU] ('ll' | 'LL' | [lL])? 
-            | ('ll' | 'LL' | [lL]) [uU]? 
+fragment IS : [uU] ([lL] [lL]?)? 
+            | ([lL] [lL]?) [uU]? 
             ;

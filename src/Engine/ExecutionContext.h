@@ -13,7 +13,7 @@ namespace ve {
 	 **/
 	class ExecutionContext {
 	public :
-		ExecutionContext() : rootIndex(0) {}
+		ExecutionContext() {}
 
 		
 		// == Functions.
@@ -29,14 +29,14 @@ namespace ve {
 		/**
 		 * Evaluates the currently compiled AST. Can be called multiple times.
 		 * 
-		 * \return			Returns the evaluated Result.
+		 * \return				Returns the evaluated Result.
 		 **/
 		Result							execute();
 
 		/**
 		 * Determines the promotion type between two given numeric types.
 		 * 
-		 * \param left		The left operand type.
+		 * \param left			The left operand type.
 		 * \param right			The right operand type.
 		 * \return				Returns the common cast type based on C++ promotion rules.
 		 **/
@@ -59,9 +59,23 @@ namespace ve {
 		const AstArena &				getArena() const { return arena; }
 
 		/**
+		 * Determines whether to treat all standard integers as hexadecimal or not.
+		 * 
+		 * \return				Returns true if unqualified integer constants should be parsed as hexadecimal.
+		 **/
+		inline bool						getTreatAllAsHex() const { return treatAllAsHex; }
+
+		/**
+		 * Sets whether to treat all unqualified standard integer strings as hexadecimal constants.
+		 * 
+		 * \param treatAsHex	If true, standard integer strings (333, 129, 88959, etc.) are parsed as hexadecimal integers.
+		 **/
+		inline void						setTreatAllAsHex(bool treatAsHex) { treatAllAsHex = treatAsHex; }
+
+		/**
 		 * Allocates a new AST node within the internal arena.
 		 * 
-		 * \param args		The arguments to forward to the specified node's constructor.
+		 * \param args			The arguments to forward to the specified node's constructor.
 		 * \return				Returns the size_t index of the newly created node.
 		 **/
 		template <typename T, typename... Args>
@@ -69,17 +83,32 @@ namespace ve {
 			return arena.addNode<T>(std::forward<Args>(args)...);
 		}
 
-	protected :
-		// == Members.
 		/**
-		 * The central storage arena containing all allocated AST nodes.
+		 * Allocates a new variable slot and returns its runtime index.
 		 **/
-		AstArena						arena;
+		size_t							allocateVariable() {
+			variables.push_back(Result{}); // Pushes a default 0/Unsigned Result
+			return variables.size() - 1;
+		}
 
 		/**
-		 * The arena index of the root AST node to execute.
+		 * Retrieves a reference to a variable by its runtime index.
 		 **/
-		size_t							rootIndex;
+		inline Result&					getVariable(size_t index) {
+			return variables[index];
+		}
+
+	protected :
+		// == Members.
+		/** The central storage arena containing all allocated AST nodes. **/
+		AstArena						arena;
+		/** The array of registered variables. */
+		std::vector<Result>				variables;
+		/** The arena index of the root AST node to execute. **/
+		size_t							rootIndex = 0;
+		/** Treat standard integers as hex? */
+		bool							treatAllAsHex = false;
+
 
 	private :
 	};

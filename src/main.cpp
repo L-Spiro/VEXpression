@@ -1,5 +1,6 @@
 #include "Engine/ExecutionContext.h"
 #include "Engine/Result.h"
+#include "Foundation/Text.h"
 #include <iostream>
 #include <string>
 
@@ -10,15 +11,15 @@ void printResult(const ve::Result& res) {
 	std::cout << "Result: ";
 	switch (res.type) {
 		case ve::NumericConstant::Unsigned : {
-			std::cout << res.value.uintVal << " (Unsigned)\n";
+			std::cout << ve::Text::toUnsigned( res.value.uintVal ) << " (Unsigned)\n";
 			break;
 		}
 		case ve::NumericConstant::Signed : {
-			std::cout << res.value.intVal << " (Signed)\n";
+			std::cout << ve::Text::toSigned( res.value.intVal ) << " (Signed)\n";
 			break;
 		}
 		case ve::NumericConstant::Floating : {
-			std::cout << res.value.doubleVal << " (Floating)\n";
+			std::cout << ve::Text::toDouble( res.value.doubleVal ) << " (Floating)\n";
 			break;
 		}
 		case ve::NumericConstant::Object : {
@@ -38,16 +39,20 @@ int main() {
 	std::cout << "--- VEXpression Engine Test ---\n\n";
 
 	ve::ExecutionContext context;
-	auto coolType = 0xBadBeefULL + 634U;
+	auto Cool = ((0xBadBeefBull << 1ULL) + 36) / 500;;
+	auto Cool2 = --Cool;
 	
-	std::string testExpr = "0xBadBeefULL + 634U";
+	std::string testExpr = "Cool = ((0xBadBeefBull << 1ULL) + 36) / 500;;\r\n--Cool / 1";
 	std::cout << "Evaluating: " << testExpr << "\n";
 	
 	context.compile(testExpr);
+	try {
+		ve::Result res = context.execute();
 	
-	ve::Result res = context.execute();
-	
-	printResult(res);
+		printResult(res);
+	}
+	catch (...) {
+	}
 	
 	return 0;
 }

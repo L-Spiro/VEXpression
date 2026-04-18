@@ -1,12 +1,16 @@
 #pragma once
 
+#include "Text.h"
+
 #include <algorithm>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <format>
 #include <fstream>
 #include <string>
 #include <thread>
+#include <type_traits>
 #include <vector>
 
 #ifdef _WIN32
@@ -14,11 +18,13 @@
 	#define WIN32_LEAN_AND_MEAN
 	#include <Windows.h>
 	#include <processthreadsapi.h>
+	#include <shlobj.h>
 #elif defined( __APPLE__ )
 	#include <CoreFoundation/CoreFoundation.h>
 	#include <IOKit/ps/IOPowerSources.h>
 	#include <IOKit/ps/IOPSKeys.h>
 	#include <IOKit/pwr_mgt/IOPMLib.h>
+	#include <mach-o/dyld.h>
 	#include <mach/host_info.h>
 	#include <mach/mach.h>
 	#include <mach/mach_host.h>
@@ -26,11 +32,14 @@
 	#include <mach/thread_act.h>
 	#include <mach/thread_policy.h>
 	#include <pthread.h>
+	#include <pwd.h>
 	#include <sys/sysctl.h>
 	#include <sys/types.h>
 	#include <unistd.h>
 #else
+	#include <limits.h>
 	#include <pthread.h>
+	#include <pwd.h>
 	#include <sys/syscall.h>
 	#include <sys/types.h>
 	#include <sys/utsname.h>
@@ -61,10 +70,10 @@ namespace ve {
 			::QueryPerformanceCounter(&li);
 			return static_cast<uint64_t>(li.QuadPart);
 #elif defined( __APPLE__ )
-			return mach_absolute_time();
+			return ::mach_absolute_time();
 #else
 			struct timespec ts;
-			clock_gettime(CLOCK_MONOTONIC, &ts);
+			::clock_gettime(CLOCK_MONOTONIC, &ts);
 			return static_cast<uint64_t>(ts.tv_sec) * 1000000000ULL + static_cast<uint64_t>(ts.tv_nsec);
 #endif
 		}
@@ -81,7 +90,7 @@ namespace ve {
 			return static_cast<uint64_t>(li.QuadPart);
 #elif defined( __APPLE__ )
 			mach_timebase_info_data_t timebase;
-			mach_timebase_info(&timebase);
+			::mach_timebase_info(&timebase);
 			// mach_absolute_time returns ticks. 
 			// 1 tick = (numer / denom) nanoseconds.
 			// Frequency (ticks per second) = 1,000,000,000 * denom / numer
@@ -92,10 +101,6 @@ namespace ve {
 #endif
 		}
 
-
-		// ===============================
-		// Timing & Performance
-		// ===============================
 		/**
 		 * Suspends the current thread for the specified number of milliseconds.
 		 *
@@ -108,7 +113,7 @@ namespace ve {
 			struct timespec ts;
 			ts.tv_sec = milliseconds / 1000;
 			ts.tv_nsec = (milliseconds % 1000) * 1000000;
-			nanosleep(&ts, nullptr);
+			::nanosleep(&ts, nullptr);
 #endif
 		}
 
@@ -149,7 +154,156 @@ namespace ve {
 			struct timespec ts;
 			ts.tv_sec = static_cast<time_t>(microseconds / 1000000ULL);
 			ts.tv_nsec = static_cast<long>((microseconds % 1000000ULL) * 1000ULL);
-			nanosleep(&ts, nullptr);
+			::nanosleep(&ts, nullptr);
+#endif
+		}
+
+
+		// =========================================================================
+		// Filesystem & Paths
+		// =========================================================================
+
+		/**
+		 * Helper function to safely retrieve the current user's home directory on POSIX systems.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return			Returns the UTF-8 path to the home directory.
+		 **/
+		static inline std::string	getPosixHomeDirectory() {
+#if !defined( _WIN32 )
+			const char* homeEnv = std::getenv("HOME");
+			if (homeEnv != nullptr) {
+				return std::string(homeEnv);
+			}
+			// Fallback if HOME is not set.
+			struct passwd* pw = ::getpwuid(getuid());
+			if (pw != nullptr && pw->pw_dir != nullptr) {
+				return std::string(pw->pw_dir);
+			}
+#endif
+			return std::string();
+		}
+
+		/**
+		 * Retrieves the full, absolute path to the currently running executable.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return			Returns the UTF-8 path to the executable.
+		 **/
+		static inline std::string	getExecutablePath() {
+#if defined( _WIN32 )
+			std::wstring buffer;
+			// 32768 (0x8000) is the maximum extended path length in Windows (\\?\ prefix).
+			buffer.resize(0x8000);
+			DWORD len = ::GetModuleFileNameW(nullptr, buffer.data(), static_cast<DWORD>(buffer.size()));
+			if (len > 0) {
+				buffer.resize(len);
+				return Text::wStringToUtf8(buffer);
+			}
+			return std::string();
+#elif defined( __APPLE__ )
+			char buffer[1024];
+			uint32_t size = sizeof(buffer);
+			if (_NSGetExecutablePath(buffer, &size) == 0) {
+				return std::string(buffer);
+			}
+
+			std::string result;
+			result.resize(size);
+			if (_NSGetExecutablePath(result.data(), &size) == 0) {
+				// Remove the null terminator that _NSGetExecutablePath includes in the size.
+				if (!result.empty() && result.back() == '\0') {
+					result.pop_back();
+				}
+				return result;
+			}
+			return std::string();
+#else
+			char buffer[PATH_MAX];
+			ssize_t len = ::readlink("/proc/self/exe", buffer, sizeof(buffer));
+			if (len > 0 && len < PATH_MAX) {
+				return std::string(buffer, static_cast<size_t>(len));
+			}
+			return std::string();
+#endif
+		}
+
+		/**
+		 * Retrieves the absolute directory containing the currently running executable.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return			Returns the UTF-8 path to the directory (without a trailing slash).
+		 **/
+		static inline std::string	getExecutableDirectory() {
+			std::string exePath = getExecutablePath();
+			size_t slashPos = exePath.find_last_of("/\\");
+			if (slashPos != std::string::npos) {
+				return exePath.substr(0, slashPos);
+			}
+			return exePath;
+		}
+
+		/**
+		 * Retrieves the path to the current user's local application data folder.
+		 * Windows: %LOCALAPPDATA% (e.g., C:\Users\Name\AppData\Local)
+		 * macOS: ~/Library/Application Support
+		 * Linux: ~/.local/share (XDG Base Directory standard)
+		 * Must be called within a try/catch block.
+		 *
+		 * \return			Returns the UTF-8 path to the application data directory.
+		 **/
+		static inline std::string	getAppDataDirectory() {
+#if defined( _WIN32 )
+			PWSTR path = nullptr;
+			std::string result;
+			if (SUCCEEDED(::SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, nullptr, &path))) {
+				result = Text::wStringToUtf8(std::wstring(path));
+				::CoTaskMemFree(path);
+			}
+			return result;
+#elif defined( __APPLE__ )
+			std::string home = getPosixHomeDirectory();
+			if (!home.empty()) {
+				return home + "/Library/Application Support";
+			}
+			return std::string();
+#else
+			const char* xdgData = std::getenv("XDG_DATA_HOME");
+			if (xdgData != nullptr && xdgData[0] != '\0') {
+				return std::string(xdgData);
+			}
+			std::string home = getPosixHomeDirectory();
+			if (!home.empty()) {
+				return home + "/.local/share";
+			}
+			return std::string();
+#endif
+		}
+
+		/**
+		 * Retrieves the path to the current user's standard documents folder.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return			Returns the UTF-8 path to the user's Documents directory.
+		 **/
+		static inline std::string	getUserDocumentsDirectory() {
+#if defined( _WIN32 )
+			PWSTR path = nullptr;
+			std::string result;
+			if (SUCCEEDED(::SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &path))) {
+				result = Text::wStringToUtf8(std::wstring(path));
+				::CoTaskMemFree(path);
+			}
+			return result;
+#else
+			// macOS and Linux largely share the standard ~/Documents paradigm.
+			// On Linux, XDG_DOCUMENTS_DIR is technically correct, but manually parsing user-dirs.dirs 
+			// is overkill for a lightweight system header. The fallback to ~/Documents is nearly universal.
+			std::string home = getPosixHomeDirectory();
+			if (!home.empty()) {
+				return home + "/Documents";
+			}
+			return std::string();
 #endif
 		}
 
@@ -192,13 +346,12 @@ namespace ve {
 #elif defined( __APPLE__ )
 			uint32_t cores = 0;
 			size_t len = sizeof(cores);
-			sysctlbyname("hw.physicalcpu", &cores, &len, nullptr, 0);
+			::sysctlbyname("hw.physicalcpu", &cores, &len, nullptr, 0);
 			return cores > 0 ? cores : getLogicalCoreCount();
 #else
 			// Linux: Parse /proc/cpuinfo and count unique core IDs per physical ID.
-			// For a header-only utility, a simplified fallback is often safer, 
-			// but here is a basic approach relying on sysconf offline processors as a proxy.
-			long cores = sysconf(_SC_NPROCESSORS_ONLN);
+			// TODO: Implement a simplififed fallback.
+			long cores = ::sysconf(_SC_NPROCESSORS_ONLN);
 			return cores > 0 ? static_cast<uint32_t>(cores) : getLogicalCoreCount();
 #endif
 		}
@@ -217,11 +370,11 @@ namespace ve {
 #elif defined( __APPLE__ )
 			uint64_t mem = 0;
 			size_t len = sizeof(mem);
-			sysctlbyname("hw.memsize", &mem, &len, nullptr, 0);
+			::sysctlbyname("hw.memsize", &mem, &len, nullptr, 0);
 			return mem;
 #else
-			uint64_t pages = static_cast<uint64_t>(sysconf(_SC_PHYS_PAGES));
-			uint64_t pageSize = static_cast<uint64_t>(sysconf(_SC_PAGE_SIZE));
+			uint64_t pages = static_cast<uint64_t>(::sysconf(_SC_PHYS_PAGES));
+			uint64_t pageSize = static_cast<uint64_t>(::sysconf(_SC_PAGE_SIZE));
 			return pages * pageSize;
 #endif
 		}
@@ -240,13 +393,13 @@ namespace ve {
 #elif defined( __APPLE__ )
 			mach_msg_type_number_t count = HOST_VM_INFO64_COUNT;
 			vm_statistics64_data_t vmStats;
-			if ( host_statistics64(mach_host_self(), HOST_VM_INFO64, reinterpret_cast<host_info64_t*>(&vmStats), &count) == KERN_SUCCESS ) {
-				return static_cast<uint64_t>(vmStats.free_count + vmStats.inactive_count) * static_cast<uint64_t>(sysconf(_SC_PAGE_SIZE));
+			if ( ::host_statistics64(::mach_host_self(), HOST_VM_INFO64, reinterpret_cast<host_info64_t*>(&vmStats), &count) == KERN_SUCCESS ) {
+				return static_cast<uint64_t>(vmStats.free_count + vmStats.inactive_count) * static_cast<uint64_t>(::sysconf(_SC_PAGE_SIZE));
 			}
 			return 0;
 #else
-			uint64_t pages = static_cast<uint64_t>(sysconf(_SC_AVPHYS_PAGES));
-			uint64_t pageSize = static_cast<uint64_t>(sysconf(_SC_PAGE_SIZE));
+			uint64_t pages = static_cast<uint64_t>(::sysconf(_SC_AVPHYS_PAGES));
+			uint64_t pageSize = static_cast<uint64_t>(::sysconf(_SC_PAGE_SIZE));
 			return pages * pageSize;
 #endif
 		}
@@ -265,7 +418,7 @@ namespace ve {
 			return "macOS";
 #else
 			struct utsname buffer;
-			if ( uname(&buffer) == 0 ) {
+			if ( ::uname(&buffer) == 0 ) {
 				return std::string(buffer.sysname) + " " + buffer.release;
 			}
 			return "Linux";
@@ -278,7 +431,7 @@ namespace ve {
 		 * \return			Returns true if the system is little-endian.
 		 **/
 		static inline bool			isLittleEndian() {
-			// This runtime check is heavily optimized by all modern compilers 
+			// This runtime check should be optimized by all modern compilers 
 			// into a compile-time constant `return true;` or `return false;`.
 			const uint16_t number = 0x1;
 			const char* ptr = reinterpret_cast<const char*>(&number);
@@ -290,39 +443,6 @@ namespace ve {
 		// Threading & Processes
 		// ===============================
 		/**
-		 * Sets the name of the calling thread for easier debugging in IDEs or profilers.
-		 *
-		 * \param name		The UTF-8 name to apply to the current thread.
-		 **/
-		static inline void			setCurrentThreadName(const char* name) {
-#if defined( _WIN32 )
-			// Convert to wide string.
-			int len = ::MultiByteToWideChar(CP_UTF8, 0, name, -1, nullptr, 0);
-			if (len > 0) {
-				std::vector<wchar_t> wName(static_cast<size_t>(len));
-				::MultiByteToWideChar(CP_UTF8, 0, name, -1, wName.data(), len);
-				
-				// Try dynamic resolution of SetThreadDescription to gracefully support older Windows builds.
-				using PfnSetThreadDescription = HRESULT(WINAPI*)(HANDLE, PCWSTR);
-				static PfnSetThreadDescription setDesc = reinterpret_cast<PfnSetThreadDescription>(
-					::GetProcAddress(::GetModuleHandleW(L"kernel32.dll"), "SetThreadDescription"));
-				
-				if (setDesc != nullptr) {
-					setDesc(::GetCurrentThread(), wName.data());
-				}
-			}
-#elif defined( __APPLE__ )
-			pthread_setname_np(name);
-#else
-			// Linux requires the name to be 16 characters or less, including the null terminator.
-			char buffer[16];
-			std::strncpy(buffer, name, 15);
-			buffer[15] = '\0';
-			pthread_setname_np(pthread_self(), buffer);
-#endif
-		}
-
-		/**
 		 * Pins the current thread to specific CPU cores.
 		 *
 		 * \param coreMask	A bitmask representing the physical/logical cores the thread is allowed to run on.
@@ -331,10 +451,10 @@ namespace ve {
 #if defined( _WIN32 )
 			::SetThreadAffinityMask(::GetCurrentThread(), static_cast<DWORD_PTR>(coreMask));
 #elif defined( __APPLE__ )
-			// macOS does not support strict core pinning. We use the thread affinity API as a best-effort grouping mechanism.
+			// macOS does not support strict core pinning. Use the thread affinity API as a best-effort grouping mechanism.
 			thread_affinity_policy_data_t policy;
 			policy.affinity_tag = static_cast<integer_t>(coreMask);
-			thread_policy_set(pthread_mach_thread_np(pthread_self()), THREAD_AFFINITY_POLICY, 
+			::thread_policy_set(::pthread_mach_thread_np(pthread_self()), THREAD_AFFINITY_POLICY, 
 							  reinterpret_cast<thread_policy_t>(&policy), THREAD_AFFINITY_POLICY_COUNT);
 #else
 			cpu_set_t cpuset;
@@ -371,7 +491,7 @@ namespace ve {
 			return static_cast<uint64_t>(::GetCurrentThreadId());
 #elif defined( __APPLE__ )
 			uint64_t tid;
-			pthread_threadid_np(nullptr, &tid);
+			::pthread_threadid_np(nullptr, &tid);
 			return tid;
 #else
 			return static_cast<uint64_t>(syscall(SYS_gettid));

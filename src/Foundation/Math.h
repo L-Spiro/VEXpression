@@ -1375,7 +1375,8 @@ namespace ve {
 
 		/**
 		 * Converts chromaticities to XYZ values.
-		 * * \param chromaX		The input chromaticity X.
+		 * 
+		 * \param chromaX		The input chromaticity X.
 		 * \param chromaY		The input chromaticity Y.
 		 * \param y0			The input XYZ Y value.
 		 * \param x0			The output XYZ X value.

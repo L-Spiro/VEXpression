@@ -10,8 +10,8 @@ namespace ve {
 	 * and define cast priority for C++-style type promotion.
 	 **/
 	enum class NumericConstant : uint8_t {
-		Unsigned		= 0x00,
-		Signed			= 0x01,
+		Signed			= 0x00,
+		Unsigned		= 0x01,
 		Floating		= 0x02,
 		Object			= 0x03,
 		Invalid			= 0x80
@@ -24,7 +24,7 @@ namespace ve {
 	struct Result {
 		// == Members.
 		/** The active type currently stored in the union. **/
-		NumericConstant type;
+		NumericConstant type = NumericConstant::Invalid;
 
 		union {
 			int64_t		intVal;

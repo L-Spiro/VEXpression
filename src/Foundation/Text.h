@@ -1,9 +1,12 @@
 #pragma once
 
+#include "../Engine/Result.h"
+#include "Character.h"
 #include "TextPolicy.h"
 
 #include <cstdint>
 #include <cwctype>
+#include <format>
 #include <string>
 #include <vector>
 
@@ -187,7 +190,7 @@ namespace ve {
 		 **/
 		template <typename CharT>
 		static inline size_t			utf8CharSize(const CharT* str, size_t len) {
-			static_assert(sizeof(CharT) == 1, "utf8CharSize requires an exactly 8-bit character type (e.g., char, char8_t, uint8_t).");
+			static_assert(sizeof(CharT) == 1, "utf8CharSize: Character type must be 8 bits (char, char8_t, uint8_t, etc.)");
 
 			if (len == 0) { return 0; }
 
@@ -301,8 +304,8 @@ namespace ve {
 		 **/
 		template <typename OutStringT = std::u16string, typename InStringT>
 		static inline OutStringT		utf8ToUtf16(const InStringT& utf8) {
-			static_assert(sizeof(typename OutStringT::value_type) == 2, "Output string must have 16-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 1, "Input string must have 8-bit characters.");
+			static_assert(sizeof(typename OutStringT::value_type) == 2, "utf8ToUtf16: Output string must have 16-bit characters.");
+			static_assert(sizeof(typename InStringT::value_type) == 1, "utf8ToUtf16: Input string must have 8-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf8.data();
@@ -350,8 +353,8 @@ namespace ve {
 		 **/
 		template <typename OutStringT = std::string, typename InStringT>
 		static inline OutStringT		utf16ToUtf8(const InStringT& utf16) {
-			static_assert(sizeof(typename OutStringT::value_type) == 1, "Output string must have 8-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 2, "Input string must have 16-bit characters.");
+			static_assert(sizeof(typename OutStringT::value_type) == 1, "utf16ToUtf8: Output string must have 8-bit characters.");
+			static_assert(sizeof(typename InStringT::value_type) == 2, "utf16ToUtf8: Input string must have 16-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf16.data();
@@ -399,8 +402,8 @@ namespace ve {
 		 **/
 		template <typename OutStringT = std::u32string, typename InStringT>
 		static inline OutStringT		utf8ToUtf32(const InStringT& utf8) {
-			static_assert(sizeof(typename OutStringT::value_type) == 4, "Output string must have 32-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 1, "Input string must have 8-bit characters.");
+			static_assert(sizeof(typename OutStringT::value_type) == 4, "utf8ToUtf32: Output string must have 32-bit characters.");
+			static_assert(sizeof(typename InStringT::value_type) == 1, "utf8ToUtf32: Input string must have 8-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf8.data();
@@ -448,8 +451,8 @@ namespace ve {
 		 **/
 		template <typename OutStringT = std::string, typename InStringT>
 		static inline OutStringT		utf32ToUtf8(const InStringT& utf32) {
-			static_assert(sizeof(typename OutStringT::value_type) == 1, "Output string must have 8-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 4, "Input string must have 32-bit characters.");
+			static_assert(sizeof(typename OutStringT::value_type) == 1, "utf32ToUtf8: Output string must have 8-bit characters.");
+			static_assert(sizeof(typename InStringT::value_type) == 4, "utf32ToUtf8: Input string must have 32-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf32.data();
@@ -498,12 +501,13 @@ namespace ve {
 		 **/
 		template <typename OutStringT = std::wstring, typename InStringT>
 		static inline OutStringT		utf8ToWString(const InStringT& utf8) {
-			static_assert(sizeof(typename InStringT::value_type) == 1, "Input string must have 8-bit characters.");
-#if defined( _WIN32 )
-			return utf8ToUtf16<OutStringT>(utf8);
-#else
-			return utf8ToUtf32<OutStringT>(utf8);
-#endif
+			static_assert(sizeof(typename InStringT::value_type) == 1, "utf8ToWString: Input string must have 8-bit characters.");
+			if constexpr ( sizeof(typename InStringT::value_type) == 2) {
+				return utf8ToUtf16<OutStringT>(utf8);
+			}
+			else {
+				return utf8ToUtf32<OutStringT>(utf8);
+			}
 		}
 
 		/**
@@ -516,12 +520,13 @@ namespace ve {
 		 **/
 		template <typename OutStringT = std::string, typename InStringT = std::wstring>
 		static inline OutStringT		wStringToUtf8(const InStringT& wstr) {
-			static_assert(sizeof(typename OutStringT::value_type) == 1, "Output string must have 8-bit characters.");
-#if defined( _WIN32 )
-			return utf16ToUtf8<OutStringT>(wstr);
-#else
-			return utf32ToUtf8<OutStringT>(wstr);
-#endif
+			static_assert(sizeof(typename OutStringT::value_type) == 1, "wStringToUtf8: Output string must have 8-bit characters.");
+			if constexpr ( sizeof(typename InStringT::value_type) == 2) {
+				return utf16ToUtf8<OutStringT>(wstr);
+			}
+			else {
+				return utf32ToUtf8<OutStringT>(wstr);
+			}
 		}
 
 
@@ -907,12 +912,12 @@ namespace ve {
 			result.reserve(totalLen);
 
 			auto it = list.begin();
-			result.append(*it);
+			result.append((*it));
 			++it;
 			
 			for (; it != list.end(); ++it) {
 				result.append(separator);
-				result.append(*it);
+				result.append((*it));
 			}
 
 			return result;
@@ -933,7 +938,7 @@ namespace ve {
 				return StringT();
 			}
 
-			size_t totalLen = (list.size() - 1); // 1 char per separator.
+			size_t totalLen = (list.size() - 1);
 			for (const auto& item : list) {
 				totalLen += item.length();
 			}
@@ -942,16 +947,301 @@ namespace ve {
 			result.reserve(totalLen);
 
 			auto it = list.begin();
-			result.append(*it);
+			result.append((*it));
 			++it;
 			
 			for (; it != list.end(); ++it) {
 				result.push_back(separator);
-				result.append(*it);
+				result.append((*it));
 			}
 
 			return result;
 		}
+
+
+		// ===============================
+		// Formatting & Stringification
+		// ===============================
+		/**
+		 * Converts an integer or pointer to a hexadecimal string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param value		The numeric value or pointer to convert.
+		 * \param padding	The minimum number of digits to output (pads with leading zeros).
+		 * \param prefix	If true, prepends "0x" to the output.
+		 * \return			Returns the formatted hexadecimal string.
+		 **/
+		template <typename StringT = std::string, typename IntT>
+		static inline StringT			toHex(IntT value, size_t padding = 0, bool prefix = true) {
+			using CharT = typename StringT::value_type;
+			uint64_t val;
+			
+			if constexpr (std::is_pointer_v<IntT>) {
+				val = reinterpret_cast<uintptr_t>(value);
+			}
+			else {
+				val = static_cast<uint64_t>(value);
+			}
+
+			CharT buffer[16];
+			int index = 15;
+			
+			if (val == 0) {
+				buffer[index--] = static_cast<CharT>('0');
+			}
+			else {
+				while (val > 0) {
+					uint64_t nibble = val & 0xF;
+					buffer[index--] = static_cast<CharT>(nibble < 10 ? '0' + nibble : 'A' + (nibble - 10));
+					val >>= 4;
+				}
+			}
+
+			int charsWritten = 15 - index;
+			int padLen = (padding > static_cast<size_t>(charsWritten)) ? static_cast<int>(padding) - charsWritten : 0;
+			int prefixLen = prefix ? 2 : 0;
+
+			StringT result;
+			result.resize(prefixLen + padLen + charsWritten);
+			
+			auto* outPtr = result.data();
+			if (prefix) {
+				(*outPtr++) = static_cast<CharT>('0');
+				(*outPtr++) = static_cast<CharT>('x');
+			}
+			for (int i = 0; i < padLen; ++i) {
+				(*outPtr++) = static_cast<CharT>('0');
+			}
+			for (int i = 0; i < charsWritten; ++i) {
+				(*outPtr++) = buffer[index+1+i];
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Converts an integer or pointer to a binary string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param value		The numeric value or pointer to convert.
+		 * \param padding	The minimum number of digits to output (pads with leading zeros).
+		 * \param prefix	If true, prepends "0b" to the output.
+		 * \return			Returns the formatted binary string.
+		 **/
+		template <typename StringT = std::string, typename IntT>
+		static inline StringT			toBinary(IntT value, size_t padding = 0, bool prefix = true) {
+			using CharT = typename StringT::value_type;
+			uint64_t val;
+			
+			if constexpr (std::is_pointer_v<IntT>) {
+				val = reinterpret_cast<uintptr_t>(value);
+			}
+			else {
+				val = static_cast<uint64_t>(value);
+			}
+
+			CharT buffer[64];
+			int index = 63;
+			
+			if (val == 0) {
+				buffer[index--] = static_cast<CharT>('0');
+			}
+			else {
+				while (val > 0) {
+					buffer[index--] = static_cast<CharT>('0' + (val & 1));
+					val >>= 1;
+				}
+			}
+
+			int charsWritten = 63 - index;
+			int padLen = (padding > static_cast<size_t>(charsWritten)) ? static_cast<int>(padding) - charsWritten : 0;
+			int prefixLen = prefix ? 2 : 0;
+
+			StringT result;
+			result.resize(prefixLen + padLen + charsWritten);
+			
+			auto* outPtr = result.data();
+			if (prefix) {
+				(*outPtr++) = static_cast<CharT>('0');
+				(*outPtr++) = static_cast<CharT>('b');
+			}
+			for (int i = 0; i < padLen; ++i) {
+				(*outPtr++) = static_cast<CharT>('0');
+			}
+			for (int i = 0; i < charsWritten; ++i) {
+				(*outPtr++) = buffer[index+1+i];
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Converts an integer or pointer to an octal string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param value		The numeric value or pointer to convert.
+		 * \param padding	The minimum number of digits to output (pads with leading zeros).
+		 * \param prefix	If true, prepends "0" to the output.
+		 * \return			Returns the formatted octal string.
+		 **/
+		template <typename StringT = std::string, typename IntT>
+		static inline StringT			toOctal(IntT value, size_t padding = 0, bool prefix = true) {
+			using CharT = typename StringT::value_type;
+			uint64_t val;
+			
+			if constexpr (std::is_pointer_v<IntT>) {
+				val = reinterpret_cast<uintptr_t>(value);
+			}
+			else {
+				val = static_cast<uint64_t>(value);
+			}
+
+			CharT buffer[22];
+			int index = 21;
+			
+			if (val == 0) {
+				buffer[index--] = static_cast<CharT>('0');
+			}
+			else {
+				while (val > 0) {
+					buffer[index--] = static_cast<CharT>('0' + (val & 7));
+					val >>= 3;
+				}
+			}
+
+			int charsWritten = 21 - index;
+			int padLen = (padding > static_cast<size_t>(charsWritten)) ? static_cast<int>(padding) - charsWritten : 0;
+			int prefixLen = prefix ? 1 : 0;
+
+			StringT result;
+			result.resize(prefixLen + padLen + charsWritten);
+			
+			auto* outPtr = result.data();
+			if (prefix) {
+				(*outPtr++) = static_cast<CharT>('0');
+			}
+			for (int i = 0; i < padLen; ++i) {
+				(*outPtr++) = static_cast<CharT>('0');
+			}
+			for (int i = 0; i < charsWritten; ++i) {
+				(*outPtr++) = buffer[index+1+i];
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Converts a NumericConstant::Signed value to a string.
+		 * Must be called within a try/catch block.
+		 * 
+		 * \param value		The numeric value to convert.
+		 * \param padding	The minimum number of digits to output (pads with leading zeros).
+		 * \return			Returns the formatted string.
+		 **/
+		template <typename StringT = std::string>
+		static inline StringT			toSigned(int64_t value, uint32_t padding = 0) {
+			uint32_t digits = std::max(padding, 1u);
+			int width = static_cast<int>(digits);
+			
+			if (value < 0) {
+				width++;
+			}
+			
+			std::string fmt = std::format("{:0{}}", value, width);
+			return StringT(fmt.begin(), fmt.end());
+		}
+
+		/**
+		 * Converts a NumericConstant::Unsigned value to a string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param value		The numeric value to convert.
+		 * \param padding	The minimum number of digits to output (pads with leading zeros).
+		 * \return			Returns the formatted string.
+		 **/
+		template <typename StringT = std::string>
+		static inline StringT			toUnsigned(uint64_t value, uint32_t padding = 0) {
+			uint32_t digits = std::max(padding, 1u);
+			std::string fmt = std::format("{:0{}}", value, digits);
+			return StringT(fmt.begin(), fmt.end());
+		}
+
+		/**
+		 * Converts a NumericConstant::Floating value to a string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param value		The numeric value to convert.
+		 * \param sigDigits	If < 0, prints all digits with trailing zeros removed. If 0, uses default shortest representation. If > 0, uses scientific notation with specified precision.
+		 * \return			Returns the formatted string.
+		 **/
+		template <typename StringT = std::string>
+		static inline StringT			toDouble(double value, int32_t sigDigits = -1) {
+			std::string fmt;
+			
+			if (sigDigits < 0) {
+				fmt = std::format("{:.2000f}", value);
+				
+				while (!fmt.empty() && fmt.back() == '0') {
+					fmt.pop_back();
+				}
+				
+				if (!fmt.empty() && fmt.back() == '.') {
+					if (std::abs(value) > static_cast<double>(static_cast<uint64_t>(-1))) {
+						fmt.push_back('0');
+					}
+					else {
+						fmt.pop_back();
+					}
+				}
+			}
+			else if (sigDigits == 0) {
+				fmt = std::format("{}", value);
+			}
+			else {
+				fmt = std::format("{:.{}e}", value, sigDigits);
+			}
+			
+			return StringT(fmt.begin(), fmt.end());
+		}
+
+
+		// ===============================
+		// Numeric Parsing
+		// ===============================
+		/**
+		 * Classifies a string as one of the NumericConstant types. Determines whether the string represents a valid floating-point,
+		 * signed integer, unsigned integer, or is invalid.
+		 *
+		 * \param sIn			The input string to classify.
+		 * \param specialBase	Optional pointer to receive the detected numeric base (8, 10, 16, etc.)
+		 * \return				Returns the classification as a NumericConstant enum value.
+		 **/
+		static NumericConstant			classifyString(const std::string& sIn, uint8_t* specialBase = nullptr);
+
+		/**
+		 * String to integer, from any base. Since std::stoull() raises exceptions etc. Also provides information on whether the parsed
+		 * number is too large to fit within a given range.
+		 *
+		 * \param text		The text to parse.
+		 * \param base		The base of the number to parse out of the text.
+		 * \param eaten		Optional pointer to a size_t that will be set to the number of character eaten during parsing.
+		 * \param maxVal	The maximum value after which overflow is considered to have happened.
+		 * \param overflow	An optional pointer to a boolean used to indicate whether overflow has occurred or not.
+		 * \return			Returns the value parsed from the string.
+		 **/
+		static uint64_t					stoull(const char* text, int base, size_t* eaten = nullptr, uint64_t maxVal = std::numeric_limits<uint64_t>::max(), bool* overflow = nullptr);
+
+		/**
+		 * String to double. Unlike std::atof(), this returns the number of characters eaten, and casts to float when the f postfix is seen.
+		 *
+		 * \param text		The text to parse.
+		 * \param eaten		The number of characters consumed while parsing the double value.
+		 * \param error		Optional pointer to a boolean which will be set to true if there are parsing errors.
+		 * \return			Returns the parsed double.
+		 **/
+		static double					atof(const char* text, size_t* eaten = nullptr, bool* error = nullptr);
+
+
 	protected :
 
 	private :

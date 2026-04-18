@@ -2,6 +2,7 @@
 
 #include "../Engine/Result.h"
 
+#include <cassert>
 #include <cstdint>
 
 namespace ve {
