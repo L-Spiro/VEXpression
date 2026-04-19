@@ -401,6 +401,23 @@ namespace ve {
 		{ "rand", StringId::VE_STR_RAND_DESC, { }, IntrinsicBridges::randBridge },
 		{ "deg", StringId::VE_STR_DEG_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::degBridge },
 		{ "rad", StringId::VE_STR_RAD_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::radBridge },
+
+		// == Bit Manipulation (<bit>)
+		{ "byteswap16", StringId::VE_STR_BYTESWAP16_DESC, { { DataType::UInt16, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::byteswap16Bridge },
+		{ "byteswap32", StringId::VE_STR_BYTESWAP32_DESC, { { DataType::UInt32, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::byteswap32Bridge },
+		{ "byteswap64", StringId::VE_STR_BYTESWAP_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::byteswap64Bridge },
+		{ "byteswap", StringId::VE_STR_BYTESWAP_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::byteswap64Bridge },
+		{ "has_single_bit", StringId::VE_STR_HAS_SINGLE_BIT_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::has_single_bitBridge },
+		{ "bit_ceil", StringId::VE_STR_BIT_CEIL_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::bit_ceilBridge },
+		{ "bit_floor", StringId::VE_STR_BIT_FLOOR_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::bit_floorBridge },
+		{ "bit_width", StringId::VE_STR_BIT_WIDTH_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::bit_widthBridge },
+		{ "rotl", StringId::VE_STR_ROTL_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL }, { DataType::Int32, "s", StringId::VE_STR_BIT_PARAM_S } }, IntrinsicBridges::rotlBridge },
+		{ "rotr", StringId::VE_STR_ROTR_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL }, { DataType::Int32, "s", StringId::VE_STR_BIT_PARAM_S } }, IntrinsicBridges::rotrBridge },
+		{ "countl_zero", StringId::VE_STR_COUNTL_ZERO_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::countl_zeroBridge },
+		{ "countl_one", StringId::VE_STR_COUNTL_ONE_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::countl_oneBridge },
+		{ "countr_zero", StringId::VE_STR_COUNTR_ZERO_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::countr_zeroBridge },
+		{ "countr_one", StringId::VE_STR_COUNTR_ONE_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::countr_oneBridge },
+		{ "popcount", StringId::VE_STR_POPCOUNT_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::popcountBridge },
 	};
 
 	// == Functions.

@@ -627,3 +627,282 @@ VE_STR( VE_STR_LGAMMA_DESC,
     "गामा फ़ंक्शन के निरपेक्ष मान के प्राकृतिक लघुगणक की गणना करता है।", 
     "Gama fonksiyonunun mutlak değerinin doğal logaritmasını hesaplar." 
 )
+
+
+// =======================================================================================================
+// SHARED PARAMETERS FOR BIT INTRINSICS
+// =======================================================================================================
+
+VE_STR( VE_STR_BIT_PARAM_S, 
+    "The number of bits to shift or rotate.", 
+    "シフトまたは回転するビット数。", 
+    "要移位或旋转的位数。", 
+    "El número de bits a desplazar o rotar.", 
+    "Le nombre de bits à décaler ou à faire pivoter.", 
+    "Il numero di bit da spostare o ruotare.", 
+    "O número de bits para deslocar ou rotacionar.", 
+    "عدد البتات المراد إزاحتها أو تدويرها.", 
+    "Количество битов для сдвига или вращения.", 
+    "Die Anzahl der Bits zum Verschieben oder Rotieren.", 
+    "Het aantal bits om te verschuiven of roteren.", 
+    "시프트하거나 회전할 비트 수.", 
+    "จำนวนบิตที่จะเลื่อนหรือหมุน", 
+    "शिफ्ट या रोटेट करने के लिए बिट्स की संख्या।", 
+    "Kaydırılacak veya döndürülecek bit sayısı." 
+)
+
+// =======================================================================================================
+// BIT FUNCTION DESCRIPTIONS
+// =======================================================================================================
+
+VE_STR( VE_STR_BYTESWAP_DESC, 
+    "Reverses the bytes of the given 64-bit integer.", 
+    "指定された64ビット整数のバイトを反転します。", 
+    "反转给定 64 位整数的字节。", 
+    "Invierte los bytes del entero de 64 bits dado.", 
+    "Inverse les octets de l'entier 64 bits donné.", 
+    "Inverte i byte dell'intero a 64 bit dato.", 
+    "Inverte os bytes do inteiro de 64 bits dado.", 
+    "يعكس بايتات العدد الصحيح المعطى ذو 64 بت.", 
+    "Изменяет порядок байтов заданного 64-битного целого числа на обратный.", 
+    "Kehrt die Bytes der angegebenen 64-Bit-Ganzzahl um.", 
+    "Keert de bytes van het opgegeven 64-bits gehele getal om.", 
+    "주어진 64비트 정수의 바이트 순서를 반전합니다.", 
+    "สลับไบต์ของจำนวนเต็ม 64 บิตที่กำหนด", 
+    "दिए गए 64-बिट पूर्णांक के बाइट्स को उलट देता है।", 
+    "Verilen 64 bitlik tam sayının baytlarını tersine çevirir." 
+)
+
+VE_STR( VE_STR_BYTESWAP16_DESC, 
+    "Reverses the bytes of the given 16-bit integer.", 
+    "指定された16ビット整数のバイトを反転します。", 
+    "反转给定 16 位整数的字节。", 
+    "Invierte los bytes del entero de 16 bits dado.", 
+    "Inverse les octets de l'entier 16 bits donné.", 
+    "Inverte i byte dell'intero a 16 bit dato.", 
+    "Inverte os bytes do inteiro de 16 bits dado.", 
+    "يعكس بايتات العدد الصحيح المعطى ذو 16 بت.", 
+    "Изменяет порядок байтов заданного 16-битного целого числа на обратный.", 
+    "Kehrt die Bytes der angegebenen 16-Bit-Ganzzahl um.", 
+    "Keert de bytes van het opgegeven 16-bits gehele getal om.", 
+    "주어진 16비트 정수의 바이트 순서를 반전합니다.", 
+    "สลับไบต์ของจำนวนเต็ม 16 บิตที่กำหนด", 
+    "दिए गए 16-बिट पूर्णांक के बाइट्स को उलट देता है।", 
+    "Verilen 16 bitlik tam sayının baytlarını tersine çevirir." 
+)
+
+VE_STR( VE_STR_BYTESWAP32_DESC, 
+    "Reverses the bytes of the given 32-bit integer.", 
+    "指定された32ビット整数のバイトを反転します。", 
+    "反转给定 32 位整数的字节。", 
+    "Invierte los bytes del entero de 32 bits dado.", 
+    "Inverse les octets de l'entier 32 bits donné.", 
+    "Inverte i byte dell'intero a 32 bit dato.", 
+    "Inverte os bytes do inteiro de 32 bits dado.", 
+    "يعكس بايتات العدد الصحيح المعطى ذو 32 بت.", 
+    "Изменяет порядок байтов заданного 32-битного целого числа на обратный.", 
+    "Kehrt die Bytes der angegebenen 32-Bit-Ganzzahl um.", 
+    "Keert de bytes van het opgegeven 32-bits gehele getal om.", 
+    "주어진 32비트 정수의 바이트 순서를 반전합니다.", 
+    "สลับไบต์ของจำนวนเต็ม 32 บิตที่กำหนด", 
+    "दिए गए 32-बिट पूर्णांक के बाइट्स को उलट देता है。", 
+    "Verilen 32 bitlik tam sayının baytlarını tersine çevirir." 
+)
+
+VE_STR( VE_STR_HAS_SINGLE_BIT_DESC, 
+    "Checks if a number is a power of two.", 
+    "数値が2の累乗であるかを確認します。", 
+    "检查数字是否为2的幂。", 
+    "Comprueba si un número es una potencia de dos.", 
+    "Vérifie si un nombre est une puissance de deux.", 
+    "Verifica se un numero è una potenza di due.", 
+    "Verifica se um número é uma potência de dois.", 
+    "يتحقق مما إذا كان الرقم من مضاعفات 2.", 
+    "Проверяет, является ли число степенью двойки.", 
+    "Überprüft, ob eine Zahl eine Zweierpotenz ist.", 
+    "Controleert of een getal een macht van twee is.", 
+    "숫자가 2의 거듭제곱인지 확인합니다.", 
+    "ตรวจสอบว่าตัวเลขเป็นยกกำลังของสองหรือไม่", 
+    "जांचता है कि क्या कोई संख्या दो की घात है।", 
+    "Bir sayının ikinin kuvveti olup olmadığını kontrol eder." 
+)
+
+VE_STR( VE_STR_BIT_CEIL_DESC, 
+    "Finds the smallest power of two not less than the given value.", 
+    "指定された値以上の最小の2の累乗を求めます。", 
+    "查找不小于给定值的最小的2的幂。", 
+    "Encuentra la potencia de dos más pequeña que no sea menor al valor dado.", 
+    "Trouve la plus petite puissance de deux qui n'est pas inférieure à la valeur donnée.", 
+    "Trova la più piccola potenza di due non inferiore al valore dato.", 
+    "Encontra a menor potência de dois não inferior ao valor dado.", 
+    "يجد أصغر قوة للعدد 2 لا تقل عن القيمة المعطاة.", 
+    "Находит наименьшую степень двойки, не меньшую заданного значения.", 
+    "Findet die kleinste Zweierpotenz, die nicht kleiner als der angegebene Wert ist.", 
+    "Vindt de kleinste macht van twee die niet kleiner is dan de opgegeven waarde.", 
+    "주어진 값보다 작지 않은 가장 작은 2의 거듭제곱을 찾습니다.", 
+    "หาค่ายกกำลังของสองที่น้อยที่สุดที่ไม่น้อยกว่าค่าที่กำหนด", 
+    "दिए गए मान से कम न होने वाली दो की सबसे छोटी घात ज्ञात करता है।", 
+    "Verilen değerden küçük olmayan en küçük ikinin kuvvetini bulur." 
+)
+
+VE_STR( VE_STR_BIT_FLOOR_DESC, 
+    "Finds the largest power of two not greater than the given value.", 
+    "指定された値以下の最大の2の累乗を求めます。", 
+    "查找不大于给定值的最大的2的幂。", 
+    "Encuentra la potencia de dos más grande que no sea mayor al valor dado.", 
+    "Trouve la plus grande puissance de deux qui n'est pas supérieure à la valeur donnée.", 
+    "Trova la più grande potenza di due non superiore al valore dato.", 
+    "Encontra a maior potência de dois não superior ao valor dado.", 
+    "يجد أكبر قوة للعدد 2 لا تزيد عن القيمة المعطاة.", 
+    "Находит наибольшую степень двойки, не превышающую заданное значение.", 
+    "Findet die größte Zweierpotenz, die nicht größer als der angegebene Wert ist.", 
+    "Vindt de grootste macht van twee die niet groter is dan de opgegeven waarde.", 
+    "주어진 값보다 크지 않은 가장 큰 2의 거듭제곱을 찾습니다.", 
+    "หาค่ายกกำลังของสองที่มากที่สุดที่ไม่เกินค่าที่กำหนด", 
+    "दिए गए मान से अधिक न होने वाली दो की सबसे बड़ी घात ज्ञात करता है।", 
+    "Verilen değerden büyük olmayan en büyük ikinin kuvvetini bulur." 
+)
+
+VE_STR( VE_STR_BIT_WIDTH_DESC, 
+    "Finds the smallest number of bits needed to represent the given value.", 
+    "指定された値を表現するために必要な最小のビット数を求めます。", 
+    "查找表示给定值所需的最小位数。", 
+    "Encuentra el menor número de bits necesarios para representar el valor dado.", 
+    "Trouve le plus petit nombre de bits nécessaires pour représenter la valeur donnée.", 
+    "Trova il minor numero di bit necessari per rappresentare il valore dato.", 
+    "Encontra o menor número de bits necessários para representar o valor dado.", 
+    "يجد أقل عدد من البتات اللازمة لتمثيل القيمة المعطاة.", 
+    "Находит наименьшее количество битов, необходимое для представления заданного значения.", 
+    "Findet die kleinste Anzahl von Bits, die benötigt wird, um den angegebenen Wert darzustellen.", 
+    "Vindt het kleinste aantal bits dat nodig is om de opgegeven waarde weer te geven.", 
+    "주어진 값을 나타내는 데 필요한 최소 비트 수를 찾습니다.", 
+    "หาจำนวนบิตที่น้อยที่สุดที่จำเป็นในการแสดงค่าที่กำหนด", 
+    "दिए गए मान को दर्शाने के लिए आवश्यक बिट्स की सबसे छोटी संख्या ज्ञात करता है।", 
+    "Verilen değeri temsil etmek için gereken en küçük bit sayısını bulur." 
+)
+
+VE_STR( VE_STR_ROTL_DESC, 
+    "Computes the result of a bitwise left-rotation.", 
+    "ビット単位の左回転の結果を計算します。", 
+    "计算按位左旋的结果。", 
+    "Calcula el resultado de una rotación a la izquierda a nivel de bits.", 
+    "Calcule le résultat d'une rotation à gauche au niveau des bits.", 
+    "Calcola il risultato di una rotazione a sinistra bit a bit.", 
+    "Calcula o resultado de uma rotação à esquerda bit a bit.", 
+    "يحسب نتيجة التدوير لليسار على مستوى البت.", 
+    "Вычисляет результат побитового циклического сдвига влево.", 
+    "Berechnet das Ergebnis einer bitweisen Linksrotation.", 
+    "Berekent het resultaat van een bitgewijze linkse rotatie.", 
+    "비트 단위 왼쪽 회전의 결과를 계산합니다.", 
+    "คำนวณผลลัพธ์ของการหมุนบิตไปทางซ้าย", 
+    "बिटवाइज़ लेफ्ट-रोटेशन के परिणाम की गणना करता है।", 
+    "Bit düzeyinde sola döndürmenin sonucunu hesaplar." 
+)
+
+VE_STR( VE_STR_ROTR_DESC, 
+    "Computes the result of a bitwise right-rotation.", 
+    "ビット単位の右回転の結果を計算します。", 
+    "计算按位右旋的结果。", 
+    "Calcula el resultado de una rotación a la derecha a nivel de bits.", 
+    "Calcule le résultat d'une rotation à droite au niveau des bits.", 
+    "Calcola il risultato di una rotazione a destra bit a bit.", 
+    "Calcula o resultado de uma rotação à direita bit a bit.", 
+    "يحسب نتيجة التدوير لليمين على مستوى البت.", 
+    "Вычисляет результат побитового циклического сдвига вправо.", 
+    "Berechnet das Ergebnis einer bitweisen Rechtsrotation.", 
+    "Berekent het resultaat van een bitgewijze rechtse rotatie.", 
+    "비트 단위 오른쪽 회전의 결과를 계산합니다.", 
+    "คำนวณผลลัพธ์ของการหมุนบิตไปทางขวา", 
+    "बिटवाइज़ राइट-रोटेशन के परिणाम की गणना करता है।", 
+    "Bit düzeyinde sağa döndürmenin sonucunu hesaplar." 
+)
+
+VE_STR( VE_STR_COUNTL_ZERO_DESC, 
+    "Counts the number of consecutive 0 bits, starting from the most significant bit.", 
+    "最上位ビットから連続する0のビット数を数えます。", 
+    "从最高有效位开始计算连续的0位的数量。", 
+    "Cuenta el número de bits 0 consecutivos, comenzando desde el bit más significativo.", 
+    "Compte le nombre de bits 0 consécutifs, en commençant par le bit de poids fort.", 
+    "Conta il numero di bit 0 consecutivi, partendo dal bit più significativo.", 
+    "Conta o número de bits 0 consecutivos, começando do bit mais significativo.", 
+    "يحسب عدد بتات 0 المتتالية، بدءًا من البت الأكثر أهمية.", 
+    "Считает количество последовательных нулевых битов, начиная со старшего значащего бита.", 
+    "Zählt die Anzahl der aufeinanderfolgenden 0-Bits, beginnend beim höchstwertigen Bit.", 
+    "Telt het aantal opeenvolgende 0-bits, beginnend bij de meest significante bit.", 
+    "최상위 비트부터 연속적인 0 비트의 수를 셉니다.", 
+    "นับจำนวนบิต 0 ที่เรียงติดกัน โดยเริ่มจากบิตที่มีนัยสำคัญที่สุด", 
+    "सबसे महत्वपूर्ण बिट से शुरू करते हुए लगातार 0 बिट्स की संख्या की गणना करता है।", 
+    "En anlamlı bitten başlayarak ardışık 0 bitlerinin sayısını sayar." 
+)
+
+VE_STR( VE_STR_COUNTL_ONE_DESC, 
+    "Counts the number of consecutive 1 bits, starting from the most significant bit.", 
+    "最上位ビットから連続する1のビット数を数えます。", 
+    "从最高有效位开始计算连续的1位的数量。", 
+    "Cuenta el número de bits 1 consecutivos, comenzando desde el bit más significativo.", 
+    "Compte le nombre de bits 1 consécutifs, en commençant par le bit de poids fort.", 
+    "Conta il numero di bit 1 consecutivi, partendo dal bit più significativo.", 
+    "Conta o número de bits 1 consecutivos, começando do bit mais significativo.", 
+    "يحسب عدد بتات 1 المتتالية، بدءًا من البت الأكثر أهمية.", 
+    "Считает количество последовательных единичных битов, начиная со старшего значащего бита.", 
+    "Zählt die Anzahl der aufeinanderfolgenden 1-Bits, beginnend beim höchstwertigen Bit.", 
+    "Telt het aantal opeenvolgende 1-bits, beginnend bij de meest significante bit.", 
+    "최상위 비트부터 연속적인 1 비트의 수를 셉니다.", 
+    "นับจำนวนบิต 1 ที่เรียงติดกัน โดยเริ่มจากบิตที่มีนัยสำคัญที่สุด", 
+    "सबसे महत्वपूर्ण बिट से शुरू करते हुए लगातार 1 बिट्स की संख्या की गणना करता है।", 
+    "En anlamlı bitten başlayarak ardışık 1 bitlerinin sayısını sayar." 
+)
+
+VE_STR( VE_STR_COUNTR_ZERO_DESC, 
+    "Counts the number of consecutive 0 bits, starting from the least significant bit.", 
+    "最下位ビットから連続する0のビット数を数えます。", 
+    "从最低有效位开始计算连续的0位的数量。", 
+    "Cuenta el número de bits 0 consecutivos, comenzando desde el bit menos significativo.", 
+    "Compte le nombre de bits 0 consécutifs, en commençant par le bit de poids faible.", 
+    "Conta il numero di bit 0 consecutivi, partendo dal bit meno significativo.", 
+    "Conta o número de bits 0 consecutivos, começando do bit menos significativo.", 
+    "يحسب عدد بتات 0 المتتالية، بدءًا من البت الأقل أهمية.", 
+    "Считает количество последовательных нулевых битов, начиная с младшего значащего бита.", 
+    "Zählt die Anzahl der aufeinanderfolgenden 0-Bits, beginnend beim niederwertigsten Bit.", 
+    "Telt het aantal opeenvolgende 0-bits, beginnend bij de minst significante bit.", 
+    "최하위 비트부터 연속적인 0 비트의 수를 셉니다.", 
+    "นับจำนวนบิต 0 ที่เรียงติดกัน โดยเริ่มจากบิตที่มีนัยสำคัญน้อยที่สุด", 
+    "सबसे कम महत्वपूर्ण बिट से शुरू करते हुए लगातार 0 बिट्स की संख्या की गणना करता है।", 
+    "En anlamsız bitten başlayarak ardışık 0 bitlerinin sayısını sayar." 
+)
+
+VE_STR( VE_STR_COUNTR_ONE_DESC, 
+    "Counts the number of consecutive 1 bits, starting from the least significant bit.", 
+    "最下位ビットから連続する1のビット数を数えます。", 
+    "从最低有效位开始计算连续的1位的数量。", 
+    "Cuenta el número de bits 1 consecutivos, comenzando desde el bit menos significativo.", 
+    "Compte le nombre de bits 1 consécutifs, en commençant par le bit de poids faible.", 
+    "Conta il numero di bit 1 consecutivi, partendo dal bit meno significativo.", 
+    "Conta o número de bits 1 consecutivos, começando do bit menos significativo.", 
+    "يحسب عدد بتات 1 المتتالية، بدءًا من البت الأقل أهمية.", 
+    "Считает количество последовательных единичных битов, начиная с младшего значащего бита.", 
+    "Zählt die Anzahl der aufeinanderfolgenden 1-Bits, beginnend beim niederwertigsten Bit.", 
+    "Telt het aantal opeenvolgende 1-bits, beginnend bij de minst significante bit.", 
+    "최하위 비트부터 연속적인 1 비트의 수를 셉니다.", 
+    "นับจำนวนบิต 1 ที่เรียงติดกัน โดยเริ่มจากบิตที่มีนัยสำคัญน้อยที่สุด", 
+    "सबसे कम महत्वपूर्ण बिट से शुरू करते हुए लगातार 1 बिट्स की संख्या की गणना करता है।", 
+    "En anlamsız bitten başlayarak ardışık 1 bitlerinin sayısını sayar." 
+)
+
+VE_STR( VE_STR_POPCOUNT_DESC, 
+    "Counts the number of 1 bits in the value.", 
+    "値に含まれる1のビット数を数えます。", 
+    "计算值中 1 位的数量。", 
+    "Cuenta el número de bits 1 en el valor.", 
+    "Compte le nombre de bits 1 dans la valeur.", 
+    "Conta il numero di bit 1 nel valore.", 
+    "Conta o número de bits 1 no valor.", 
+    "يحسب عدد بتات 1 في القيمة.", 
+    "Считает количество единичных битов в значении.", 
+    "Zählt die Anzahl der 1-Bits im Wert.", 
+    "Telt het aantal 1-bits in de waarde.", 
+    "값에 포함된 1 비트의 수를 셉니다.", 
+    "นับจำนวนบิต 1 ในค่า", 
+    "मान में 1 बिट्स की संख्या की गणना करता है।", 
+    "Değerdeki 1 bitlerinin sayısını sayar." 
+)

@@ -2,7 +2,9 @@
 
 #include "Result.h"
 
+#include <bit>
 #include <cmath>
+#include <numbers>
 #include <vector>
 
 namespace ve {
@@ -12,7 +14,6 @@ namespace ve {
 	 **/
 	class IntrinsicBridges {
 	public :
-		
 		// =========================================================================
 		// Core Math
 		// =========================================================================
@@ -913,7 +914,7 @@ namespace ve {
 		 * \return			Returns the result of the intrinsic function.
 		 **/
 		static Result		degBridge(const std::vector<Result>& args) {
-			return Result::make(args[0].value.doubleVal * (180.0 / 3.14159265358979323846));
+			return Result::make(args[0].value.doubleVal * (180.0 / std::numbers::pi));
 		}
 
 		/**
@@ -923,7 +924,7 @@ namespace ve {
 		 * \return			Returns the result of the intrinsic function.
 		 **/
 		static Result		radBridge(const std::vector<Result>& args) {
-			return Result::make(args[0].value.doubleVal * (3.14159265358979323846 / 180.0));
+			return Result::make(args[0].value.doubleVal * (std::numbers::pi / 180.0));
 		}
 
 		/**
@@ -954,6 +955,161 @@ namespace ve {
 		 **/
 		static Result		isinfBridge(const std::vector<Result>& args) {
 			return Result::make(static_cast<int64_t>(std::isinf(args[0].value.doubleVal) ? 1 : 0));
+		}
+
+
+		// =========================================================================
+		// Bit Manipulation (<bit>)
+		// =========================================================================
+
+		/**
+		 * Bridge for std::byteswap. Reverses the bytes of a 64-bit unsigned integer.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the byte-swapped result.
+		 **/
+		static Result		byteswapBridge(const std::vector<Result>& args) {
+			return Result::make(std::byteswap(args[0].value.uintVal));
+		}
+
+		/**
+		 * Bridge for std::byteswap (16-bit). Reverses the bytes of a 16-bit unsigned integer.
+		 * 
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the byte-swapped result.
+		 **/
+		static Result		byteswap16Bridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<uint64_t>(std::byteswap(static_cast<uint16_t>(args[0].value.uintVal))));
+		}
+
+		/**
+		 * Bridge for std::byteswap (32-bit). Reverses the bytes of a 32-bit unsigned integer.
+		 * 
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the byte-swapped result.
+		 **/
+		static Result		byteswap32Bridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<uint64_t>(std::byteswap(static_cast<uint32_t>(args[0].value.uintVal))));
+		}
+
+		/**
+		 * Bridge for std::byteswap (64-bit). Reverses the bytes of a 64-bit unsigned integer.
+		 * 
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the byte-swapped result.
+		 **/
+		static Result		byteswap64Bridge(const std::vector<Result>& args) {
+			return Result::make(std::byteswap(static_cast<uint64_t>(args[0].value.uintVal)));
+		}
+
+		/**
+		 * Bridge for std::has_single_bit. Checks if a 64-bit integer is a power of two.
+		 * 
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns 1 if it has a single bit set, 0 otherwise.
+		 **/
+		static Result		has_single_bitBridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<uint64_t>(std::has_single_bit(args[0].value.uintVal) ? 1 : 0));
+		}
+
+		/**
+		 * Bridge for std::bit_ceil. Finds the smallest power of two not less than the value.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the calculated power of two.
+		 **/
+		static Result		bit_ceilBridge(const std::vector<Result>& args) {
+			return Result::make(std::bit_ceil(args[0].value.uintVal));
+		}
+
+		/**
+		 * Bridge for std::bit_floor. Finds the largest power of two not greater than the value.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the calculated power of two.
+		 **/
+		static Result		bit_floorBridge(const std::vector<Result>& args) {
+			return Result::make(std::bit_floor(args[0].value.uintVal));
+		}
+
+		/**
+		 * Bridge for std::bit_width. Finds the smallest number of bits needed to represent the value.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the bit width.
+		 **/
+		static Result		bit_widthBridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<int64_t>(std::bit_width(args[0].value.uintVal)));
+		}
+
+		/**
+		 * Bridge for std::rotl. Computes the result of a bitwise left-rotation.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the rotated 64-bit value.
+		 **/
+		static Result		rotlBridge(const std::vector<Result>& args) {
+			return Result::make(std::rotl(args[0].value.uintVal, static_cast<int>(args[1].value.intVal)));
+		}
+
+		/**
+		 * Bridge for std::rotr. Computes the result of a bitwise right-rotation.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the rotated 64-bit value.
+		 **/
+		static Result		rotrBridge(const std::vector<Result>& args) {
+			return Result::make(std::rotr(args[0].value.uintVal, static_cast<int>(args[1].value.intVal)));
+		}
+
+		/**
+		 * Bridge for std::countl_zero. Counts consecutive 0 bits starting from the MSB.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the number of leading zeros.
+		 **/
+		static Result		countl_zeroBridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<int64_t>(std::countl_zero(args[0].value.uintVal)));
+		}
+
+		/**
+		 * Bridge for std::countl_one. Counts consecutive 1 bits starting from the MSB.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the number of leading ones.
+		 **/
+		static Result		countl_oneBridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<int64_t>(std::countl_one(args[0].value.uintVal)));
+		}
+
+		/**
+		 * Bridge for std::countr_zero. Counts consecutive 0 bits starting from the LSB.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the number of trailing zeros.
+		 **/
+		static Result		countr_zeroBridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<int64_t>(std::countr_zero(args[0].value.uintVal)));
+		}
+
+		/**
+		 * Bridge for std::countr_one. Counts consecutive 1 bits starting from the LSB.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the number of trailing ones.
+		 **/
+		static Result		countr_oneBridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<int64_t>(std::countr_one(args[0].value.uintVal)));
+		}
+
+		/**
+		 * Bridge for std::popcount. Counts the total number of 1 bits.
+		 *
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns the number of set bits.
+		 **/
+		static Result		popcountBridge(const std::vector<Result>& args) {
+			return Result::make(static_cast<int64_t>(std::popcount(args[0].value.uintVal)));
 		}
 	};
 
