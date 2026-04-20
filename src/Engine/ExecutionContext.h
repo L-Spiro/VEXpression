@@ -2,10 +2,13 @@
 
 #include "../Ast/AstArena.h"
 #include "FunctionDef.h"
+#include "Object.h"
 #include "Result.h"
 
 #include <map>
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace ve {
 
@@ -16,6 +19,9 @@ namespace ve {
 	class ExecutionContext {
 	public :
 		ExecutionContext() {}
+		~ExecutionContext() {
+			reset();
+		}
 
 		
 		// == Functions.
@@ -205,6 +211,45 @@ namespace ve {
 			return false;
 		}
 
+		/**
+		 * Allocates an object of the specified type and tracks it for memory management via a smart pointer.
+		 *
+		 * \param flags			Optional flags for allocation.
+		 * \return				Returns a non-owning pointer to the allocated object, or nullptr on failure.
+		 **/
+		template <typename T>
+		T*								allocateObject(uint32_t flags = 0) {
+			static_cast<void>(flags);
+			try {
+				std::unique_ptr<T> obj = std::make_unique<T>(this);
+				T* ptr = obj.get();
+				objects.push_back(std::move(obj));
+				return ptr;
+			}
+			catch (const std::bad_alloc&) {
+				return nullptr;
+			}
+		}
+
+		/**
+		 * Deallocates a specifically tracked object by removing its smart pointer.
+		 *
+		 * \param obj			The non-owning pointer to the object to deallocate.
+		 * \return				Returns true if the object was found and deleted, false otherwise.
+		 **/
+		bool							deallocateObject(Object* obj) {
+			// Reverse search because it is most likely the immediate deletion of a temporary object.
+			for (size_t i = objects.size(); i--; ) {
+				if (objects[i].get() == obj) {
+					objects.erase(objects.begin() + i);
+					return true;
+				}
+			}
+			
+			return false;
+		}
+
+
 	protected :
 		// == Members.
 		/** The central storage arena containing all allocated AST nodes. **/
@@ -216,6 +261,9 @@ namespace ve {
 		/** A map of user-registered and built-in function definitions. **/
 		std::map<std::string, FunctionDef>
 										registeredFunctions;
+		/** Tracked objects managed by the execution context. **/
+		std::vector<std::unique_ptr<Object>>
+										objects;
 		/** The arena index of the root AST node to execute. **/
 		size_t							rootIndex = 0;
 		/** Treat standard integers as hex? */

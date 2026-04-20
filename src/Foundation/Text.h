@@ -24,6 +24,17 @@ namespace ve {
 		// Standard Unicode replacement character for malformed sequences.
 		static constexpr uint32_t		UNICODE_REPLACEMENT_CHAR = 0xFFFD;
 
+		/** Represents the explicit format of a string literal requested by the script. **/
+		enum class StringFormat : uint8_t {
+			Normal,
+			Raw,
+			Utf8,
+			Utf16,
+			Utf32,
+			Wide,
+			CString
+		};
+
 
 		// == Functions.
 		// ===============================
@@ -216,6 +227,20 @@ namespace ve {
 			return seqLen;
 		}
 
+		/**
+		 * Gets the size of the given UTF-16 character.
+		 *
+		 * \param str		Pointer to the UTF-16 characters to decode. Accepts any 16-bit type (char16_t, uint16_t, Windows wchar_t).
+		 * \param len		The number of characters to which str points.
+		 * \return			Returns the size of the UTF-16 character to which str points (1 or 2).
+		 **/
+		template <typename CharT>
+		static inline size_t			utf16CharSize(const CharT* str, size_t len) {
+			if (len == 0) { return 0; }
+			if (len == 1) { return 1; }
+			return (static_cast<uint16_t>(str[0]) >= 0xD800 && static_cast<uint16_t>(str[0]) <= 0xDBFF) ? 2 : 1;
+		}
+
 
 		// ===============================
 		// Raw Pointer Writers (Pass 2 Helpers)
@@ -288,6 +313,137 @@ namespace ve {
 			}
 			else {
 				(*outPtr++) = static_cast<CharT>(UNICODE_REPLACEMENT_CHAR);
+			}
+		}
+
+		/**
+		 * Gets the number of UTF-8 elements required to encode a UTF-32 character.
+		 *
+		 * \param character	The UTF-32 code point.
+		 * \return			Returns the number of bytes required (1 to 4).
+		 **/
+		static size_t					getUtf8EncodedSize(uint32_t character) {
+			if (character <= 0x7F) {
+				return 1;
+			}
+			else if (character <= 0x7FF) {
+				return 2;
+			}
+			else if (character <= 0xFFFF) {
+				return 3;
+			}
+			else if (character <= 0x10FFFF) {
+				return 4;
+			}
+			
+			// Fallback for UNICODE_REPLACEMENT_CHAR (0xFFFD), which takes 3 bytes in UTF-8.
+			return 3;
+		}
+
+		/**
+		 * Gets the number of UTF-16 elements required to encode a UTF-32 character.
+		 *
+		 * \param character	The UTF-32 code point.
+		 * \return			Returns 1 or 2.
+		 **/
+		static size_t					getUtf16EncodedSize(uint32_t character) {
+			if (character <= 0xFFFF) {
+				return 1;
+			}
+			else if (character <= 0x10FFFF) {
+				return 2;
+			}
+			
+			// Fallback for UNICODE_REPLACEMENT_CHAR (0xFFFD), which takes 1 element in UTF-16.
+			return 1;
+		}
+
+		/**
+		 * Gets the number of UTF-32 elements required to encode a character.
+		 *
+		 * \param character	The UTF-32 code point.
+		 * \return			Returns 1.
+		 **/
+		static constexpr size_t			getUtf32EncodedSize(uint32_t character) {
+			static_cast<void>(character);
+			return 1;
+		}
+
+
+		// ===============================
+		// String Append Writers (Allocating)
+		// ===============================
+		/**
+		 * Encodes a UTF-32 codepoint into UTF-8 and appends it to a string.
+		 *
+		 * \param outString		A reference to the destination string/vector.
+		 * \param cp			The 32-bit codepoint to encode and append.
+		 **/
+		template <typename StringT>
+		static inline void				appendUtf8(StringT& outString, uint32_t cp) {
+			using CharT = typename StringT::value_type;
+			
+			if (cp <= 0x7F) {
+				outString.push_back(static_cast<CharT>(cp));
+			}
+			else if (cp <= 0x7FF) {
+				outString.push_back(static_cast<CharT>(0xC0 | (cp >> 6)));
+				outString.push_back(static_cast<CharT>(0x80 | (cp & 0x3F)));
+			}
+			else if (cp <= 0xFFFF) {
+				outString.push_back(static_cast<CharT>(0xE0 | (cp >> 12)));
+				outString.push_back(static_cast<CharT>(0x80 | ((cp >> 6) & 0x3F)));
+				outString.push_back(static_cast<CharT>(0x80 | (cp & 0x3F)));
+			}
+			else if (cp <= 0x10FFFF) {
+				outString.push_back(static_cast<CharT>(0xF0 | (cp >> 18)));
+				outString.push_back(static_cast<CharT>(0x80 | ((cp >> 12) & 0x3F)));
+				outString.push_back(static_cast<CharT>(0x80 | ((cp >> 6) & 0x3F)));
+				outString.push_back(static_cast<CharT>(0x80 | (cp & 0x3F)));
+			}
+			else {
+				appendUtf8(outString, UNICODE_REPLACEMENT_CHAR);
+			}
+		}
+
+		/**
+		 * Encodes a UTF-32 codepoint into UTF-16 and appends it to a string.
+		 *
+		 * \param outString		A reference to the destination string/vector.
+		 * \param cp			The 32-bit codepoint to encode and append.
+		 **/
+		template <typename StringT>
+		static inline void				appendUtf16(StringT& outString, uint32_t cp) {
+			using CharT = typename StringT::value_type;
+			
+			if (cp <= 0xFFFF) {
+				outString.push_back(static_cast<CharT>(cp));
+			}
+			else if (cp <= 0x10FFFF) {
+				uint32_t tmp = cp - 0x10000;
+				outString.push_back(static_cast<CharT>(0xD800 | (tmp >> 10)));
+				outString.push_back(static_cast<CharT>(0xDC00 | (tmp & 0x3FF)));
+			}
+			else {
+				appendUtf16(outString, UNICODE_REPLACEMENT_CHAR);
+			}
+		}
+
+		/**
+		 * Appends a UTF-32 codepoint directly to a string.
+		 *
+		 * \param outString		A reference to the destination string/vector.
+		 * \param cp			The 32-bit codepoint to append.
+		 **/
+		template <typename StringT>
+		static inline void				appendUtf32(StringT& outString, uint32_t cp) {
+			using CharT = typename StringT::value_type;
+			
+			if (cp <= 0x10FFFF) {
+				outString.push_back(static_cast<CharT>(cp));
+			}
+			else {
+				outString.push_back(static_cast<CharT>(UNICODE_REPLACEMENT_CHAR));
 			}
 		}
 
@@ -485,6 +641,104 @@ namespace ve {
 					cp = UNICODE_REPLACEMENT_CHAR;
 				}
 				writeUtf8(outPtr, cp);
+				ptr += eaten;
+				len -= eaten;
+			}
+			return result;
+		}
+
+		/**
+		 * Converts a 16-bit UTF-16 string to a 32-bit UTF-32 string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param utf16		The UTF-16 string to convert.
+		 * \return			Returns the converted 32-bit string.
+		 **/
+		template <typename OutStringT = std::u32string, typename InStringT>
+		static inline OutStringT		utf16ToUtf32(const InStringT& utf16) {
+			static_assert(sizeof(typename OutStringT::value_type) == 4, "utf16ToUtf32: Output string must have 32-bit characters.");
+			static_assert(sizeof(typename InStringT::value_type) == 2, "utf16ToUtf32: Input string must have 16-bit characters.");
+
+			size_t exactLen = 0;
+			const auto* ptr = utf16.data();
+			size_t len = utf16.length();
+			
+			while (len > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf16Char(ptr, len, &eaten);
+				if (cp == UTF_INVALID || eaten == 0) {
+					if (eaten == 0) { eaten = 1; }
+					cp = UNICODE_REPLACEMENT_CHAR;
+				}
+				exactLen += getUtf32EncodedSize(cp);
+				ptr += eaten;
+				len -= eaten;
+			}
+
+			OutStringT result;
+			result.resize(exactLen);
+			
+			auto* outPtr = result.data();
+			ptr = utf16.data();
+			len = utf16.length();
+			
+			while (len > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf16Char(ptr, len, &eaten);
+				if (cp == UTF_INVALID || eaten == 0) {
+					if (eaten == 0) { eaten = 1; }
+					cp = UNICODE_REPLACEMENT_CHAR;
+				}
+				writeUtf32(outPtr, cp);
+				ptr += eaten;
+				len -= eaten;
+			}
+			return result;
+		}
+
+		/**
+		 * Converts a 32-bit UTF-32 string to a 16-bit UTF-16 string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param utf32		The UTF-32 string to convert.
+		 * \return			Returns the converted 16-bit string.
+		 **/
+		template <typename OutStringT = std::u16string, typename InStringT>
+		static inline OutStringT		utf32ToUtf16(const InStringT& utf32) {
+			static_assert(sizeof(typename OutStringT::value_type) == 2, "utf32ToUtf16: Output string must have 16-bit characters.");
+			static_assert(sizeof(typename InStringT::value_type) == 4, "utf32ToUtf16: Input string must have 32-bit characters.");
+
+			size_t exactLen = 0;
+			const auto* ptr = utf32.data();
+			size_t len = utf32.length();
+			
+			while (len > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf32Char(ptr, len, &eaten);
+				if (cp == UTF_INVALID || eaten == 0) {
+					if (eaten == 0) { eaten = 1; }
+					cp = UNICODE_REPLACEMENT_CHAR;
+				}
+				exactLen += getUtf16EncodedSize(cp);
+				ptr += eaten;
+				len -= eaten;
+			}
+
+			OutStringT result;
+			result.resize(exactLen);
+			
+			auto* outPtr = result.data();
+			ptr = utf32.data();
+			len = utf32.length();
+			
+			while (len > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf32Char(ptr, len, &eaten);
+				if (cp == UTF_INVALID || eaten == 0) {
+					if (eaten == 0) { eaten = 1; }
+					cp = UNICODE_REPLACEMENT_CHAR;
+				}
+				writeUtf16(outPtr, cp);
 				ptr += eaten;
 				len -= eaten;
 			}
@@ -1204,6 +1458,138 @@ namespace ve {
 			return StringT(fmt.begin(), fmt.end());
 		}
 
+		/**
+		 * Converts a string to a C-style escaped string.
+		 * Must be called within a try/catch block.
+		 * 
+		 * \param str			The input string to escape. Accepts any character width.
+		 * \param len			The length of the input string in characters.
+		 * \return				Returns the escaped string, formatted to the specified OutStringT.
+		 **/
+		template <typename OutStringT = std::string, typename CharT>
+		static OutStringT				toEscaped(const CharT* str, size_t len) {
+			OutStringT result;
+			result.reserve(len + 2);
+
+			using OutCharT = typename OutStringT::value_type;
+
+			auto appendHex = [&result](uint32_t val, int width, char prefix) {
+				result.push_back(static_cast<OutCharT>('\\'));
+				result.push_back(static_cast<OutCharT>(prefix));
+				const char* hexChars = "0123456789ABCDEF";
+				for (int i = width - 1; i >= 0; --i) {
+					result.push_back(static_cast<OutCharT>(hexChars[(val>>(i*4))&0xF]));
+				}
+			};
+
+			for (size_t i = 0; i < len; ++i) {
+				uint32_t cp = 0;
+				size_t eaten = 0;
+
+				if constexpr (sizeof(CharT) == 1) {
+					cp = nextUtf8Char(reinterpret_cast<const uint8_t*>(&str[i]), len - i, &eaten);
+					if (eaten > 1) { i += (eaten - 1); }
+				}
+				else if constexpr (sizeof(CharT) == 2) {
+					cp = nextUtf16Char(reinterpret_cast<const uint16_t*>(&str[i]), len - i, &eaten);
+					if (eaten > 1) { i += (eaten - 1); }
+				}
+				else {
+					cp = static_cast<uint32_t>(str[i]);
+				}
+
+				if (cp == UTF_INVALID) {
+					// Escape raw byte.
+					appendHex(static_cast<uint8_t>(str[i]), 2, 'x');
+					continue;
+				}
+
+				// Standard C Escapes.
+				struct Escape { uint32_t val; char esc; };
+				static constexpr Escape escapes[] = {
+					{ '\0', '0' },
+					{ '\a', 'a' }, { '\b', 'b' }, { '\f', 'f' },
+					{ '\n', 'n' }, { '\r', 'r' }, { '\t', 't' },
+					{ '\v', 'v' }, { '\"', '\"' }, { '\\', '\\' }
+				};
+
+				bool found = false;
+				for (const auto& e : escapes) {
+					if (cp == e.val) {
+						result.push_back(static_cast<OutCharT>('\\'));
+						result.push_back(static_cast<OutCharT>(e.esc));
+						found = true;
+						break;
+					}
+				}
+
+				if (found) { continue; }
+
+				// Printable ASCII and extended values.
+				if (cp < 256) {
+					// Safely check if the character is printable in standard ASCII/Latin-1 bounds.
+					if (cp < 128 && std::isprint(static_cast<unsigned char>(cp))) {
+						result.push_back(static_cast<OutCharT>(cp));
+					}
+					else {
+						appendHex(cp, 2, 'x');
+					}
+				}
+				else if (cp <= 0xFFFF) {
+					// \uXXXX for Basic Multilingual Plane.
+					appendHex(cp, 4, 'u');
+				}
+				else {
+					// \UXXXXXXXX for extended planes.
+					appendHex(cp, 8, 'U');
+				}
+			}
+			return result;
+		}
+
+		/**
+		 * Converts a string to an ASCII string.
+		 * Unrepresentable characters are replaced with '?' to match standard encoding fallback behavior.
+		 * Must be called within a try/catch block.
+		 * 
+		 * \param str			The input string to process. Accepts any character width.
+		 * \param len			The length of the input string in characters.
+		 * \return				Returns the ASCII string, formatted to the specified OutStringT.
+		 **/
+		template <typename OutStringT = std::string, typename CharT>
+		static OutStringT				toAscii(const CharT* str, size_t len) {
+			OutStringT result;
+			result.reserve(len);
+
+			using OutCharT = typename OutStringT::value_type;
+
+			for (size_t i = 0; i < len; ++i) {
+				uint32_t cp = 0;
+				size_t eaten = 0;
+
+				if constexpr (sizeof(CharT) == 1) {
+					cp = nextUtf8Char(reinterpret_cast<const uint8_t*>(&str[i]), len - i, &eaten);
+					if (eaten > 1) { i += (eaten - 1); }
+				}
+				else if constexpr (sizeof(CharT) == 2) {
+					cp = nextUtf16Char(reinterpret_cast<const uint16_t*>(&str[i]), len - i, &eaten);
+					if (eaten > 1) { i += (eaten - 1); }
+				}
+				else {
+					cp = static_cast<uint32_t>(str[i]);
+				}
+
+				if (cp == UTF_INVALID || cp > 127) {
+					result.push_back(static_cast<OutCharT>('?'));
+					continue;
+				}
+
+				// Standard printable ASCII values.
+				result.push_back(static_cast<OutCharT>(cp));
+			}
+			return result;
+		}
+
 
 		// ===============================
 		// Numeric Parsing
@@ -1240,6 +1626,478 @@ namespace ve {
 		 * \return			Returns the parsed double.
 		 **/
 		static double					atof(const char* text, size_t* eaten = nullptr, bool* error = nullptr);
+
+
+		// ===============================
+		// Escape Sequence Parsing
+		// ===============================
+		/**
+		 * Converts a hexadecimal character to its numeric value.
+		 *
+		 * \param c				The character to convert.
+		 * \return				Returns the integer value (0-15), or 0 if invalid.
+		 **/
+		static inline uint32_t			hexToUint32(char c) {
+			if (c >= '0' && c <= '9') {
+				return static_cast<uint32_t>(c - '0');
+			}
+			else if (c >= 'a' && c <= 'f') {
+				return static_cast<uint32_t>(c - 'a' + 10);
+			}
+			else if (c >= 'A' && c <= 'F') {
+				return static_cast<uint32_t>(c - 'A' + 10);
+			}
+			
+			return 0;
+		}
+
+		/**
+		 * Converts an octal character to its numeric value.
+		 *
+		 * \param c				The character to convert.
+		 * \return				Returns the integer value (0-7), or 0 if invalid.
+		 **/
+		static inline uint32_t			octalToUint32(char c) {
+			if (c >= '0' && c <= '7') {
+				return static_cast<uint32_t>(c - '0');
+			}
+			
+			return 0;
+		}
+
+		/**
+		 * Parses a hexadecimal escape sequence (\xNN).
+		 *
+		 * \param val					Pointer to the characters following the backslash.
+		 * \param len					The remaining length of the string.
+		 * \param charsConsumed			Reference to a size_t that will contain the number of characters consumed.
+		 * \param maxAllowedHexChars	The maximum number of hexadecimal characters to consume.
+		 * \return						Returns the parsed codepoint.
+		 **/
+		template <typename CharT>
+		static inline uint32_t			escapeX(const CharT* val, size_t len, size_t& charsConsumed, size_t maxAllowedHexChars = 4) {
+			charsConsumed = 0;
+			
+			if (len >= 2 && val[0] == static_cast<CharT>('x')) {
+				size_t hexChars = 0;
+				for (size_t i = 1; i < len; ++i) {
+					if (std::isxdigit(static_cast<unsigned char>(val[i]))) {
+						++hexChars;
+					}
+					else {
+						break;
+					}
+				}
+				
+				if (hexChars >= 1) {
+					hexChars = (hexChars < maxAllowedHexChars) ? hexChars : maxAllowedHexChars;
+					size_t pos = 1;
+					uint32_t ret = 0;
+					
+					for (size_t i = 0; i < hexChars; ++i) {
+						char cTemp = static_cast<char>(val[pos++]);
+						ret <<= 4;
+						ret |= hexToUint32(cTemp);
+					}
+					
+					charsConsumed = hexChars + 1;
+					return ret;
+				}
+			}
+			
+			return 0;
+		}
+
+		/**
+		 * Parses a 4-character wide Unicode escape sequence (\uNNNN).
+		 *
+		 * \param val					Pointer to the characters following the backslash.
+		 * \param len					The remaining length of the string.
+		 * \param charsConsumed			Reference to a size_t that will contain the number of characters consumed.
+		 * \return						Returns the parsed codepoint.
+		 **/
+		template <typename CharT>
+		static inline uint32_t			escapeUnicodeWide4(const CharT* val, size_t len, size_t& charsConsumed) {
+			charsConsumed = 0;
+			
+			if (len >= 5 && val[0] == static_cast<CharT>('u')) {
+				size_t hexChars = 0;
+				for (size_t i = 1; i < len && i <= 4; ++i) {
+					if (std::isxdigit(static_cast<unsigned char>(val[i]))) {
+						++hexChars;
+					}
+					else {
+						break;
+					}
+				}
+				
+				if (hexChars == 4) {
+					size_t pos = 1;
+					uint32_t ret = 0;
+					
+					for (size_t i = 0; i < hexChars; ++i) {
+						char cTemp = static_cast<char>(val[pos++]);
+						ret <<= 4;
+						ret |= hexToUint32(cTemp);
+					}
+					
+					charsConsumed = 5;
+					return ret;
+				}
+			}
+			
+			return 0;
+		}
+
+		/**
+		 * Parses a 4-character wide Unicode escape sequence, resolving surrogate pairs if present.
+		 *
+		 * \param val					Pointer to the characters following the backslash.
+		 * \param len					The remaining length of the string.
+		 * \param charsConsumed			Reference to a size_t that will contain the number of characters consumed.
+		 * \return						Returns the parsed codepoint.
+		 **/
+		template <typename CharT>
+		static inline uint32_t			escapeUnicodeWide4WithSurrogatePairs(const CharT* val, size_t len, size_t& charsConsumed) {
+			uint32_t left = escapeUnicodeWide4(val, len, charsConsumed);
+			
+			if (!charsConsumed) {
+				return left;
+			}
+
+			// In order to be a surrogate pair.
+			if ((left & 0xFC00) == 0xD800) {
+				const CharT* nextVal = val + charsConsumed;
+				size_t nextLen = len - charsConsumed;
+				
+				// '\' + 'u' + NNNN.
+				if (nextLen >= 6) {
+					if (nextVal[0] == static_cast<CharT>('\\')) {
+						++nextVal;
+						--nextLen;
+						size_t consumedRight = 0;
+						uint32_t right = escapeUnicodeWide4(nextVal, nextLen, consumedRight);
+
+						// 2nd half of surrogate pair must be valid.
+						if ((right & 0xFC00) == 0xDC00) {
+							uint32_t h = left & 0x03FF;
+							uint32_t l = right & 0x03FF;
+							left = 0x10000 + (h << 10) + l;
+							charsConsumed = charsConsumed + 1 + consumedRight;
+						}
+					}
+				}
+			}
+			
+			return left;
+		}
+
+		/**
+		 * Parses an 8-character Unicode escape sequence (\UNNNNNNNN).
+		 *
+		 * \param val					Pointer to the characters following the backslash.
+		 * \param len					The remaining length of the string.
+		 * \param charsConsumed			Reference to a size_t that will contain the number of characters consumed.
+		 * \return						Returns the parsed codepoint.
+		 **/
+		template <typename CharT>
+		static inline uint32_t			escapeUnicode8(const CharT* val, size_t len, size_t& charsConsumed) {
+			charsConsumed = 0;
+			
+			if (len >= 9 && val[0] == static_cast<CharT>('U')) {
+				size_t hexChars = 0;
+				for (size_t i = 1; i < len && i <= 8; ++i) {
+					if (std::isxdigit(static_cast<unsigned char>(val[i]))) {
+						++hexChars;
+					}
+					else {
+						break;
+					}
+				}
+				
+				if (hexChars == 8) {
+					size_t pos = 1;
+					uint32_t ret = 0;
+					
+					for (size_t i = 0; i < hexChars; ++i) {
+						char cTemp = static_cast<char>(val[pos++]);
+						ret <<= 4;
+						ret |= hexToUint32(cTemp);
+					}
+					
+					charsConsumed = 9;
+					return ret;
+				}
+			}
+			
+			return 0;
+		}
+
+		/**
+		 * Parses an octal escape sequence.
+		 *
+		 * \param val					Pointer to the characters following the backslash.
+		 * \param len					The remaining length of the string.
+		 * \param charsConsumed			Reference to a size_t that will contain the number of characters consumed.
+		 * \param maxAllowedOctalChars	The maximum number of octal characters to consume.
+		 * \return						Returns the parsed codepoint.
+		 **/
+		template <typename CharT>
+		static inline uint32_t			escapeOctal(const CharT* val, size_t len, size_t& charsConsumed, size_t maxAllowedOctalChars = 4) {
+			charsConsumed = 0;
+			
+			if (len >= 1) {
+				size_t octalChars = 0;
+				for (size_t i = 0; i < len; ++i) {
+					char c = static_cast<char>(val[i]);
+					if (c >= '0' && c <= '7') {
+						++octalChars;
+					}
+					else {
+						break;
+					}
+				}
+				
+				if (octalChars >= 1) {
+					octalChars = (octalChars < maxAllowedOctalChars) ? octalChars : maxAllowedOctalChars;
+					size_t pos = 0;
+					uint32_t ret = 0;
+					
+					for (size_t i = 0; i < octalChars; ++i) {
+						char cTemp = static_cast<char>(val[pos++]);
+						ret <<= 3;
+						ret |= octalToUint32(cTemp);
+					}
+					
+					charsConsumed = octalChars;
+					return ret;
+				}
+			}
+
+			return 0;
+		}
+
+		/**
+		 * Resolves an escape sequence starting with a backslash (or an ampersand for HTML if supported).
+		 *
+		 * \param input					Pointer to the escape sequence (pointing to the backslash).
+		 * \param len					The remaining length of the string.
+		 * \param charsConsumed			Reference to a size_t that will contain the number of characters consumed.
+		 * \param includeHtml			Whether to process HTML entities.
+		 * \param escapeFound			Optional pointer to a boolean indicating if an escape was successfully resolved.
+		 * \return						Returns the resolved Unicode codepoint.
+		 **/
+		template <typename CharT>
+		static inline uint32_t			resolveEscape(const CharT* input, size_t len, size_t& charsConsumed, bool includeHtml = false, bool* escapeFound = nullptr) {
+			if (escapeFound) {
+				(*escapeFound) = false;
+			}
+			
+			if (!len) {
+				charsConsumed = 0;
+				return 0;
+			}
+			
+			if (len == 1) {
+				charsConsumed = 1;
+				return static_cast<uint32_t>(*input);
+			}
+
+			// There are at least 2 characters so an escape is possible.
+			if (len >= 2 && (*input) == static_cast<CharT>('&') && includeHtml) {
+				// TODO: Implement HTML entity escaping.
+			}
+
+			if (includeHtml || (*input) != static_cast<CharT>('\\')) {
+				charsConsumed = 1;
+				return static_cast<uint32_t>(*input);	// Not an escape.
+			}
+
+			struct StandardEscape {
+				char cEscape;
+				char cValue;
+			};
+			
+			static constexpr StandardEscape escapes[] = {
+				{ 'a', '\a' },
+				{ 'b', '\b' },
+				{ 'f', '\f' },
+				{ 'n', '\n' },
+				{ 'r', '\r' },
+				{ 't', '\t' },
+				{ 'v', '\v' },
+				{ '\\', '\\' },
+				{ '\'', '\'' },
+				{ '"', '\"' },
+				{ '?', '\?' },
+				{ ' ', ' ' },
+				{ '\0', '\0' }
+			};
+
+			char cNext = static_cast<char>(input[1]);
+			charsConsumed = 1;
+
+			switch (cNext) {
+				case 'x' : {
+					uint32_t temp = escapeX(&input[1], len - 1, charsConsumed);
+					
+					if (!charsConsumed) {
+						charsConsumed = 1;
+						return static_cast<uint32_t>(*input);
+					}
+					else {
+						++charsConsumed;
+						if (escapeFound) {
+							(*escapeFound) = true;
+						}
+					}
+					
+					return temp;
+				}
+				case 'u' : {
+					// Takes \uNNNN and \uNNNN\uNNNN.
+					uint32_t temp = escapeUnicodeWide4WithSurrogatePairs(&input[1], len - 1, charsConsumed);
+					
+					if (!charsConsumed) {
+						charsConsumed = 1;
+						return static_cast<uint32_t>(*input);
+					}
+					else {
+						++charsConsumed;
+						if (escapeFound) {
+							(*escapeFound) = true;
+						}
+					}
+					
+					return temp;
+				}
+				case 'U' : {
+					uint32_t temp = escapeUnicode8(&input[1], len - 1, charsConsumed);
+					
+					if (!charsConsumed) {
+						charsConsumed = 1;
+						return static_cast<uint32_t>(*input);
+					}
+					else {
+						++charsConsumed;
+						if (escapeFound) {
+							(*escapeFound) = true;
+						}
+					}
+					
+					return temp;
+				}
+				case 'N' : {
+					// TODO: Implement named Unicode escapes.
+					charsConsumed = 1;
+					return static_cast<uint32_t>(*input);
+				}
+				default : {
+					if (input[1] >= static_cast<CharT>('0') && input[1] <= static_cast<CharT>('7')) {
+						uint32_t temp = escapeOctal(&input[1], len - 1, charsConsumed);
+						++charsConsumed;	// Eat the \.
+						
+						if (escapeFound) {
+							(*escapeFound) = true;
+						}
+						
+						return temp;
+					}
+					else {
+						for (size_t i = 0; escapes[i].cEscape != '\0'; ++i) {
+							if (cNext == escapes[i].cEscape) {
+								++charsConsumed;
+								
+								if (escapeFound) {
+									(*escapeFound) = true;
+								}
+								
+								return static_cast<uint32_t>(static_cast<unsigned char>(escapes[i].cValue));
+							}
+						}
+						
+						// Invalid escape.
+						return static_cast<uint32_t>(*input);
+					}
+				}
+			}
+		}
+
+		/**
+		 * Simulates converting a UTF-8 string to the current code page and back.
+		 * 
+		 * \param utf8Str				The input UTF-8 string.
+		 * \return						Returns the processed UTF-8 string.
+		 **/
+		static std::string				simulateCodePageConversion(const std::string& utf8Str) {
+			// TODO: Implement actual OS-level code page conversion.
+			// 1. Convert utf8Str to wide string (UTF-16).
+			// 2. Convert wide string to multi-byte string using current active code page.
+			// 3. Convert multi-byte string back to wide string.
+			// 4. Convert wide string back to UTF-8.
+			return utf8Str; 
+		}
+
+		/**
+		 * Parses a raw string literal, resolving quotes, escapes, and applying format-specific rules.
+		 *
+		 * \param rawToken				The raw string token matched by ANTLR.
+		 * \param format				The specific format detected by the lexer.
+		 * \return						Returns the fully processed UTF-8 string payload.
+		 **/
+		static std::string				parseStringLiteral(std::string_view rawToken, StringFormat format) {
+			size_t quoteIdx = rawToken.find_first_of("\"'");
+			
+			if (quoteIdx == std::string_view::npos) {
+				return "";
+			}
+
+			char quoteChar = rawToken[quoteIdx];
+			size_t quoteLen = 1;
+			
+			if (quoteIdx + 2 < rawToken.size() && rawToken[quoteIdx + 1] == quoteChar && rawToken[quoteIdx + 2] == quoteChar) {
+				quoteLen = 3;
+			}
+
+			std::string_view payload = rawToken.substr(quoteIdx + quoteLen, rawToken.size() - quoteIdx - (quoteLen * 2));
+
+			// If a raw string, no need to do escape sequences.
+			if (format == StringFormat::Raw) {
+				return std::string(payload);
+			}
+
+			// Resolve Escapes.
+			std::string result;
+			result.reserve(payload.size());
+
+			for (size_t i = 0; i < payload.size(); ) {
+				if (payload[i] == '\\') {
+					size_t charsConsumed = 0;
+					bool escapeFound = false;
+					uint32_t cp = resolveEscape(&payload[i], payload.size() - i, charsConsumed, false, &escapeFound);
+					
+					if (charsConsumed > 0) {
+						appendUtf8(result, cp);
+						i += charsConsumed;
+					}
+					else {
+						result.push_back(payload[i]);
+						++i;
+					}
+				}
+				else {
+					result.push_back(payload[i]);
+					++i;
+				}
+			}
+
+			// Apply C-string code page conversion rule if explicitly requested.
+			if (format == StringFormat::CString) {
+				return simulateCodePageConversion(result);
+			}
+
+			return result;
+		}
 
 
 	protected :

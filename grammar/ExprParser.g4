@@ -58,6 +58,7 @@ constant
     | hex_constant
     | dec_constant
     | float_constant
+    | string_constant
     ;
 
 puredec_constant : PUREDEC_CONSTANT ;
@@ -66,3 +67,16 @@ oct_constant     : OCT_CONSTANT ;
 hex_constant     : HEX_CONSTANT ;
 dec_constant     : DEC_CONSTANT ;
 float_constant   : FLOAT_CONSTANT ;
+
+string_token
+    : STRING_NORMAL
+    | STRING_RAW
+    | STRING_UTF8
+    | STRING_UTF16
+    | STRING_UTF32
+    | STRING_WIDE
+    | STRING_C
+    ;
+
+// Implicitly concatenates multiple adjacent string literals of any format.
+string_constant  : string_token+ ;

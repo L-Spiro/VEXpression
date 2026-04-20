@@ -1,8 +1,22 @@
 lexer grammar ExprLexer;
 
 // ==========================================
-// 1. TOKENS
+// TOKENS
 // ==========================================
+
+STRING_UTF8         : 'u8' STR_BODY ;
+STRING_UTF16        : 'u' STR_BODY ;
+STRING_UTF32        : 'U' STR_BODY ;
+STRING_WIDE         : 'L' STR_BODY ;
+STRING_C            : [cC] STR_BODY ;
+STRING_RAW          : [rR] STR_BODY 
+                    | 'u8' [rR] STR_BODY
+                    | [uUL] [rR] STR_BODY
+                    | [rR] [uUL] STR_BODY
+                    | [cC] [rR] STR_BODY
+                    | [rR] [cC] STR_BODY
+                    ;
+STRING_NORMAL       : STR_BODY ;
 
 LPAREN              : '(' ;
 RPAREN              : ')' ;
@@ -83,9 +97,15 @@ LINE_COMMENT        : '//' ~[\r\n]* -> skip ;
 BLOCK_COMMENT       : '/*' .*? '*/' -> skip ;
 
 // ==========================================
-// 2. FRAGMENTS
+// FRAGMENTS
 // ==========================================
 
+fragment STR_BODY
+            : '"""' .*? '"""'
+            | '\'\'\'' .*? '\'\'\''
+            | '"' (~["\\] | '\\' .)* '"'
+            | '\'' (~['\\] | '\\' .)* '\''
+            ;
 fragment D  : [0-9] ;
 fragment O  : [0-7] ;
 fragment B  : [0-1] ;

@@ -132,6 +132,7 @@ set(APP_HEADERS
 	src/Ast/VarNode.h
     src/Compiler/AstBuilderVisitor.h
 	src/Foundation/Character.h
+	src/Foundation/Html.h
 	src/Foundation/LargeMath.h
 	src/Foundation/Math.h
 	src/Foundation/System.h
@@ -141,13 +142,17 @@ set(APP_HEADERS
     src/Engine/ExecutionContext.h
 	src/Engine/FunctionDef.h
 	src/Engine/IntrinsicBridges.h
+	src/Engine/Object.h
 	src/Engine/Result.h
+	src/Engine/String.h
 	src/Strings/Strings.h
 	src/Strings/StringEnum.inl
 )
 
 set(APP_SOURCES
 	src/Engine/ExecutionContext.cpp
+	src/Engine/String.cpp
+	src/Foundation/Html.cpp
 	src/Foundation/Text.cpp
     src/main.cpp
 )

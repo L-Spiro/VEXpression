@@ -38,6 +38,7 @@
 #include "../Ast/VarNode.h"
 #include "../Engine/ExecutionContext.h"
 #include "../Engine/Result.h"
+#include "../Engine/String.h"
 #include "../Foundation/Character.h"
 #include "../Foundation/Text.h"
 
@@ -214,7 +215,8 @@ namespace ve {
 
 		/**
 		 * Visits a comma-separated list of expressions and compiles each one into the arena.
-		 * * \param ctx		The ANTLR parser context for the expression list.
+		 * 
+		 * \param ctx		The ANTLR parser context for the expression list.
 		 * \return			Returns an std::any containing a std::vector<size_t> of allocated node indices.
 		 **/
 		virtual std::any			visitExprList(ExprParser::ExprListContext* ctx) override {
@@ -723,6 +725,66 @@ namespace ve {
 			}
 			
 			return context.addNode<ConstantNode>(res);
+		}
+
+		/**
+		 * Visits a string_constant node, resolves string literals based on their specific prefixes,
+		 * concatenates them, and allocates a runtime String object to be returned via a ConstantNode.
+		 *
+		 * \param ctx		The parser context for the string constant.
+		 * \return			Returns an AST node containing the parsed string Result.
+		 **/
+		virtual std::any			visitString_constant(ExprParser::String_constantContext* ctx) override {
+			std::string combinedUtf8;
+			
+			for (auto tokenCtx : ctx->string_token()) {
+				antlr4::tree::TerminalNode* terminal = static_cast<antlr4::tree::TerminalNode*>(tokenCtx->children[0]);
+				size_t tokenType = terminal->getSymbol()->getType();
+				Text::StringFormat format = Text::StringFormat::Normal;
+
+				switch (tokenType) {
+					case ExprLexer::STRING_RAW : {
+						format = Text::StringFormat::Raw;
+						break;
+					}
+					case ExprLexer::STRING_UTF8 : {
+						format = Text::StringFormat::Utf8;
+						break;
+					}
+					case ExprLexer::STRING_UTF16 : {
+						format = Text::StringFormat::Utf16;
+						break;
+					}
+					case ExprLexer::STRING_UTF32 : {
+						format = Text::StringFormat::Utf32;
+						break;
+					}
+					case ExprLexer::STRING_WIDE : {
+						format = Text::StringFormat::Wide;
+						break;
+					}
+					case ExprLexer::STRING_C : {
+						format = Text::StringFormat::CString;
+						break;
+					}
+					default : {
+						format = Text::StringFormat::Normal;
+						break;
+					}
+				}
+
+				combinedUtf8 += Text::parseStringLiteral(terminal->getText(), format);
+			}
+			
+			String* strObj = context.allocateObject<String>();
+			
+			if (strObj) {
+				strObj->assignUtf8(combinedUtf8.data(), combinedUtf8.length());
+				return context.addNode<ConstantNode>(strObj->createResult());
+			}
+			else {
+				return context.addNode<ConstantNode>(Result{ .type = NumericConstant::Invalid });
+			}
 		}
 
 	protected :

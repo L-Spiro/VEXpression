@@ -512,11 +512,17 @@ namespace ve {
 	 * Resets the object back to scratch.
 	 **/
 	void ExecutionContext::reset() {
+		// Clear objects first.  Who knows what kinds of resources they may need to access, so
+		// don’t clear resources until objects are already gone.
+		objects.clear();
+
 		arena.nodes.clear();
 		variables.clear();
 		registeredConstants.clear();
 		registeredFunctions.clear();
 		rootIndex = 0;
+
+		// Don’t change settings such as treatAllAsHex.
 	}
 
 	/**

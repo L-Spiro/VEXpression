@@ -5,6 +5,8 @@
 
 namespace ve {
 
+	class				Object;
+
 	// == Enumerations.
 	/**
 	 * Numeric constant categories used to identify runtime representation 
@@ -31,7 +33,7 @@ namespace ve {
 			int64_t		intVal;
 			uint64_t	uintVal;
 			double		doubleVal;
-			void *		objectVal;
+			Object *	objectVal;
 		}				value;
 
 
