@@ -9,7 +9,7 @@ VE_STR1(VE_STR_NONE, "")
 // SHARED MATH PARAMETERS
 // =======================================================================================================
 
-VE_STR( VE_STR_MATH_PARAM_ANGLE, 
+VE_STR( Desc_MathParam_Angle, 
     "The angle in radians.", 
     "ラジアン単位の角度。", 
     "以弧度为单位的角度。", 
@@ -27,7 +27,7 @@ VE_STR( VE_STR_MATH_PARAM_ANGLE,
     "Radyan cinsinden açı." 
 )
 
-VE_STR( VE_STR_MATH_PARAM_VAL, 
+VE_STR( Desc_MathParam_Val, 
     "The input value.", 
     "入力値。", 
     "输入值。", 
@@ -45,7 +45,7 @@ VE_STR( VE_STR_MATH_PARAM_VAL,
     "Giriş değeri." 
 )
 
-VE_STR( VE_STR_MATH_PARAM_Y, 
+VE_STR( Desc_MathParam_Y, 
     "The Y coordinate.", 
     "Y座標。", 
     "Y坐标。", 
@@ -63,7 +63,7 @@ VE_STR( VE_STR_MATH_PARAM_Y,
     "Y koordinatı." 
 )
 
-VE_STR( VE_STR_MATH_PARAM_X, 
+VE_STR( Desc_MathParam_X, 
     "The X coordinate.", 
     "X座標。", 
     "X坐标。", 
@@ -81,7 +81,7 @@ VE_STR( VE_STR_MATH_PARAM_X,
     "X koordinatı." 
 )
 
-VE_STR( VE_STR_MATH_PARAM_Z, 
+VE_STR( Desc_MathParam_Z, 
     "The Z coordinate.", 
     "Z座標。", 
     "Z坐标。", 
@@ -117,7 +117,7 @@ VE_STR( VE_STR_MATH_PARAM_PTR,
     "Bir tamsayıya işaretçi." 
 )
 
-VE_STR( VE_STR_POW_PARAM_X, 
+VE_STR( Desc_MathParam_PowX, 
     "The base value.", 
     "ベース値。", 
     "基数值。", 
@@ -157,7 +157,7 @@ VE_STR( VE_STR_POW_PARAM_Y,
 // MATH FUNCTION DESCRIPTIONS
 // =======================================================================================================
 
-VE_STR( VE_STR_SIN_DESC, 
+VE_STR( Desc_Sin, 
     "Computes the sine of an angle.", 
     "角度のサイン（正弦）を計算します。", 
     "计算角度的正弦值。", 
@@ -175,7 +175,7 @@ VE_STR( VE_STR_SIN_DESC,
     "Bir açının sinüsünü hesaplar." 
 )
 
-VE_STR( VE_STR_COS_DESC, 
+VE_STR( Desc_Cos, 
     "Computes the cosine of an angle.", 
     "角度のコサイン（余弦）を計算します。", 
     "计算角度的余弦值。", 
@@ -193,7 +193,7 @@ VE_STR( VE_STR_COS_DESC,
     "Bir açının kosinüsünü hesaplar." 
 )
 
-VE_STR( VE_STR_TAN_DESC, 
+VE_STR( Desc_Tan, 
     "Computes the tangent of an angle.", 
     "角度のタンジェント（正接）を計算します。", 
     "计算角度的正切值。", 
@@ -211,7 +211,7 @@ VE_STR( VE_STR_TAN_DESC,
     "Bir açının tanjantını hesaplar." 
 )
 
-VE_STR( VE_STR_ASIN_DESC, 
+VE_STR( Desc_Asin, 
     "Computes the arc sine of a value.", 
     "値のアークサイン（逆正弦）を計算します。", 
     "计算值的反正弦。", 
@@ -229,7 +229,7 @@ VE_STR( VE_STR_ASIN_DESC,
     "Bir değerin ark sinüsünü hesaplar." 
 )
 
-VE_STR( VE_STR_ACOS_DESC, 
+VE_STR( Desc_Acos, 
     "Computes the arc cosine of a value.", 
     "値のアークコサイン（逆余弦）を計算します。", 
     "计算值的反余弦。", 
@@ -247,7 +247,7 @@ VE_STR( VE_STR_ACOS_DESC,
     "Bir değerin ark kosinüsünü hesaplar." 
 )
 
-VE_STR( VE_STR_ATAN_DESC, 
+VE_STR( Desc_Atan, 
     "Computes the arc tangent of a value.", 
     "値のアークタンジェント（逆正接）を計算します。", 
     "计算值的反正切。", 
@@ -265,7 +265,7 @@ VE_STR( VE_STR_ATAN_DESC,
     "Bir değerin ark tanjantını hesaplar." 
 )
 
-VE_STR( VE_STR_ATAN2_DESC, 
+VE_STR( Desc_Atan2, 
     "Computes the arc tangent of y/x using the signs of arguments.", 
     "引数の符号を使用してy/xのアークタンジェントを計算します。", 
     "使用参数的符号计算 y/x 的反正切。", 
@@ -283,7 +283,7 @@ VE_STR( VE_STR_ATAN2_DESC,
     "Argümanların işaretlerini kullanarak y/x'in ark tanjantını hesaplar." 
 )
 
-VE_STR( VE_STR_EXP_DESC, 
+VE_STR( Desc_Exp, 
     "Computes Euler's number raised to the given power.", 
     "オイラー数を指定された累乗で計算します。", 
     "计算欧拉数 e 的给定次幂。", 
@@ -301,7 +301,7 @@ VE_STR( VE_STR_EXP_DESC,
     "Euler sayısının verilen üsse yükseltilmiş değerini hesaplar." 
 )
 
-VE_STR( VE_STR_LOG_DESC, 
+VE_STR( Desc_Log, 
     "Computes the natural (base-e) logarithm.", 
     "自然対数（底がe）を計算します。", 
     "计算自然（以 e 为底）对数。", 
@@ -319,7 +319,7 @@ VE_STR( VE_STR_LOG_DESC,
     "Doğal (e tabanında) logaritmayı hesaplar." 
 )
 
-VE_STR( VE_STR_LOG10_DESC, 
+VE_STR( Desc_Log10, 
     "Computes the common (base-10) logarithm.", 
     "常用対数（底が10）を計算します。", 
     "计算常用（以 10 为底）对数。", 
@@ -337,7 +337,7 @@ VE_STR( VE_STR_LOG10_DESC,
     "Ortak (10 tabanında) logaritmayı hesaplar." 
 )
 
-VE_STR( VE_STR_SQRT_DESC, 
+VE_STR( Desc_Sqrt, 
     "Computes the square root of a value.", 
     "値の平方根を計算します。", 
     "计算值的平方根。", 
@@ -355,7 +355,7 @@ VE_STR( VE_STR_SQRT_DESC,
     "Bir değerin karekökünü hesaplar." 
 )
 
-VE_STR( VE_STR_CBRT_DESC, 
+VE_STR( Desc_Cbrt, 
     "Computes the cube root of a value.", 
     "値の立方根を計算します。", 
     "计算值的立方根。", 
@@ -373,7 +373,7 @@ VE_STR( VE_STR_CBRT_DESC,
     "Bir değerin küp kökünü hesaplar." 
 )
 
-VE_STR( VE_STR_CEIL_DESC, 
+VE_STR( Desc_Ceil, 
     "Computes the smallest integer not less than the given value.", 
     "指定された値以上の最小の整数を計算します。", 
     "计算不小于给定值的最小整数（向上取整）。", 
@@ -391,7 +391,7 @@ VE_STR( VE_STR_CEIL_DESC,
     "Verilen değerden küçük olmayan en küçük tam sayıyı hesaplar." 
 )
 
-VE_STR( VE_STR_FLOOR_DESC, 
+VE_STR( Desc_Floor, 
     "Computes the largest integer not greater than the given value.", 
     "指定された値以下の最大の整数を計算します。", 
     "计算不大于给定值的最大整数（向下取整）。", 
@@ -409,7 +409,7 @@ VE_STR( VE_STR_FLOOR_DESC,
     "Verilen değerden büyük olmayan en büyük tam sayıyı hesaplar." 
 )
 
-VE_STR( VE_STR_ABS_DESC, 
+VE_STR( Desc_Abs, 
     "Computes the absolute value of a number.", 
     "数値の絶対値を計算します。", 
     "计算数字的绝对值。", 
@@ -427,7 +427,7 @@ VE_STR( VE_STR_ABS_DESC,
     "Bir sayının mutlak değerini hesaplar." 
 )
 
-VE_STR( VE_STR_POW_DESC, 
+VE_STR( Desc_Pow, 
     "Returns the value of a base raised to a power.", 
     "ベースを累乗した値を返します。", 
     "返回基数的幂次方值。", 
@@ -445,154 +445,244 @@ VE_STR( VE_STR_POW_DESC,
     "Bir üsse yükseltilmiş tabanın değerini döndürür." 
 )
 
-VE_STR( VE_STR_COSH_DESC, 
+VE_STR( Desc_CosH, 
     "Computes the hyperbolic cosine.", "双曲線余弦を計算します。", "计算双曲余弦。", 
     "Calcula el coseno hiperbólico.", "Calcule le cosinus hyperbolique.", "Calcola il coseno iperbolico.", 
     "Calcula o cosseno hiperbólico.", "يحسب جيب التمام الزائدي.", "Вычисляет гиперболический косинус.", 
     "Berechnet den hyperbolischen Kosinus.", "Berekent de hyperbolische cosinus.", "쌍곡 코사인을 계산합니다.", 
     "คำนวณโคไซน์ไฮเปอร์โบลิก", "हाइपरबोलिक कोसाइन की गणना करता है।", "Hiperbolik kosinüsü hesaplar." )
 
-VE_STR( VE_STR_SINH_DESC, 
+VE_STR( Desc_SinH, 
     "Computes the hyperbolic sine.", "双曲線正弦を計算します。", "计算双曲正弦。", 
     "Calcula el seno hiperbólico.", "Calcule le sinus hyperbolique.", "Calcola il seno iperbolico.", 
     "Calcula o seno hiperbólico.", "يحسب الجيب الزائدي.", "Вычисляет гиперболический синус.", 
     "Berechnet den hyperbolischen Sinus.", "Berekent de hyperbolische sinus.", "쌍곡 사인을 계산합니다.", 
     "คำนวณไซน์ไฮเปอร์โบลิก", "हाइपरबोलिक साइन की गणना करता है।", "Hiperbolik sinüsü hesaplar." )
 
-VE_STR( VE_STR_TANH_DESC, 
+VE_STR( Desc_TanH, 
     "Computes the hyperbolic tangent.", "双曲線正接を計算します。", "计算双曲正切。", 
     "Calcula la tangente hiperbólica.", "Calcule la tangente hyperbolique.", "Calcola la tangente iperbolica.", 
     "Calcula a tangente hiperbólica.", "يحسب الظل الزائدي.", "Вычисляет гиперболический тангенс.", 
     "Berechnet den hyperbolischen Tangens.", "Berekent de hyperbolische tangens.", "쌍곡 탄젠트를 계산합니다.", 
     "คำนวณแทนเจนต์ไฮเปอร์โบลิก", "हाइपरबोलिक टेंजेंट की गणना करता है।", "Hiperbolik tanjantı hesaplar." )
 
-VE_STR( VE_STR_ACOSH_DESC, 
+VE_STR( Desc_AcosH, 
     "Computes the inverse hyperbolic cosine.", "逆双曲線余弦を計算します。", "计算反双曲余弦。", 
     "Calcula el coseno hiperbólico inverso.", "Calcule le cosinus hyperbolique inverse.", "Calcola il coseno iperbolico inverso.", 
     "Calcula o cosseno hiperbólico inverso.", "يحسب جيب التمام الزائدي العكسي.", "Вычисляет обратный гиперболический косинус.", 
     "Berechnet den inversen hyperbolischen Kosinus.", "Berekent de inverse hyperbolische cosinus.", "역쌍곡 코사인을 계산합니다.", 
     "คำนวณโคไซน์ไฮเปอร์โบลิกผกผัน", "व्युत्क्रम हाइपरबोलिक कोसाइन की गणना करता है।", "Ters hiperbolik kosinüsü hesaplar." )
 
-VE_STR( VE_STR_ASINH_DESC, 
+VE_STR( Desc_AsinH, 
     "Computes the inverse hyperbolic sine.", "逆双曲線正弦を計算します。", "计算反双曲正弦。", 
     "Calcula el seno hiperbólico inverso.", "Calcule le sinus hyperbolique inverse.", "Calcola il seno iperbolico inverso.", 
     "Calcula o seno hiperbólico inverso.", "يحسب الجيب الزائدي العكسي.", "Вычисляет обратный гиперболический синус.", 
     "Berechnet den inversen hyperbolischen Sinus.", "Berekent de inverse hyperbolische sinus.", "역쌍곡 사인을 계산합니다.", 
     "คำนวณไซน์ไฮเปอร์โบลิกผกผัน", "व्युत्क्रम हाइपरबोलिक साइन की गणना करता है।", "Ters hiperbolik sinüsü hesaplar." )
 
-VE_STR( VE_STR_ATANH_DESC, 
+VE_STR( Desc_AtanH, 
     "Computes the inverse hyperbolic tangent.", "逆双曲線正接を計算します。", "计算反双曲正切。", 
     "Calcula la tangente hiperbólica inversa.", "Calcule la tangente hyperbolique inverse.", "Calcola la tangente iperbolica inversa.", 
     "Calcula a tangente hiperbólica inversa.", "يحسب الظل الزائدي العكسي.", "Вычисляет обратный гиперболический тангенс.", 
     "Berechnet den inversen hyperbolischen Tangens.", "Berekent de inverse hyperbolische tangens.", "역쌍곡 탄젠트를 계산합니다.", 
     "คำนวณแทนเจนต์ไฮเปอร์โบลิกผกผัน", "व्युत्क्रम हाइपरबोलिक टेंजेंट की गणना करता है।", "Ters hiperbolik tanjantı hesaplar." )
 
-VE_STR( VE_STR_LOG2_DESC, 
+VE_STR( Desc_Log2, 
     "Computes the base-2 logarithm.", "底が2の対数を計算します。", "计算以2为底的对数。", 
     "Calcula el logaritmo en base 2.", "Calcule le logarithme en base 2.", "Calcola il logaritmo in base 2.", 
     "Calcula o logaritmo na base 2.", "يحسب اللوغاريتم للأساس 2.", "Вычисляет логарифм по основанию 2.", 
     "Berechnet den Logarithmus zur Basis 2.", "Berekent de logaritme met grondtal 2.", "밑이 2인 로그를 계산합니다.", 
     "คำนวณลอการิทึมฐาน 2", "आधार-2 लघुगणक की गणना करता है।", "2 tabanında logaritmayı hesaplar." )
 
-VE_STR( VE_STR_EXP2_DESC, 
+VE_STR( Desc_Exp2, 
     "Computes 2 raised to the given power.", "2の累乗を計算します。", "计算2的给定次幂。", 
     "Calcula 2 elevado a la potencia dada.", "Calcule 2 élevé à la puissance donnée.", "Calcola 2 elevato alla potenza data.", 
     "Calcula 2 elevado à potência dada.", "يحسب 2 مرفوعة إلى الأس المعطى.", "Вычисляет 2 в заданной степени.", 
     "Berechnet 2 potenziert mit dem angegebenen Wert.", "Berekent 2 verheven tot de opgegeven macht.", "2의 거듭제곱을 계산합니다.", 
     "คำนวณ 2 ยกกำลังด้วยค่าที่กำหนด", "दी गई घात तक 2 की गणना करता है।", "Verilen üsse yükseltilmiş 2'yi hesaplar." )
 
-VE_STR( VE_STR_EXPM1_DESC, 
+VE_STR( Desc_ExpM1, 
     "Computes e raised to the given power, minus one.", "eの累乗から1を引いた値を計算します。", "计算 e 的幂减一。", 
     "Calcula e elevado a la potencia dada, menos uno.", "Calcule e élevé à la puissance donnée, moins un.", "Calcola e elevato alla potenza data, meno uno.", 
     "Calcula e elevado à potência dada, menos um.", "يحسب e مرفوعة إلى الأس المعطى، ناقص واحد.", "Вычисляет e в заданной степени минус один.", 
     "Berechnet e potenziert mit dem angegebenen Wert, minus eins.", "Berekent e verheven tot de macht, minus één.", "e의 거듭제곱에서 1을 뺀 값을 계산합니다.", 
     "คำนวณ e ยกกำลังด้วยค่าที่กำหนด ลบหนึ่ง", "दी गई घात तक e की गणना करता है, माइनस एक।", "Verilen üsse yükseltilmiş e değerinden bir çıkarır." )
 
-VE_STR( VE_STR_HYPOT_DESC, 
+VE_STR( Desc_Hypot, 
     "Computes the square root of the sum of the squares of x and y.", "xとyの二乗の和の平方根を計算します。", "计算 x 和 y 的平方和的平方根。", 
     "Calcula la raíz cuadrada de la suma de los cuadrados de x e y.", "Calcule la racine carrée de la somme des carrés de x et y.", "Calcola la radice quadrata della somma dei quadrati di x e y.", 
     "Calcula a raiz quadrada da soma dos quadrados de x e y.", "يحسب الجذر التربيعي لمجموع مربعي x و y.", "Вычисляет квадратный корень из суммы квадратов x и y.", 
     "Berechnet die Quadratwurzel aus der Summe der Quadrate von x und y.", "Berekent de vierkantswortel van de som van de kwadraten van x en y.", "x와 y의 제곱의 합의 제곱근을 계산합니다.", 
     "คำนวณรากที่สองของผลรวมของกำลังสองของ x และ y", "x और y के वर्गों के योग के वर्गमूल की गणना करता है।", "x ve y'nin kareleri toplamının karekökünü hesaplar." )
 
-VE_STR( VE_STR_FMOD_DESC, 
+VE_STR( Desc_Fmod, 
     "Computes the floating-point remainder of the division operation.", "除算の浮動小数点剰余を計算します。", "计算浮点除法的余数。", 
     "Calcula el resto de coma flotante de la división.", "Calcule le reste en virgule flottante de la division.", "Calcola il resto in virgola mobile della divisione.", 
     "Calcula o resto de ponto flutuante da divisão.", "يحسب باقي القسمة بفاصلة عائمة.", "Вычисляет остаток от деления с плавающей запятой.", 
     "Berechnet den Gleitkommarest der Division.", "Berekent de drijvende-komma rest van de deling.", "나눗셈의 부동 소수점 나머지를 계산합니다.", 
     "คำนวณเศษทศนิยมของการหาร", "विभाजन के फ्लोटिंग-पॉइंट शेषफल की गणना करता है।", "Bölme işleminin kayan noktalı kalanını hesaplar." )
 
-VE_STR( VE_STR_ROUND_DESC, 
+VE_STR( Desc_Remainder, 
+    "Returns the IEEE 754 floating-point remainder of x/y (rounded to nearest).", 
+    "x/yのIEEE 754浮動小数点剰余を返します（最も近い値に丸められます）。", 
+    "返回 x/y 的 IEEE 754 浮点余数（舍入到最接近的值）。", 
+    "Devuelve el resto de punto flotante IEEE 754 de x/y (redondeado al más cercano).", 
+    "Renvoie le reste à virgule flottante IEEE 754 de x/y (arrondi au plus proche).", 
+    "Restituisce il resto in virgola mobile IEEE 754 di x/y (arrotondato al più vicino).", 
+    "Retorna o resto de ponto flutuante IEEE 754 de x/y (arredondado para o mais próximo).", 
+    "يُرجع باقي النقطة العائمة IEEE 754 لـ x/y (مقربًا إلى الأقرب).", 
+    "Возвращает остаток от деления с плавающей запятой IEEE 754 x/y (с округлением до ближайшего).", 
+    "Gibt den IEEE 754-Gleitkommarest von x/y zurück (gerundet auf den nächsten Wert).", 
+    "Geeft de IEEE 754 drijvende-komma rest van x/y als resultaat (afgerond naar dichtstbijzijnde).", 
+    "x/y의 IEEE 754 부동 소수점 나머지 값을 반환합니다(가장 가까운 값으로 반올림됨).", 
+    "ส่งคืนเศษทศนิยม IEEE 754 ของ x/y (ปัดเศษให้ใกล้เคียงที่สุด)", 
+    "x/y का IEEE 754 फ़्लोटिंग-पॉइंट शेषफल देता है (निकटतम तक पूर्णांकित)।", 
+    "x/y'nin IEEE 754 kayan nokta kalanını döndürür (en yakına yuvarlanmış)."
+)
+
+VE_STR( Desc_NextAfter, 
+    "Returns the next representable floating-point value of x in the direction of y.", 
+    "yの方向にあるxの次の表現可能な浮動小数点値を返します。", 
+    "返回在y方向上x的下一个可表示的浮点值。", 
+    "Devuelve el siguiente valor de punto flotante representable de x en la dirección de y.", 
+    "Renvoie la valeur à virgule flottante représentable suivante de x dans la direction de y.", 
+    "Restituisce il successivo valore in virgola mobile rappresentabile di x nella direzione di y.", 
+    "Retorna o próximo valor de ponto flutuante representável de x na direção de y.", 
+    "يُرجع قيمة النقطة العائمة التالية القابلة للتمثيل لـ x في اتجاه y.", 
+    "Возвращает следующее представимое значение с плавающей запятой для x в направлении y.", 
+    "Gibt den nächsten darstellbaren Gleitkommawert von x in Richtung y zurück.", 
+    "Geeft de volgende representeerbare drijvende-kommawaarde van x in de richting van y als resultaat.", 
+    "y 방향으로 x의 다음으로 표현 가능한 부동 소수점 값을 반환합니다.", 
+    "ส่งคืนค่าจุดลอยตัวที่สามารถแทนค่าได้ถัดไปของ x ในทิศทางของ y", 
+    "y की दिशा में x का अगला दर्शाने योग्य फ़्लोटिंग-पॉइंट मान देता है।", 
+    "x'in y yönündeki bir sonraki temsil edilebilir kayan nokta değerini döndürür."
+)
+
+VE_STR( Desc_NextToward, 
+    "Returns the next representable floating-point value of x in the direction of y (evaluating y with extended precision).", 
+    "yの方向にあるxの次の表現可能な浮動小数点値を返します（yを拡張精度で評価します）。", 
+    "返回在y方向上x的下一个可表示的浮点值（以扩展精度评估y）。", 
+    "Devuelve el siguiente valor de punto flotante representable de x en la dirección de y (evaluando y con precisión extendida).", 
+    "Renvoie la valeur à virgule flottante représentable suivante de x dans la direction de y (en évaluant y avec une précision étendue).", 
+    "Restituisce il successivo valore in virgola mobile rappresentabile di x nella direzione di y (valutando y con precisione estesa).", 
+    "Retorna o próximo valor de ponto flutuante representável de x na direção de y (avaliando y com precisão estendida).", 
+    "يُرجع قيمة النقطة العائمة التالية القابلة للتمثيل لـ x في اتجاه y (مع تقييم y بدقة ممتدة).", 
+    "Возвращает следующее представимое значение с плавающей запятой для x в направлении y (оценивая y с расширенной точностью).", 
+    "Gibt den nächsten darstellbaren Gleitkommawert von x in Richtung y zurück (wobei y mit erweiterter Genauigkeit ausgewertet wird).", 
+    "Geeft de volgende representeerbare drijvende-kommawaarde van x in de richting van y als resultaat (waarbij y met uitgebreide precisie wordt geëvalueerd).", 
+    "y 방향으로 x의 다음으로 표현 가능한 부동 소수점 값을 반환합니다(y를 확장된 정밀도로 평가).", 
+    "ส่งคืนค่าจุดลอยตัวที่สามารถแทนค่าได้ถัดไปของ x ในทิศทางของ y (โดยประเมิน y ด้วยความแม่นยำที่ขยายขอบเขต)", 
+    "y की दिशा में x का अगला दर्शाने योग्य फ़्लोटिंग-पॉइंट मान देता है (विस्तारित परिशुद्धता के साथ y का मूल्यांकन करते हुए)।", 
+    "x'in y yönündeki bir sonraki temsil edilebilir kayan nokta değerini döndürür (y'yi genişletilmiş hassasiyetle değerlendirerek)."
+)
+
+VE_STR( Desc_Fdim, 
+    "Returns the positive difference between x and y (x - y if x > y, otherwise +0).", 
+    "xとyの正の差を返します（x > yの場合はx - y、それ以外の場合は+0）。", 
+    "返回 x 和 y 之间的正差值（如果 x > y，则为 x - y，否则为 +0）。", 
+    "Devuelve la diferencia positiva entre x e y (x - y si x > y, de lo contrario +0).", 
+    "Renvoie la différence positive entre x et y (x - y si x > y, sinon +0).", 
+    "Restituisce la differenza positiva tra x e y (x - y se x > y, altrimenti +0).", 
+    "Retorna a diferença positiva entre x e y (x - y se x > y, caso contrário +0).", 
+    "يُرجع الفرق الموجب بين x و y (x - y إذا كان x > y، وإلا +0).", 
+    "Возвращает положительную разность между x и y (x - y, если x > y, иначе +0).", 
+    "Gibt die positive Differenz zwischen x und y zurück (x - y, wenn x > y, andernfalls +0).", 
+    "Geeft het positieve verschil tussen x en y als resultaat (x - y als x > y, anders +0).", 
+    "x와 y 사이의 양의 차이를 반환합니다(x > y인 경우 x - y, 그렇지 않으면 +0).", 
+    "ส่งคืนผลต่างเชิงบวกระหว่าง x และ y (x - y หาก x > y มิฉะนั้นจะเป็น +0)", 
+    "x और y के बीच का सकारात्मक अंतर देता है (यदि x > y है तो x - y, अन्यथा +0)।", 
+    "x ve y arasındaki pozitif farkı döndürür (x > y ise x - y, aksi takdirde +0)."
+)
+
+VE_STR( Desc_Round, 
     "Rounds to the nearest integer.", "最も近い整数に丸めます。", "四舍五入到最近的整数。", 
     "Redondea al entero más cercano.", "Arrondit à l'entier le plus proche.", "Arrotonda all'intero più vicino.", 
     "Arredonda para o inteiro mais próximo.", "يقرب إلى أقرب عدد صحيح.", "Округляет до ближайшего целого числа.", 
     "Rundet auf die nächste ganze Zahl.", "Rondt af op het dichtstbijzijnde gehele getal.", "가장 가까운 정수로 반올림합니다.", 
     "ปัดเศษเป็นจำนวนเต็มที่ใกล้ที่สุด", "निकटतम पूर्णांक तक पूर्णांकित करता है।", "En yakın tam sayıya yuvarlar." )
 
-VE_STR( VE_STR_TRUNC_DESC, 
+VE_STR( Desc_NearbyInt, 
+    "Returns the nearest integer value to x using the current rounding mode, without raising the inexact exception.", 
+    "現在の丸めモードを使用してxに最も近い整数値を返します（不正確例外は発生しません）。", 
+    "使用当前舍入模式返回最接近 x 的整数值，且不引发不精确异常。", 
+    "Devuelve el valor entero más cercano a x utilizando el modo de redondeo actual, sin generar la excepción inexacta.", 
+    "Renvoie la valeur entière la plus proche de x en utilisant le mode d'arrondi actuel, sans lever l'exception inexacte.", 
+    "Restituisce il valore intero più vicino a x utilizzando l'attuale modalità di arrotondamento, senza sollevare l'eccezione inesatta.", 
+    "Retorna o valor inteiro mais próximo de x usando o modo de arredondamento atual, sem levantar a exceção inexata.", 
+    "يُرجع أقرب قيمة صحيحة إلى x باستخدام وضع التقريب الحالي، دون إثارة الاستثناء غير الدقيق.", 
+    "Возвращает ближайшее целое значение к x, используя текущий режим округления, не вызывая исключения неточности.", 
+    "Gibt den nächsten ganzzahligen Wert zu x unter Verwendung des aktuellen Rundungsmodus zurück, ohne die Ungenauigkeitsausnahme auszulösen.", 
+    "Geeft de dichtstbijzijnde gehele waarde van x als resultaat met behulp van de huidige afrondingsmodus, zonder de onnauwkeurige uitzondering te genereren.", 
+    "현재 반올림 모드를 사용하여 x에 가장 가까운 정수 값을 반환하며, 부정확 예외를 발생시키지 않습니다.", 
+    "ส่งคืนค่าจำนวนเต็มที่ใกล้เคียงกับ x มากที่สุดโดยใช้โหมดการปัดเศษปัจจุบัน โดยไม่ทำให้เกิดข้อยกเว้นที่ไม่ถูกต้อง", 
+    "वर्तमान राउंडिंग मोड का उपयोग करके x के निकटतम पूर्णांक मान देता है, बिना गलत अपवाद उठाए।", 
+    "Geçerli yuvarlama modunu kullanarak ve kesin olmayan istisnayı tetiklemeden x'e en yakın tam sayı değerini döndürür."
+)
+
+VE_STR( Desc_Trunc, 
     "Truncates the decimal part, rounding towards zero.", "小数部分を切り捨て、ゼロに向けて丸めます。", "截断小数部分，向零取整。", 
     "Trunca la parte decimal, redondeando hacia cero.", "Tronque la partie décimale, en arrondissant vers zéro.", "Tronca la parte decimale, arrotondando verso zero.", 
     "Trunca a parte decimal, arredondando em direção a zero.", "يقتطع الجزء العشري، مقربًا نحو الصفر.", "Отсекает дробную часть, округляя к нулю.", 
     "Schneidet den Dezimalteil ab und rundet in Richtung Null.", "Kapt het decimale deel af, afrondend naar nul.", "소수 부분을 버리고 0을 향해 반올림합니다.", 
     "ตัดทศนิยมทิ้ง ปัดเศษเข้าหาศูนย์", "दशमलव भाग को काटता है, शून्य की ओर पूर्णांकित करता है।", "Ondalık kısmı keser, sıfıra doğru yuvarlar." )
 
-VE_STR( VE_STR_MAX_DESC, 
+VE_STR( Desc_Max, 
     "Returns the larger of two values.", "2つの値のうち大きい方を返します。", "返回两个值中的较大者。", 
     "Devuelve el mayor de dos valores.", "Renvoie la plus grande de deux valeurs.", "Restituisce il maggiore tra due valori.", 
     "Retorna o maior de dois valores.", "يعيد القيمة الأكبر بين قيمتين.", "Возвращает большее из двух значений.", 
     "Gibt den größeren von zwei Werten zurück.", "Geeft de grootste van twee waarden terug.", "두 값 중 큰 값을 반환합니다.", 
     "ส่งคืนค่าที่มากกว่าในสองค่า", "दो मानों में से बड़ा मान लौटाता है।", "İki değerden büyük olanı döndürür." )
 
-VE_STR( VE_STR_MIN_DESC, 
+VE_STR( Desc_Min, 
     "Returns the smaller of two values.", "2つの値のうち小さい方を返します。", "返回两个值中的较小者。", 
     "Devuelve el menor de dos valores.", "Renvoie la plus petite de deux valeurs.", "Restituisce il minore tra due valori.", 
     "Retorna o menor de dois valores.", "يعيد القيمة الأصغر بين قيمتين.", "Возвращает меньшее из двух значений.", 
     "Gibt den kleineren von zwei Werten zurück.", "Geeft de kleinste van twee waarden terug.", "두 값 중 작은 값을 반환합니다.", 
     "ส่งคืนค่าที่น้อยกว่าในสองค่า", "दो मानों में से छोटा मान लौटाता है।", "İki değerden küçük olanı döndürür." )
 
-VE_STR( VE_STR_DEG_DESC, 
+VE_STR( Desc_Deg, 
     "Converts radians to degrees.", "ラジアンを度数に変換します。", "将弧度转换为角度。", 
     "Convierte radianes a grados.", "Convertit les radians en degrés.", "Converte i radianti in gradi.", 
     "Converte radianos em graus.", "يحول الراديان إلى درجات.", "Преобразует радианы в градусы.", 
     "Konvertiert Bogenmaß in Grad.", "Zet radialen om in graden.", "라디안을 각도로 변환합니다.", 
     "แปลงเรเดียนเป็นองศา", "रेडियन को डिग्री में बदलता है।", "Radyanları dereceye dönüştürür." )
 
-VE_STR( VE_STR_RAD_DESC, 
+VE_STR( Desc_Rad, 
     "Converts degrees to radians.", "度数をラジアンに変換します。", "将角度转换为弧度。", 
     "Convierte grados a radianes.", "Convertit les degrés en radians.", "Converte i gradi in radianti.", 
     "Converte graus em radianos.", "يحول الدرجات إلى راديان.", "Преобразует градусы в радианы.", 
     "Konvertiert Grad in Bogenmaß.", "Zet graden om in radialen.", "각도를 라디안으로 변환합니다.", 
     "แปลงองศาเป็นเรเดียน", "डिग्री को रेडियन में बदलता है।", "Dereceleri radyana dönüştürür." )
 
-VE_STR( VE_STR_FMA_DESC, 
+VE_STR( Desc_Fma, 
     "Computes (x * y) + z without losing intermediate precision.", "中間の精度を失うことなく (x * y) + z を計算します。", "计算 (x * y) + z 而不丢失中间精度。", 
     "Calcula (x * y) + z sin perder precisión intermedia.", "Calcule (x * y) + z sans perdre la précision intermédiaire.", "Calcola (x * y) + z senza perdere precisione intermedia.", 
     "Calcula (x * y) + z sem perder a precisão intermediária.", "يحسب (x * y) + z دون فقدان الدقة المتوسطة.", "Вычисляет (x * y) + z без потери промежуточной точности.", 
     "Berechnet (x * y) + z ohne Verlust der Zwischengenauigkeit.", "Berekent (x * y) + z zonder tussentijds precisieverlies.", "중간 정밀도를 잃지 않고 (x * y) + z를 계산합니다.", 
     "คำนวณ (x * y) + z โดยไม่สูญเสียความแม่นยำระหว่างกลาง", "मध्यवर्ती सटीकता खोए बिना (x * y) + z की गणना करता है।", "Ara hassasiyeti kaybetmeden (x * y) + z hesaplar." )
 
-VE_STR( VE_STR_RAND_DESC, 
+VE_STR( Desc_Rand, 
     "Returns a pseudo-random integer.", "疑似乱数の整数を返します。", "返回一个伪随机整数。", 
     "Devuelve un entero pseudoaleatorio.", "Renvoie un entier pseudo-aléatoire.", "Restituisce un intero pseudo-casuale.", 
     "Retorna um inteiro pseudoaleatório.", "يعيد عددًا صحيحًا شبه عشوائي.", "Возвращает псевдослучайное целое число.", 
     "Gibt eine pseudozufällige ganze Zahl zurück.", "Geeft een pseudo-willekeurig geheel getal terug.", "의사 난수 정수를 반환합니다.", 
     "ส่งคืนจำนวนเต็มสุ่มเทียม", "एक छद्म-यादृच्छिक पूर्णांक लौटाता है।", "Sözde rastgele bir tam sayı döndürür." )
 
-VE_STR( VE_STR_ISNAN_DESC, 
+VE_STR( Desc_IsNan, 
     "Returns 1 if the value is NaN (Not-a-Number), 0 otherwise.", "値がNaNの場合は1、それ以外は0を返します。", "如果值为 NaN，则返回 1，否则返回 0。", 
     "Devuelve 1 si el valor es NaN, 0 en caso contrario.", "Renvoie 1 si la valeur est NaN, 0 sinon.", "Restituisce 1 se il valore è NaN, 0 altrimenti.", 
     "Retorna 1 se o valor for NaN, 0 caso contrário.", "يعيد 1 إذا كانت القيمة NaN، و 0 بخلاف ذلك.", "Возвращает 1, если значение является NaN, иначе 0.", 
     "Gibt 1 zurück, wenn der Wert NaN ist, andernfalls 0.", "Geeft 1 terug als de waarde NaN is, anders 0.", "값이 NaN이면 1을, 그렇지 않으면 0을 반환합니다.", 
     "ส่งคืน 1 หากค่าคือ NaN มิฉะนั้นจะส่งคืน 0", "यदि मान NaN है तो 1 लौटाता है, अन्यथा 0।", "Değer NaN ise 1, aksi takdirde 0 döndürür." )
 
-VE_STR( VE_STR_ISINF_DESC, 
+VE_STR( Desc_IsInf, 
     "Returns 1 if the value is infinite, 0 otherwise.", "値が無限大の場合は1、それ以外は0を返します。", "如果值为无穷大，则返回 1，否则返回 0。", 
     "Devuelve 1 si el valor es infinito, 0 en caso contrario.", "Renvoie 1 si la valeur est infinie, 0 sinon.", "Restituisce 1 se il valore è infinito, 0 altrimenti.", 
     "Retorna 1 se o valor for infinito, 0 caso contrário.", "يعيد 1 إذا كانت القيمة لا نهائية، و 0 بخلاف ذلك.", "Возвращает 1, если значение бесконечно, иначе 0.", 
     "Gibt 1 zurück, wenn der Wert unendlich ist, andernfalls 0.", "Geeft 1 terug als de waarde oneindig is, anders 0.", "값이 무한대이면 1을, 그렇지 않으면 0을 반환합니다.", 
     "ส่งคืน 1 หากค่าเป็นอนันต์ มิฉะนั้นจะส่งคืน 0", "यदि मान अनंत है तो 1 लौटाता है, अन्यथा 0।", "Değer sonsuz ise 1, aksi takdirde 0 döndürür." )
 
-VE_STR( VE_STR_TGAMMA_DESC, 
+VE_STR( Desc_TGamma, 
     "Computes the gamma function.", 
     "ガンマ関数を計算します。", 
     "计算伽马函数。", 
@@ -610,7 +700,7 @@ VE_STR( VE_STR_TGAMMA_DESC,
     "Gama fonksiyonunu hesaplar." 
 )
 
-VE_STR( VE_STR_LGAMMA_DESC, 
+VE_STR( Desc_LGamma, 
     "Computes the natural logarithm of the absolute value of the gamma function.", 
     "ガンマ関数の絶対値の自然対数を計算します。", 
     "计算伽马函数绝对值的自然对数。", 
@@ -633,7 +723,7 @@ VE_STR( VE_STR_LGAMMA_DESC,
 // SHARED PARAMETERS FOR BIT INTRINSICS
 // =======================================================================================================
 
-VE_STR( VE_STR_BIT_PARAM_S, 
+VE_STR( Desc_BitParamS, 
     "The number of bits to shift or rotate.", 
     "シフトまたは回転するビット数。", 
     "要移位或旋转的位数。", 
@@ -655,7 +745,7 @@ VE_STR( VE_STR_BIT_PARAM_S,
 // BIT FUNCTION DESCRIPTIONS
 // =======================================================================================================
 
-VE_STR( VE_STR_BYTESWAP_DESC, 
+VE_STR( Desc_ByteSwap, 
     "Reverses the bytes of the given 64-bit integer.", 
     "指定された64ビット整数のバイトを反転します。", 
     "反转给定 64 位整数的字节。", 
@@ -673,7 +763,7 @@ VE_STR( VE_STR_BYTESWAP_DESC,
     "Verilen 64 bitlik tam sayının baytlarını tersine çevirir." 
 )
 
-VE_STR( VE_STR_BYTESWAP16_DESC, 
+VE_STR( Desc_ByteSwap16, 
     "Reverses the bytes of the given 16-bit integer.", 
     "指定された16ビット整数のバイトを反転します。", 
     "反转给定 16 位整数的字节。", 
@@ -691,7 +781,7 @@ VE_STR( VE_STR_BYTESWAP16_DESC,
     "Verilen 16 bitlik tam sayının baytlarını tersine çevirir." 
 )
 
-VE_STR( VE_STR_BYTESWAP32_DESC, 
+VE_STR( Desc_ByteSwap32, 
     "Reverses the bytes of the given 32-bit integer.", 
     "指定された32ビット整数のバイトを反転します。", 
     "反转给定 32 位整数的字节。", 
@@ -709,7 +799,7 @@ VE_STR( VE_STR_BYTESWAP32_DESC,
     "Verilen 32 bitlik tam sayının baytlarını tersine çevirir." 
 )
 
-VE_STR( VE_STR_HAS_SINGLE_BIT_DESC, 
+VE_STR( Desc_HasSingleBit, 
     "Checks if a number is a power of two.", 
     "数値が2の累乗であるかを確認します。", 
     "检查数字是否为2的幂。", 
@@ -727,7 +817,7 @@ VE_STR( VE_STR_HAS_SINGLE_BIT_DESC,
     "Bir sayının ikinin kuvveti olup olmadığını kontrol eder." 
 )
 
-VE_STR( VE_STR_BIT_CEIL_DESC, 
+VE_STR( Desc_BitCeil, 
     "Finds the smallest power of two not less than the given value.", 
     "指定された値以上の最小の2の累乗を求めます。", 
     "查找不小于给定值的最小的2的幂。", 
@@ -745,7 +835,7 @@ VE_STR( VE_STR_BIT_CEIL_DESC,
     "Verilen değerden küçük olmayan en küçük ikinin kuvvetini bulur." 
 )
 
-VE_STR( VE_STR_BIT_FLOOR_DESC, 
+VE_STR( Desc_BitFloor, 
     "Finds the largest power of two not greater than the given value.", 
     "指定された値以下の最大の2の累乗を求めます。", 
     "查找不大于给定值的最大的2的幂。", 
@@ -763,7 +853,7 @@ VE_STR( VE_STR_BIT_FLOOR_DESC,
     "Verilen değerden büyük olmayan en büyük ikinin kuvvetini bulur." 
 )
 
-VE_STR( VE_STR_BIT_WIDTH_DESC, 
+VE_STR( Desc_BitWidth, 
     "Finds the smallest number of bits needed to represent the given value.", 
     "指定された値を表現するために必要な最小のビット数を求めます。", 
     "查找表示给定值所需的最小位数。", 
@@ -781,7 +871,7 @@ VE_STR( VE_STR_BIT_WIDTH_DESC,
     "Verilen değeri temsil etmek için gereken en küçük bit sayısını bulur." 
 )
 
-VE_STR( VE_STR_ROTL_DESC, 
+VE_STR( Desc_RotL, 
     "Computes the result of a bitwise left-rotation.", 
     "ビット単位の左回転の結果を計算します。", 
     "计算按位左旋的结果。", 
@@ -799,7 +889,7 @@ VE_STR( VE_STR_ROTL_DESC,
     "Bit düzeyinde sola döndürmenin sonucunu hesaplar." 
 )
 
-VE_STR( VE_STR_ROTR_DESC, 
+VE_STR( Desc_RotR, 
     "Computes the result of a bitwise right-rotation.", 
     "ビット単位の右回転の結果を計算します。", 
     "计算按位右旋的结果。", 
@@ -817,7 +907,7 @@ VE_STR( VE_STR_ROTR_DESC,
     "Bit düzeyinde sağa döndürmenin sonucunu hesaplar." 
 )
 
-VE_STR( VE_STR_COUNTL_ZERO_DESC, 
+VE_STR( Desc_CountLZero, 
     "Counts the number of consecutive 0 bits, starting from the most significant bit.", 
     "最上位ビットから連続する0のビット数を数えます。", 
     "从最高有效位开始计算连续的0位的数量。", 
@@ -835,7 +925,7 @@ VE_STR( VE_STR_COUNTL_ZERO_DESC,
     "En anlamlı bitten başlayarak ardışık 0 bitlerinin sayısını sayar." 
 )
 
-VE_STR( VE_STR_COUNTL_ONE_DESC, 
+VE_STR( Desc_CountLOne, 
     "Counts the number of consecutive 1 bits, starting from the most significant bit.", 
     "最上位ビットから連続する1のビット数を数えます。", 
     "从最高有效位开始计算连续的1位的数量。", 
@@ -853,7 +943,7 @@ VE_STR( VE_STR_COUNTL_ONE_DESC,
     "En anlamlı bitten başlayarak ardışık 1 bitlerinin sayısını sayar." 
 )
 
-VE_STR( VE_STR_COUNTR_ZERO_DESC, 
+VE_STR( Desc_CountRZero, 
     "Counts the number of consecutive 0 bits, starting from the least significant bit.", 
     "最下位ビットから連続する0のビット数を数えます。", 
     "从最低有效位开始计算连续的0位的数量。", 
@@ -871,7 +961,7 @@ VE_STR( VE_STR_COUNTR_ZERO_DESC,
     "En anlamsız bitten başlayarak ardışık 0 bitlerinin sayısını sayar." 
 )
 
-VE_STR( VE_STR_COUNTR_ONE_DESC, 
+VE_STR( Desc_CountROne, 
     "Counts the number of consecutive 1 bits, starting from the least significant bit.", 
     "最下位ビットから連続する1のビット数を数えます。", 
     "从最低有效位开始计算连续的1位的数量。", 
@@ -889,7 +979,7 @@ VE_STR( VE_STR_COUNTR_ONE_DESC,
     "En anlamsız bitten başlayarak ardışık 1 bitlerinin sayısını sayar." 
 )
 
-VE_STR( VE_STR_POPCOUNT_DESC, 
+VE_STR( Desc_PopCount, 
     "Counts the number of 1 bits in the value.", 
     "値に含まれる1のビット数を数えます。", 
     "计算值中 1 位的数量。", 
@@ -905,4 +995,158 @@ VE_STR( VE_STR_POPCOUNT_DESC,
     "นับจำนวนบิต 1 ในค่า", 
     "मान में 1 बिट्स की संख्या की गणना करता है।", 
     "Değerdeki 1 bitlerinin sayısını sayar." 
+)
+
+
+// =======================================================================================================
+// HTML BUILT-IN FUNCTIONS
+// =======================================================================================================
+
+VE_STR( Desc_HtmlCount, 
+    "Returns the total number of HTML entities available in the lookup table.", 
+    "ルックアップテーブルで利用可能なHTMLエンティティの総数を返します。", 
+    "返回查找表中可用的 HTML 实体的总数。", 
+    "Devuelve el número total de entidades HTML disponibles en la tabla de búsqueda.", 
+    "Renvoie le nombre total d'entités HTML disponibles dans la table de recherche.", 
+    "Restituisce il numero totale di entità HTML disponibili nella tabella di ricerca.", 
+    "Retorna o número total de entidades HTML disponíveis na tabela de pesquisa.", 
+    "يُرجع العدد الإجمالي لكيانات HTML المتوفرة في جدول البحث.", 
+    "Возвращает общее количество HTML-сущностей, доступных в таблице поиска.", 
+    "Gibt die Gesamtzahl der in der Suchtabelle verfügbaren HTML-Entitäten zurück.", 
+    "Geeft het totale aantal beschikbare HTML-entiteiten in de opzoektabel als resultaat.", 
+    "조회 테이블에서 사용 가능한 HTML 엔티티의 총 개수를 반환합니다.", 
+    "ส่งคืนจำนวนเอนทิตี HTML ทั้งหมดที่มีอยู่ในตารางการค้นหา", 
+    "लुकअप तालिका में उपलब्ध HTML संस्थाओं की कुल संख्या देता है।", 
+    "Arama tablosunda bulunan toplam HTML varlıklarının sayısını döndürür."
+)
+
+VE_STR( Desc_HtmlName, 
+    "Returns the string name of an HTML entity given its index.", 
+    "指定されたインデックスに対応するHTMLエンティティの文字列名を返します。", 
+    "返回给定索引的 HTML 实体的字符串名称。", 
+    "Devuelve el nombre de cadena de una entidad HTML dado su índice.", 
+    "Renvoie le nom de chaîne d'une entité HTML en fonction de son index.", 
+    "Restituisce il nome in formato stringa di un'entità HTML dato il suo indice.", 
+    "Retorna o nome da string de uma entidade HTML dado o seu índice.", 
+    "يُرجع اسم السلسلة لكيان HTML بناءً على الفهرس الخاص به.", 
+    "Возвращает строковое имя HTML-сущности по ее индексу.", 
+    "Gibt den Zeichenfolgennamen einer HTML-Entität anhand ihres Index zurück.", 
+    "Geeft de tekenreeksnaam van een HTML-entiteit op basis van de index als resultaat.", 
+    "주어진 인덱스에 해당하는 HTML 엔티티의 문자열 이름을 반환합니다.", 
+    "ส่งคืนชื่อสตริงของเอนทิตี HTML ตามดัชนีที่กำหนด", 
+    "दिए गए इंडेक्स के आधार पर HTML इकाई का स्ट्रिंग नाम देता है।", 
+    "Verilen dizine göre bir HTML varlığının dize adını döndürür."
+)
+
+VE_STR( Desc_HtmlName_Index, 
+    "The zero-based index of the HTML entity.", 
+    "HTMLエンティティのゼロベースのインデックス。", 
+    "HTML 实体的基于零的索引。", 
+    "El índice basado en cero de la entidad HTML.", 
+    "L'index de base zéro de l'entité HTML.", 
+    "L'indice in base zero dell'entità HTML.", 
+    "O índice baseado em zero da entidade HTML.", 
+    "الفهرس الصفري لكيان HTML.", 
+    "Индекс HTML-сущности, начиная с нуля.", 
+    "Der nullbasierte Index der HTML-Entität.", 
+    "De op nul gebaseerde index van de HTML-entiteit.", 
+    "HTML 엔티티의 0 기반 인덱스입니다.", 
+    "ดัชนีเริ่มต้นที่ศูนย์ของเอนทิตี HTML", 
+    "HTML इकाई का शून्य-आधारित इंडेक्स।", 
+    "HTML varlığının sıfır tabanlı dizini."
+)
+
+VE_STR( Desc_HtmlChar, 
+    "Returns the parsed UTF-8 character string for the specified HTML entity.", 
+    "指定されたHTMLエンティティの解析済みUTF-8文字列を返します。", 
+    "返回指定 HTML 实体的解析后的 UTF-8 字符串。", 
+    "Devuelve la cadena de caracteres UTF-8 analizada para la entidad HTML especificada.", 
+    "Renvoie la chaîne de caractères UTF-8 analysée pour l'entité HTML spécifiée.", 
+    "Restituisce la stringa di caratteri UTF-8 analizzata per l'entità HTML specificata.", 
+    "Retorna a string de caracteres UTF-8 analisada para a entidade HTML especificada.", 
+    "يُرجع سلسلة أحرف UTF-8 التي تم تحليلها لكيان HTML المحدد.", 
+    "Возвращает проанализированную строку символов UTF-8 для указанной HTML-сущности.", 
+    "Gibt die geparste UTF-8-Zeichenfolge für die angegebene HTML-Entität zurück.", 
+    "Geeft de geparseerde UTF-8-tekenreeks voor de opgegeven HTML-entiteit als resultaat.", 
+    "지정된 HTML 엔티티에 대해 파싱된 UTF-8 문자열을 반환합니다.", 
+    "ส่งคืนสตริงอักขระ UTF-8 ที่แยกวิเคราะห์สำหรับเอนทิตี HTML ที่ระบุ", 
+    "निर्दिष्ट HTML इकाई के लिए पार्स की गई UTF-8 कैरेक्टर स्ट्रिंग देता है।", 
+    "Belirtilen HTML varlığı için ayrıştırılmış UTF-8 karakter dizesini döndürür."
+)
+
+VE_STR( Desc_HtmlChar_Arg, 
+    "The index (integer) or exact name (string) of the HTML entity to resolve.", 
+    "解決するHTMLエンティティのインデックス（整数）または正確な名前（文字列）。", 
+    "要解析的 HTML 实体的索引（整数）或准确名称（字符串）。", 
+    "El índice (entero) o el nombre exacto (cadena) de la entidad HTML a resolver.", 
+    "L'index (entier) ou le nom exact (chaîne) de l'entité HTML à résoudre.", 
+    "L'indice (intero) o il nome esatto (stringa) dell'entità HTML da risolvere.", 
+    "O índice (inteiro) ou o nome exato (string) da entidade HTML a ser resolvida.", 
+    "الفهرس (عدد صحيح) أو الاسم الدقيق (سلسلة) لكيان HTML المراد حله.", 
+    "Индекс (целое число) или точное имя (строка) HTML-сущности для разрешения.", 
+    "Der Index (Ganzzahl) oder der genaue Name (Zeichenfolge) der aufzulösenden HTML-Entität.", 
+    "De index (geheel getal) of de exacte naam (tekenreeks) van de op te lossen HTML-entiteit.", 
+    "확인할 HTML 엔티티의 인덱스(정수) 또는 정확한 이름(문자열)입니다.", 
+    "ดัชนี (จำนวนเต็ม) หรือชื่อที่แน่นอน (สตริง) ของเอนทิตี HTML ที่จะแก้ไข", 
+    "हल करने के लिए HTML इकाई का इंडेक्स (पूर्णांक) या सटीक नाम (स्ट्रिंग)।", 
+    "Çözümlenecek HTML varlığının dizini (tamsayı) veya tam adı (dize)."
+)
+
+
+// =======================================================================================================
+// STRING BUILT-IN FUNCTIONS
+// =======================================================================================================
+
+VE_STR( Desc_String_Capitalize, 
+    "Returns a copy of the string with its first character capitalized and the rest lowercased.", 
+    "最初の文字を大文字にし、残りを小文字にした文字列のコピーを返します。", 
+    "返回字符串的副本，其首字母大写，其余小写。", 
+    "Devuelve una copia de la cadena con su primer carácter en mayúscula y el resto en minúscula.", 
+    "Renvoie une copie de la chaîne avec son premier caractère en majuscule et le reste en minuscule.", 
+    "Restituisce una copia della stringa con il primo carattere in maiuscolo e il resto in minuscolo.", 
+    "Retorna uma cópia da string com seu primeiro caractere em maiúscula e o restante em minúscula.", 
+    "يُرجع نسخة من السلسلة بحيث يكون الحرف الأول بحرف كبير والباقي بأحرف صغيرة.", 
+    "Возвращает копию строки, в которой первый символ переведен в верхний регистр, а остальные — в нижний.", 
+    "Gibt eine Kopie der Zeichenfolge zurück, bei der das erste Zeichen groß- und der Rest kleingeschrieben ist.", 
+    "Geeft een kopie van de tekenreeks als resultaat waarvan het eerste teken een hoofdletter is en de rest kleine letters.", 
+    "첫 번째 문자는 대문자로, 나머지는 소문자로 변환된 문자열의 복사본을 반환합니다.", 
+    "ส่งคืนสำเนาของสตริงโดยที่อักขระตัวแรกเป็นตัวพิมพ์ใหญ่และที่เหลือเป็นตัวพิมพ์เล็ก", 
+    "स्ट्रिंग की एक प्रति देता है जिसका पहला अक्षर बड़ा (कैपिटल) और बाकी छोटे (लोअरकेस) होते हैं।", 
+    "İlk karakteri büyük, geri kalanı küçük harf yapılmış dizenin bir kopyasını döndürür."
+)
+
+VE_STR( String_Param_Target, 
+    "The target string object.", 
+    "対象の文字列オブジェクト。", 
+    "目标字符串对象。", 
+    "El objeto de cadena de destino.", 
+    "L'objet chaîne cible.", 
+    "L'oggetto stringa di destinazione.", 
+    "O objeto de string de destino.", 
+    "كائن السلسلة المستهدف.", 
+    "Целевой строковый объект.", 
+    "Das Zielzeichenfolgenobjekt.", 
+    "Het doel-tekenreeksobject.", 
+    "대상 문자열 객체입니다.", 
+    "ออบเจ็กต์สตริงเป้าหมาย", 
+    "लक्ष्य स्ट्रिंग ऑब्जेक्ट।", 
+    "Hedef dize nesnesi."
+)
+
+VE_STR( Desc_String_Casefold, 
+    "Returns a casefolded copy of the string, suitable for caseless matching.", 
+    "ケースを無視した比較に適した、ケースフォールドされた文字列のコピーを返します。", 
+    "返回字符串的消除大小写副本，适用于不区分大小写的匹配。", 
+    "Devuelve una copia de la cadena convertida a minúsculas especiales (casefolded), adecuada para coincidencias sin distinción de mayúsculas.", 
+    "Renvoie une copie de la chaîne convertie en minuscules spéciales (casefolded), adaptée à la correspondance sans casse.", 
+    "Restituisce una copia della stringa convertita in minuscole speciali (casefolded), adatta per il confronto senza distinzione tra maiuscole e minuscole.", 
+    "Retorna uma cópia da string convertida para minúsculas especiais (casefolded), adequada para correspondência sem distinção entre maiúsculas e minúsculas.", 
+    "يُرجع نسخة مطوية من السلسلة، مناسبة للمطابقة غير الحساسة لحالة الأحرف.", 
+    "Возвращает копию строки в нижнем регистре (casefolded), подходящую для сопоставления без учета регистра.", 
+    "Gibt eine casegefoldete Kopie der Zeichenfolge zurück, die für den gehäuselosen Abgleich geeignet ist.", 
+    "Geeft een casefolded kopie van de tekenreeks als resultaat, geschikt voor matching zonder hoofdletters.", 
+    "대소문자 구분이 없는 매칭에 적합하도록 케이스 폴딩된 문자열의 복사본을 반환합니다.", 
+    "ส่งคืนสำเนาที่พับกรณีของสตริง ซึ่งเหมาะสำหรับการจับคู่แบบไม่คำนึงถึงตัวพิมพ์", 
+    "केसलेस मिलान के लिए उपयुक्त स्ट्रिंग की एक केसफोल्डेड प्रति देता है।", 
+    "Dizenin büyük/küçük harf ayrımı yapmayan eşleştirme için uygun, küçük harfe dönüştürülmüş (casefold) bir kopyasını döndürür."
 )

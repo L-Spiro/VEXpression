@@ -1,6 +1,10 @@
 #pragma once
 
+#include "../Foundation/Html.h"
+#include "../Foundation/Math.h"
+#include "../Foundation/Text.h"
 #include "Result.h"
+#include "String.h"
 
 #include <bit>
 #include <cmath>
@@ -8,6 +12,8 @@
 #include <vector>
 
 namespace ve {
+
+	class					ExecutionContext;
 
 	/**
 	 * A collection of static bridge callbacks mapping the engine's Result array directly to C++ intrinsics.
@@ -24,7 +30,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		powBridge(const std::vector<Result>& args) {
+		static Result		powBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::pow(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -34,7 +41,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		powfBridge(const std::vector<Result>& args) {
+		static Result		powfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::powf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -44,7 +52,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		sinBridge(const std::vector<Result>& args) {
+		static Result		sinBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::sin(args[0].value.doubleVal));
 		}
 
@@ -54,7 +63,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		sinfBridge(const std::vector<Result>& args) {
+		static Result		sinfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::sinf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -64,7 +74,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		cosBridge(const std::vector<Result>& args) {
+		static Result		cosBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::cos(args[0].value.doubleVal));
 		}
 
@@ -74,7 +85,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		cosfBridge(const std::vector<Result>& args) {
+		static Result		cosfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::cosf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -84,7 +96,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		tanBridge(const std::vector<Result>& args) {
+		static Result		tanBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::tan(args[0].value.doubleVal));
 		}
 
@@ -94,7 +107,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		tanfBridge(const std::vector<Result>& args) {
+		static Result		tanfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::tanf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -104,7 +118,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		asinBridge(const std::vector<Result>& args) {
+		static Result		asinBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::asin(args[0].value.doubleVal));
 		}
 
@@ -114,7 +129,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		asinfBridge(const std::vector<Result>& args) {
+		static Result		asinfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::asinf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -124,7 +140,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		acosBridge(const std::vector<Result>& args) {
+		static Result		acosBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::acos(args[0].value.doubleVal));
 		}
 
@@ -134,7 +151,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		acosfBridge(const std::vector<Result>& args) {
+		static Result		acosfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::acosf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -144,7 +162,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		atanBridge(const std::vector<Result>& args) {
+		static Result		atanBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::atan(args[0].value.doubleVal));
 		}
 
@@ -154,7 +173,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		atanfBridge(const std::vector<Result>& args) {
+		static Result		atanfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::atanf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -164,7 +184,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		atan2Bridge(const std::vector<Result>& args) {
+		static Result		atan2Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::atan2(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -174,7 +195,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		atan2fBridge(const std::vector<Result>& args) {
+		static Result		atan2fBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::atan2f(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -184,7 +206,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		expBridge(const std::vector<Result>& args) {
+		static Result		expBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::exp(args[0].value.doubleVal));
 		}
 
@@ -194,7 +217,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		expfBridge(const std::vector<Result>& args) {
+		static Result		expfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::expf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -204,7 +228,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		logBridge(const std::vector<Result>& args) {
+		static Result		logBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::log(args[0].value.doubleVal));
 		}
 
@@ -214,7 +239,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		logfBridge(const std::vector<Result>& args) {
+		static Result		logfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::logf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -224,7 +250,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		log10Bridge(const std::vector<Result>& args) {
+		static Result		log10Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::log10(args[0].value.doubleVal));
 		}
 
@@ -234,7 +261,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		log10fBridge(const std::vector<Result>& args) {
+		static Result		log10fBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::log10f(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -244,7 +272,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		sqrtBridge(const std::vector<Result>& args) {
+		static Result		sqrtBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::sqrt(args[0].value.doubleVal));
 		}
 
@@ -254,7 +283,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		sqrtfBridge(const std::vector<Result>& args) {
+		static Result		sqrtfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::sqrtf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -264,7 +294,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		cbrtBridge(const std::vector<Result>& args) {
+		static Result		cbrtBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::cbrt(args[0].value.doubleVal));
 		}
 
@@ -274,7 +305,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		cbrtfBridge(const std::vector<Result>& args) {
+		static Result		cbrtfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::cbrtf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -284,7 +316,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		ceilBridge(const std::vector<Result>& args) {
+		static Result		ceilBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::ceil(args[0].value.doubleVal));
 		}
 
@@ -294,7 +327,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		ceilfBridge(const std::vector<Result>& args) {
+		static Result		ceilfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::ceilf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -304,7 +338,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		floorBridge(const std::vector<Result>& args) {
+		static Result		floorBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::floor(args[0].value.doubleVal));
 		}
 
@@ -314,7 +349,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		floorfBridge(const std::vector<Result>& args) {
+		static Result		floorfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::floorf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -324,7 +360,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		absBridge(const std::vector<Result>& args) {
+		static Result		absBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::abs(args[0].value.doubleVal));
 		}
 
@@ -334,7 +371,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fabsBridge(const std::vector<Result>& args) {
+		static Result		fabsBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fabs(args[0].value.doubleVal));
 		}
 
@@ -344,7 +382,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fabsfBridge(const std::vector<Result>& args) {
+		static Result		fabsfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fabsf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -359,7 +398,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		coshBridge(const std::vector<Result>& args) {
+		static Result		coshBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::cosh(args[0].value.doubleVal));
 		}
 
@@ -369,7 +409,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		coshfBridge(const std::vector<Result>& args) {
+		static Result		coshfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::coshf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -379,7 +420,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		sinhBridge(const std::vector<Result>& args) {
+		static Result		sinhBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::sinh(args[0].value.doubleVal));
 		}
 
@@ -389,7 +431,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		sinhfBridge(const std::vector<Result>& args) {
+		static Result		sinhfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::sinhf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -399,7 +442,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		tanhBridge(const std::vector<Result>& args) {
+		static Result		tanhBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::tanh(args[0].value.doubleVal));
 		}
 
@@ -409,7 +453,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		tanhfBridge(const std::vector<Result>& args) {
+		static Result		tanhfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::tanhf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -419,7 +464,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		acoshBridge(const std::vector<Result>& args) {
+		static Result		acoshBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::acosh(args[0].value.doubleVal));
 		}
 
@@ -429,7 +475,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		acoshfBridge(const std::vector<Result>& args) {
+		static Result		acoshfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::acoshf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -439,7 +486,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		asinhBridge(const std::vector<Result>& args) {
+		static Result		asinhBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::asinh(args[0].value.doubleVal));
 		}
 
@@ -449,7 +497,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		asinhfBridge(const std::vector<Result>& args) {
+		static Result		asinhfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::asinhf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -459,7 +508,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		atanhBridge(const std::vector<Result>& args) {
+		static Result		atanhBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::atanh(args[0].value.doubleVal));
 		}
 
@@ -469,7 +519,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		atanhfBridge(const std::vector<Result>& args) {
+		static Result		atanhfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::atanhf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -484,7 +535,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		log2Bridge(const std::vector<Result>& args) {
+		static Result		log2Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::log2(args[0].value.doubleVal));
 		}
 
@@ -494,7 +546,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		log2fBridge(const std::vector<Result>& args) {
+		static Result		log2fBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::log2f(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -504,7 +557,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		exp2Bridge(const std::vector<Result>& args) {
+		static Result		exp2Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::exp2(args[0].value.doubleVal));
 		}
 
@@ -514,7 +568,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		exp2fBridge(const std::vector<Result>& args) {
+		static Result		exp2fBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::exp2f(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -524,7 +579,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		expm1Bridge(const std::vector<Result>& args) {
+		static Result		expm1Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::expm1(args[0].value.doubleVal));
 		}
 
@@ -534,7 +590,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		expm1fBridge(const std::vector<Result>& args) {
+		static Result		expm1fBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::expm1f(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -544,7 +601,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		ilogbBridge(const std::vector<Result>& args) {
+		static Result		ilogbBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::ilogb(args[0].value.doubleVal)));
 		}
 
@@ -554,7 +612,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		ilogbfBridge(const std::vector<Result>& args) {
+		static Result		ilogbfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::ilogbf(static_cast<float>(args[0].value.doubleVal))));
 		}
 
@@ -564,7 +623,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		log1pBridge(const std::vector<Result>& args) {
+		static Result		log1pBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::log1p(args[0].value.doubleVal));
 		}
 
@@ -574,7 +634,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		log1pfBridge(const std::vector<Result>& args) {
+		static Result		log1pfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::log1pf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -584,7 +645,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		logbBridge(const std::vector<Result>& args) {
+		static Result		logbBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::logb(args[0].value.doubleVal));
 		}
 
@@ -594,7 +656,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		logbfBridge(const std::vector<Result>& args) {
+		static Result		logbfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::logbf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -609,7 +672,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		hypotBridge(const std::vector<Result>& args) {
+		static Result		hypotBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::hypot(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -619,7 +683,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		hypotfBridge(const std::vector<Result>& args) {
+		static Result		hypotfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::hypotf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -629,7 +694,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		tgammaBridge(const std::vector<Result>& args) {
+		static Result		tgammaBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::tgamma(args[0].value.doubleVal));
 		}
 
@@ -639,7 +705,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		tgammafBridge(const std::vector<Result>& args) {
+		static Result		tgammafBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::tgammaf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -649,7 +716,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		lgammaBridge(const std::vector<Result>& args) {
+		static Result		lgammaBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::lgamma(args[0].value.doubleVal));
 		}
 
@@ -659,7 +727,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		lgammafBridge(const std::vector<Result>& args) {
+		static Result		lgammafBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::lgammaf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -669,7 +738,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fmodBridge(const std::vector<Result>& args) {
+		static Result		fmodBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fmod(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -679,7 +749,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fmodfBridge(const std::vector<Result>& args) {
+		static Result		fmodfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fmodf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -689,7 +760,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		truncBridge(const std::vector<Result>& args) {
+		static Result		truncBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::trunc(args[0].value.doubleVal));
 		}
 
@@ -699,7 +771,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		truncfBridge(const std::vector<Result>& args) {
+		static Result		truncfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::truncf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -709,7 +782,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		roundBridge(const std::vector<Result>& args) {
+		static Result		roundBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::round(args[0].value.doubleVal));
 		}
 
@@ -719,7 +793,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		roundfBridge(const std::vector<Result>& args) {
+		static Result		roundfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::roundf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -729,7 +804,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		nearbyintBridge(const std::vector<Result>& args) {
+		static Result		nearbyintBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::nearbyint(args[0].value.doubleVal));
 		}
 
@@ -739,7 +815,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		nearbyintfBridge(const std::vector<Result>& args) {
+		static Result		nearbyintfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::nearbyintf(static_cast<float>(args[0].value.doubleVal)));
 		}
 
@@ -749,7 +826,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		remainderBridge(const std::vector<Result>& args) {
+		static Result		remainderBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::remainder(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -759,7 +837,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		remainderfBridge(const std::vector<Result>& args) {
+		static Result		remainderfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::remainderf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -770,7 +849,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function (quotient is currently discarded).
 		 **/
-		static Result		remquoBridge(const std::vector<Result>& args) {
+		static Result		remquoBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			int dummyQuo;
 			return Result::make(std::remquo(args[0].value.doubleVal, args[1].value.doubleVal, &dummyQuo));
 		}
@@ -782,7 +862,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function (quotient is currently discarded).
 		 **/
-		static Result		remquofBridge(const std::vector<Result>& args) {
+		static Result		remquofBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			int dummyQuo;
 			return Result::make(std::remquo(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal), &dummyQuo));
 		}
@@ -793,7 +874,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		nextafterBridge(const std::vector<Result>& args) {
+		static Result		nextafterBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::nextafter(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -803,7 +885,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		nextafterfBridge(const std::vector<Result>& args) {
+		static Result		nextafterfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::nextafterf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -813,7 +896,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		nexttowardBridge(const std::vector<Result>& args) {
+		static Result		nexttowardBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::nexttoward(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -823,7 +907,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		nexttowardfBridge(const std::vector<Result>& args) {
+		static Result		nexttowardfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::nexttowardf(static_cast<float>(args[0].value.doubleVal), args[1].value.doubleVal));
 		}
 
@@ -833,7 +918,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fdimBridge(const std::vector<Result>& args) {
+		static Result		fdimBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fdim(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -843,7 +929,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fdimfBridge(const std::vector<Result>& args) {
+		static Result		fdimfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fdimf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -853,7 +940,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fmaxBridge(const std::vector<Result>& args) {
+		static Result		fmaxBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fmax(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -863,7 +951,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fmaxfBridge(const std::vector<Result>& args) {
+		static Result		fmaxfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fmaxf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -873,7 +962,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fminBridge(const std::vector<Result>& args) {
+		static Result		fminBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fmin(args[0].value.doubleVal, args[1].value.doubleVal));
 		}
 
@@ -883,7 +973,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fminfBridge(const std::vector<Result>& args) {
+		static Result		fminfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fminf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal)));
 		}
 
@@ -893,7 +984,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fmaBridge(const std::vector<Result>& args) {
+		static Result		fmaBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fma(args[0].value.doubleVal, args[1].value.doubleVal, args[2].value.doubleVal));
 		}
 
@@ -903,7 +995,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		fmafBridge(const std::vector<Result>& args) {
+		static Result		fmafBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::fmaf(static_cast<float>(args[0].value.doubleVal), static_cast<float>(args[1].value.doubleVal), static_cast<float>(args[2].value.doubleVal)));
 		}
 
@@ -913,7 +1006,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		degBridge(const std::vector<Result>& args) {
+		static Result		degBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(args[0].value.doubleVal * (180.0 / std::numbers::pi));
 		}
 
@@ -923,7 +1017,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		radBridge(const std::vector<Result>& args) {
+		static Result		radBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(args[0].value.doubleVal * (std::numbers::pi / 180.0));
 		}
 
@@ -933,7 +1028,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		randBridge(const std::vector<Result>& args) {
+		static Result		randBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::rand()));
 		}
 
@@ -943,7 +1039,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		isnanBridge(const std::vector<Result>& args) {
+		static Result		isnanBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::isnan(args[0].value.doubleVal) ? 1 : 0));
 		}
 
@@ -953,7 +1050,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the result of the intrinsic function.
 		 **/
-		static Result		isinfBridge(const std::vector<Result>& args) {
+		static Result		isinfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::isinf(args[0].value.doubleVal) ? 1 : 0));
 		}
 
@@ -963,43 +1061,39 @@ namespace ve {
 		// =========================================================================
 
 		/**
-		 * Bridge for std::byteswap. Reverses the bytes of a 64-bit unsigned integer.
-		 *
-		 * \param args		A vector containing the evaluated arguments.
-		 * \return			Returns the byte-swapped result.
-		 **/
-		static Result		byteswapBridge(const std::vector<Result>& args) {
-			return Result::make(std::byteswap(args[0].value.uintVal));
-		}
-
-		/**
 		 * Bridge for std::byteswap (16-bit). Reverses the bytes of a 16-bit unsigned integer.
 		 * 
+		 * \param ctx		The execution context.
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the byte-swapped result.
 		 **/
-		static Result		byteswap16Bridge(const std::vector<Result>& args) {
-			return Result::make(static_cast<uint64_t>(std::byteswap(static_cast<uint16_t>(args[0].value.uintVal))));
+		static Result		byteswap16Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			return Result::make(static_cast<uint64_t>(Math::byteswap(static_cast<uint16_t>(args[0].value.uintVal))));
 		}
 
 		/**
 		 * Bridge for std::byteswap (32-bit). Reverses the bytes of a 32-bit unsigned integer.
 		 * 
+		 * \param ctx		The execution context.
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the byte-swapped result.
 		 **/
-		static Result		byteswap32Bridge(const std::vector<Result>& args) {
-			return Result::make(static_cast<uint64_t>(std::byteswap(static_cast<uint32_t>(args[0].value.uintVal))));
+		static Result		byteswap32Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			return Result::make(static_cast<uint64_t>(Math::byteswap(static_cast<uint32_t>(args[0].value.uintVal))));
 		}
 
 		/**
 		 * Bridge for std::byteswap (64-bit). Reverses the bytes of a 64-bit unsigned integer.
 		 * 
+		 * \param ctx		The execution context.
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the byte-swapped result.
 		 **/
-		static Result		byteswap64Bridge(const std::vector<Result>& args) {
-			return Result::make(std::byteswap(static_cast<uint64_t>(args[0].value.uintVal)));
+		static Result		byteswap64Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			return Result::make(Math::byteswap(static_cast<uint64_t>(args[0].value.uintVal)));
 		}
 
 		/**
@@ -1008,7 +1102,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns 1 if it has a single bit set, 0 otherwise.
 		 **/
-		static Result		has_single_bitBridge(const std::vector<Result>& args) {
+		static Result		has_single_bitBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<uint64_t>(std::has_single_bit(args[0].value.uintVal) ? 1 : 0));
 		}
 
@@ -1018,7 +1113,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the calculated power of two.
 		 **/
-		static Result		bit_ceilBridge(const std::vector<Result>& args) {
+		static Result		bit_ceilBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::bit_ceil(args[0].value.uintVal));
 		}
 
@@ -1028,7 +1124,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the calculated power of two.
 		 **/
-		static Result		bit_floorBridge(const std::vector<Result>& args) {
+		static Result		bit_floorBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::bit_floor(args[0].value.uintVal));
 		}
 
@@ -1038,7 +1135,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the bit width.
 		 **/
-		static Result		bit_widthBridge(const std::vector<Result>& args) {
+		static Result		bit_widthBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::bit_width(args[0].value.uintVal)));
 		}
 
@@ -1048,7 +1146,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the rotated 64-bit value.
 		 **/
-		static Result		rotlBridge(const std::vector<Result>& args) {
+		static Result		rotlBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::rotl(args[0].value.uintVal, static_cast<int>(args[1].value.intVal)));
 		}
 
@@ -1058,7 +1157,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the rotated 64-bit value.
 		 **/
-		static Result		rotrBridge(const std::vector<Result>& args) {
+		static Result		rotrBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(std::rotr(args[0].value.uintVal, static_cast<int>(args[1].value.intVal)));
 		}
 
@@ -1068,7 +1168,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the number of leading zeros.
 		 **/
-		static Result		countl_zeroBridge(const std::vector<Result>& args) {
+		static Result		countl_zeroBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::countl_zero(args[0].value.uintVal)));
 		}
 
@@ -1078,7 +1179,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the number of leading ones.
 		 **/
-		static Result		countl_oneBridge(const std::vector<Result>& args) {
+		static Result		countl_oneBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::countl_one(args[0].value.uintVal)));
 		}
 
@@ -1088,7 +1190,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the number of trailing zeros.
 		 **/
-		static Result		countr_zeroBridge(const std::vector<Result>& args) {
+		static Result		countr_zeroBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::countr_zero(args[0].value.uintVal)));
 		}
 
@@ -1098,7 +1201,8 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the number of trailing ones.
 		 **/
-		static Result		countr_oneBridge(const std::vector<Result>& args) {
+		static Result		countr_oneBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::countr_one(args[0].value.uintVal)));
 		}
 
@@ -1108,8 +1212,200 @@ namespace ve {
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns the number of set bits.
 		 **/
-		static Result		popcountBridge(const std::vector<Result>& args) {
+		static Result		popcountBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
 			return Result::make(static_cast<int64_t>(std::popcount(args[0].value.uintVal)));
+		}
+
+
+		// =========================================================================
+		// HTML Entities
+		// =========================================================================
+
+		/**
+		 * Bridge for htmlCount().
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Unsigned Result containing the total number of HTML entities.
+		 **/
+		static Result		htmlCountBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			static_cast<void>(args);
+			return Result{ .type = NumericConstant::Unsigned, .value = { .uintVal = static_cast<uint64_t>(Html::totalNames()) } };
+		}
+
+		/**
+		 * Bridge for htmlName(index).
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the entity name, or invalid if out of bounds.
+		 **/
+		static Result		htmlNameBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty()) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			size_t idx = 0;
+			const Result& arg = args[0];
+			
+			if (arg.type == NumericConstant::Signed) {
+				if (arg.value.intVal < 0) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				idx = static_cast<size_t>(arg.value.intVal);
+			}
+			else if (arg.type == NumericConstant::Unsigned) {
+				idx = static_cast<size_t>(arg.value.uintVal);
+			}
+			else {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			std::string name;
+			Html::getName(name, idx);
+			
+			if (!name.empty()) {
+				String* strObj = ctx->allocateObject<String>();
+				
+				if (strObj) {
+					strObj->assignUtf8(name.data(), name.length());
+					return strObj->createResult();
+				}
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for htmlChar(index) OR htmlChar(name).
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the 1 or 2 UTF-8 characters, or invalid if not found.
+		 **/
+		static Result		htmlCharBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty()) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			const Result& arg = args[0];
+			uint64_t code = static_cast<uint64_t>(Html::InvalidCode::Invalid);
+			
+			if (arg.type == NumericConstant::Signed || arg.type == NumericConstant::Unsigned) {
+				size_t idx = 0;
+				
+				if (arg.type == NumericConstant::Signed) {
+					if (arg.value.intVal >= 0) {
+						idx = static_cast<size_t>(arg.value.intVal);
+					}
+					else {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+				}
+				else {
+					idx = static_cast<size_t>(arg.value.uintVal);
+				}
+				
+				std::string name;
+				Html::getName(name, idx);
+				
+				if (!name.empty()) {
+					code = Html::getCode(name.c_str(), name.length());
+				}
+			}
+			else if (arg.type == NumericConstant::Object && arg.value.objectVal != nullptr) {
+				if (arg.value.objectVal->type() & BuiltInType_String) {
+					std::wstring wStr;
+					
+					// Assuming ToStringFlag_None is 0
+					if (arg.value.objectVal->toString(wStr, 0, 0)) {
+						std::string name;
+						name.reserve(wStr.length());
+						
+						for (size_t i = 0; i < wStr.length(); ++i) {
+							name.push_back(static_cast<char>(wStr[i]));
+						}
+						
+						code = Html::getCode(name.c_str(), name.length());
+					}
+				}
+			}
+			
+			if (code != static_cast<uint64_t>(Html::InvalidCode::Invalid)) {
+				std::string utf8Payload;
+				uint32_t lower = static_cast<uint32_t>(code & 0xFFFFFFFF);
+				uint32_t upper = static_cast<uint32_t>(code >> 32);
+				
+				Text::appendUtf8(utf8Payload, lower);
+				
+				if (upper != 0) {
+					Text::appendUtf8(utf8Payload, upper);
+				}
+				
+				String* strObj = ctx->allocateObject<String>();
+				
+				if (strObj) {
+					strObj->assignUtf8(utf8Payload.data(), utf8Payload.length());
+					return strObj->createResult();
+				}
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+
+		// =========================================================================
+		// String Methods
+		// =========================================================================
+
+		/**
+		 * Bridge for String.capitalize().
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the capitalized string.
+		 **/
+		static Result		capitalizeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			// Ensure you perform whatever internal RTTI check you use for BuiltInType_String here if needed.
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			String* capStr = strObj->capitalize(ctx);
+			
+			if (capStr) {
+				return capStr->createResult();
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.casefold().
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the casefolded string.
+		 **/
+		static Result		casefoldBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			try {
+				String* foldedStr = strObj->casefold(ctx);
+				if (foldedStr) {
+					return foldedStr->createResult();
+				}
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
 		}
 	};
 

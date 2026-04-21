@@ -6,7 +6,7 @@
 namespace ve {
 
 	const Unicode::UnicodeNameEntry Unicode::unicodeNames[] = {
-#ifdef _NAMED_ESCAPES
+#ifdef VE_NAMED_ESCAPES
 		{ "ABACUS", 6, 0x1F9EE },
 		{ "AC CURRENT", 10, 0x23E6 },
 		{ "ACCORDION", 9, 0x1FA97 },
@@ -43058,15 +43058,15 @@ namespace ve {
 		{ "ZNAMENNY PRIZNAK MODIFIER LEVEL-3", 33, 0x1CF43 },
 		{ "ZNAMENNY PRIZNAK MODIFIER ROG", 29, 0x1CF46 },
 		{ "ZOMBIE", 6, 0x1F9DF },
-#else	// #ifdef _NAMED_ESCAPES
+#else	// #ifdef VE_NAMED_ESCAPES
 		{ nullptr, 0, 0 }
-#endif	// #ifdef _NAMED_ESCAPES
+#endif	// #ifdef VE_NAMED_ESCAPES
 	};
 
-#ifdef _NAMED_ESCAPES
+#ifdef VE_NAMED_ESCAPES
 	const size_t Unicode::numUnicodeNames = 43051;
-#else	// #ifdef _NAMED_ESCAPES
+#else	// #ifdef VE_NAMED_ESCAPES
 	const size_t Unicode::numUnicodeNames = 0;
-#endif	// #ifdef _NAMED_ESCAPES
+#endif	// #ifdef VE_NAMED_ESCAPES
 
 }	// namespace ve

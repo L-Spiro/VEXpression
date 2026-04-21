@@ -276,148 +276,157 @@ namespace ve {
 	/** The static list of built-in functions. */
 	const FunctionDef ExecutionContext::builtInFunctions[] = {
 		// == Pow
-		{ "pow", StringId::VE_STR_POW_DESC, { { DataType::Double, "x", StringId::VE_STR_POW_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_POW_PARAM_Y } }, IntrinsicBridges::powBridge },
-		{ "powf", StringId::VE_STR_POW_DESC, { { DataType::Float, "x", StringId::VE_STR_POW_PARAM_X }, { DataType::Float, "y", StringId::VE_STR_POW_PARAM_Y } }, IntrinsicBridges::powfBridge },
+		{ "pow", StringId::Desc_Pow, { { DataType::Double, "x", StringId::Desc_MathParam_PowX }, { DataType::Double, "y", StringId::VE_STR_POW_PARAM_Y } }, IntrinsicBridges::powBridge },
+		{ "powf", StringId::Desc_Pow, { { DataType::Float, "x", StringId::Desc_MathParam_PowX }, { DataType::Float, "y", StringId::VE_STR_POW_PARAM_Y } }, IntrinsicBridges::powfBridge },
 
 		// == Trigonometry
-		{ "sin", StringId::VE_STR_SIN_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::sinBridge },
-		{ "sinf", StringId::VE_STR_SIN_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::sinfBridge },
+		{ "sin", StringId::Desc_Sin, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinBridge },
+		{ "sinf", StringId::Desc_Sin, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinfBridge },
 		
-		{ "cos", StringId::VE_STR_COS_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::cosBridge },
-		{ "cosf", StringId::VE_STR_COS_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::cosfBridge },
+		{ "cos", StringId::Desc_Cos, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::cosBridge },
+		{ "cosf", StringId::Desc_Cos, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::cosfBridge },
 		
-		{ "tan", StringId::VE_STR_TAN_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::tanBridge },
-		{ "tanf", StringId::VE_STR_TAN_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::tanfBridge },
+		{ "tan", StringId::Desc_Tan, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanBridge },
+		{ "tanf", StringId::Desc_Tan, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanfBridge },
 
 		// == Inverse Trigonometry
-		{ "asin", StringId::VE_STR_ASIN_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::asinBridge },
-		{ "asinf", StringId::VE_STR_ASIN_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::asinfBridge },
+		{ "asin", StringId::Desc_Asin, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinBridge },
+		{ "asinf", StringId::Desc_Asin, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinfBridge },
 		
-		{ "acos", StringId::VE_STR_ACOS_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::acosBridge },
-		{ "acosf", StringId::VE_STR_ACOS_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::acosfBridge },
+		{ "acos", StringId::Desc_Acos, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acosBridge },
+		{ "acosf", StringId::Desc_Acos, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acosfBridge },
 		
-		{ "atan", StringId::VE_STR_ATAN_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::atanBridge },
-		{ "atanf", StringId::VE_STR_ATAN_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::atanfBridge },
+		{ "atan", StringId::Desc_Atan, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanBridge },
+		{ "atanf", StringId::Desc_Atan, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanfBridge },
 		
-		{ "atan2", StringId::VE_STR_ATAN2_DESC, { { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y }, { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X } }, IntrinsicBridges::atan2Bridge },
-		{ "atan2f", StringId::VE_STR_ATAN2_DESC, { { DataType::Float, "y", StringId::VE_STR_MATH_PARAM_Y }, { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_X } }, IntrinsicBridges::atan2fBridge },
+		{ "atan2", StringId::Desc_Atan2, { { DataType::Double, "y", StringId::Desc_MathParam_Y }, { DataType::Double, "x", StringId::Desc_MathParam_X } }, IntrinsicBridges::atan2Bridge },
+		{ "atan2f", StringId::Desc_Atan2, { { DataType::Float, "y", StringId::Desc_MathParam_Y }, { DataType::Float, "x", StringId::Desc_MathParam_X } }, IntrinsicBridges::atan2fBridge },
 
 		// == Exponential & Logarithmic
-		{ "exp", StringId::VE_STR_EXP_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::expBridge },
-		{ "expf", StringId::VE_STR_EXP_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::expfBridge },
+		{ "exp", StringId::Desc_Exp, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expBridge },
+		{ "expf", StringId::Desc_Exp, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expfBridge },
 		
-		{ "log", StringId::VE_STR_LOG_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::logBridge },
-		{ "logf", StringId::VE_STR_LOG_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::logfBridge },
+		{ "log", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logBridge },
+		{ "logf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logfBridge },
 		
-		{ "log10", StringId::VE_STR_LOG10_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::log10Bridge },
-		{ "log10f", StringId::VE_STR_LOG10_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::log10fBridge },
+		{ "log10", StringId::Desc_Log10, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log10Bridge },
+		{ "log10f", StringId::Desc_Log10, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log10fBridge },
 
 		// == Roots
-		{ "sqrt", StringId::VE_STR_SQRT_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::sqrtBridge },
-		{ "sqrtf", StringId::VE_STR_SQRT_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::sqrtfBridge },
+		{ "sqrt", StringId::Desc_Sqrt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::sqrtBridge },
+		{ "sqrtf", StringId::Desc_Sqrt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::sqrtfBridge },
 		
-		{ "cbrt", StringId::VE_STR_CBRT_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::cbrtBridge },
-		{ "cbrtf", StringId::VE_STR_CBRT_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::cbrtfBridge },
+		{ "cbrt", StringId::Desc_Cbrt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::cbrtBridge },
+		{ "cbrtf", StringId::Desc_Cbrt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::cbrtfBridge },
 
 		// == Rounding & Absolute Value
-		{ "ceil", StringId::VE_STR_CEIL_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::ceilBridge },
-		{ "ceilf", StringId::VE_STR_CEIL_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::ceilfBridge },
+		{ "ceil", StringId::Desc_Ceil, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ceilBridge },
+		{ "ceilf", StringId::Desc_Ceil, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ceilfBridge },
 		
-		{ "floor", StringId::VE_STR_FLOOR_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::floorBridge },
-		{ "floorf", StringId::VE_STR_FLOOR_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::floorfBridge },
+		{ "floor", StringId::Desc_Floor, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::floorBridge },
+		{ "floorf", StringId::Desc_Floor, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::floorfBridge },
 		
-		{ "abs", StringId::VE_STR_ABS_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::absBridge },
-		{ "fabs", StringId::VE_STR_ABS_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::fabsBridge },
-		{ "fabsf", StringId::VE_STR_ABS_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::fabsfBridge },
+		{ "abs", StringId::Desc_Abs, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::absBridge },
+		{ "fabs", StringId::Desc_Abs, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::fabsBridge },
+		{ "fabsf", StringId::Desc_Abs, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::fabsfBridge },
 
 		// == Hyperbolics
-		{ "cosh", StringId::VE_STR_COSH_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::coshBridge },
-		{ "coshf", StringId::VE_STR_COSH_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::coshfBridge },
-		{ "sinh", StringId::VE_STR_SINH_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::sinhBridge },
-		{ "sinhf", StringId::VE_STR_SINH_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::sinhfBridge },
-		{ "tanh", StringId::VE_STR_TANH_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::tanhBridge },
-		{ "tanhf", StringId::VE_STR_TANH_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::tanhfBridge },
-		{ "acosh", StringId::VE_STR_ACOSH_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::acoshBridge },
-		{ "acoshf", StringId::VE_STR_ACOSH_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::acoshfBridge },
-		{ "asinh", StringId::VE_STR_ASINH_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::asinhBridge },
-		{ "asinhf", StringId::VE_STR_ASINH_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::asinhfBridge },
-		{ "atanh", StringId::VE_STR_ATANH_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::atanhBridge },
-		{ "atanhf", StringId::VE_STR_ATANH_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::atanhfBridge },
+		{ "cosh", StringId::Desc_CosH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::coshBridge },
+		{ "coshf", StringId::Desc_CosH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::coshfBridge },
+		{ "sinh", StringId::Desc_SinH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinhBridge },
+		{ "sinhf", StringId::Desc_SinH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinhfBridge },
+		{ "tanh", StringId::Desc_TanH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanhBridge },
+		{ "tanhf", StringId::Desc_TanH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanhfBridge },
+		{ "acosh", StringId::Desc_AcosH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acoshBridge },
+		{ "acoshf", StringId::Desc_AcosH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acoshfBridge },
+		{ "asinh", StringId::Desc_AsinH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinhBridge },
+		{ "asinhf", StringId::Desc_AsinH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinhfBridge },
+		{ "atanh", StringId::Desc_AtanH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanhBridge },
+		{ "atanhf", StringId::Desc_AtanH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanhfBridge },
 
 		// == Extended Exponents & Logs
-		{ "log2", StringId::VE_STR_LOG2_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::log2Bridge },
-		{ "log2f", StringId::VE_STR_LOG2_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::log2fBridge },
-		{ "exp2", StringId::VE_STR_EXP2_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::exp2Bridge },
-		{ "exp2f", StringId::VE_STR_EXP2_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::exp2fBridge },
-		{ "expm1", StringId::VE_STR_EXPM1_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::expm1Bridge },
-		{ "expm1f", StringId::VE_STR_EXPM1_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::expm1fBridge },
-		{ "ilogb", StringId::VE_STR_LOG_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::ilogbBridge },
-		{ "ilogbf", StringId::VE_STR_LOG_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::ilogbfBridge },
-		{ "log1p", StringId::VE_STR_LOG_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::log1pBridge },
-		{ "log1pf", StringId::VE_STR_LOG_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::log1pfBridge },
-		{ "logb", StringId::VE_STR_LOG_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::logbBridge },
-		{ "logbf", StringId::VE_STR_LOG_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::logbfBridge },
+		{ "log2", StringId::Desc_Log2, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log2Bridge },
+		{ "log2f", StringId::Desc_Log2, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log2fBridge },
+		{ "exp2", StringId::Desc_Exp2, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::exp2Bridge },
+		{ "exp2f", StringId::Desc_Exp2, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::exp2fBridge },
+		{ "expm1", StringId::Desc_ExpM1, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expm1Bridge },
+		{ "expm1f", StringId::Desc_ExpM1, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expm1fBridge },
+		{ "ilogb", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ilogbBridge },
+		{ "ilogbf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ilogbfBridge },
+		{ "log1p", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log1pBridge },
+		{ "log1pf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log1pfBridge },
+		{ "logb", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logbBridge },
+		{ "logbf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logbfBridge },
 
 		// == Misc Math
-		{ "hypot", StringId::VE_STR_HYPOT_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::hypotBridge },
-		{ "hypotf", StringId::VE_STR_HYPOT_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Float, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::hypotfBridge },
-		{ "tgamma", StringId::VE_STR_TGAMMA_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::tgammaBridge },
-		{ "tgammaf", StringId::VE_STR_TGAMMA_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::tgammafBridge },
-		{ "lgamma", StringId::VE_STR_LGAMMA_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::lgammaBridge },
-		{ "lgammaf", StringId::VE_STR_LGAMMA_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::lgammafBridge },
-		{ "trunc", StringId::VE_STR_TRUNC_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::truncBridge },
-		{ "truncf", StringId::VE_STR_TRUNC_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::truncfBridge },
-		{ "round", StringId::VE_STR_ROUND_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::roundBridge },
-		{ "roundf", StringId::VE_STR_ROUND_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::roundfBridge },
-		{ "nearbyint", StringId::VE_STR_ROUND_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::nearbyintBridge },
-		{ "nearbyintf", StringId::VE_STR_ROUND_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::nearbyintfBridge },
+		{ "hypot", StringId::Desc_Hypot, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::hypotBridge },
+		{ "hypotf", StringId::Desc_Hypot, { { DataType::Float, "x", StringId::Desc_MathParam_X }, { DataType::Float, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::hypotfBridge },
+		{ "tgamma", StringId::Desc_TGamma, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::tgammaBridge },
+		{ "tgammaf", StringId::Desc_TGamma, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::tgammafBridge },
+		{ "lgamma", StringId::Desc_LGamma, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::lgammaBridge },
+		{ "lgammaf", StringId::Desc_LGamma, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::lgammafBridge },
+		{ "trunc", StringId::Desc_Trunc, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::truncBridge },
+		{ "truncf", StringId::Desc_Trunc, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::truncfBridge },
+		{ "round", StringId::Desc_Round, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::roundBridge },
+		{ "roundf", StringId::Desc_Round, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::roundfBridge },
+		{ "nearbyint", StringId::Desc_NearbyInt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::nearbyintBridge },
+		{ "nearbyintf", StringId::Desc_NearbyInt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::nearbyintfBridge },
 
 		// == Mod / Remainder
-		{ "mod", StringId::VE_STR_FMOD_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::fmodBridge },
-		{ "fmod", StringId::VE_STR_FMOD_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::fmodBridge },
-		{ "fmodf", StringId::VE_STR_FMOD_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Float, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::fmodfBridge },
-		{ "remainder", StringId::VE_STR_FMOD_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::remainderBridge },
-		{ "remainderf", StringId::VE_STR_FMOD_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Float, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::remainderfBridge },
-		// TODO: { "remquo", StringId::VE_STR_FMOD_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y }, { DataType::Pointer, "quo", StringId::VE_STR_MATH_PARAM_PTR } }, IntrinsicBridges::remquoBridge },
+		{ "mod", StringId::Desc_Fmod, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fmodBridge },
+		{ "fmod", StringId::Desc_Fmod, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fmodBridge },
+		{ "fmodf", StringId::Desc_Fmod, { { DataType::Float, "x", StringId::Desc_MathParam_X }, { DataType::Float, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fmodfBridge },
+		{ "remainder", StringId::Desc_Remainder, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::remainderBridge },
+		{ "remainderf", StringId::Desc_Remainder, { { DataType::Float, "x", StringId::Desc_MathParam_X }, { DataType::Float, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::remainderfBridge },
+		// TODO: { "remquo", StringId::Desc_Fmod, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y }, { DataType::Pointer, "quo", StringId::VE_STR_MATH_PARAM_PTR } }, IntrinsicBridges::remquoBridge },
 		
 		// == Bounds & MADD
-		{ "nextafter", StringId::VE_STR_MAX_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::nextafterBridge },
-		{ "nextafterf", StringId::VE_STR_MAX_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Float, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::nextafterfBridge },
-		{ "nexttoward", StringId::VE_STR_MAX_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::nexttowardBridge },
-		{ "nexttowardf", StringId::VE_STR_MAX_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::nexttowardfBridge },
-		{ "dim", StringId::VE_STR_MAX_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::fdimBridge },
-		{ "fdim", StringId::VE_STR_MAX_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::fdimBridge },
-		{ "fdimf", StringId::VE_STR_MAX_DESC, { { DataType::Float, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Float, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::fdimfBridge },
-		{ "max", StringId::VE_STR_MAX_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::fmaxBridge },
-		{ "min", StringId::VE_STR_MIN_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y } }, IntrinsicBridges::fminBridge },
-		{ "madd", StringId::VE_STR_FMA_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y }, { DataType::Double, "z", StringId::VE_STR_MATH_PARAM_Z } }, IntrinsicBridges::fmaBridge },
-		{ "fma", StringId::VE_STR_FMA_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_X }, { DataType::Double, "y", StringId::VE_STR_MATH_PARAM_Y }, { DataType::Double, "z", StringId::VE_STR_MATH_PARAM_Z } }, IntrinsicBridges::fmaBridge },
+		{ "nextafter", StringId::Desc_NextAfter, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::nextafterBridge },
+		{ "nextafterf", StringId::Desc_NextAfter, { { DataType::Float, "x", StringId::Desc_MathParam_X }, { DataType::Float, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::nextafterfBridge },
+		{ "nexttoward", StringId::Desc_NextToward, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::nexttowardBridge },
+		{ "nexttowardf", StringId::Desc_NextToward, { { DataType::Float, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::nexttowardfBridge },
+		{ "dim", StringId::Desc_Fdim, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fdimBridge },
+		{ "fdim", StringId::Desc_Fdim, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fdimBridge },
+		{ "fdimf", StringId::Desc_Fdim, { { DataType::Float, "x", StringId::Desc_MathParam_X }, { DataType::Float, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fdimfBridge },
+		{ "max", StringId::Desc_Max, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fmaxBridge },
+		{ "min", StringId::Desc_Min, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fminBridge },
+		{ "madd", StringId::Desc_Fma, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y }, { DataType::Double, "z", StringId::Desc_MathParam_Z } }, IntrinsicBridges::fmaBridge },
+		{ "fma", StringId::Desc_Fma, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y }, { DataType::Double, "z", StringId::Desc_MathParam_Z } }, IntrinsicBridges::fmaBridge },
 		
 		// == Type Identification / Logic
-		{ "isnan", StringId::VE_STR_ISNAN_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::isnanBridge },
-		{ "isinf", StringId::VE_STR_ISINF_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::isinfBridge },
+		{ "isnan", StringId::Desc_IsNan, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::isnanBridge },
+		{ "isinf", StringId::Desc_IsInf, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::isinfBridge },
 
 		// == Custom Helpers
-		{ "rand", StringId::VE_STR_RAND_DESC, { }, IntrinsicBridges::randBridge },
-		{ "deg", StringId::VE_STR_DEG_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::degBridge },
-		{ "rad", StringId::VE_STR_RAD_DESC, { { DataType::Double, "x", StringId::VE_STR_MATH_PARAM_ANGLE } }, IntrinsicBridges::radBridge },
+		{ "rand", StringId::Desc_Rand, { }, IntrinsicBridges::randBridge },
+		{ "deg", StringId::Desc_Deg, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::degBridge },
+		{ "rad", StringId::Desc_Rad, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::radBridge },
 
 		// == Bit Manipulation (<bit>)
-		{ "byteswap16", StringId::VE_STR_BYTESWAP16_DESC, { { DataType::UInt16, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::byteswap16Bridge },
-		{ "byteswap32", StringId::VE_STR_BYTESWAP32_DESC, { { DataType::UInt32, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::byteswap32Bridge },
-		{ "byteswap64", StringId::VE_STR_BYTESWAP_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::byteswap64Bridge },
-		{ "byteswap", StringId::VE_STR_BYTESWAP_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::byteswap64Bridge },
-		{ "has_single_bit", StringId::VE_STR_HAS_SINGLE_BIT_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::has_single_bitBridge },
-		{ "bit_ceil", StringId::VE_STR_BIT_CEIL_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::bit_ceilBridge },
-		{ "bit_floor", StringId::VE_STR_BIT_FLOOR_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::bit_floorBridge },
-		{ "bit_width", StringId::VE_STR_BIT_WIDTH_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::bit_widthBridge },
-		{ "rotl", StringId::VE_STR_ROTL_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL }, { DataType::Int32, "s", StringId::VE_STR_BIT_PARAM_S } }, IntrinsicBridges::rotlBridge },
-		{ "rotr", StringId::VE_STR_ROTR_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL }, { DataType::Int32, "s", StringId::VE_STR_BIT_PARAM_S } }, IntrinsicBridges::rotrBridge },
-		{ "countl_zero", StringId::VE_STR_COUNTL_ZERO_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::countl_zeroBridge },
-		{ "countl_one", StringId::VE_STR_COUNTL_ONE_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::countl_oneBridge },
-		{ "countr_zero", StringId::VE_STR_COUNTR_ZERO_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::countr_zeroBridge },
-		{ "countr_one", StringId::VE_STR_COUNTR_ONE_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::countr_oneBridge },
-		{ "popcount", StringId::VE_STR_POPCOUNT_DESC, { { DataType::UInt64, "x", StringId::VE_STR_MATH_PARAM_VAL } }, IntrinsicBridges::popcountBridge },
+		{ "byteswap16", StringId::Desc_ByteSwap16, { { DataType::UInt16, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap16Bridge },
+		{ "byteswap32", StringId::Desc_ByteSwap32, { { DataType::UInt32, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap32Bridge },
+		{ "byteswap64", StringId::Desc_ByteSwap, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap64Bridge },
+		{ "byteswap", StringId::Desc_ByteSwap, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap64Bridge },
+		{ "has_single_bit", StringId::Desc_HasSingleBit, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::has_single_bitBridge },
+		{ "bit_ceil", StringId::Desc_BitCeil, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_ceilBridge },
+		{ "bit_floor", StringId::Desc_BitFloor, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_floorBridge },
+		{ "bit_width", StringId::Desc_BitWidth, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_widthBridge },
+		{ "rotl", StringId::Desc_RotL, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val }, { DataType::Int32, "s", StringId::Desc_BitParamS } }, IntrinsicBridges::rotlBridge },
+		{ "rotr", StringId::Desc_RotR, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val }, { DataType::Int32, "s", StringId::Desc_BitParamS } }, IntrinsicBridges::rotrBridge },
+		{ "countl_zero", StringId::Desc_CountLZero, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countl_zeroBridge },
+		{ "countl_one", StringId::Desc_CountLOne, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countl_oneBridge },
+		{ "countr_zero", StringId::Desc_CountRZero, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countr_zeroBridge },
+		{ "countr_one", StringId::Desc_CountROne, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countr_oneBridge },
+		{ "popcount", StringId::Desc_PopCount, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::popcountBridge },
+
+		// == HTML
+		{ "htmlCount", StringId::Desc_HtmlCount, {}, IntrinsicBridges::htmlCountBridge },
+		{ "htmlName", StringId::Desc_HtmlName, { { DataType::Int64, "index", StringId::Desc_HtmlName_Index } }, IntrinsicBridges::htmlNameBridge },
+		{ "htmlChar", StringId::Desc_HtmlChar, { { DataType::Int64, "indexOrName", StringId::Desc_HtmlChar_Arg } }, IntrinsicBridges::htmlCharBridge },
+
+		// == Strings
+		{ "capitalize", StringId::Desc_String_Capitalize, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::capitalizeBridge },
+		{ "casefold", StringId::Desc_String_Casefold, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::casefoldBridge },
 	};
 
 	// == Functions.
@@ -698,6 +707,41 @@ namespace ve {
 			case DataType::Double : {
 				out.type = NumericConstant::Floating;
 				out.value.doubleVal = getAsDouble();
+				break;
+			}
+			case DataType::Object : {
+				if (rawVal.type == NumericConstant::Object) {
+					// out can just be the given input directly.
+					out = rawVal;
+				}
+				else {
+					// We don’t know what type of object to make, so nothing to do but error.
+					out.type = NumericConstant::Invalid;
+					out.value.uintVal = 0;
+				}
+				break;
+			}
+			case DataType::String : {
+				if (rawVal.type == NumericConstant::Object && rawVal.value.objectVal != nullptr && (rawVal.value.objectVal->type() & BuiltInType_String)) {
+					out = rawVal;
+				}
+				else {
+					ExecutionContext* nonConstCtx = const_cast<ExecutionContext*>(this);
+					String* str = nonConstCtx->allocateObject<String>();
+        
+					if (str && str->initializeFrom(rawVal)) {
+						out = str->createResult();
+					}
+					else {
+						nonConstCtx->deallocateObject(str);
+						out.type = NumericConstant::Invalid;
+						out.value.uintVal = 0;
+					}
+				}
+				break;
+			}
+			case DataType::Any : {
+				out = rawVal;
 				break;
 			}
 		}

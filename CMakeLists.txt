@@ -26,11 +26,11 @@ foreach(config ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${config_upper} ${CMAKE_BINARY_DIR}/bin/${ARCH_DIR}/${config})
 endforeach()
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ### Global Compile Definitions
-add_compile_definitions(_USE_MATH_DEFINES _HTML_ESCAPES _NAMED_ESCAPES)
+add_compile_definitions(_USE_MATH_DEFINES VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_SIMPLE_STRINGS)
 
 ### Locate the Java Runtime.
 find_package(Java 11 COMPONENTS Runtime REQUIRED)
@@ -48,7 +48,7 @@ include(FetchContent)
 # Turn off tests to save compile time.
 set(ANTLR_BUILD_CPP_TESTS OFF CACHE BOOL "" FORCE)
 # Force a STATIC library. Prevent "DLL Hell" on Windows.
-set(WITH_STATIC_CRT OFF CACHE BOOL "" FORCE) 
+set(WITH_STATIC_CRT ON CACHE BOOL "" FORCE) 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 ### Tell CMake where to get the code (Bypassing Git)
@@ -71,6 +71,16 @@ if (MSVC)
     if (TARGET antlr4_shared)
         target_compile_options(antlr4_shared PRIVATE /FI"chrono")
     endif()
+endif()
+
+### MSVC Runtime Library Selection (/MT for Release, /MTd for Debug)
+if(MSVC)
+    # This evaluates to "MultiThreadedDebug" for Debug builds 
+    # and "MultiThreaded" for all other configurations.
+    #set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+	#set_property(TARGET VEXpression PROPERTY
+	#	MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+	#)
 endif()
 
 ### Define the Expected Outputs from ANTLR.
@@ -143,7 +153,6 @@ set(APP_HEADERS
     src/Engine/Errors.h
     src/Engine/ExecutionContext.h
 	src/Engine/FunctionDef.h
-	src/Engine/HtmlIntrinsics.h
 	src/Engine/IntrinsicBridges.h
 	src/Engine/Object.h
 	src/Engine/Result.h
@@ -170,6 +179,13 @@ source_group("Source Files\\Generated" FILES ${GENERATED_SOURCES})
 ### Create the Executable.
 add_executable(VEXpression ${APP_SOURCES} ${APP_HEADERS} ${GENERATED_SOURCES} ${GENERATED_HEADERS})
 
+### Apply MSVC Runtime Settings (Must be after add_executable)
+if(MSVC)
+    set_property(TARGET VEXpression PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    )
+endif()
+
 ### Include Directories.
 target_include_directories(VEXpression PRIVATE
     src
@@ -177,7 +193,7 @@ target_include_directories(VEXpression PRIVATE
 )
 
 ### Strictly Enforce C++23 on the Executable.
-target_compile_features(VEXpression PRIVATE cxx_std_23)
+target_compile_features(VEXpression PRIVATE cxx_std_20)
 
 ### Link the ANTLR Runtime.
 target_link_libraries(VEXpression PRIVATE antlr4_static)

@@ -2,7 +2,9 @@
 
 #include <cmath>
 #include <numbers>
+#include <numeric>
 #include <optional>
+#include <stdexcept>
 #include <vector>
 
 namespace ve {
@@ -430,6 +432,69 @@ namespace ve {
 			val = ((val >> 16) & 0x0000FFFF0000FFFFULL) | ((val & 0x0000FFFF0000FFFFULL) << 16);
 			val = ((val >> 32) & 0x00000000FFFFFFFFULL) | ((val & 0x00000000FFFFFFFFULL) << 32);
 			return val;
+		}
+
+
+		// ===============================
+		// Byte Swapping Utilities
+		// ===============================
+		/**
+		 * Swaps the byte order of the given unsigned integral value.
+		 * Provides a cross-platform fallback for std::byteswap (C++23) in C++20.
+		 * 
+		 * \param value		The unsigned integral value whose bytes are to be swapped.
+		 * \return			Returns the byte-swapped result.
+		 **/
+		template <typename T>
+		requires std::is_integral_v<T> && std::is_unsigned_v<T>
+		static constexpr inline T	byteswap(T value) noexcept {
+			if constexpr (sizeof(T) == 1) {
+				return value;
+			} 
+			else if constexpr (sizeof(T) == 2) {
+#if defined(_MSC_VER) && !defined(__clang__)
+				return _byteswap_ushort(value);
+#elif defined(__GNUC__) || defined(__clang__)
+				return __builtin_bswap16(value);
+#else
+				return static_cast<T>((value >> 8) | (value << 8));
+#endif
+			} 
+			else if constexpr (sizeof(T) == 4) {
+#if defined(_MSC_VER) && !defined(__clang__)
+				return _byteswap_ulong(value);
+#elif defined(__GNUC__) || defined(__clang__)
+				return __builtin_bswap32(value);
+#else
+				return static_cast<T>(
+					((value & 0xFF000000u) >> 24) |
+					((value & 0x00FF0000u) >>  8) |
+					((value & 0x0000FF00u) <<  8) |
+					((value & 0x000000FFu) << 24)
+				);
+#endif
+			} 
+			else if constexpr (sizeof(T) == 8) {
+#if defined(_MSC_VER) && !defined(__clang__)
+				return _byteswap_uint64(value);
+#elif defined(__GNUC__) || defined(__clang__)
+				return __builtin_bswap64(value);
+#else
+				return static_cast<T>(
+					((value & 0xFF00000000000000ull) >> 56) |
+					((value & 0x00FF000000000000ull) >> 40) |
+					((value & 0x0000FF0000000000ull) >> 24) |
+					((value & 0x000000FF00000000ull) >>  8) |
+					((value & 0x00000000FF000000ull) <<  8) |
+					((value & 0x0000000000FF0000ull) << 24) |
+					((value & 0x000000000000FF00ull) << 40) |
+					((value & 0x00000000000000FFull) << 56)
+				);
+#endif
+			} 
+			else {
+				return value;
+			}
 		}
 
 

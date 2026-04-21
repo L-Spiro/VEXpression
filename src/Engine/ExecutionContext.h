@@ -262,7 +262,7 @@ namespace ve {
 		std::map<std::string, FunctionDef>
 										registeredFunctions;
 		/** Tracked objects managed by the execution context. **/
-		std::vector<std::unique_ptr<Object>>
+		mutable std::vector<std::unique_ptr<Object>>
 										objects;
 		/** The arena index of the root AST node to execute. **/
 		size_t							rootIndex = 0;

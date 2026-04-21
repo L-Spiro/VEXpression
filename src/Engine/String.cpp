@@ -12,7 +12,7 @@ namespace ve {
 	 **/
 	Result String::operator+(const Result& rhs) const {
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
-			if (rhs.value.objectVal->type() == BuiltInType_String) {
+			if (rhs.value.objectVal->type() & BuiltInType_String) {
 				const String* rhsString = static_cast<const String*>(rhs.value.objectVal);
 
 				Width newWidth = std::max(bufferWidth, rhsString->bufferWidth);
@@ -77,6 +77,7 @@ namespace ve {
 	// == Functions.
 	/**
 	 * Assigns a UTF-8 string to this object, automatically selecting the optimal width.
+	 * Must be called within a try/catch block.
 	 *
 	 * \param str			The UTF-8 string to copy.
 	 * \param len			The length of the string in bytes.
@@ -422,6 +423,27 @@ namespace ve {
 		}
 			
 		return false;
+	}
+
+	/**
+	 * Creates a casefolded copy of the string.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx	The execution context for allocation.
+	 * \return		Returns a new String object.
+	 **/
+	String* String::casefold(ExecutionContext* ctx) const {
+		std::string foldedStr = Text::casefoldUtf8(this->getUtf8());
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(foldedStr.data(), foldedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
 	}
 
 	/**

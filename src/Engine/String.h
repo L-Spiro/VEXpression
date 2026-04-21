@@ -202,7 +202,7 @@ namespace ve {
 		 **/
 		virtual Result						operator==(const Result& rhs) const override {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
-				if (rhs.value.objectVal->type() == BuiltInType_String) {
+				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					const String* rhsString = static_cast<const String*>(rhs.value.objectVal);
 
 					// Must be the same length.
@@ -250,7 +250,7 @@ namespace ve {
 		 **/
 		virtual Result						operator<(const Result& rhs) const override {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
-				if (rhs.value.objectVal->type() == BuiltInType_String) {
+				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					int cmp = compareString(static_cast<const String*>(rhs.value.objectVal));
 					return Result{ .type = NumericConstant::Signed, .value = { .intVal = (cmp < 0) ? 1 : 0 } };
 				}
@@ -268,7 +268,7 @@ namespace ve {
 		 **/
 		virtual Result						operator>(const Result& rhs) const override {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
-				if (rhs.value.objectVal->type() == BuiltInType_String) {
+				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					int cmp = compareString(static_cast<const String*>(rhs.value.objectVal));
 					return Result{ .type = NumericConstant::Signed, .value = { .intVal = (cmp > 0) ? 1 : 0 } };
 				}
@@ -286,7 +286,7 @@ namespace ve {
 		 **/
 		virtual Result						operator<=(const Result& rhs) const override {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
-				if (rhs.value.objectVal->type() == BuiltInType_String) {
+				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					int cmp = compareString(static_cast<const String*>(rhs.value.objectVal));
 					return Result{ .type = NumericConstant::Signed, .value = { .intVal = (cmp <= 0) ? 1 : 0 } };
 				}
@@ -304,7 +304,7 @@ namespace ve {
 		 **/
 		virtual Result						operator>=(const Result& rhs) const override {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
-				if (rhs.value.objectVal->type() == BuiltInType_String) {
+				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					int cmp = compareString(static_cast<const String*>(rhs.value.objectVal));
 					return Result{ .type = NumericConstant::Signed, .value = { .intVal = (cmp >= 0) ? 1 : 0 } };
 				}
@@ -457,7 +457,7 @@ namespace ve {
 		 **/
 		virtual bool						operator+=(const Result& rhs) override {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
-				if (rhs.value.objectVal->type() == BuiltInType_String) {
+				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					const String* rhsString = static_cast<const String*>(rhs.value.objectVal);
 
 					Width newWidth = std::max(bufferWidth, rhsString->bufferWidth);
@@ -637,6 +637,7 @@ namespace ve {
 		// == Functions.
 		/**
 		 * Assigns a UTF-8 string to this object, automatically selecting the optimal width.
+		 * Must be called within a try/catch block.
 		 *
 		 * \param str			The UTF-8 string to copy.
 		 * \param len			The length of the string in bytes.
@@ -726,6 +727,52 @@ namespace ve {
 		 * \return				Returns true if successful, false otherwise.
 		 **/
 		virtual bool						initializeFrom(const Result& obj) override;
+
+		/**
+		 * Converts the internal string representation into a UTF-8 encoded standard string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return							Returns a std::string containing the UTF-8 encoded characters.
+		 **/
+		std::string							getUtf8() const {
+			std::string result;
+			result.reserve(charCount);
+			
+			for (size_t i = 0; i < charCount; ++i) {
+				Text::appendUtf8(result, getCodePoint(i));
+			}
+			
+			return result;
+		}
+
+
+		// == API Functions.
+		/**
+		 * Creates a new string with the first character capitalized and the rest lowercased.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx	The execution context for allocation.
+		 * \return		Returns a new String object with the capitalized content, or nullptr on allocation failure.
+		 **/
+		String*								capitalize(ExecutionContext* ctx) const {
+			std::string capStr = Text::capitalizeUtf8(this->getUtf8());
+		
+			String* newStr = ctx->allocateObject<String>();
+			if (newStr) {
+				newStr->assignUtf8(capStr.data(), capStr.length());
+			}
+		
+			return newStr;
+		}
+
+		/**
+		 * Creates a casefolded copy of the string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx	The execution context for allocation.
+		 * \return		Returns a new String object.
+		 **/
+		String*								casefold(ExecutionContext* ctx) const;
 
 	protected :
 		// == Members.

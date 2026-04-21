@@ -21,7 +21,8 @@ namespace ve {
 		Invalid_Argument_Count,
 
 		// == Runtime Errors.
-		Unknown_Numeric_Type
+		Unknown_Numeric_Type,
+		Object_Initialization_Failed
 	};
 
 }	// namespace ve

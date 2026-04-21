@@ -37,10 +37,8 @@ namespace ve {
 				evaluatedArgs.push_back(context.castArgument(rawResult, expectedType));
 			}
 
-			return functionDefinition.callback(evaluatedArgs);
+			return functionDefinition.callback(&context, evaluatedArgs);
 		}
-
-	protected :
 
 	private :
 		// == Members.

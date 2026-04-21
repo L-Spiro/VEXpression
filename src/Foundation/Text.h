@@ -1028,6 +1028,135 @@ namespace ve {
 			return str;
 		}
 
+		/**
+		 * Converts a single Unicode code point to uppercase.
+		 *
+		 * \param cp	The Unicode code point.
+		 * \return		Returns the uppercase code point.
+		 **/
+		static inline uint32_t			toUpper(uint32_t cp) {
+			if (cp <= 0x10FFFF) {
+				return static_cast<uint32_t>(std::towupper(static_cast<wint_t>(cp)));
+			}
+			return cp;
+		}
+
+		/**
+		 * Converts a single Unicode code point to lowercase.
+		 *
+		 * \param cp	The Unicode code point.
+		 * \return		Returns the lowercase code point.
+		 **/
+		static inline uint32_t			toLower(uint32_t cp) {
+			if (cp <= 0x10FFFF) {
+				return static_cast<uint32_t>(std::towlower(static_cast<wint_t>(cp)));
+			}
+			return cp;
+		}
+
+		/**
+		 * Capitalizes a UTF-8 string (first character uppercase, the rest lowercase).
+		 * Must be called within a try/catch block.
+		 *
+		 * \param input		The input UTF-8 string view.
+		 * \return			Returns the capitalized UTF-8 string.
+		 **/
+		static inline std::string		capitalizeUtf8(std::string_view input) {
+			std::string result;
+			result.reserve(input.length());
+			
+			bool first = true;
+			size_t i = 0;
+			
+			while (i < input.length()) {
+				unsigned char c = static_cast<unsigned char>(input[i]);
+				size_t seqLen = 1;
+				
+				if ((c & 0xE0) == 0xC0) { seqLen = 2; }
+				else if ((c & 0xF0) == 0xE0) { seqLen = 3; }
+				else if ((c & 0xF8) == 0xF0) { seqLen = 4; }
+				
+				if (i + seqLen > input.length()) {
+					// Malformed trailing sequence; append raw and break.
+					result.append(input.data() + i, input.length() - i);
+					break;
+				}
+				
+				uint32_t cp = 0;
+				if (seqLen == 1) {
+					cp = c;
+				}
+				else if (seqLen == 2) {
+					cp = ((c & 0x1F) << 6) | (input[i + 1] & 0x3F);
+				}
+				else if (seqLen == 3) {
+					cp = ((c & 0x0F) << 12) | ((input[i + 1] & 0x3F) << 6) | (input[i + 2] & 0x3F);
+				}
+				else if (seqLen == 4) {
+					cp = ((c & 0x07) << 18) | ((input[i + 1] & 0x3F) << 12) | ((input[i + 2] & 0x3F) << 6) | (input[i + 3] & 0x3F);
+				}
+				
+				if (first) {
+					cp = toUpper(cp);
+					first = false;
+				}
+				else {
+					cp = toLower(cp);
+				}
+				
+				appendUtf8(result, cp);
+				i += seqLen;
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Casefolds a UTF-8 string for caseless comparison.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param input		The input UTF-8 string view.
+		 * \return			Returns the casefolded UTF-8 string.
+		 **/
+		static inline std::string		casefoldUtf8(std::string_view input) {
+			std::string result;
+			result.reserve(input.length());
+			
+			size_t i = 0;
+			while (i < input.length()) {
+				unsigned char c = static_cast<unsigned char>(input[i]);
+				size_t seqLen = 1;
+				
+				if ((c & 0xE0) == 0xC0) { seqLen = 2; }
+				else if ((c & 0xF0) == 0xE0) { seqLen = 3; }
+				else if ((c & 0xF8) == 0xF0) { seqLen = 4; }
+				
+				if (i + seqLen > input.length()) {
+					result.append(input.data() + i, input.length() - i);
+					break;
+				}
+				
+				uint32_t cp = 0;
+				if (seqLen == 1) { cp = c; }
+				else if (seqLen == 2) { cp = ((c & 0x1F) << 6) | (input[i + 1] & 0x3F); }
+				else if (seqLen == 3) { cp = ((c & 0x0F) << 12) | ((input[i + 1] & 0x3F) << 6) | (input[i + 2] & 0x3F); }
+				else if (seqLen == 4) { cp = ((c & 0x07) << 18) | ((input[i + 1] & 0x3F) << 12) | ((input[i + 2] & 0x3F) << 6) | (input[i + 3] & 0x3F); }
+				
+				// Standard Unicode casefolding rule: German 'ß' becomes 'ss'.
+				if (cp == 0x00DF) {
+					result.push_back('s');
+					result.push_back('s');
+				}
+				else {
+					appendUtf8(result, toLower(cp));
+				}
+				
+				i += seqLen;
+			}
+			
+			return result;
+		}
+
 
 		// ===============================
 		// Search, Replace & Validation
@@ -2074,9 +2203,9 @@ namespace ve {
 			if (escapeFound) {
 				(*escapeFound) = false;
 			}
-#if !defined(_HTML_ESCAPES)
+#if !defined(VE_HTML_ESCAPES)
 			includeHtml = false;
-#endif	// #if !defined(_HTML_ESCAPES)
+#endif	// #if !defined(VE_HTML_ESCAPES)
 			
 			if (!len) {
 				charsConsumed = 0;

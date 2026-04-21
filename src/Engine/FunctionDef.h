@@ -7,6 +7,8 @@
 
 namespace ve {
 
+	class							ExecutionContext;
+
 	/**
 	 * Represents exact C-style data types for strict parameter casting and truncation.
 	 **/
@@ -21,7 +23,10 @@ namespace ve {
 		UInt64,
 		Float,
 		Double,
-		Pointer
+		Pointer,
+		Object,
+		String,
+		Any
 	};
 
 	/**
@@ -36,7 +41,7 @@ namespace ve {
 	/**
 	 * Callback signature for built-in intrinsic functions.
 	 **/
-	using IntrinsicCallback = Result (*)(const std::vector<Result>& args);
+	using IntrinsicCallback = Result (*)(ExecutionContext* ctx, const std::vector<Result>& args);
 
 	/**
 	 * Complete definition of a registered function, including documentation metadata.
