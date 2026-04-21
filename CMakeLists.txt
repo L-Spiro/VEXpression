@@ -30,7 +30,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ### Global Compile Definitions
-add_compile_definitions(_USE_MATH_DEFINES)
+add_compile_definitions(_USE_MATH_DEFINES _HTML_ESCAPES _NAMED_ESCAPES)
 
 ### Locate the Java Runtime.
 find_package(Java 11 COMPONENTS Runtime REQUIRED)
@@ -138,9 +138,12 @@ set(APP_HEADERS
 	src/Foundation/System.h
 	src/Foundation/Text.h
 	src/Foundation/TextPolicy.h
+	src/Foundation/Unicode.h
+	src/Foundation/UnicodeData.inl
     src/Engine/Errors.h
     src/Engine/ExecutionContext.h
 	src/Engine/FunctionDef.h
+	src/Engine/HtmlIntrinsics.h
 	src/Engine/IntrinsicBridges.h
 	src/Engine/Object.h
 	src/Engine/Result.h
@@ -154,6 +157,7 @@ set(APP_SOURCES
 	src/Engine/String.cpp
 	src/Foundation/Html.cpp
 	src/Foundation/Text.cpp
+	src/Foundation/Unicode.cpp
     src/main.cpp
 )
 

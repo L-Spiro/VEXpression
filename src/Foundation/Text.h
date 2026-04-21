@@ -2,7 +2,9 @@
 
 #include "../Engine/Result.h"
 #include "Character.h"
+#include "Html.h"
 #include "TextPolicy.h"
+#include "Unicode.h"
 
 #include <cstdint>
 #include <cwctype>
@@ -1666,6 +1668,35 @@ namespace ve {
 		}
 
 		/**
+		 * Counts the number of alphanumeric or underscore characters from a starting position.
+		 *
+		 * \param val			Pointer to the input buffer.
+		 * \param len			Total length of the buffer.
+		 * \param cntFromPos	Index from which to start counting.
+		 * \return				Number of consecutive alphanumeric or underscore characters.
+		 **/
+		template <typename CharT>
+		static inline size_t			countAlphanumeric(const CharT* val, size_t len, size_t cntFromPos) {
+			size_t ret = 0;
+			
+			for (; cntFromPos < len; ++cntFromPos) {
+				char c = static_cast<char>(val[cntFromPos]);
+				
+				if ((c >= 'a' && c <= 'z') ||
+					(c >= 'A' && c <= 'Z') ||
+					(c >= '0' && c <= '9') ||
+					c == '_') {
+					++ret;
+				}
+				else {
+					break;
+				}
+			}
+			
+			return ret;
+		}
+
+		/**
 		 * Parses a hexadecimal escape sequence (\xNN).
 		 *
 		 * \param val					Pointer to the characters following the backslash.
@@ -1878,7 +1909,158 @@ namespace ve {
 		}
 
 		/**
+		 * Converts an HTML entity name or numeric escape sequence to a Unicode code point.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param val			Pointer to the input buffer (assumed to be pointing immediately after the '&').
+		 * \param len			Remaining length of the buffer.
+		 * \param charsConsumed	Reference to a size_t that will contain the number of characters consumed.
+		 * \return				Returns the Unicode code point (or two packed code points), or 0 if invalid.
+		 **/
+		template <typename CharT>
+		static inline uint64_t			escapeHtml(const CharT* val, size_t len, size_t& charsConsumed) {
+			const CharT* orig = val;
+			charsConsumed = 0;
+			
+			if (len) {
+				if ((*val) == static_cast<CharT>('#')) {
+					++val;
+					--len;
+					
+					if (len && (*val) == static_cast<CharT>('x')) {
+						++val;
+						--len;
+						
+						uint32_t ret = 0;
+						bool foundOne = false;
+						
+						for (size_t i = 0; i < len; ++i) {
+							char cTemp = static_cast<char>(val[i]);
+							
+							if (!Character::validHex(cTemp)) {
+								if (!foundOne) {
+									return 0;
+								}
+								
+								charsConsumed = static_cast<size_t>(val - orig) + i;
+								
+								if (cTemp == ';') {
+									++charsConsumed;
+								}
+								
+								return static_cast<uint64_t>(ret);
+							}
+							
+							ret <<= 4;
+							ret |= hexToUint32(cTemp);
+							foundOne = true;
+						}
+					}
+					else {
+						uint32_t ret = 0;
+						bool foundOne = false;
+						
+						for (size_t i = 0; i < len; ++i) {
+							char cTemp = static_cast<char>(val[i]);
+							
+							if (!Character::isDigit(cTemp)) {
+								if (!foundOne) {
+									return 0;
+								}
+								
+								charsConsumed = static_cast<size_t>(val - orig) + i;
+								
+								if (cTemp == ';') {
+									++charsConsumed;
+								}
+								
+								return static_cast<uint64_t>(ret);
+							}
+							
+							ret *= 10;
+							ret |= static_cast<uint32_t>(cTemp - '0');
+							foundOne = true;
+						}
+					}
+				}
+
+				size_t count = countAlphanumeric(val, len, 0);
+				
+				if (count > 0) {
+					std::string nameStr;
+					nameStr.reserve(count);
+					
+					for (size_t i = 0; i < count; ++i) {
+						nameStr.push_back(static_cast<char>(val[i]));
+					}
+					
+					uint64_t code = Html::getCode(nameStr.c_str(), count);
+					
+					if (code != static_cast<uint64_t>(Html::InvalidCode::Invalid)) {
+						charsConsumed = static_cast<size_t>(val - orig) + count;
+						
+						if (len > count && val[count] == static_cast<CharT>(';')) {
+							++charsConsumed;
+						}
+						
+						return code;
+					}
+				}
+			}
+			
+			return 0;
+		}
+
+		/**
+		 * Parses a named Unicode escape sequence (\N{NAME}).
+		 * Must be called within a try/catch block.
+		 *
+		 * \param val					Pointer to the characters following the backslash (starting at 'N').
+		 * \param len					The remaining length of the string.
+		 * \param charsConsumed			Reference to a size_t that will contain the number of characters consumed.
+		 * \return						Returns the parsed codepoint, or 0 if invalid.
+		 **/
+		template <typename CharT>
+		static inline uint32_t			escapeNamedUnicode(const CharT* val, size_t len, size_t& charsConsumed) {
+			const CharT* orig = val;
+			charsConsumed = 0;
+			const CharT* start = nullptr;
+			size_t nameLen = 0;
+			
+			for (size_t i = 0; i < len; ++i) {
+				if (val[i] == static_cast<CharT>('{')) {
+					start = &val[i + 1];
+				}
+				else if (val[i] == static_cast<CharT>('}')) {
+					if (start) {
+						nameLen = static_cast<size_t>(&val[i] - start);
+					}
+					break;
+				}
+			}
+			
+			if (start && nameLen > 0) {
+				std::string nameStr;
+				nameStr.reserve(nameLen);
+				
+				for (size_t i = 0; i < nameLen; ++i) {
+					nameStr.push_back(static_cast<char>(start[i]));
+				}
+				
+				uint32_t code = Unicode::getCodeByName(nameStr.c_str(), nameLen);
+				
+				if (code != UTF_INVALID) {
+					// We ate however many characters from the start plus the characters in the actual name plus the final }.
+					charsConsumed = nameLen + static_cast<size_t>(start - orig) + 1;
+					return code;
+				}
+			}
+			
+			return 0;
+		}
+		/**
 		 * Resolves an escape sequence starting with a backslash (or an ampersand for HTML if supported).
+		 * Must be called within a try/catch block.
 		 *
 		 * \param input					Pointer to the escape sequence (pointing to the backslash).
 		 * \param len					The remaining length of the string.
@@ -1888,10 +2070,13 @@ namespace ve {
 		 * \return						Returns the resolved Unicode codepoint.
 		 **/
 		template <typename CharT>
-		static inline uint32_t			resolveEscape(const CharT* input, size_t len, size_t& charsConsumed, bool includeHtml = false, bool* escapeFound = nullptr) {
+		static inline uint64_t			resolveEscape(const CharT* input, size_t len, size_t& charsConsumed, bool includeHtml = false, bool* escapeFound = nullptr) {
 			if (escapeFound) {
 				(*escapeFound) = false;
 			}
+#if !defined(_HTML_ESCAPES)
+			includeHtml = false;
+#endif	// #if !defined(_HTML_ESCAPES)
 			
 			if (!len) {
 				charsConsumed = 0;
@@ -1905,10 +2090,21 @@ namespace ve {
 
 			// There are at least 2 characters so an escape is possible.
 			if (len >= 2 && (*input) == static_cast<CharT>('&') && includeHtml) {
-				// TODO: Implement HTML entity escaping.
+				size_t sLen = 0;
+				uint64_t temp = escapeHtml(input + 1, len - 1, sLen);
+				
+				if (sLen) {
+					charsConsumed = sLen + 1;
+					
+					if (escapeFound) {
+						(*escapeFound) = true;
+					}
+					
+					return temp;
+				}
 			}
 
-			if (includeHtml || (*input) != static_cast<CharT>('\\')) {
+			if ((*input) != static_cast<CharT>('\\')) {
 				charsConsumed = 1;
 				return static_cast<uint32_t>(*input);	// Not an escape.
 			}
@@ -1988,9 +2184,20 @@ namespace ve {
 					return temp;
 				}
 				case 'N' : {
-					// TODO: Implement named Unicode escapes.
-					charsConsumed = 1;
-					return static_cast<uint32_t>(*input);
+					uint32_t temp = escapeNamedUnicode(&input[1], len - 1, charsConsumed);
+					
+					if (!charsConsumed) {
+						charsConsumed = 1;
+						return static_cast<uint64_t>(*input);
+					}
+					else {
+						++charsConsumed;
+						if (escapeFound) {
+							(*escapeFound) = true;
+						}
+					}
+					
+					return static_cast<uint64_t>(temp);
 				}
 				default : {
 					if (input[1] >= static_cast<CharT>('0') && input[1] <= static_cast<CharT>('7')) {
@@ -2071,13 +2278,22 @@ namespace ve {
 			result.reserve(payload.size());
 
 			for (size_t i = 0; i < payload.size(); ) {
-				if (payload[i] == '\\') {
+				// To fully enable HTML escapes in standard strings, set the 4th argument to true.
+				if (payload[i] == '\\' || payload[i] == '&') {
 					size_t charsConsumed = 0;
 					bool escapeFound = false;
-					uint32_t cp = resolveEscape(&payload[i], payload.size() - i, charsConsumed, false, &escapeFound);
+					uint64_t cp = resolveEscape(&payload[i], payload.size() - i, charsConsumed, true, &escapeFound);
 					
-					if (charsConsumed > 0) {
-						appendUtf8(result, cp);
+					if (charsConsumed > 0 && escapeFound) {
+						uint32_t lower = static_cast<uint32_t>(cp & 0xFFFFFFFF);
+						uint32_t upper = static_cast<uint32_t>(cp >> 32);
+						
+						appendUtf8(result, lower);
+						
+						if (upper != 0) {
+							appendUtf8(result, upper);
+						}
+						
 						i += charsConsumed;
 					}
 					else {

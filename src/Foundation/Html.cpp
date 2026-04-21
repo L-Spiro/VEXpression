@@ -9,6 +9,7 @@ namespace ve {
 	// ===============================
 	/** The internal static array containing all HTML entity mappings. **/
 	const Html::EntityEntry Html::entities[] = {
+#ifdef _HTML_ESCAPES
 		{ "aacute", 6, 1, { 0xE1, } },
 		{ "Aacute", 6, 1, { 0xC1, } },
 		{ "abreve", 6, 1, { 0x103, } },
@@ -2134,6 +2135,9 @@ namespace ve {
 		{ "Zscr", 4, 1, { 0x1D4B5, } },
 		{ "zwj", 3, 1, { 0x200D, } },
 		{ "zwnj", 4, 1, { 0x200C, } },
+#else	// #ifdef _HTML_ESCAPES
+		{ "", 0, 0, { } },
+#endif	// #ifdef _HTML_ESCAPES
 	};
 
 
@@ -2147,7 +2151,11 @@ namespace ve {
 	 * \return				Returns the number of entries available via getName() / getNameLength().
 	 **/
 	size_t Html::totalNames() {
+#ifdef _HTML_ESCAPES
 		return std::size(Html::entities);
+#else
+		return 0;
+#endif	// #ifdef _HTML_ESCAPES
 	}
 
 	/**
@@ -2161,13 +2169,16 @@ namespace ve {
 	 * \note				If index is out of range, the returned string is cleared to an empty value.
 	 **/
 	std::string& Html::getName(std::string& ret, size_t index) {
+#ifdef _HTML_ESCAPES
 		if (index < std::size(Html::entities)) {
 			ret.assign(entities[index].name, entities[index].length);
 		}
 		else {
 			ret.clear();
 		}
-		
+#else
+		ret.clear();
+#endif	// #ifdef _HTML_ESCAPES
 		return ret;
 	}
 
@@ -2182,13 +2193,14 @@ namespace ve {
 	 * \note				If index is out of range, the returned string is cleared to an empty value.
 	 **/
 	std::wstring& Html::getName(std::wstring& ret, size_t index) {
+#ifdef _HTML_ESCAPES
 		if (index < std::size(Html::entities)) {
 			const char* narrowName = entities[index].name;
 			size_t len = entities[index].length;
 			
 			ret.resize(len);
 			
-			// HTML entity names are strictly ASCII, allowing a fast cast.
+			// HTML entity names are strictly ASCII.
 			for (size_t i = 0; i < len; ++i) {
 				ret[i] = static_cast<wchar_t>(narrowName[i]);
 			}
@@ -2196,7 +2208,9 @@ namespace ve {
 		else {
 			ret.clear();
 		}
-		
+#else
+		ret.clear();
+#endif	// #ifdef _HTML_ESCAPES
 		return ret;
 	}
 
@@ -2211,6 +2225,7 @@ namespace ve {
 	 *						If the entity resolves to two code points, the second code point is shifted into the upper 32 bits.
 	 **/
 	uint64_t Html::getCode(const char* name, size_t len) {
+#ifdef _HTML_ESCAPES
 		for (size_t i = 0; i < std::size(Html::entities); ++i) {
 			if (entities[i].length == len && std::strncmp(entities[i].name, name, len) == 0) {
 				if (entities[i].totalVals == 1) {
@@ -2223,7 +2238,7 @@ namespace ve {
 				}
 			}
 		}
-		
+#endif	// #ifdef _HTML_ESCAPES
 		return static_cast<uint64_t>(InvalidCode::Invalid);
 	}
 
