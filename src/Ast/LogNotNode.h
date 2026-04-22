@@ -5,8 +5,6 @@
 #include "../Engine/Result.h"
 #include "AstNode.h"
 
-#include <cassert>
-
 namespace ve {
 
 	/**

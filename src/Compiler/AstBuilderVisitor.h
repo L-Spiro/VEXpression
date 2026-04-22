@@ -12,9 +12,12 @@
 #include "../Ast/ConstantNode.h"
 #include "../Ast/DivNode.h"
 #include "../Ast/EqNode.h"
+#include "../Ast/ForNode.h"
+#include "../Ast/ForRangeNode.h"
 #include "../Ast/FunctionCallNode.h"
 #include "../Ast/GeNode.h"
 #include "../Ast/GtNode.h"
+#include "../Ast/IfNode.h"
 #include "../Ast/LeNode.h"
 #include "../Ast/LogAndNode.h"
 #include "../Ast/LogNotNode.h"
@@ -247,18 +250,17 @@ namespace ve {
 
 			std::string funcName = idCtx->IDENTIFIER()->getText();
 
-			FunctionDef funcDef;
-			if (!context.getFunction(funcName, funcDef)) {
-				throw ErrorCode::Unknown_Function;
-			}
-
 			std::vector<size_t> args;
 			if (ctx->exprList()) {
 				args = std::any_cast<std::vector<size_t>>(visit(ctx->exprList()));
 			}
 
-			if (args.size() != funcDef.parameters.size()) {
-				throw ErrorCode::Invalid_Argument_Count;
+			FunctionDef funcDef;
+			if (!context.getFunction(funcName, args.size(), funcDef)) {
+				if (context.isFunction(funcName)) {
+					throw ErrorCode::Invalid_Argument_Count;
+				}
+				throw ErrorCode::Unknown_Function;
 			}
 
 			return context.addNode<FunctionCallNode>(funcDef, args);
@@ -562,6 +564,127 @@ namespace ve {
 		}
 
 		/**
+		 * Visits an if/else expression, extracting the condition and block contents.
+		 * Empty blocks are safely detected and skipped, enforcing fallback logic.
+		 *
+		 * \param ctx		The parser context containing the if/else expression.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitIfElseExpr(ExprParser::IfElseExprContext* ctx) override {
+			size_t condNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			size_t trueBlockNode = static_cast<size_t>(-1);
+			if (ctx->block(0)) {
+				// Structurally verify the block actually contains statements
+				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block(0)->statement_list())) {
+					trueBlockNode = std::any_cast<size_t>(visit(ctx->block(0)));
+				}
+			}
+			
+			size_t falseBlockNode = static_cast<size_t>(-1);
+			if (ctx->ELSE()) {
+				if (ctx->block(1)) {
+					// Structurally verify the block actually contains statements
+					if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block(1)->statement_list())) {
+						falseBlockNode = std::any_cast<size_t>(visit(ctx->block(1)));
+					}
+				}
+			}
+			
+			return context.addNode<IfNode>(condNode, trueBlockNode, falseBlockNode);
+		}
+
+		/**
+		 * Visits a standard for loop, parsing optional initialization, condition, and step expressions.
+		 *
+		 * \param ctx		The parser context containing the standard for loop.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitForStandardExpr(ExprParser::ForStandardExprContext* ctx) override {
+			size_t initNode = static_cast<size_t>(-1);
+			if (ctx->init) {
+				initNode = std::any_cast<size_t>(visit(ctx->init));
+			}
+			
+			size_t condNode = static_cast<size_t>(-1);
+			if (ctx->cond) {
+				condNode = std::any_cast<size_t>(visit(ctx->cond));
+			}
+			
+			size_t stepNode = static_cast<size_t>(-1);
+			if (ctx->step) {
+				stepNode = std::any_cast<size_t>(visit(ctx->step));
+			}
+			
+			size_t blockNode = static_cast<size_t>(-1);
+			if (ctx->block()) {
+				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+					blockNode = std::any_cast<size_t>(visit(ctx->block()));
+				}
+			}
+			
+			return context.addNode<ForNode>(initNode, condNode, stepNode, blockNode);
+		}
+
+		/**
+		 * Visits a ranged for loop, parsing the identifier and the target range object.
+		 *
+		 * \param ctx		The parser context containing the ranged for loop.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitForRangeExpr(ExprParser::ForRangeExprContext* ctx) override {
+			std::string varName = ctx->IDENTIFIER()->getText();
+			
+			// Resolve the string to a numeric index using your compiler's existing symbol table logic.
+			size_t varIdx = getOrCreateVariable(varName); 
+			
+			size_t objNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			size_t blockNode = static_cast<size_t>(-1);
+			if (ctx->block()) {
+				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+					blockNode = std::any_cast<size_t>(visit(ctx->block()));
+				}
+			}
+			
+			return context.addNode<ForRangeNode>(varIdx, objNode, blockNode);
+		}
+
+		/**
+		 * Visits a C++ style ranged for loop (for (var : obj)), parsing the identifier and target range object.
+		 *
+		 * \param ctx		The parser context containing the C++ style ranged for loop.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitForCppRangeExpr(ExprParser::ForCppRangeExprContext* ctx) override {
+			std::string varName = ctx->IDENTIFIER()->getText();
+			
+			// Resolve the string to a numeric index using your compiler's existing symbol table logic.
+			size_t varIdx = getOrCreateVariable(varName); 
+			
+			size_t objNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			size_t blockNode = static_cast<size_t>(-1);
+			if (ctx->block()) {
+				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+					blockNode = std::any_cast<size_t>(visit(ctx->block()));
+				}
+			}
+			
+			return context.addNode<ForRangeNode>(varIdx, objNode, blockNode);
+		}
+
+		/**
+		 * Visits a block structure and routes it to the underlying statement_list logic.
+		 *
+		 * \param ctx		The parser context containing the block.
+		 * \return			Returns an std::any containing the allocated block node index.
+		 **/
+		virtual std::any			visitBlock(ExprParser::BlockContext* ctx) override {
+			return visit(ctx->statement_list());
+		}
+
+		/**
 		 * Visits an identifier node. If the identifier is a registered constant, 
 		 * it compiles down to a literal ConstantNode. Otherwise, it compiles as a VarNode.
 		 * 
@@ -723,6 +846,39 @@ namespace ve {
 				res.value.doubleVal = Text::atof(text.c_str());
 				res.type = NumericConstant::Floating;
 			}
+			
+			return context.addNode<ConstantNode>(res);
+		}
+
+		/**
+		 * Visits a character constant node, parsing its content into a UTF-8 code point.
+		 * Handles both raw character sequences and escape sequences.
+		 *
+		 * \param ctx		The parser context containing the character literal.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitChar_constant(ExprParser::Char_constantContext* ctx) override {
+			std::string text = ctx->CHAR_CONSTANT()->getText();
+			
+			std::string_view payload(text.data() + 1, text.length() - 2);
+			
+			uint64_t codePoint = 0;
+			
+			if (!payload.empty()) {
+				size_t charsConsumed = 0;
+				bool escapeFound = false;
+					
+				codePoint = Text::resolveEscape(payload.data(), payload.size(), charsConsumed, true, &escapeFound);
+					
+				if (!escapeFound) {
+					size_t eaten = 0;
+					codePoint = static_cast<uint64_t>(Text::nextUtf8Char(payload.data(), payload.size(), &eaten));
+				}
+			}
+			
+			Result res;
+			res.type = NumericConstant::Unsigned;
+			res.value.uintVal = codePoint;
 			
 			return context.addNode<ConstantNode>(res);
 		}

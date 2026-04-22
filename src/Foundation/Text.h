@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Engine/Result.h"
+#include "CaseFold.h"
 #include "Character.h"
 #include "Html.h"
 #include "TextPolicy.h"
@@ -192,6 +193,37 @@ namespace ve {
 
 			// Finally done.
 			return ret;
+		}
+
+		/**
+		 * Determines the byte length of a UTF-8 sequence based on its leading byte.
+		 *
+		 * \param c			The leading byte of the UTF-8 sequence.
+		 * \return			Returns the expected length of the sequence (1 to 4).
+		 **/
+		template <typename CharT>
+		static inline size_t			getUtf8SequenceLength(CharT c) {
+			unsigned char uc = static_cast<unsigned char>(c);
+			if ((uc & 0x80) == 0) { return 1; }
+			if ((uc & 0xE0) == 0xC0) { return 2; }
+			if ((uc & 0xF0) == 0xE0) { return 3; }
+			if ((uc & 0xF8) == 0xF0) { return 4; }
+			return 1;
+		}
+
+		/**
+		 * Determines the code unit length of a UTF-16 sequence based on its leading word.
+		 *
+		 * \param c			The leading code unit of the UTF-16 sequence.
+		 * \return			Returns the expected length of the sequence in units (1 or 2).
+		 **/
+		template <typename CharT>
+		static inline size_t			getUtf16SequenceLength(CharT c) {
+			uint16_t uc = static_cast<uint16_t>(c);
+			if (uc >= 0xD800 && uc <= 0xDBFF) {
+				return 2;
+			}
+			return 1;
 		}
 
 		/**
@@ -1055,45 +1087,31 @@ namespace ve {
 		}
 
 		/**
-		 * Capitalizes a UTF-8 string (first character uppercase, the rest lowercase).
+		 * Capitalizes an 8-bit UTF-8 string (first character uppercase, the rest lowercase).
 		 * Must be called within a try/catch block.
 		 *
 		 * \param input		The input UTF-8 string view.
-		 * \return			Returns the capitalized UTF-8 string.
+		 * \return			Returns the capitalized UTF-8 string matching the requested StringT.
 		 **/
-		static inline std::string		capitalizeUtf8(std::string_view input) {
-			std::string result;
+		template <typename StringT>
+		static inline StringT			capitalizeUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "capitalizeUtf8 requires an 8-bit character string type (e.g., std::string).");
+			
+			StringT result;
 			result.reserve(input.length());
 			
 			bool first = true;
-			size_t i = 0;
+			const CharT* ptr = input.data();
+			const CharT* end = ptr + input.length();
 			
-			while (i < input.length()) {
-				unsigned char c = static_cast<unsigned char>(input[i]);
-				size_t seqLen = 1;
+			while (ptr < end) {
+				size_t size;
+				uint32_t cp = nextUtf8Char(ptr, end - ptr, &size);
+				ptr += size;
 				
-				if ((c & 0xE0) == 0xC0) { seqLen = 2; }
-				else if ((c & 0xF0) == 0xE0) { seqLen = 3; }
-				else if ((c & 0xF8) == 0xF0) { seqLen = 4; }
-				
-				if (i + seqLen > input.length()) {
-					// Malformed trailing sequence; append raw and break.
-					result.append(input.data() + i, input.length() - i);
-					break;
-				}
-				
-				uint32_t cp = 0;
-				if (seqLen == 1) {
-					cp = c;
-				}
-				else if (seqLen == 2) {
-					cp = ((c & 0x1F) << 6) | (input[i + 1] & 0x3F);
-				}
-				else if (seqLen == 3) {
-					cp = ((c & 0x0F) << 12) | ((input[i + 1] & 0x3F) << 6) | (input[i + 2] & 0x3F);
-				}
-				else if (seqLen == 4) {
-					cp = ((c & 0x07) << 18) | ((input[i + 1] & 0x3F) << 12) | ((input[i + 2] & 0x3F) << 6) | (input[i + 3] & 0x3F);
+				if (cp == UTF_INVALID) {
+					continue;
 				}
 				
 				if (first) {
@@ -1105,56 +1123,136 @@ namespace ve {
 				}
 				
 				appendUtf8(result, cp);
-				i += seqLen;
 			}
 			
 			return result;
 		}
 
 		/**
-		 * Casefolds a UTF-8 string for caseless comparison.
+		 * Casefolds an 8-bit UTF-8 string for caseless comparison.
 		 * Must be called within a try/catch block.
 		 *
 		 * \param input		The input UTF-8 string view.
-		 * \return			Returns the casefolded UTF-8 string.
+		 * \return			Returns the casefolded UTF-8 string matching the requested StringT.
 		 **/
-		static inline std::string		casefoldUtf8(std::string_view input) {
-			std::string result;
+		template <typename StringT>
+		static inline StringT			casefoldUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "casefoldUtf8 requires an 8-bit character string type.");
+			
+			StringT result;
 			result.reserve(input.length());
 			
-			size_t i = 0;
-			while (i < input.length()) {
-				unsigned char c = static_cast<unsigned char>(input[i]);
-				size_t seqLen = 1;
+			const CharT* ptr = input.data();
+			const CharT* end = ptr + input.length();
+			
+			while (ptr < end) {
+				size_t size;
+				uint32_t cp = nextUtf8Char(ptr, end - ptr, &size);
+				ptr += size;
 				
-				if ((c & 0xE0) == 0xC0) { seqLen = 2; }
-				else if ((c & 0xF0) == 0xE0) { seqLen = 3; }
-				else if ((c & 0xF8) == 0xF0) { seqLen = 4; }
-				
-				if (i + seqLen > input.length()) {
-					result.append(input.data() + i, input.length() - i);
-					break;
+				if (cp == UTF_INVALID) {
+					continue;
 				}
 				
-				uint32_t cp = 0;
-				if (seqLen == 1) { cp = c; }
-				else if (seqLen == 2) { cp = ((c & 0x1F) << 6) | (input[i + 1] & 0x3F); }
-				else if (seqLen == 3) { cp = ((c & 0x0F) << 12) | ((input[i + 1] & 0x3F) << 6) | (input[i + 2] & 0x3F); }
-				else if (seqLen == 4) { cp = ((c & 0x07) << 18) | ((input[i + 1] & 0x3F) << 12) | ((input[i + 2] & 0x3F) << 6) | (input[i + 3] & 0x3F); }
+				char32_t outSeq[3];
+				uint32_t foldedCount = CaseFold::getFoldedSequence(static_cast<char32_t>(cp), outSeq);
 				
-				// Standard Unicode casefolding rule: German 'ß' becomes 'ss'.
-				if (cp == 0x00DF) {
-					result.push_back('s');
-					result.push_back('s');
+				if (foldedCount > 0) {
+					for (uint32_t j = 0; j < foldedCount; ++j) {
+						appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+					}
 				}
 				else {
 					appendUtf8(result, toLower(cp));
 				}
-				
-				i += seqLen;
 			}
 			
 			return result;
+		}
+
+		/**
+		 * Centers an 8-bit UTF-8 string within a given width, padding with a specified character.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param input			The input UTF-8 string view.
+		 * \param charCount		The number of actual Unicode characters in the input string.
+		 * \param width			The total desired width in characters.
+		 * \param fillChar		The Unicode codepoint to use for padding.
+		 * \return				Returns the centered UTF-8 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			centerUtf8(std::basic_string_view<typename StringT::value_type> input, size_t charCount, size_t width, uint32_t fillChar) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "centerUtf8 requires an 8-bit character string type.");
+			
+			if (width <= charCount) {
+				return StringT(input);
+			}
+
+			size_t padTotal = width - charCount;
+			size_t padLeft = (padTotal / 2) + (padTotal & width & 1);
+			size_t padRight = padTotal - padLeft;
+
+			StringT result;
+			result.reserve(input.length() + padTotal);
+
+			for (size_t i = 0; i < padLeft; ++i) {
+				appendUtf8(result, fillChar);
+			}
+
+			result.append(input);
+
+			for (size_t i = 0; i < padRight; ++i) {
+				appendUtf8(result, fillChar);
+			}
+
+			return result;
+		}
+
+		/**
+		 * Counts the number of non-overlapping occurrences of a substring.
+		 *
+		 * \param haystack		The string to search within.
+		 * \param needle		The substring to search for.
+		 * \return				Returns the number of occurrences.
+		 **/
+		template <typename StringT>
+		static inline size_t			countUtf8(std::basic_string_view<typename StringT::value_type> haystack, std::basic_string_view<typename StringT::value_type> needle) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "countUtf8 requires an 8-bit character string type.");
+
+			// Python explicitly returns the character length + 1 when searching for an empty string.
+			if (needle.empty()) {
+				size_t chars = 0;
+				const CharT* ptr = haystack.data();
+				size_t remaining = haystack.length();
+				
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+					
+					if (eaten == 0) {
+						break;
+					}
+					
+					ptr += eaten;
+					remaining -= eaten;
+					chars++;
+				}
+				
+				return chars + 1;
+			}
+
+			size_t count = 0;
+			size_t pos = 0;
+			
+			while ((pos = haystack.find(needle, pos)) != std::basic_string_view<CharT>::npos) {
+				count++;
+				pos += needle.length();
+			}
+			
+			return count;
 		}
 
 

@@ -116,9 +116,12 @@ set(APP_HEADERS
     src/Ast/ConstantNode.h
 	src/Ast/DivNode.h
 	src/Ast/EqNode.h
+	src/Ast/ForNode.h
+	src/Ast/ForRangeNode.h
 	src/Ast/FunctionCallNode.h
 	src/Ast/GeNode.h
 	src/Ast/GtNode.h
+	src/Ast/IfNode.h
 	src/Ast/LeNode.h
 	src/Ast/LogAndNode.h
 	src/Ast/LogNotNode.h
@@ -141,6 +144,7 @@ set(APP_HEADERS
 	src/Ast/UnaryPlusNode.h
 	src/Ast/VarNode.h
     src/Compiler/AstBuilderVisitor.h
+	src/Foundation/CaseFold.h
 	src/Foundation/Character.h
 	src/Foundation/Html.h
 	src/Foundation/LargeMath.h
@@ -164,6 +168,7 @@ set(APP_HEADERS
 set(APP_SOURCES
 	src/Engine/ExecutionContext.cpp
 	src/Engine/String.cpp
+	src/Foundation/CaseFold.cpp
 	src/Foundation/Html.cpp
 	src/Foundation/Text.cpp
 	src/Foundation/Unicode.cpp

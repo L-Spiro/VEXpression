@@ -18,7 +18,7 @@ def generate_casefold_extras():
             
         try:
             char = chr(i)
-            folded = char.lower()#char.casefold()
+            folded = char.casefold()
             lowered = char#char.lower()
             
             # THE FILTER: Only keep if casefold did something DIFFERENT than lower

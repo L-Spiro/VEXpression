@@ -65,6 +65,13 @@ SHR_ASSIGN          : '>>=' ;
 OR_ASSIGN           : '|=' ;
 AND_ASSIGN          : '&=' ;
 
+IF                  : 'if' ;
+ELSE                : 'else' ;
+FOR                 : 'for' ;
+IN                  : 'in' ;
+DO                  : 'do' ;
+WHILE               : 'while' ;
+
 IDENTIFIER          : L (L | D)* ;
 
 PUREDEC_CONSTANT    : '#' D+ IS? ;
@@ -91,6 +98,8 @@ FLOAT_CONSTANT      : D+ E FS?
                     | HP H* '.' H+ P FS?
                     | HP H+ '.' P FS?
                     ;
+					
+CHAR_CONSTANT       : '\'' .*? '\'' ;
 
 WS                  : [ \t\u000B\r\n\f]+ -> skip ;
 LINE_COMMENT        : '//' ~[\r\n]* -> skip ;
@@ -102,9 +111,7 @@ BLOCK_COMMENT       : '/*' .*? '*/' -> skip ;
 
 fragment STR_BODY
             : '"""' .*? '"""'
-            | '\'\'\'' .*? '\'\'\''
-            | '"' (~["\\] | '\\' .)* '"'
-            | '\'' (~['\\] | '\\' .)* '\''
+            | '"' .*? '"'
             ;
 fragment D  : [0-9] ;
 fragment O  : [0-7] ;

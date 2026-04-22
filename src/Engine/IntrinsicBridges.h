@@ -1407,6 +1407,139 @@ namespace ve {
 			
 			return Result{ .type = NumericConstant::Invalid };
 		}
+
+		/**
+		 * Bridge for String.center().
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the centered string.
+		 **/
+		static Result		centerBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || 
+				args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			// Resolve target width.
+			size_t width = 0;
+			if (args[1].type == NumericConstant::Signed) {
+				if (args[1].value.intVal < 0) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				width = static_cast<size_t>(args[1].value.intVal);
+			}
+			else if (args[1].type == NumericConstant::Unsigned) {
+				width = static_cast<size_t>(args[1].value.uintVal);
+			}
+			else {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			// Optional fillChar.
+			uint32_t fillChar = ' ';
+			if (args.size() >= 3) {
+				if (args[2].type == NumericConstant::Signed) {
+					if (args[2].value.intVal < 0 || args[2].value.intVal > 0x10FFFF) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					fillChar = static_cast<uint32_t>(args[2].value.intVal);
+				}
+				else if (args[2].type == NumericConstant::Unsigned) {
+					if (args[2].value.uintVal > 0x10FFFF) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					fillChar = static_cast<uint32_t>(args[2].value.uintVal);
+				}
+				else if (args[2].type == NumericConstant::Object && 
+					args[2].value.objectVal != nullptr && 
+					(args[2].value.objectVal->type() & BuiltInType_String)) {
+					
+					String* fillStr = static_cast<String*>(args[2].value.objectVal);
+					
+					// Python requires fillchar to be exactly one character.
+					if (fillStr->arrayLength() != 1) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					
+					fillChar = fillStr->getCodePoint(0);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			String* centeredStr = strObj->center(ctx, width, fillChar);
+			if (centeredStr) {
+				return centeredStr->createResult();
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.count(). Handles varying arity for optional start and end parameters.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Integer Result containing the count.
+		 **/
+		static Result		countBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args.size() > 4) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			if (args[1].type != NumericConstant::Object || 
+				args[1].value.objectVal == nullptr || 
+				!(args[1].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			String* subObj = static_cast<String*>(args[1].value.objectVal);
+			
+			int64_t start = 0;
+			if (args.size() >= 3) {
+				if (args[2].type == NumericConstant::Signed) {
+					start = args[2].value.intVal;
+				}
+				else if (args[2].type == NumericConstant::Unsigned) {
+					start = static_cast<int64_t>(args[2].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			int64_t end = -1;
+			if (args.size() == 4) {
+				if (args[3].type == NumericConstant::Signed) {
+					end = args[3].value.intVal;
+				}
+				else if (args[3].type == NumericConstant::Unsigned) {
+					end = static_cast<int64_t>(args[3].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			int64_t occurrences = strObj->count(subObj, start, end);
+				
+			Result res;
+			res.type = NumericConstant::Signed;
+			res.value.intVal = occurrences;
+			return res;
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
 	};
 
 }	// namespace ve

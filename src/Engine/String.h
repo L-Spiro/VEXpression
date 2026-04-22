@@ -732,7 +732,7 @@ namespace ve {
 		 * Converts the internal string representation into a UTF-8 encoded standard string.
 		 * Must be called within a try/catch block.
 		 *
-		 * \return							Returns a std::string containing the UTF-8 encoded characters.
+		 * \return				Returns a std::string containing the UTF-8 encoded characters.
 		 **/
 		std::string							getUtf8() const {
 			std::string result;
@@ -751,11 +751,11 @@ namespace ve {
 		 * Creates a new string with the first character capitalized and the rest lowercased.
 		 * Must be called within a try/catch block.
 		 *
-		 * \param ctx	The execution context for allocation.
-		 * \return		Returns a new String object with the capitalized content, or nullptr on allocation failure.
+		 * \param ctx			The execution context for allocation.
+		 * \return				Returns a new String object with the capitalized content, or nullptr on allocation failure.
 		 **/
 		String*								capitalize(ExecutionContext* ctx) const {
-			std::string capStr = Text::capitalizeUtf8(this->getUtf8());
+			std::string capStr = Text::capitalizeUtf8<std::string>(this->getUtf8());
 		
 			String* newStr = ctx->allocateObject<String>();
 			if (newStr) {
@@ -769,19 +769,34 @@ namespace ve {
 		 * Creates a casefolded copy of the string.
 		 * Must be called within a try/catch block.
 		 *
-		 * \param ctx	The execution context for allocation.
-		 * \return		Returns a new String object.
+		 * \param ctx			The execution context for allocation.
+		 * \return				Returns a new String object.
 		 **/
 		String*								casefold(ExecutionContext* ctx) const;
 
-	protected :
-		// == Members.
-		std::vector<uint8_t>				buffer;
-		Width								bufferWidth;
-		size_t								charCount;
+		/**
+		 * Creates a copy of the string centered in a string of length width.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param width			The total width of the new string.
+		 * \param fillChar		The padding character code point (defaults to space).
+		 * \return				Returns a new String object, or nullptr on allocation failure.
+		 **/
+		String*								center(ExecutionContext* ctx, size_t width, uint32_t fillChar = ' ') const;
 
-
-		// == Functions.
+		/**
+		 * Returns the number of non-overlapping occurrences of substring sub in the range [start, end].
+		 * Optional arguments start and end are interpreted as in slice notation.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param sub			The substring to count.
+		 * \param start			The starting index (character-based, handles negative).
+		 * \param end			The ending index (character-based, handles negative).
+		 * \return				Returns the number of occurrences.
+		 **/
+		int64_t								count(const String* sub, int64_t start = 0, int64_t end = INT64_MAX) const;
+		
 		/**
 		 * Internal helper to fetch a UTF-32 code point at a linear index.
 		 *
@@ -797,6 +812,14 @@ namespace ve {
 			return 0;
 		}
 
+	protected :
+		// == Members.
+		std::vector<uint8_t>				buffer;
+		Width								bufferWidth;
+		size_t								charCount;
+
+
+		// == Functions.
 		/**
 		 * Creates a Result using a best-fit interpretation of the string as a number.
 		 *

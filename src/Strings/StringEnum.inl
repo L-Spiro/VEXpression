@@ -3,7 +3,7 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 // General.
-VE_STR1(VE_STR_NONE, "")
+VE_STR1(None, "")
 
 // =======================================================================================================
 // SHARED MATH PARAMETERS
@@ -1149,4 +1149,130 @@ VE_STR( Desc_String_Casefold,
     "ส่งคืนสำเนาที่พับกรณีของสตริง ซึ่งเหมาะสำหรับการจับคู่แบบไม่คำนึงถึงตัวพิมพ์", 
     "केसलेस मिलान के लिए उपयुक्त स्ट्रिंग की एक केसफोल्डेड प्रति देता है।", 
     "Dizenin büyük/küçük harf ayrımı yapmayan eşleştirme için uygun, küçük harfe dönüştürülmüş (casefold) bir kopyasını döndürür."
+)
+
+VE_STR( Desc_String_Center, 
+    "Returns a centered string of length width. Padding is done using the specified fill character (default is a space).", 
+    "指定された幅の中央に配置された文字列を返します。パディングには指定された文字（デフォルトはスペース）が使用されます。", 
+    "返回一个长度为 width 的居中字符串。使用指定的填充字符（默认为空格）进行填充。", 
+    "Devuelve una cadena centrada de la longitud especificada. El relleno se realiza con el carácter indicado (por defecto es un espacio).", 
+    "Renvoie une chaîne centrée de la largeur spécifiée. Le remplissage est effectué avec le caractère indiqué (un espace par défaut).", 
+    "Restituisce una stringa centrata della larghezza specificata. Il riempimento avviene utilizzando il carattere indicato (il valore predefinito è uno spazio).", 
+    "Retorna uma string centralizada com a largura especificada. O preenchimento é feito usando o caractere indicado (o padrão é um espaço).", 
+    "يُرجع سلسلة تتوسطها مسافات أو أحرف بالطول المحدد. يتم الحشو باستخدام حرف التعبئة المحدد (الافتراضي هو مسافة).", 
+    "Возвращает центрированную строку указанной ширины. Заполнение выполняется с использованием указанного символа (по умолчанию — пробел).", 
+    "Gibt eine zentrierte Zeichenfolge mit der angegebenen Breite zurück. Die Auffüllung erfolgt mit dem angegebenen Zeichen (Standard ist ein Leerzeichen).", 
+    "Geeft een gecentreerde tekenreeks van de opgegeven breedte als resultaat. De opvulling wordt gedaan met het opgegeven teken (standaard is een spatie).", 
+    "지정된 너비에 가운데 정렬된 문자열을 반환합니다. 여백은 지정된 채우기 문자(기본값은 공백)로 채워집니다.", 
+    "ส่งคืนสตริงที่อยู่กึ่งกลางตามความกว้างที่ระบุ การเติมจะทำโดยใช้อักขระเติมที่กำหนด (ค่าเริ่มต้นคือช่องว่าง)", 
+    "निर्दिष्ट चौड़ाई वाली एक केंद्रित स्ट्रिंग देता है। पैडिंग निर्दिष्ट भरण वर्ण (डिफ़ॉल्ट एक रिक्ति है) का उपयोग करके की जाती है।", 
+    "Belirtilen genişlikte ortalanmış bir dize döndürür. Doldurma işlemi, belirtilen dolgu karakteri (varsayılan boşluktur) kullanılarak yapılır."
+)
+
+VE_STR( String_Param_Width, 
+    "The total desired width of the resulting string.", 
+    "結果として得られる文字列の目的の全体幅。", 
+    "结果字符串所需的总宽度。", 
+    "El ancho total deseado de la cadena resultante.", 
+    "La largeur totale souhaitée pour la chaîne résultante.", 
+    "La larghezza totale desiderata per la stringa risultante.", 
+    "A largura total desejada para a string resultante.", 
+    "العرض الإجمالي المطلوب للسلسلة الناتجة.", 
+    "Желаемая общая ширина результирующей строки.", 
+    "Die gewünschte Gesamtbreite der resultierenden Zeichenfolge.", 
+    "De gewenste totale breedte van de resulterende tekenreeks.", 
+    "결과 문자열의 원하는 전체 너비입니다.", 
+    "ความกว้างทั้งหมดที่ต้องการสำหรับสตริงที่ได้ผลลัพธ์", 
+    "परिणामी स्ट्रिंग की वांछित कुल चौड़ाई।", 
+    "Elde edilen dizenin istenen toplam genişliği."
+)
+
+VE_STR( String_Param_FillChar, 
+    "The padding character (must be exactly one Unicode character).", 
+    "パディング文字（正確に1つのUnicode文字である必要があります）。", 
+    "填充字符（必须正好是一个 Unicode 字符）。", 
+    "El carácter de relleno (debe ser exactamente un carácter Unicode).", 
+    "Le caractère de remplissage (doit être exactement un caractère Unicode).", 
+    "Il carattere di riempimento (deve essere esattamente un carattere Unicode).", 
+    "O caractere de preenchimento (deve ser exatamente um caractere Unicode).", 
+    "حرف التعبئة (يجب أن يكون حرف Unicode واحدًا بالضبط).", 
+    "Символ заполнения (должен быть ровно одним символом Unicode).", 
+    "Das Füllzeichen (muss genau ein Unicode-Zeichen sein).", 
+    "Het opvulteken (moet exact één Unicode-teken zijn).", 
+    "채우기 문자(정확히 하나의 유니코드 문자여야 함)입니다.", 
+    "อักขระที่ใช้เติม (ต้องเป็นอักขระ Unicode หนึ่งตัวพอดี)", 
+    "पैडिंग वर्ण (बिल्कुल एक यूनिकोड वर्ण होना चाहिए)।", 
+    "Dolgu karakteri (tam olarak bir Unicode karakteri olmalıdır)."
+)
+
+VE_STR( Desc_String_Count, 
+    "Returns the number of non-overlapping occurrences of a substring within the optionally specified [start, end] range.", 
+    "オプションで指定された[start, end]の範囲内で、重複しない部分文字列の出現回数を返します。", 
+    "返回在可选指定的 [start, end] 范围内非重叠子字符串出现的次数。", 
+    "Devuelve el número de apariciones no superpuestas de una subcadena dentro del rango opcional [inicio, fin].", 
+    "Renvoie le nombre d'occurrences ne se chevauchant pas d'une sous-chaîne dans la plage [début, fin] éventuellement spécifiée.", 
+    "Restituisce il numero di occorrenze non sovrapposte di una sottostringa nell'intervallo [inizio, fine] opzionalmente specificato.", 
+    "Retorna o número de ocorrências não sobrepostas de uma substring no intervalo opcional [início, fim].", 
+    "يُرجع عدد التكرارات غير المتداخلة لسلسلة فرعية ضمن النطاق [start, end] المحدد اختياريًا.", 
+    "Возвращает количество неперекрывающихся вхождений подстроки в опционально указанном диапазоне [start, end].", 
+    "Gibt die Anzahl der nicht überlappenden Vorkommen einer Teilzeichenfolge innerhalb des optional angegebenen Bereichs [Start, Ende] zurück.", 
+    "Geeft het aantal niet-overlappende keren dat een subtekenreeks voorkomt binnen het optioneel opgegeven bereik [start, einde] als resultaat.", 
+    "선택적으로 지정된 [start, end] 범위 내에서 겹치지 않는 부분 문자열의 발생 횟수를 반환합니다.", 
+    "ส่งคืนจำนวนครั้งที่เกิดสตริงย่อยแบบไม่ซ้อนทับกันภายในช่วง [เริ่มต้น, สิ้นสุด] ที่ระบุแบบไม่บังคับ", 
+    "वैकल्पिक रूप से निर्दिष्ट [start, end] सीमा के भीतर किसी सबस्ट्रिंग की गैर-ओवरलैपिंग घटनाओं की संख्या देता है।", 
+    "İsteğe bağlı olarak belirtilen [başlangıç, bitiş] aralığında bir alt dizenin çakışmayan geçiş sayısını döndürür."
+)
+
+VE_STR( String_Param_Sub, 
+    "The substring to search for.", 
+    "検索する部分文字列。", 
+    "要搜索的子字符串。", 
+    "La subcadena a buscar.", 
+    "La sous-chaîne à rechercher.", 
+    "La sottostringa da cercare.", 
+    "A substring a ser pesquisada.", 
+    "السلسلة الفرعية للبحث عنها.", 
+    "Подстрока для поиска.", 
+    "Die zu suchende Teilzeichenfolge.", 
+    "De subtekenreeks waarnaar moet worden gezocht.", 
+    "검색할 부분 문자열입니다.", 
+    "สตริงย่อยที่ต้องการค้นหา", 
+    "खोजने के लिए सबस्ट्रिंग।", 
+    "Aranacak alt dize."
+)
+
+VE_STR( String_Param_Start, 
+    "The optional starting index (supports negative indexing).", 
+    "オプションの開始インデックス（負のインデックス付けをサポートします）。", 
+    "可选的起始索引（支持负索引）。", 
+    "El índice de inicio opcional (admite indexación negativa).", 
+    "L'index de départ facultatif (prend en charge l'indexation négative).", 
+    "L'indice di inizio opzionale (supporta l'indicizzazione negativa).", 
+    "O índice de início opcional (suporta indexação negativa).", 
+    "فهرس البدء الاختياري (يدعم الفهرسة السلبية).", 
+    "Опциональный начальный индекс (поддерживает отрицательную индексацию).", 
+    "Der optionale Startindex (unterstützt negative Indizierung).", 
+    "De optionele startindex (ondersteunt negatieve indexering).", 
+    "선택적 시작 인덱스입니다(음수 인덱싱 지원).", 
+    "ดัชนีเริ่มต้นทางเลือก (รองรับการทำดัชนีเชิงลบ)", 
+    "वैकल्पिक प्रारंभिक इंडेक्स (नकारात्मक इंडेक्सिंग का समर्थन करता है)।", 
+    "İsteğe bağlı başlangıç dizini (negatif indekslemeyi destekler)."
+)
+
+VE_STR( String_Param_End, 
+    "The optional ending index (supports negative indexing).", 
+    "オプションの終了インデックス（負のインデックス付けをサポートします）。", 
+    "可选的结束索引（支持负索引）。", 
+    "El índice de fin opcional (admite indexación negativa).", 
+    "L'index de fin facultatif (prend en charge l'indexation négative).", 
+    "L'indice di fine opzionale (supporta l'indicizzazione negativa).", 
+    "O índice de fim opcional (suporta indexação negativa).", 
+    "فهرس النهاية الاختياري (يدعم الفهرسة السلبية).", 
+    "Опциональный конечный индекс (поддерживает отрицательную индексацию).", 
+    "Der optionale Endindex (unterstützt negative Indizierung).", 
+    "De optionele eindindex (ondersteunt negatieve indexering).", 
+    "선택적 종료 인덱스입니다(음수 인덱싱 지원).", 
+    "ดัชนีสิ้นสุดทางเลือก (รองรับการทำดัชนีเชิงลบ)", 
+    "वैकल्पिक समाप्ति इंडेक्स (नकारात्मक इंडेक्सिंग का समर्थन करता है)।", 
+    "İsteğe bağlı bitiş dizini (negatif indekslemeyi destekler)."
 )

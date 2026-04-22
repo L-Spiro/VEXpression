@@ -427,6 +427,11 @@ namespace ve {
 		// == Strings
 		{ "capitalize", StringId::Desc_String_Capitalize, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::capitalizeBridge },
 		{ "casefold", StringId::Desc_String_Casefold, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::casefoldBridge },
+		{ "center", StringId::Desc_String_Center, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::centerBridge },
+		{ "center", StringId::Desc_String_Center, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width }, { DataType::Any, "fillchar", StringId::String_Param_FillChar } }, IntrinsicBridges::centerBridge },
+		{ "count", StringId::Desc_String_Count, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub } }, IntrinsicBridges::countBridge },
+		{ "count", StringId::Desc_String_Count, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start } }, IntrinsicBridges::countBridge },
+		{ "count", StringId::Desc_String_Count, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start }, { DataType::Any, "end", StringId::String_Param_End } }, IntrinsicBridges::countBridge },
 	};
 
 	// == Functions.
@@ -612,8 +617,22 @@ namespace ve {
 				out.type = NumericConstant::Invalid;
 			}
 			else {
-				// TODO.
-				out.type = NumericConstant::Invalid; 
+				out.type = NumericConstant::Invalid;
+				if (res.value.objectVal->type() & BuiltInType_String) {
+					String * newStr = allocateObject<String>();
+					if (newStr) {
+						if (newStr->initializeFrom(res)) {
+							out = newStr->createResult();
+						}
+						else {
+							deallocateObject(newStr);
+						}
+					}
+				}
+				else {
+					// TODO.
+					out.type = NumericConstant::Invalid;
+				}
 			}
 		}
 

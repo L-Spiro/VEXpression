@@ -27,6 +27,11 @@ namespace ve {
 			Result leftVal = context.getArena().nodes[leftIndex]->evaluate(context);
 			Result rightVal = context.getArena().nodes[rightIndex]->evaluate(context);
 
+			if (leftVal.type == NumericConstant::Object) {
+				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+				return (*leftVal.value.objectVal) - rightVal;
+			}
+
 			NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
 			Result l = context.convertResult(leftVal, common);
 			Result r = context.convertResult(rightVal, common);
@@ -42,6 +47,11 @@ namespace ve {
 			}
 			else if (common == NumericConstant::Unsigned) {
 				out.value.uintVal = l.value.uintVal - r.value.uintVal;
+			}
+			else if (common == NumericConstant::Object) {
+				if (!l.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+				out = (*l.value.objectVal) - r;
 			}
 			else {
 				throw ErrorCode::Unknown_Numeric_Type;

@@ -122,6 +122,18 @@ namespace ve {
 		}
 
 		/**
+		 * Assigns a result to a variable at the specified index.
+		 *
+		 * \param index		The resolved index of the variable.
+		 * \param value		The Result to assign.
+		 **/
+		inline void						setVariable(size_t index, const Result& value) {
+			if (index < variables.size()) {
+				variables[index] = value;
+			}
+		}
+
+		/**
 		 * Registers a custom constant with the execution context.
 		 * 
 		 * \param name		The string identifier for the constant.
@@ -172,24 +184,26 @@ namespace ve {
 			try {
 				FunctionDef def;
 				def.name = name;
-				def.description = StringId::VE_STR_NONE;
+				def.description = StringId::None;
 				def.parameters = params;
 				def.callback = callback;
 
-				registeredFunctions[name] = def;
+				FunctionSignature sig = { name, params.size() };
+				registeredFunctions[sig] = def;
 			}
 			catch (...) { throw ErrorCode::Out_Of_Memory; }
 		}
 
 		/**
-		 * Checks if a function is registered and retrieves its definition.
+		 * Checks if a specific function overload is registered and retrieves its definition.
 		 * 
 		 * \param name		The string identifier to check.
+		 * \param arity		The number of arguments the function was called with.
 		 * \param outDef	Output parameter to store the FunctionDef if found.
-		 * \return			True if the function exists, false otherwise.
+		 * \return			True if the exact overload exists, false otherwise.
 		 **/
-		bool							getFunction(const std::string& name, FunctionDef& outDef) const {
-			auto it = registeredFunctions.find(name);
+		bool							getFunction(const std::string& name, size_t arity, FunctionDef& outDef) const {
+			auto it = registeredFunctions.find({ name, arity });
 			if (it != registeredFunctions.end()) {
 				outDef = it->second;
 				return true;
@@ -204,8 +218,11 @@ namespace ve {
 		 * \return			True if the function exists, false otherwise.
 		 **/
 		bool							isFunction(const std::string& name) const {
-			auto it = registeredFunctions.find(name);
-			if (it != registeredFunctions.end()) {
+			// Find the first signature that is not less than {name, 0}
+			auto it = registeredFunctions.lower_bound({ name, 0 });
+			
+			// If it exists and the name matches, the function exists.
+			if (it != registeredFunctions.end() && it->first.name == name) {
 				return true;
 			}
 			return false;
@@ -251,6 +268,23 @@ namespace ve {
 
 
 	protected :
+		// == Types.
+		/**
+		 * Represents a unique function signature for arity-based overloading.
+		 **/
+		struct FunctionSignature {
+			std::string					name;
+			size_t						arity;
+
+			bool						operator<(const FunctionSignature& rhs) const {
+				if (name != rhs.name) {
+					return name < rhs.name;
+				}
+				return arity < rhs.arity;
+			}
+		};
+
+
 		// == Members.
 		/** The central storage arena containing all allocated AST nodes. **/
 		AstArena						arena;
@@ -259,7 +293,7 @@ namespace ve {
 		/** A map of built-in and user-registered constants (e.g., M_PI). **/
 		std::map<std::string, Result>	registeredConstants;
 		/** A map of user-registered and built-in function definitions. **/
-		std::map<std::string, FunctionDef>
+		std::map<FunctionSignature, FunctionDef>
 										registeredFunctions;
 		/** Tracked objects managed by the execution context. **/
 		mutable std::vector<std::unique_ptr<Object>>

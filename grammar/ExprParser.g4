@@ -19,6 +19,10 @@ statement
     : expr SEMI                                                     # exprStmt
     | SEMI                                                          # emptyStmt
     ;
+	
+block
+    : LBRACE statement_list RBRACE
+    ;
 
 exprList
     : expr (',' expr)*
@@ -43,6 +47,10 @@ expr
     | <assoc=right> expr '?' expr ':' expr                          # ternary
     | <assoc=right> IDENTIFIER op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # assignment
     | '(' expr ')'                                                  # parens
+	| IF '(' expr ')' block (ELSE block)?                           # ifElseExpr
+	| FOR '(' init=expr? ';' cond=expr? ';' step=expr? ')' block    # forStandardExpr
+    | FOR '(' IDENTIFIER IN expr ')' block                          # forRangeExpr
+    | FOR '(' IDENTIFIER ':' expr ')' block                         # forCppRangeExpr
     | IDENTIFIER                                                    # identifier
     | constant                                                      # constValue
     ;
@@ -59,6 +67,7 @@ constant
     | dec_constant
     | float_constant
     | string_constant
+    | char_constant
     ;
 
 puredec_constant : PUREDEC_CONSTANT ;
@@ -67,6 +76,7 @@ oct_constant     : OCT_CONSTANT ;
 hex_constant     : HEX_CONSTANT ;
 dec_constant     : DEC_CONSTANT ;
 float_constant   : FLOAT_CONSTANT ;
+char_constant    : CHAR_CONSTANT ;
 
 string_token
     : STRING_NORMAL

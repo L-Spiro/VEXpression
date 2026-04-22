@@ -28,7 +28,7 @@ namespace ve {
 							outPtr[i] = static_cast<char8_t>(getCodePoint(i));
 						}
 						for (size_t i = 0; i < rhsString->charCount; ++i) {
-							outPtr[charCount + i] = static_cast<char8_t>(rhsString->getCodePoint(i));
+							outPtr[charCount+i] = static_cast<char8_t>(rhsString->getCodePoint(i));
 						}
 						break;
 					}
@@ -40,7 +40,7 @@ namespace ve {
 							outPtr[i] = static_cast<char16_t>(getCodePoint(i));
 						}
 						for (size_t i = 0; i < rhsString->charCount; ++i) {
-							outPtr[charCount + i] = static_cast<char16_t>(rhsString->getCodePoint(i));
+							outPtr[charCount+i] = static_cast<char16_t>(rhsString->getCodePoint(i));
 						}
 						break;
 					}
@@ -52,7 +52,7 @@ namespace ve {
 							outPtr[i] = static_cast<char32_t>(getCodePoint(i));
 						}
 						for (size_t i = 0; i < rhsString->charCount; ++i) {
-							outPtr[charCount + i] = static_cast<char32_t>(rhsString->getCodePoint(i));
+							outPtr[charCount+i] = static_cast<char32_t>(rhsString->getCodePoint(i));
 						}
 						break;
 					}
@@ -429,11 +429,11 @@ namespace ve {
 	 * Creates a casefolded copy of the string.
 	 * Must be called within a try/catch block.
 	 *
-	 * \param ctx	The execution context for allocation.
-	 * \return		Returns a new String object.
+	 * \param ctx			The execution context for allocation.
+	 * \return				Returns a new String object.
 	 **/
 	String* String::casefold(ExecutionContext* ctx) const {
-		std::string foldedStr = Text::casefoldUtf8(this->getUtf8());
+		std::string foldedStr = Text::casefoldUtf8<std::string>(this->getUtf8());
 		
 		String* newStr = ctx->allocateObject<String>();
 		if (newStr) {
@@ -444,6 +444,60 @@ namespace ve {
 		}
 		
 		return newStr;
+	}
+
+	/**
+	 * Creates a copy of the string centered in a string of length width.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param width			The total width of the new string.
+	 * \param fillChar		The padding character code point (defaults to space).
+	 * \return				Returns a new String object, or nullptr on allocation failure.
+	 **/
+	String* String::center(ExecutionContext* ctx, size_t width, uint32_t fillChar) const {
+		std::string centeredStr = Text::centerUtf8<std::string>(this->getUtf8(), this->charCount, width, fillChar);
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			newStr->assignUtf8(centeredStr.data(), centeredStr.length());
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns the number of non-overlapping occurrences of substring sub in the range [start, end].
+	 * Optional arguments start and end are interpreted as in slice notation.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param sub			The substring to count.
+	 * \param start			The starting index (character-based, handles negative).
+	 * \param end			The ending index (character-based, handles negative).
+	 * \return				Returns the number of occurrences.
+	 **/
+	int64_t String::count(const String* sub, int64_t start, int64_t end) const {
+		int64_t len = static_cast<int64_t>(this->charCount);
+		
+		// Map slice indices exactly like Python does.
+		start = arrayIndexToLinearIndex(start, this->charCount);
+		end = arrayIndexToLinearIndex(end, this->charCount);
+		
+		if (start > end || start >= len) {
+			if (sub->charCount == 0) { return 1; }
+			return 0;
+		}
+		
+		std::string haystackStr;
+		haystackStr.reserve(static_cast<size_t>(end - start));
+		
+		for (int64_t i = start; i < end; ++i) {
+			Text::appendUtf8(haystackStr, this->getCodePoint(static_cast<size_t>(i)));
+		}
+		
+		std::string needleStr = sub->getUtf8();
+		
+		return static_cast<int64_t>(Text::countUtf8<std::string>(haystackStr, needleStr));
 	}
 
 	/**

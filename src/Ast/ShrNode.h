@@ -5,7 +5,6 @@
 #include "../Engine/Result.h"
 #include "AstNode.h"
 
-#include <cassert>
 #include <cmath>
 
 namespace ve {
@@ -42,6 +41,11 @@ namespace ve {
 			}
 			else {
 				throw ErrorCode::Unknown_Numeric_Type;
+			}
+
+			if (leftVal.type == NumericConstant::Object) {
+				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+				return (*leftVal.value.objectVal) >> Result{ .type = NumericConstant::Unsigned, .value { .uintVal = shift } };
 			}
 
 			Result out;
