@@ -72,6 +72,30 @@ namespace ve {
 				return Result{ .type = NumericConstant::Invalid };
 			}
 		}
+		else if (rhs.type == NumericConstant::Signed) {
+			std::string str = getUtf8();
+			Text::appendUtf32(str, uint32_t(rhs.value.intVal));
+			String* newStr = context->allocateObject<String>();
+					
+			if (newStr) {
+				if (newStr->assignUtf8(str.c_str(), str.size())) {
+					return newStr->createResult();
+				}
+				context->deallocateObject(newStr);
+			}
+		}
+		else if (rhs.type == NumericConstant::Unsigned) {
+			std::string str = getUtf8();
+			Text::appendUtf32(str, uint32_t(rhs.value.uintVal));
+			String* newStr = context->allocateObject<String>();
+					
+			if (newStr) {
+				if (newStr->assignUtf8(str.c_str(), str.size())) {
+					return newStr->createResult();
+				}
+				context->deallocateObject(newStr);
+			}
+		}
 
 		return Result{ .type = NumericConstant::Invalid };
 	}
@@ -672,6 +696,18 @@ namespace ve {
 		}
 
 		return newStr;
+	}
+
+	/**
+	 * Returns true if all characters in the string are alphanumeric and there is at least one character.
+	 * Must be called within a try/catch block.
+	 * 
+	 * \return				Returns true if the string is alphanumeric, false otherwise.
+	 **/
+	bool String::isalnum() const {
+		std::string currentUtf8 = this->getUtf8();
+		
+		return Text::isAlnumUtf8<std::string>(currentUtf8);
 	}
 
 	/**

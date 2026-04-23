@@ -33,8 +33,13 @@ namespace ve {
 			for (size_t i = 0; i < arguments.size(); ++i) {
 				Result rawResult = context.getArena().nodes[arguments[i]]->evaluate(context);
 				
-				DataType expectedType = functionDefinition.parameters[i].type;
-				evaluatedArgs.push_back(context.castArgument(rawResult, expectedType));
+				if (i >= functionDefinition.parameters.size()) {
+					evaluatedArgs.push_back(rawResult);
+				}
+				else {
+					DataType expectedType = functionDefinition.parameters[i].type;
+					evaluatedArgs.push_back(context.castArgument(rawResult, expectedType));
+				}
 			}
 
 			return functionDefinition.callback(&context, evaluatedArgs);

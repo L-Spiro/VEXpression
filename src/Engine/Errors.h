@@ -19,6 +19,7 @@ namespace ve {
 		Invalid_Function_Target,
 		Unknown_Function,
 		Invalid_Argument_Count,
+		Syntax_Error,
 
 		// == Runtime Errors.
 		Unknown_Numeric_Type,

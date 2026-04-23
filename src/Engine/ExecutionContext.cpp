@@ -442,6 +442,11 @@ namespace ve {
 		{ "find", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub } }, IntrinsicBridges::findBridge },
 		{ "find", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start } }, IntrinsicBridges::findBridge },
 		{ "find", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start }, { DataType::Any, "end", StringId::String_Param_End } }, IntrinsicBridges::findBridge },
+		{ "format", StringId::Desc_String_Format, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Variadic } }, IntrinsicBridges::formatBridge },
+		{ "index", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub } }, IntrinsicBridges::findBridge },
+		{ "index", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start } }, IntrinsicBridges::findBridge },
+		{ "index", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start }, { DataType::Any, "end", StringId::String_Param_End } }, IntrinsicBridges::findBridge },
+		{ "isalnum", StringId::Desc_String_IsAlnum, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::isAlnumBridge },
 	};
 
 	// == Functions.
@@ -468,8 +473,12 @@ namespace ve {
 			ExprLexer lexer(&input);
 			antlr4::CommonTokenStream tokens(&lexer);
 			ExprParser parser(&tokens);
+			parser.setErrorHandler(std::make_shared<antlr4::BailErrorStrategy>());
 
 			antlr4::tree::ParseTree* tree = parser.prog();
+			if (parser.getNumberOfSyntaxErrors() > 0) {
+				throw ErrorCode::Syntax_Error;
+			}
 
 			AstBuilderVisitor visitor(*this);
 			std::any resultAny = visitor.visit(tree);
@@ -770,6 +779,10 @@ namespace ve {
 				break;
 			}
 			case DataType::Any : {
+				out = rawVal;
+				break;
+			}
+			case DataType::Variadic : {
 				out = rawVal;
 				break;
 			}

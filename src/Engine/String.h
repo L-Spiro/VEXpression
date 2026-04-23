@@ -509,6 +509,18 @@ namespace ve {
 					return true;
 				}
 			}
+			else if (rhs.type == NumericConstant::Signed) {
+				std::string str = getUtf8();
+				Text::appendUtf32(str, uint32_t(rhs.value.intVal));
+				assignUtf8(str.c_str(), str.size());
+				return true;
+			}
+			else if (rhs.type == NumericConstant::Unsigned) {
+				std::string str = getUtf8();
+				Text::appendUtf32(str, uint32_t(rhs.value.uintVal));
+				assignUtf8(str.c_str(), str.size());
+				return true;
+			}
 
 			return false;
 		}
@@ -814,10 +826,10 @@ namespace ve {
 		 * Optional arguments start and end are interpreted as in slice notation.
 		 * Must be called within a try/catch block.
 		 *
-		 * \param suffix	The suffix string to check for.
-		 * \param start		The starting index (character-based, handles negative).
-		 * \param end		The ending index (character-based, handles negative).
-		 * \return			Returns true if the string ends with the suffix.
+		 * \param suffix		The suffix string to check for.
+		 * \param start			The starting index (character-based, handles negative).
+		 * \param end			The ending index (character-based, handles negative).
+		 * \return				Returns true if the string ends with the suffix.
 		 **/
 		bool								endsWith(const String* suffix, int64_t start = 0, int64_t end = -1) const;
 
@@ -825,9 +837,9 @@ namespace ve {
 		 * Returns a copy of the string where all tab characters are replaced by one or more spaces.
 		 * Must be called within a try/catch block.
 		 *
-		 * \param ctx		The runtime execution context.
-		 * \param tabSize	The size of each tab stop (defaults to 8).
-		 * \return			Returns the newly expanded String.
+		 * \param ctx			The runtime execution context.
+		 * \param tabSize		The size of each tab stop (defaults to 8).
+		 * \return				Returns the newly expanded String.
 		 **/
 		String*								expandtabs(ExecutionContext* ctx, int64_t tabSize = 8) const;
 
@@ -835,10 +847,10 @@ namespace ve {
 		 * Returns the lowest index in the string where substring sub is found within the slice [start, end].
 		 * Must be called within a try/catch block.
 		 *
-		 * \param sub		The substring to search for.
-		 * \param start		The starting index (character-based, handles negative).
-		 * \param end		The ending index (character-based, handles negative).
-		 * \return			Returns the character index of the match, or -1 if not found.
+		 * \param sub			The substring to search for.
+		 * \param start			The starting index (character-based, handles negative).
+		 * \param end			The ending index (character-based, handles negative).
+		 * \return				Returns the character index of the match, or -1 if not found.
 		 **/
 		int64_t								find(const String* sub, int64_t start = 0, int64_t end = -1) const;
 
@@ -846,11 +858,19 @@ namespace ve {
 		 * Returns a formatted version of the string, replacing {} and {N} placeholders with arguments.
 		 * Must be called within a try/catch block.
 		 *
-		 * \param ctx		The runtime execution context.
-		 * \param args		A vector of UTF-8 string representations of the arguments.
-		 * \return			Returns the newly formatted String.
+		 * \param ctx			The runtime execution context.
+		 * \param args			A vector of UTF-8 string representations of the arguments.
+		 * \return				Returns the newly formatted String.
 		 **/
 		String*								format(ExecutionContext* ctx, const std::vector<Result>& args) const;
+
+		/**
+		 * Returns true if all characters in the string are alphanumeric and there is at least one character.
+		 * Must be called within a try/catch block.
+		 * 
+		 * \return				Returns true if the string is alphanumeric, false otherwise.
+		 **/
+		bool								isalnum() const;
 		
 		/**
 		 * Internal helper to fetch a UTF-32 code point at a linear index.

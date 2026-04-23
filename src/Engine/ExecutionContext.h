@@ -189,7 +189,7 @@ namespace ve {
 				def.callback = callback;
 				def.variadic = params.size() && params[params.size()-1].type == DataType::Variadic;
 
-				FunctionSignature sig = { name, params.size() };
+				FunctionSignature sig = { name, params.size(), def.variadic };
 				registeredFunctions[sig] = def;
 			}
 			catch (...) { throw ErrorCode::Out_Of_Memory; }
@@ -204,11 +204,25 @@ namespace ve {
 		 * \return			True if the exact overload exists, false otherwise.
 		 **/
 		bool							getFunction(const std::string& name, size_t arity, FunctionDef& outDef) const {
-			auto it = registeredFunctions.find({ name, arity });
-			if (it != registeredFunctions.end()) {
-				outDef = it->second;
+			auto exactIt = registeredFunctions.find({ name, arity, false });
+			
+			if (exactIt != registeredFunctions.end()) {
+				outDef = exactIt->second;
 				return true;
 			}
+
+			auto startIt = std::make_reverse_iterator(registeredFunctions.upper_bound({ name, arity, false }));
+			auto endIt = std::make_reverse_iterator(registeredFunctions.lower_bound({ name, 0, false }));
+
+			auto match = std::find_if(startIt, endIt, [](const auto& pair) {
+				return pair.first.variadic;
+			});
+
+			if (match != endIt) {
+				outDef = match->second;
+				return true;
+			}
+
 			return false;
 		}
 
@@ -276,7 +290,7 @@ namespace ve {
 		struct FunctionSignature {
 			std::string					name;
 			size_t						arity;
-			bool						variadic
+			bool						variadic;
 
 			bool						operator<(const FunctionSignature& rhs) const {
 				if (name != rhs.name) {

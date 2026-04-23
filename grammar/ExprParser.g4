@@ -19,7 +19,7 @@ statement
     : expr SEMI                                                     # exprStmt
     | SEMI                                                          # emptyStmt
     ;
-	
+
 block
     : LBRACE statement_list RBRACE
     ;
@@ -27,10 +27,11 @@ block
 exprList
     : expr (',' expr)*
     ;
-	
+
 expr
     : IDENTIFIER op=(INC | DEC)                                     # postfix
     | op=(INC | DEC) IDENTIFIER                                     # prefixIncDec
+    | expr DOT IDENTIFIER '(' exprList? ')'                         # methodCall
     | expr '(' exprList? ')'                                        # functionCall
     | op=(ADD | SUB | LOG_NOT | BIT_NOT) expr                       # unary
     | expr op=(MUL | DIV | MOD) expr                                # mulDiv

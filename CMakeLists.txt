@@ -127,6 +127,7 @@ set(APP_HEADERS
 	src/Ast/LogNotNode.h
 	src/Ast/LogOrNode.h
 	src/Ast/LtNode.h
+	src/Ast/MethodCallNode.h
 	src/Ast/ModNode.h
 	src/Ast/MulNode.h
 	src/Ast/NeNode.h

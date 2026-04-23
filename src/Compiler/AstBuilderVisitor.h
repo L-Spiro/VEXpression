@@ -23,6 +23,7 @@
 #include "../Ast/LogNotNode.h"
 #include "../Ast/LogOrNode.h"
 #include "../Ast/LtNode.h"
+#include "../Ast/MethodCallNode.h"
 #include "../Ast/ModNode.h"
 #include "../Ast/MulNode.h"
 #include "../Ast/NeNode.h"
@@ -214,6 +215,30 @@ namespace ve {
 			}
 			
 			throw ErrorCode::Invalid_LValue;
+		}
+
+		/**
+		 * Compiles a method call AST node.
+		 * Evaluates the target expression, extracts the method identifier, evaluates the arguments, 
+		 * and allocates a MethodCallNode in the runtime arena.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx	The ANTLR parser context for the method call.
+		 * \return		Returns an std::any containing the allocated node index (size_t).
+		 **/
+		virtual std::any			visitMethodCall(ExprParser::MethodCallContext* ctx) override {
+			size_t targetNode = std::any_cast<size_t>(visit(ctx->expr()));
+			std::string methodName = ctx->IDENTIFIER()->getText();
+			
+			std::vector<size_t> args;
+			
+			if (ctx->exprList()) {
+				for (auto* argCtx : ctx->exprList()->expr()) {
+					args.push_back(std::any_cast<size_t>(visit(argCtx)));
+				}
+			}
+
+			return context.addNode<MethodCallNode>(targetNode, methodName, args);
 		}
 
 		/**

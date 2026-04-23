@@ -1359,6 +1359,43 @@ namespace ve {
 			return result;
 		}
 
+		/**
+		 * Checks if all characters in the string are alphanumeric.
+		 * 
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if all characters are alphanumeric and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isAlnumUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) {
+				return false;
+			}
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) {
+					return false;
+				}
+
+				if (cp > 127 || (!Character::isAlpha(static_cast<char>(cp)) && !Character::isDigit(static_cast<char>(cp)))) {
+					return false;
+				}
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return true;
+		}
+
 
 		// ===============================
 		// Search, Replace & Validation

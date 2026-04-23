@@ -1456,3 +1456,21 @@ VE_STR( String_Param_Args,
     "स्ट्रिंग में स्वरूपित करने के लिए तर्क।", 
     "Dizeye biçimlendirilecek argüman."
 )
+
+VE_STR( Desc_String_IsAlnum, 
+    "Returns true if all characters in the string are alphanumeric and there is at least one character, false otherwise.", 
+    "文字列内のすべての文字が英数字であり、少なくとも 1 つの文字がある場合は true を返し、そうでない場合は false を返します。", 
+    "如果字符串中的所有字符都是字母数字，并且至少有一个字符，则返回 true，否则返回 false。", 
+    "Devuelve verdadero si todos los caracteres de la cadena son alfanuméricos y hay al menos un carácter, falso en caso contrario.", 
+    "Renvoie vrai si tous les caractères de la chaîne sont alphanumériques et s'il y a au moins un caractère, sinon faux.", 
+    "Restituisce vero se tutti i caratteri della stringa sono alfanumerici e c'è almeno un carattere, altrimenti falso.", 
+    "Retorna verdadeiro se todos os caracteres da string forem alfanuméricos e houver pelo menos um caractere, caso contrário, falso.", 
+    "يُرجع القيمة true إذا كانت كافة الأحرف في السلسلة أبجدية رقمية وكان هناك حرف واحد على الأقل، وإلا يُرجع false.", 
+    "Возвращает true, если все символы в строке являются буквенно-цифровыми и есть хотя бы один символ, иначе false.", 
+    "Gibt true zurück, wenn alle Zeichen in der Zeichenfolge alphanumerisch sind und mindestens ein Zeichen vorhanden ist, andernfalls false.", 
+    "Geeft true als resultaat als alle tekens in de tekenreeks alfanumeriek zijn en er ten minste één teken is, anders false.", 
+    "문자열의 모든 문자가 영숫자이고 문자가 하나 이상 있으면 true를 반환하고, 그렇지 않으면 false를 반환합니다.", 
+    "ส่งคืนค่า true หากอักขระทั้งหมดในสตริงเป็นตัวอักษรและตัวเลขผสมกัน และมีอักขระอย่างน้อยหนึ่งตัว มิฉะนั้นจะส่งคืนค่า false", 
+    "यदि स्ट्रिंग के सभी वर्ण अल्फ़ान्यूमेरिक हैं और कम से कम एक वर्ण है तो सही (true) लौटाता है, अन्यथा गलत (false)।", 
+    "Dizedeki tüm karakterler alfasayısal ise ve en az bir karakter varsa true, aksi takdirde false döndürür."
+)

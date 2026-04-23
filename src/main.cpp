@@ -1,12 +1,11 @@
 ﻿#include "Engine/ExecutionContext.h"
 #include "Engine/Result.h"
 #include "Foundation/Text.h"
+#include "OS/OS.h"
 
 #include <bit>
 #include <iostream>
 #include <string>
-
-#include "OS/OS.h"
 
 /**
  * A simple helper function to print the strongly-typed Result union.
@@ -60,7 +59,7 @@ int main() {
 	ve::ExecutionContext context;
 	auto Cool = HUGE_VALF / 2;
 	
-	std::u8string testExprU8 = std::u8string( u8"find(\"How well does it translate?\", \"ate?\")" );
+	std::u8string testExprU8 = std::u8string( u8"Str = \"\"; for (i = 0; i < 0x100; ++i) { Str += i; }; Str" );
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";

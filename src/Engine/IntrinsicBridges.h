@@ -1774,6 +1774,71 @@ namespace ve {
 			
 			return Result{ .type = NumericConstant::Invalid };
 		}
+
+		/**
+		 * Bridge for String.format(). Handles dynamic replacement of {} placeholders.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the formatted text.
+		 **/
+		static Result		formatBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty()) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			std::vector<Result> formatArgs(args.begin() + 1, args.end());
+			
+			try {
+				String* formattedStr = strObj->format(ctx, formatArgs);
+				
+				if (formattedStr) {
+					return formattedStr->createResult();
+				}
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isalnum().
+		 * Must be called within a try/catch block.
+		 * * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isAlnumBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				bool result = strObj->isalnum();
+				
+				Result res;
+				res.type = NumericConstant::Signed;
+				res.value.intVal = result ? 1 : 0;
+				return res;
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
 	};
 
 }	// namespace ve
