@@ -14,9 +14,7 @@
 #include <vector>
 
 #ifdef _WIN32
-	#define NOMINMAX
-	#define WIN32_LEAN_AND_MEAN
-	#include <Windows.h>
+	#include "../OS/OS.h"
 	#include <processthreadsapi.h>
 	#include <shlobj.h>
 #elif defined( __APPLE__ )

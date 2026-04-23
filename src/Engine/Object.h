@@ -102,7 +102,7 @@ namespace ve {
 		 * \param flags			Formatting flags dictating how the string should be generated.
 		 * \return				Returns true if the object was successfully converted to a string.
 		 **/
-		virtual bool						toString(std::wstring& returnString, uint32_t depth, uint32_t flags) const = 0;
+		virtual bool						toString(std::string& returnString, uint32_t depth, uint32_t flags) const = 0;
 
 		/**
 		 * Generates a formatted string representation of the object.
@@ -111,7 +111,7 @@ namespace ve {
 		 * \param flags			Formatting flags.
 		 * \return				Returns the formatted wide string.
 		 **/
-		virtual std::wstring				formattedString(const std::wstring& format, uint32_t flags) const = 0;
+		virtual std::string					formattedString(const std::string& format, uint32_t flags) const = 0;
 
 		/**
 		 * Converts the object to a fundamental numeric constant type if possible.

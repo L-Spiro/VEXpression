@@ -3,6 +3,7 @@
 #include "../Engine/Result.h"
 #include "CaseFold.h"
 #include "Character.h"
+#include "Encode.h"
 #include "Html.h"
 #include "TextPolicy.h"
 #include "Unicode.h"
@@ -1086,6 +1087,10 @@ namespace ve {
 			return cp;
 		}
 
+
+		// ===============================
+		// General UTF-8
+		// ===============================
 		/**
 		 * Capitalizes an 8-bit UTF-8 string (first character uppercase, the rest lowercase).
 		 * Must be called within a try/catch block.
@@ -1253,6 +1258,105 @@ namespace ve {
 			}
 			
 			return count;
+		}
+
+		/**
+		 * Round-trips a UTF-8 string through a target code page to apply encoding limits and replacements.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param input				The input UTF-8 string view.
+		 * \param targetCodePage	The CodePage to encode the string into.
+		 * \param errorPolicy		The policy to apply when encountering invalid characters.
+		 * \return					Returns a new UTF-8 string representing the lossy encoding.
+		 **/
+		template <typename StringT>
+		static inline StringT			encodeUtf8(std::basic_string_view<typename StringT::value_type> input, CodePage targetCodePage, EncodingErrorPolicy errorPolicy) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "encodeUtf8 requires an 8-bit character string type.");
+
+			std::u16string utf16 = Encode::multiByteToWideChar<std::u16string>(CodePage::UTF8, input, EncodingErrorPolicy::Strict);
+			
+			std::string targetMB = Encode::wideCharToMultiByte<std::string, char16_t>(targetCodePage, utf16, errorPolicy);
+			
+			std::u16string backUtf16 = Encode::multiByteToWideChar<std::u16string>(targetCodePage, targetMB, EncodingErrorPolicy::Strict);
+			
+			return Encode::wideCharToMultiByte<StringT, char16_t>(CodePage::UTF8, backUtf16, EncodingErrorPolicy::Strict);
+		}
+
+		/**
+		 * Checks if a string ends with a specified suffix.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string.
+		 * \param haystack		The string to search within.
+		 * \param suffix		The suffix to search for.
+		 * \return				Returns true if the string ends with the suffix, false otherwise.
+		 **/
+		template <typename StringT>
+		static inline bool				endsWithUtf8(std::basic_string_view<typename StringT::value_type> haystack, std::basic_string_view<typename StringT::value_type> suffix) {
+			if (haystack.length() < suffix.length()) {
+				return false;
+			}
+			
+			return haystack.compare(haystack.length() - suffix.length(), suffix.length(), suffix) == 0;
+		}
+
+		/**
+		 * Replaces tab characters with spaces based on the current column and given tab size.
+		 *
+		 * \tparam StringT		The type of the string.
+		 * \param input			The input UTF-8 string view.
+		 * \param tabSize		The number of columns per tab stop.
+		 * \return				Returns a new UTF-8 string with tabs expanded.
+		 **/
+		template <typename StringT>
+		static inline StringT			expandTabsUtf8(std::basic_string_view<typename StringT::value_type> input, int64_t tabSize) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "expandTabsUtf8 requires an 8-bit character string type.");
+
+			StringT result;
+			
+			if (input.empty()) {
+				return result;
+			}
+
+			size_t currentColumn = 0;
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) {
+					break;
+				}
+
+				if (cp == '\t') {
+					if (tabSize > 0) {
+						size_t pad = static_cast<size_t>(tabSize - (currentColumn % tabSize));
+						
+						for (size_t i = 0; i < pad; ++i) {
+							appendUtf8(result, ' ');
+						}
+						
+						currentColumn += pad;
+					}
+				}
+				else if (cp == '\n' || cp == '\r') {
+					appendUtf8(result, cp);
+					currentColumn = 0;
+				}
+				else if (cp != UTF_INVALID) {
+					appendUtf8(result, cp);
+					currentColumn++;
+				}
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return result;
 		}
 
 
@@ -2540,6 +2644,133 @@ namespace ve {
 			}
 
 			return result;
+		}
+
+
+		// ===============================
+		// Formatting
+		// ===============================
+		/**
+		 * Consumes a {..} formatter from a format string.
+		 * Parses and removes the formatter portion beginning immediately after an opening '{' and ending at the
+		 * matching '}'. The formatter is interpreted as ASCII-only.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The string type to return (e.g., std::string or std::u8string).
+		 * \param formatStr		Pointer to the current format-string position; must point to the character immediately after the opening '{'. Updated to point past the closing '}'.
+		 * \param length		Remaining length of the format string; updated as characters are consumed.
+		 * \param argIdx		Receives/updates the argument index selected by the formatter.
+		 * \return				Returns the decoded/expanded formatter text.
+		 **/
+		template <typename StringT>
+		static inline StringT			eatStringFormatter(const typename StringT::value_type*& formatStr, size_t& length, size_t& argIdx) {
+			using CharT = typename StringT::value_type;
+			
+			StringT ret;
+			ret.push_back(static_cast<CharT>('{'));
+
+			size_t parsedIdx = 0;
+			size_t numberEat = 0;
+
+			while (numberEat < length && formatStr[numberEat] >= static_cast<CharT>('0') && formatStr[numberEat] <= static_cast<CharT>('9')) {
+				parsedIdx = (parsedIdx * 10) + static_cast<size_t>(formatStr[numberEat] - static_cast<CharT>('0'));
+				numberEat++;
+			}
+
+			if (numberEat > 0) {
+				argIdx = parsedIdx;
+				formatStr += numberEat;
+				length -= numberEat;
+			}
+
+			while (length > 0) {
+				if (*formatStr == static_cast<CharT>('{')) {
+					break;
+				}
+
+				ret.push_back(*formatStr);
+				++formatStr;
+				--length;
+
+				if (ret.back() == static_cast<CharT>('}')) {
+					break;
+				}
+			}
+
+			return ret;
+		}
+
+		/**
+		 * Formats a UTF-8 string by parsing {} placeholders and utilizing a callback to resolve arguments.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \tparam ResolverT	The type of the callable resolver function.
+		 * \param input			The input UTF-8 string view.
+		 * \param resolver		A callable taking (size_t argIndex, const StringT& formatter) that returns a StringT.
+		 * \return				Returns the formatted UTF-8 string.
+		 **/
+		template <typename StringT, typename ResolverT>
+		static inline StringT			formatUtf8(std::basic_string_view<typename StringT::value_type> input, ResolverT resolver) {
+			using CharT = typename StringT::value_type;
+			
+			StringT tmp;
+			const CharT* formatStr = input.data();
+			size_t len = input.length();
+			size_t autoIdx = 0;
+
+			while (len > 0) {
+				size_t charLen = 0;
+				uint32_t thisChar = nextUtf8Char(formatStr, len, &charLen);
+
+				if (thisChar == '{') {
+					if (len - charLen > 0) {
+						size_t nextCharLen = 0;
+						uint32_t nextChar = nextUtf8Char(formatStr + charLen, len - charLen, &nextCharLen);
+						
+						if (nextChar == '{') {
+							charLen += nextCharLen;
+							tmp.push_back(static_cast<CharT>('{'));
+							formatStr += charLen;
+							len -= charLen;
+							continue;
+						}
+
+						formatStr += charLen;
+						len -= charLen;
+						
+						size_t arg = autoIdx;
+						StringT formatter = eatStringFormatter<StringT>(formatStr, len, arg);
+						
+						tmp.append(resolver(arg, formatter));
+						autoIdx = arg + 1;
+						
+						continue;
+					}
+				}
+				else if (thisChar == '}') {
+					if (len - charLen > 0) {
+						size_t nextCharLen = 0;
+						uint32_t nextChar = nextUtf8Char(formatStr + charLen, len - charLen, &nextCharLen);
+						
+						if (nextChar == '}') {
+							charLen += nextCharLen;
+							tmp.push_back(static_cast<CharT>('}'));
+							formatStr += charLen;
+							len -= charLen;
+							continue;
+						}
+					}
+				}
+				
+				while (charLen > 0) {
+					tmp.push_back(*formatStr++);
+					--len;
+					--charLen;
+				}
+			}
+
+			return tmp;
 		}
 
 

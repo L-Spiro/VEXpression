@@ -9,7 +9,7 @@ namespace ve {
 	// ===============================
 	/** The internal static array containing all explicit casefold expansions. **/
 	const CaseFold::CasefoldTable CaseFold::casefoldData[] = {
-#ifdef VE_SIMPLE_STRINGS
+#ifdef VE_FULL_STRINGS
 		{ 0x00000041, { 0x00000061, 0x00000000, 0x00000000 }, 1 }, // A -> a (LATIN CAPITAL LETTER A)
         { 0x00000042, { 0x00000062, 0x00000000, 0x00000000 }, 1 }, // B -> b (LATIN CAPITAL LETTER B)
         { 0x00000043, { 0x00000063, 0x00000000, 0x00000000 }, 1 }, // C -> c (LATIN CAPITAL LETTER C)
@@ -1540,9 +1540,9 @@ namespace ve {
         { 0x0001E91F, { 0x0001E941, 0x00000000, 0x00000000 }, 1 }, // 𞤟 -> 𞥁 (ADLAM CAPITAL LETTER   ZAL)
         { 0x0001E920, { 0x0001E942, 0x00000000, 0x00000000 }, 1 }, // 𞤠 -> 𞥂 (ADLAM CAPITAL LETTER   KPO)
         { 0x0001E921, { 0x0001E943, 0x00000000, 0x00000000 }, 1 }, // 𞤡 -> 𞥃 (ADLAM CAPITAL LETTER   SHA)
-#else	// #ifdef VE_SIMPLE_STRINGS
+#else	// #ifdef VE_FULL_STRINGS
 		 { 0x00000000, { 0x00000000, 0x00000000, 0x00000000 }, 0 },
-#endif	// #ifdef VE_SIMPLE_STRINGS
+#endif	// #ifdef VE_FULL_STRINGS
 
 	};
 

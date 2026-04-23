@@ -23,7 +23,6 @@ namespace ve {
 		// =========================================================================
 		// Core Math
 		// =========================================================================
-
 		/**
 		 * Bridge for std::pow (double precision).
 		 * 
@@ -391,7 +390,6 @@ namespace ve {
 		// =========================================================================
 		// Hyperbolic Functions
 		// =========================================================================
-
 		/**
 		 * Bridge for std::cosh.
 		 * 
@@ -528,7 +526,6 @@ namespace ve {
 		// =========================================================================
 		// Exponents & Logs
 		// =========================================================================
-
 		/**
 		 * Bridge for std::log2.
 		 * 
@@ -665,7 +662,6 @@ namespace ve {
 		// =========================================================================
 		// Miscellaneous Math
 		// =========================================================================
-
 		/**
 		 * Bridge for std::hypot.
 		 * 
@@ -1059,7 +1055,6 @@ namespace ve {
 		// =========================================================================
 		// Bit Manipulation (<bit>)
 		// =========================================================================
-
 		/**
 		 * Bridge for std::byteswap (16-bit). Reverses the bytes of a 16-bit unsigned integer.
 		 * 
@@ -1221,7 +1216,6 @@ namespace ve {
 		// =========================================================================
 		// HTML Entities
 		// =========================================================================
-
 		/**
 		 * Bridge for htmlCount().
 		 *
@@ -1317,17 +1311,10 @@ namespace ve {
 			}
 			else if (arg.type == NumericConstant::Object && arg.value.objectVal != nullptr) {
 				if (arg.value.objectVal->type() & BuiltInType_String) {
-					std::wstring wStr;
+					std::string name;
 					
 					// Assuming ToStringFlag_None is 0
-					if (arg.value.objectVal->toString(wStr, 0, 0)) {
-						std::string name;
-						name.reserve(wStr.length());
-						
-						for (size_t i = 0; i < wStr.length(); ++i) {
-							name.push_back(static_cast<char>(wStr[i]));
-						}
-						
+					if (arg.value.objectVal->toString(name, 0, 0)) {						
 						code = Html::getCode(name.c_str(), name.length());
 					}
 				}
@@ -1359,7 +1346,6 @@ namespace ve {
 		// =========================================================================
 		// String Methods
 		// =========================================================================
-
 		/**
 		 * Bridge for String.capitalize().
 		 *
@@ -1537,6 +1523,254 @@ namespace ve {
 			res.type = NumericConstant::Signed;
 			res.value.intVal = occurrences;
 			return res;
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.encode(). Handles decoding the parameters into native CodePage and ErrorPolicy enums.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the encoded text.
+		 **/
+		static Result		encodeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args.size() > 3) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			CodePage codePage = CodePage::UTF8;
+			
+			if (args[1].type == NumericConstant::Object && 
+				args[1].value.objectVal != nullptr && 
+				(args[1].value.objectVal->type() & BuiltInType_String)) {
+				String* encStr = static_cast<String*>(args[1].value.objectVal);
+				
+				if (!Encode::getCodePageId(encStr->getUtf8(), codePage)) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			else if (args[1].type == NumericConstant::Unsigned) {
+				codePage = static_cast<CodePage>(args[1].value.uintVal);
+			}
+			else if (args[1].type == NumericConstant::Signed) {
+				codePage = static_cast<CodePage>(args[1].value.intVal);
+			}
+			else {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			EncodingErrorPolicy errorPolicy = EncodingErrorPolicy::Strict;
+			
+			if (args.size() == 3) {
+				if (args[2].type == NumericConstant::Object && 
+					args[2].value.objectVal != nullptr && 
+					(args[2].value.objectVal->type() & BuiltInType_String)) {
+					String* errStr = static_cast<String*>(args[2].value.objectVal);
+					std::string errUtf8 = errStr->getUtf8();
+					
+					std::string errUpper;
+					errUpper.reserve(errUtf8.length());
+					
+					for (size_t i = 0; i < errUtf8.length(); ++i) {
+						errUpper += static_cast<char>(Text::toUpper(static_cast<unsigned char>(errUtf8[i])));
+					}
+					
+					if (errUpper == "STRICT") {
+						errorPolicy = EncodingErrorPolicy::Strict;
+					}
+					else if (errUpper == "REPLACE") {
+						errorPolicy = EncodingErrorPolicy::Replace;
+					}
+					else {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			try {
+				String* encodedStr = strObj->encode(ctx, codePage, errorPolicy);
+				if (encodedStr) {
+					return encodedStr->createResult();
+				}
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.endswith(). Handles varying arity for optional start and end parameters.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		endsWithBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args.size() > 4) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			if (args[1].type != NumericConstant::Object || 
+				args[1].value.objectVal == nullptr || 
+				!(args[1].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			String* suffixObj = static_cast<String*>(args[1].value.objectVal);
+			
+			int64_t start = 0;
+			if (args.size() >= 3) {
+				if (args[2].type == NumericConstant::Signed) {
+					start = args[2].value.intVal;
+				}
+				else if (args[2].type == NumericConstant::Unsigned) {
+					start = static_cast<int64_t>(args[2].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			int64_t end = -1;
+			if (args.size() == 4) {
+				if (args[3].type == NumericConstant::Signed) {
+					end = args[3].value.intVal;
+				}
+				else if (args[3].type == NumericConstant::Unsigned) {
+					end = static_cast<int64_t>(args[3].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			try {
+				bool result = strObj->endsWith(suffixObj, start, end);
+				
+				Result res;
+				res.type = NumericConstant::Signed;
+				res.value.intVal = result ? 1 : 0;
+				return res;
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.expandtabs().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the expanded text.
+		 **/
+		static Result		expandTabsBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args.size() > 2) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			int64_t tabSize = 8;
+			
+			if (args.size() == 2) {
+				if (args[1].type == NumericConstant::Signed) {
+					tabSize = args[1].value.intVal;
+				}
+				else if (args[1].type == NumericConstant::Unsigned) {
+					tabSize = static_cast<int64_t>(args[1].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			try {
+				String* expandedStr = strObj->expandtabs(ctx, tabSize);
+				if (expandedStr) {
+					return expandedStr->createResult();
+				}
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.find(). Handles varying arity for optional start and end parameters.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing the found index, or -1.
+		 **/
+		static Result		findBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args.size() > 4) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			if (args[1].type != NumericConstant::Object || 
+				args[1].value.objectVal == nullptr || 
+				!(args[1].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			String* subObj = static_cast<String*>(args[1].value.objectVal);
+			
+			int64_t start = 0;
+			if (args.size() >= 3) {
+				if (args[2].type == NumericConstant::Signed) { start = args[2].value.intVal; }
+				else if (args[2].type == NumericConstant::Unsigned) { start = static_cast<int64_t>(args[2].value.uintVal); }
+				else { return Result{ .type = NumericConstant::Invalid }; }
+			}
+			
+			int64_t end = -1;
+			if (args.size() == 4) {
+				if (args[3].type == NumericConstant::Signed) { end = args[3].value.intVal; }
+				else if (args[3].type == NumericConstant::Unsigned) { end = static_cast<int64_t>(args[3].value.uintVal); }
+				else { return Result{ .type = NumericConstant::Invalid }; }
+			}
+			
+			try {
+				int64_t index = strObj->find(subObj, start, end);
+				
+				Result res;
+				res.type = NumericConstant::Signed;
+				res.value.intVal = index;
+				return res;
+			}
+			catch (...) {
+			}
 			
 			return Result{ .type = NumericConstant::Invalid };
 		}

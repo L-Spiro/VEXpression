@@ -677,7 +677,7 @@ namespace ve {
 		 * \param flags			Formatting flags (e.g., ToStringFlag_CString).
 		 * \return				Returns true on success.
 		 **/
-		virtual bool						toString(std::wstring& returnString, uint32_t depth, uint32_t flags) const override;
+		virtual bool						toString(std::string& returnString, uint32_t depth, uint32_t flags) const override;
 
 		/**
 		 * Generates a formatted string representation of the object.
@@ -686,21 +686,21 @@ namespace ve {
 		 * \param flags			Formatting flags.
 		 * \return				Returns the formatted wide string.
 		 **/
-		virtual std::wstring				formattedString(const std::wstring& format, uint32_t flags) const override {
-			std::wstring wStr;
+		virtual std::string					formattedString(const std::string& format, uint32_t flags) const override {
+			std::string wStr;
 
 			if (flags & ToStringFlag_CString) {
 				switch (bufferWidth) {
 					case Width_8 : {
-						wStr = Text::toEscaped<std::wstring>(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
+						wStr = Text::toEscaped<std::string>(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
 						break;
 					}
 					case Width_16 : {
-						wStr = Text::toEscaped<std::wstring>(reinterpret_cast<const char16_t*>(buffer.data()), charCount);
+						wStr = Text::toEscaped<std::string>(reinterpret_cast<const char16_t*>(buffer.data()), charCount);
 						break;
 					}
 					case Width_32 : {
-						wStr = Text::toEscaped<std::wstring>(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
+						wStr = Text::toEscaped<std::string>(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
 						break;
 					}
 				}
@@ -709,7 +709,7 @@ namespace ve {
 				toString(wStr, 0, ToStringFlag_None);
 			}
 
-			return std::vformat(format, std::make_wformat_args(wStr));
+			return std::vformat(format, std::make_format_args(wStr));
 		}
 
 		/**
@@ -722,6 +722,7 @@ namespace ve {
 
 		/**
 		 * Initializes the contents of this string object from an evaluation result.
+		 * Must be called within a try/catch block.
 		 *
 		 * \param obj			The evaluation result to read from.
 		 * \return				Returns true if successful, false otherwise.
@@ -795,7 +796,61 @@ namespace ve {
 		 * \param end			The ending index (character-based, handles negative).
 		 * \return				Returns the number of occurrences.
 		 **/
-		int64_t								count(const String* sub, int64_t start = 0, int64_t end = INT64_MAX) const;
+		int64_t								count(const String* sub, int64_t start = 0, int64_t end = -1) const;
+
+		/**
+		 * Returns an encoded version of the string as a new String object.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The runtime execution context.
+		 * \param codePage		The target code page to encode to.
+		 * \param errorPolicy	The policy for handling invalid characters.
+		 * \return				Returns the newly encoded String.
+		 **/
+		String*								encode(ExecutionContext* ctx, CodePage codePage, EncodingErrorPolicy errorPolicy = EncodingErrorPolicy::Strict) const;
+
+		/**
+		 * Returns true if the string ends with the specified suffix, otherwise false.
+		 * Optional arguments start and end are interpreted as in slice notation.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param suffix	The suffix string to check for.
+		 * \param start		The starting index (character-based, handles negative).
+		 * \param end		The ending index (character-based, handles negative).
+		 * \return			Returns true if the string ends with the suffix.
+		 **/
+		bool								endsWith(const String* suffix, int64_t start = 0, int64_t end = -1) const;
+
+		/**
+		 * Returns a copy of the string where all tab characters are replaced by one or more spaces.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param tabSize	The size of each tab stop (defaults to 8).
+		 * \return			Returns the newly expanded String.
+		 **/
+		String*								expandtabs(ExecutionContext* ctx, int64_t tabSize = 8) const;
+
+		/**
+		 * Returns the lowest index in the string where substring sub is found within the slice [start, end].
+		 * Must be called within a try/catch block.
+		 *
+		 * \param sub		The substring to search for.
+		 * \param start		The starting index (character-based, handles negative).
+		 * \param end		The ending index (character-based, handles negative).
+		 * \return			Returns the character index of the match, or -1 if not found.
+		 **/
+		int64_t								find(const String* sub, int64_t start = 0, int64_t end = -1) const;
+
+		/**
+		 * Returns a formatted version of the string, replacing {} and {N} placeholders with arguments.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector of UTF-8 string representations of the arguments.
+		 * \return			Returns the newly formatted String.
+		 **/
+		String*								format(ExecutionContext* ctx, const std::vector<Result>& args) const;
 		
 		/**
 		 * Internal helper to fetch a UTF-32 code point at a linear index.

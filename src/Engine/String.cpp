@@ -1,5 +1,7 @@
 #include "String.h"
 
+#include <cassert>
+
 
 namespace ve {
 	
@@ -222,63 +224,51 @@ namespace ve {
 	 * \param flags			Formatting flags (e.g., ToStringFlag_CString).
 	 * \return				Returns true on success.
 	 **/
-	bool String::toString(std::wstring& returnString, uint32_t depth, uint32_t flags) const {
+	bool String::toString(std::string& returnString, uint32_t depth, uint32_t flags) const {
 		static_cast<void>(depth);
 
 		if (flags & ToStringFlag_CString) {
-			returnString = L"\"";
+			returnString = "\"";
 			switch (bufferWidth) {
 				case Width_8 : {
-					returnString += Text::toEscaped<std::wstring>(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
+					returnString += Text::toEscaped<std::string>(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
 					break;
 				}
 				case Width_16 : {
-					returnString += Text::toEscaped<std::wstring>(reinterpret_cast<const char16_t*>(buffer.data()), charCount);
+					returnString += Text::toEscaped<std::string>(reinterpret_cast<const char16_t*>(buffer.data()), charCount);
 					break;
 				}
 				case Width_32 : {
-					returnString += Text::toEscaped<std::wstring>(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
+					returnString += Text::toEscaped<std::string>(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
 					break;
 				}
 			}
-			returnString += L"\"";
+			returnString += "\"";
 		}
 		else {
-			if constexpr (sizeof(wchar_t) == 2) {
-				switch (bufferWidth) {
-					case Width_8 : {
-						std::basic_string_view<char8_t> view(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
-						returnString = Text::utf8ToUtf16<std::wstring>(view);
-						break;
-					}
-					case Width_16 : {
-						// Direct copy if both are 16-bit.
-						returnString.assign(reinterpret_cast<const wchar_t*>(buffer.data()), charCount);
-						break;
-					}
-					case Width_32 : {
-						std::basic_string_view<char32_t> view(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
-						returnString = Text::utf32ToUtf16<std::wstring>(view);
-						break;
-					}
+			switch (bufferWidth) {
+				case Width_8 : {
+					returnString.assign(reinterpret_cast<const std::string::value_type*>(buffer.data()), charCount);
+					break;
 				}
-			} else if constexpr (sizeof(wchar_t) == 4) {
-				switch (bufferWidth) {
-					case Width_8 : {
-						std::basic_string_view<char8_t> view(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
-						returnString = Text::utf8ToUtf32<std::wstring>(view);
-						break;
-					}
-					case Width_16 : {
+				case Width_16 : {
+					if constexpr (sizeof(wchar_t) == sizeof(char16_t)) {
 						std::basic_string_view<char16_t> view(reinterpret_cast<const char16_t*>(buffer.data()), charCount);
-						returnString = Text::utf16ToUtf32<std::wstring>(view);
-						break;
+						returnString = Text::utf16ToUtf8<std::string>(view);
 					}
-					case Width_32 : {
-						// Direct copy if both are 32-bit.
-						returnString.assign(reinterpret_cast<const wchar_t*>(buffer.data()), charCount);
-						break;
+					else if constexpr (sizeof(wchar_t) == sizeof(char32_t)) {
+						std::basic_string_view<char32_t> view(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
+						returnString = Text::utf32ToUtf8<std::string>(view);
 					}
+					else {
+						assert(false);
+					}
+					break;
+				}
+				case Width_32 : {
+					std::basic_string_view<char32_t> view(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
+						returnString = Text::utf32ToUtf8<std::string>(view);
+					break;
 				}
 			}
 		}
@@ -355,6 +345,7 @@ namespace ve {
 
 	/**
 	 * Initializes the contents of this string object from an evaluation result.
+	 * Must be called within a try/catch block.
 	 *
 	 * \param obj			The evaluation result to read from.
 	 * \return				Returns true if successful, false otherwise.
@@ -398,19 +389,10 @@ namespace ve {
 			}
 			case NumericConstant::Object : {
 				if (obj.value.objectVal) {
-					std::wstring wStr;
+					std::string str;
 						
-					if (obj.value.objectVal->toString(wStr, 0, ToStringFlag_None)) {
-						if constexpr (sizeof(wchar_t) == 2) {
-							std::basic_string_view<char16_t> view(reinterpret_cast<const char16_t*>(wStr.data()), wStr.length());
-							tempStr = Text::utf16ToUtf8<std::string>(view);
-						}
-						else if constexpr (sizeof(wchar_t) == 4) {
-							std::basic_string_view<char32_t> view(reinterpret_cast<const char32_t*>(wStr.data()), wStr.length());
-							tempStr = Text::utf32ToUtf8<std::string>(view);
-						}
-							
-						assignUtf8(tempStr.data(), tempStr.length());
+					if (obj.value.objectVal->toString(str, 0, ToStringFlag_None)) {
+						assignUtf8(str.data(), str.length());
 						return true;
 					}
 				}
@@ -479,9 +461,8 @@ namespace ve {
 	int64_t String::count(const String* sub, int64_t start, int64_t end) const {
 		int64_t len = static_cast<int64_t>(this->charCount);
 		
-		// Map slice indices exactly like Python does.
 		start = arrayIndexToLinearIndex(start, this->charCount);
-		end = arrayIndexToLinearIndex(end, this->charCount);
+		end = arrayIndexToLinearIndex(end, this->charCount) + 1;
 		
 		if (start > end || start >= len) {
 			if (sub->charCount == 0) { return 1; }
@@ -498,6 +479,199 @@ namespace ve {
 		std::string needleStr = sub->getUtf8();
 		
 		return static_cast<int64_t>(Text::countUtf8<std::string>(haystackStr, needleStr));
+	}
+
+	/**
+	 * Returns an encoded version of the string as a new String object.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The runtime execution context.
+	 * \param codePage		The target code page to encode to.
+	 * \param errorPolicy	The policy for handling invalid characters.
+	 * \return				Returns the newly encoded String.
+	 **/
+	String* String::encode(ExecutionContext* ctx, CodePage codePage, EncodingErrorPolicy errorPolicy) const {
+		std::string currentUtf8 = this->getUtf8();
+		std::string reencoded = Text::encodeUtf8<std::string>(currentUtf8, codePage, errorPolicy);
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(reencoded.data(), reencoded.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns true if the string ends with the specified suffix, otherwise false.
+	 * Optional arguments start and end are interpreted as in slice notation.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param suffix	The suffix string to check for.
+	 * \param start		The starting index (character-based, handles negative).
+	 * \param end		The ending index (character-based, handles negative).
+	 * \return			Returns true if the string ends with the suffix.
+	 **/
+	bool String::endsWith(const String* suffix, int64_t start, int64_t end) const {
+		int64_t len = static_cast<int64_t>(this->charCount);
+		
+		start = arrayIndexToLinearIndex(start, this->charCount);
+		end = arrayIndexToLinearIndex(end, this->charCount) + 1;
+		
+		if (start > end || start >= len) {
+			if (suffix->charCount == 0) { return true; }
+			return false;
+		}
+		
+		int64_t sliceCharLen = end - start;
+		int64_t suffixCharLen = static_cast<int64_t>(suffix->charCount);
+		
+		if (suffixCharLen > sliceCharLen) { return false; }
+		
+		if (suffixCharLen == 0) { return true; }
+		
+		int64_t matchStart = end - suffixCharLen;
+		
+		for (int64_t i = 0; i < suffixCharLen; ++i) {
+			if (this->getCodePoint(static_cast<size_t>(matchStart + i)) != suffix->getCodePoint(static_cast<size_t>(i))) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Returns a copy of the string where all tab characters are replaced by one or more spaces.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx		The runtime execution context.
+	 * \param tabSize	The size of each tab stop (defaults to 8).
+	 * \return			Returns the newly expanded String.
+	 **/
+	String* String::expandtabs(ExecutionContext* ctx, int64_t tabSize) const {
+		std::string currentUtf8 = this->getUtf8();
+		std::string expanded = Text::expandTabsUtf8<std::string>(currentUtf8, tabSize);
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(expanded.data(), expanded.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns the lowest index in the string where substring sub is found within the slice [start, end].
+	 * Must be called within a try/catch block.
+	 *
+	 * \param sub		The substring to search for.
+	 * \param start		The starting index (character-based, handles negative).
+	 * \param end		The ending index (character-based, handles negative).
+	 * \return			Returns the character index of the match, or -1 if not found.
+	 **/
+	int64_t String::find(const String* sub, int64_t start, int64_t end) const {
+		int64_t len = static_cast<int64_t>(this->charCount);
+		
+		start = arrayIndexToLinearIndex(start, this->charCount);
+		end = arrayIndexToLinearIndex(end, this->charCount) + 1;
+		
+		if (start > end || start >= len) {
+			if (sub->charCount == 0 && start <= len) {
+				return start;
+			}
+			return -1;
+		}
+		
+		int64_t subLen = static_cast<int64_t>(sub->charCount);
+		
+		if (subLen == 0) {
+			return start;
+		}
+		
+		int64_t searchLimit = end - subLen;
+		
+		for (int64_t i = start; i <= searchLimit; ++i) {
+			bool match = true;
+			
+			for (int64_t j = 0; j < subLen; ++j) {
+				if (this->getCodePoint(static_cast<size_t>(i + j)) != sub->getCodePoint(static_cast<size_t>(j))) {
+					match = false;
+					break;
+				}
+			}
+			
+			if (match) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Returns a formatted version of the string, replacing {} and {N} placeholders with arguments.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx		The runtime execution context.
+	 * \param args		A vector of UTF-8 string representations of the arguments.
+	 * \return			Returns the newly formatted String.
+	 **/
+	String* String::format(ExecutionContext* ctx, const std::vector<Result>& args) const {
+		std::string currentUtf8 = this->getUtf8();
+		std::string formatted;
+
+		try {
+			formatted = Text::formatUtf8<std::string>(currentUtf8, [&](size_t argIndex, const std::string& formatter) -> std::string {
+				if (argIndex < args.size()) {
+					try {
+						switch (args[argIndex].type) {
+							case NumericConstant::Unsigned : {
+								return std::vformat(formatter, std::make_format_args(args[argIndex].value.uintVal));
+							}
+							case NumericConstant::Signed : {
+								return std::vformat(formatter, std::make_format_args(args[argIndex].value.intVal));
+							}
+							case NumericConstant::Floating : {
+								return std::vformat(formatter, std::make_format_args(args[argIndex].value.doubleVal));
+							}
+							case NumericConstant::Object : {
+								if (args[argIndex].value.objectVal != nullptr) {
+									return args[argIndex].value.objectVal->formattedString(formatter, ToStringFlag_None);
+								}
+								return std::vformat(formatter, std::make_format_args("<null>"));
+							}
+							default : {
+								return std::vformat(formatter, std::make_format_args("<null>"));
+							}
+						}
+					}
+					catch (...) {
+						return formatter;
+					}
+				}
+				return formatter;
+			});
+		}
+		catch (...) {
+			formatted.clear();
+		}
+
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(formatted.data(), formatted.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+
+		return newStr;
 	}
 
 	/**

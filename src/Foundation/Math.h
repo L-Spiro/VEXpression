@@ -445,28 +445,29 @@ namespace ve {
 		 * \param value		The unsigned integral value whose bytes are to be swapped.
 		 * \return			Returns the byte-swapped result.
 		 **/
-		template <typename T>
-		requires std::is_integral_v<T> && std::is_unsigned_v<T>
-		static constexpr inline T	byteswap(T value) noexcept {
-			if constexpr (sizeof(T) == 1) {
+		template <typename Type>
+		requires std::is_integral_v<Type> && std::is_unsigned_v<Type>
+		static constexpr inline Type
+									byteswap(Type value) noexcept {
+			if constexpr (sizeof(Type) == 1) {
 				return value;
 			} 
-			else if constexpr (sizeof(T) == 2) {
+			else if constexpr (sizeof(Type) == 2) {
 #if defined(_MSC_VER) && !defined(__clang__)
 				return _byteswap_ushort(value);
 #elif defined(__GNUC__) || defined(__clang__)
 				return __builtin_bswap16(value);
 #else
-				return static_cast<T>((value >> 8) | (value << 8));
+				return static_cast<Type>((value >> 8) | (value << 8));
 #endif
 			} 
-			else if constexpr (sizeof(T) == 4) {
+			else if constexpr (sizeof(Type) == 4) {
 #if defined(_MSC_VER) && !defined(__clang__)
 				return _byteswap_ulong(value);
 #elif defined(__GNUC__) || defined(__clang__)
 				return __builtin_bswap32(value);
 #else
-				return static_cast<T>(
+				return static_cast<Type>(
 					((value & 0xFF000000u) >> 24) |
 					((value & 0x00FF0000u) >>  8) |
 					((value & 0x0000FF00u) <<  8) |
@@ -474,13 +475,13 @@ namespace ve {
 				);
 #endif
 			} 
-			else if constexpr (sizeof(T) == 8) {
+			else if constexpr (sizeof(Type) == 8) {
 #if defined(_MSC_VER) && !defined(__clang__)
 				return _byteswap_uint64(value);
 #elif defined(__GNUC__) || defined(__clang__)
 				return __builtin_bswap64(value);
 #else
-				return static_cast<T>(
+				return static_cast<Type>(
 					((value & 0xFF00000000000000ull) >> 56) |
 					((value & 0x00FF000000000000ull) >> 40) |
 					((value & 0x0000FF0000000000ull) >> 24) |

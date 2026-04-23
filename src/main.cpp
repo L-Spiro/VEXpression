@@ -6,9 +6,7 @@
 #include <iostream>
 #include <string>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
+#include "OS/OS.h"
 
 /**
  * A simple helper function to print the strongly-typed Result union.
@@ -30,20 +28,9 @@ void printResult(const ve::Result& res) {
 		}
 		case ve::NumericConstant::Object : {
 			if (res.value.objectVal) {
-				std::wstring wStr;
+				std::string utf8Str;
 				
-				if (res.value.objectVal->toString(wStr, 0, 0)) {
-					std::string utf8Str;
-					
-					if constexpr (sizeof(wchar_t) == 2) {
-						std::basic_string_view<char16_t> view(reinterpret_cast<const char16_t*>(wStr.data()), wStr.length());
-						utf8Str = ve::Text::utf16ToUtf8<std::string>(view);
-					}
-					else if constexpr (sizeof(wchar_t) == 4) {
-						std::basic_string_view<char32_t> view(reinterpret_cast<const char32_t*>(wStr.data()), wStr.length());
-						utf8Str = ve::Text::utf32ToUtf8<std::string>(view);
-					}
-					
+				if (res.value.objectVal->toString(utf8Str, 0, 0)) {
 					std::cout << utf8Str << " (Object)\n";
 				}
 				else {
@@ -73,7 +60,7 @@ int main() {
 	ve::ExecutionContext context;
 	auto Cool = HUGE_VALF / 2;
 	
-	std::u8string testExprU8 = std::u8string( u8"Cnt = 0; Str = \"D\"; for ( I : \"ABC\" + Str ) { Cnt += I }" );
+	std::u8string testExprU8 = std::u8string( u8"find(\"How well does it translate?\", \"ate?\")" );
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";

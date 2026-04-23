@@ -425,13 +425,23 @@ namespace ve {
 		{ "htmlChar", StringId::Desc_HtmlChar, { { DataType::Int64, "indexOrName", StringId::Desc_HtmlChar_Arg } }, IntrinsicBridges::htmlCharBridge },
 
 		// == Strings
-		{ "capitalize", StringId::Desc_String_Capitalize, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::capitalizeBridge },
-		{ "casefold", StringId::Desc_String_Casefold, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::casefoldBridge },
-		{ "center", StringId::Desc_String_Center, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::centerBridge },
-		{ "center", StringId::Desc_String_Center, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width }, { DataType::Any, "fillchar", StringId::String_Param_FillChar } }, IntrinsicBridges::centerBridge },
-		{ "count", StringId::Desc_String_Count, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub } }, IntrinsicBridges::countBridge },
-		{ "count", StringId::Desc_String_Count, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start } }, IntrinsicBridges::countBridge },
-		{ "count", StringId::Desc_String_Count, { { DataType::Any, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start }, { DataType::Any, "end", StringId::String_Param_End } }, IntrinsicBridges::countBridge },
+		{ "capitalize", StringId::Desc_String_Capitalize, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::capitalizeBridge },
+		{ "casefold", StringId::Desc_String_Casefold, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::casefoldBridge },
+		{ "center", StringId::Desc_String_Center, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::centerBridge },
+		{ "center", StringId::Desc_String_Center, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width }, { DataType::Any, "fillchar", StringId::String_Param_FillChar } }, IntrinsicBridges::centerBridge },
+		{ "count", StringId::Desc_String_Count, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub } }, IntrinsicBridges::countBridge },
+		{ "count", StringId::Desc_String_Count, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start } }, IntrinsicBridges::countBridge },
+		{ "count", StringId::Desc_String_Count, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start }, { DataType::Any, "end", StringId::String_Param_End } }, IntrinsicBridges::countBridge },
+		{ "encode", StringId::Desc_String_Encode, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "encoding", StringId::String_Param_Encoding } }, IntrinsicBridges::encodeBridge },
+		{ "encode", StringId::Desc_String_Encode, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "encoding", StringId::String_Param_Encoding }, { DataType::Any, "errors", StringId::String_Param_Errors } }, IntrinsicBridges::encodeBridge },
+		{ "endswith", StringId::Desc_String_EndsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "suffix", StringId::String_Param_Suffix } }, IntrinsicBridges::endsWithBridge },
+		{ "endswith", StringId::Desc_String_EndsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "suffix", StringId::String_Param_Suffix }, { DataType::Any, "start", StringId::String_Param_Start } }, IntrinsicBridges::endsWithBridge },
+		{ "endswith", StringId::Desc_String_EndsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "suffix", StringId::String_Param_Suffix }, { DataType::Any, "start", StringId::String_Param_Start }, { DataType::Any, "end", StringId::String_Param_End } }, IntrinsicBridges::endsWithBridge },
+		{ "expandtabs", StringId::Desc_String_ExpandTabs, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::expandTabsBridge },
+		{ "expandtabs", StringId::Desc_String_ExpandTabs, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "tabsize", StringId::String_Param_TabSize } }, IntrinsicBridges::expandTabsBridge },
+		{ "find", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub } }, IntrinsicBridges::findBridge },
+		{ "find", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start } }, IntrinsicBridges::findBridge },
+		{ "find", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start }, { DataType::Any, "end", StringId::String_Param_End } }, IntrinsicBridges::findBridge },
 	};
 
 	// == Functions.

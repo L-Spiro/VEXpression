@@ -187,6 +187,7 @@ namespace ve {
 				def.description = StringId::None;
 				def.parameters = params;
 				def.callback = callback;
+				def.variadic = params.size() && params[params.size()-1].type == DataType::Variadic;
 
 				FunctionSignature sig = { name, params.size() };
 				registeredFunctions[sig] = def;
@@ -275,6 +276,7 @@ namespace ve {
 		struct FunctionSignature {
 			std::string					name;
 			size_t						arity;
+			bool						variadic
 
 			bool						operator<(const FunctionSignature& rhs) const {
 				if (name != rhs.name) {

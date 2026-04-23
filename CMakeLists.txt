@@ -30,7 +30,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ### Global Compile Definitions
-add_compile_definitions(_USE_MATH_DEFINES VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_SIMPLE_STRINGS)
+add_compile_definitions(_USE_MATH_DEFINES VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_FULL_STRINGS)
 
 ### Locate the Java Runtime.
 find_package(Java 11 COMPONENTS Runtime REQUIRED)
@@ -146,6 +146,8 @@ set(APP_HEADERS
     src/Compiler/AstBuilderVisitor.h
 	src/Foundation/CaseFold.h
 	src/Foundation/Character.h
+	src/Foundation/Encode.h
+	src/Foundation/EncodeEnum.inl
 	src/Foundation/Html.h
 	src/Foundation/LargeMath.h
 	src/Foundation/Math.h
@@ -163,12 +165,14 @@ set(APP_HEADERS
 	src/Engine/String.h
 	src/Strings/Strings.h
 	src/Strings/StringEnum.inl
+	src/OS/OS.h
 )
 
 set(APP_SOURCES
 	src/Engine/ExecutionContext.cpp
 	src/Engine/String.cpp
 	src/Foundation/CaseFold.cpp
+	src/Foundation/Encode.cpp
 	src/Foundation/Html.cpp
 	src/Foundation/Text.cpp
 	src/Foundation/Unicode.cpp

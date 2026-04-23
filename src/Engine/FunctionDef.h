@@ -26,16 +26,17 @@ namespace ve {
 		Pointer,
 		Object,
 		String,
-		Any
+		Any,
+		Variadic
 	};
 
 	/**
 	 * Metadata and type-enforcement for a single function parameter.
 	 **/
 	struct ParameterDef {
-		DataType					type;
-		const char*					name;
-		StringId					description;
+		DataType					type = DataType::Any;
+		const char*					name = nullptr;
+		StringId					description = StringId::None;
 	};
 
 	/**
@@ -47,10 +48,11 @@ namespace ve {
 	 * Complete definition of a registered function, including documentation metadata.
 	 **/
 	struct FunctionDef {
-		const char*					name;
-		StringId					description;
+		const char*					name = nullptr;
+		StringId					description = StringId::None;
 		std::vector<ParameterDef>	parameters;
-		IntrinsicCallback			callback;
+		IntrinsicCallback			callback = nullptr;
+		bool						variadic = false;
 	};
 
 }	// namespace ve
