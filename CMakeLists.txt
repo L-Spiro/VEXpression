@@ -145,7 +145,7 @@ set(APP_HEADERS
 	src/Ast/UnaryPlusNode.h
 	src/Ast/VarNode.h
     src/Compiler/AstBuilderVisitor.h
-	src/Foundation/CaseFold.h
+	src/Foundation/Case.h
 	src/Foundation/Character.h
 	src/Foundation/Encode.h
 	src/Foundation/EncodeEnum.inl
@@ -172,7 +172,8 @@ set(APP_HEADERS
 set(APP_SOURCES
 	src/Engine/ExecutionContext.cpp
 	src/Engine/String.cpp
-	src/Foundation/CaseFold.cpp
+	src/Foundation/Case.cpp
+	src/Foundation/Character.cpp
 	src/Foundation/Encode.cpp
 	src/Foundation/Html.cpp
 	src/Foundation/Text.cpp

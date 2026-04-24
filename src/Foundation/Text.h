@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Engine/Result.h"
-#include "CaseFold.h"
+#include "Case.h"
 #include "Character.h"
 #include "Encode.h"
 #include "Html.h"
@@ -1115,9 +1115,7 @@ namespace ve {
 				uint32_t cp = nextUtf8Char(ptr, end - ptr, &size);
 				ptr += size;
 				
-				if (cp == UTF_INVALID) {
-					continue;
-				}
+				if (cp == UTF_INVALID) { continue; }
 				
 				if (first) {
 					cp = toUpper(cp);
@@ -1161,7 +1159,7 @@ namespace ve {
 				}
 				
 				char32_t outSeq[3];
-				uint32_t foldedCount = CaseFold::getFoldedSequence(static_cast<char32_t>(cp), outSeq);
+				uint32_t foldedCount = Case::getFoldedSequence(static_cast<char32_t>(cp), outSeq);
 				
 				if (foldedCount > 0) {
 					for (uint32_t j = 0; j < foldedCount; ++j) {
@@ -1170,6 +1168,39 @@ namespace ve {
 				}
 				else {
 					appendUtf8(result, toLower(cp));
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Casefolds a 32-bit UTF-32 string for caseless comparison.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns the casefolded UTF-32 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			casefoldUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 4, "casefoldUtf32 requires a 32-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			
+			for (auto cp : input) {
+				char32_t outSeq[3];
+				uint32_t foldedCount = Case::getFoldedSequence(static_cast<char32_t>(cp), outSeq);
+				
+				if (foldedCount > 0) {
+					for (uint32_t j = 0; j < foldedCount; ++j) {
+						result.push_back(static_cast<CharT>(outSeq[j]));
+					}
+				}
+				else {
+					result.push_back(static_cast<CharT>(toLower(uint32_t(cp))));
 				}
 			}
 			
@@ -1385,7 +1416,267 @@ namespace ve {
 					return false;
 				}
 
-				if (cp > 127 || (!Character::isAlpha(static_cast<char>(cp)) && !Character::isDigit(static_cast<char>(cp)))) {
+				if (!Character::isAlphaUtf(cp) && !Character::isNumericUtf(cp)) { return false; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the 32-bit string are alphanumeric.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if all characters are alphanumeric and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isAlnumUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) {
+				return false;
+			}
+
+			for (auto cp : input) {
+				if (!Character::isAlphaUtf(cp) && !Character::isNumericUtf(cp)) { return false; }
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the string are alphabetic.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if all characters are alphabetic and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isAlphaUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) {
+				return false;
+			}
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) {
+					return false;
+				}
+
+				if (!Character::isAlphaUtf(cp)) { return false; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the 32-bit string are alphabetic.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if all characters are alphabetic and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isAlphaUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) {
+				return false;
+			}
+
+			for (auto cp : input) {
+				if (!Character::isAlphaUtf(cp)) { return false; }
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the string are ASCII.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if the string is empty or all characters are ASCII.
+		 **/
+		template <typename StringT>
+		static inline bool				isAsciiUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) {
+				return true;
+			}
+
+			size_t remaining = input.length();
+			const CharT* ptr = input.data();
+
+			for (size_t i = 0; i < remaining; ++i) {
+				if (!Character::isAscii(static_cast<char>(ptr[i]))) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the 32-bit string are ASCII.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if the string is empty or all characters are ASCII.
+		 **/
+		template <typename StringT>
+		static inline bool				isAsciiUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) {
+				return true;
+			}
+
+			for (auto cp : input) {
+				if (cp > 127) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the string are decimal characters.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if all characters are decimal characters and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isDecimalUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) { return false; }
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { return false; }
+
+				if (!Character::isDecimalUtf(cp)) { return false; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the 32-bit string are decimal characters.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if all characters are decimal characters and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isDecimalUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return false; }
+
+			for (auto cp : input) {
+				if (!Character::isDecimalUtf(cp)) { return false; }
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the UTF-8 string are digits.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if all characters are digits and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isDigitUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) { return false; }
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { return false; }
+
+				if (!Character::isDigitUtf(cp)) { return false; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the 32-bit string are digits.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if all characters are digits and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isDigitUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return false; }
+
+			for (auto cp : input) {
+				if (!Character::isDigitUtf(cp)) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if a string is a valid identifier.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if the string is a valid identifier and is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isIdentifierUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) {
+				return false;
+			}
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			bool isFirst = true;
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) {
+					return false;
+				}
+
+				if (cp > 127 || !Character::isIdentifier(static_cast<char>(cp), isFirst)) {
 					return false;
 				}
 
@@ -1394,6 +1685,1431 @@ namespace ve {
 			}
 
 			return true;
+		}
+
+		/**
+		 * Checks if a 32-bit string is a valid identifier.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if the string is a valid identifier and is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isIdentifierUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return false; }
+
+			bool isFirst = true;
+
+			for (auto cp : input) {
+				if (cp > 127 || !Character::isIdentifier(static_cast<char>(cp), isFirst)) { return false; }
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all cased characters in the string are lowercase and there is at least one cased character.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if the string is lowercase, false otherwise.
+		 **/
+		template <typename StringT>
+		static inline bool				isLowerUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) { return false; }
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			bool foundCased = false;
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { return false; }
+
+				if (Character::isUpperUtf(cp)) { return false; }
+				if (Character::isLowerUtf(cp)) { foundCased = true; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return foundCased;
+		}
+
+		/**
+		 * Checks if all cased characters in the 32-bit string are lowercase and there is at least one cased character.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if the string is lowercase, false otherwise.
+		 **/
+		template <typename StringT>
+		static inline bool				isLowerUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return false; }
+
+			bool foundCased = false;
+
+			for (auto cp : input) {
+				if (Character::isUpperUtf(cp)) { return false; }
+				if (Character::isLowerUtf(cp)) { foundCased = true; }
+			}
+
+			return foundCased;
+		}
+
+		/**
+		 * Checks if all cased characters in the string are uppercase and there is at least one cased character.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if the string is uppercase, false otherwise.
+		 **/
+		template <typename StringT>
+		static inline bool				isUpperUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) { return false; }
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			bool foundCased = false;
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { return false; }
+
+				if (Character::isLowerUtf(cp)) { return false; }
+				if (Character::isUpperUtf(cp)) { foundCased = true; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return foundCased;
+		}
+
+		/**
+		 * Checks if all cased characters in the 32-bit string are uppercase and there is at least one cased character.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if the string is uppercase, false otherwise.
+		 **/
+		template <typename StringT>
+		static inline bool				isUpperUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return false; }
+
+			bool foundCased = false;
+
+			for (auto cp : input) {
+				if (Character::isLowerUtf(cp)) { return false; }				
+				if (Character::isUpperUtf(cp)) { foundCased = true; }
+			}
+
+			return foundCased;
+		}
+
+		/**
+		 * Checks if all characters in the UTF-8 string are numeric characters.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if all characters are numeric characters and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isNumericUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) { return false; }
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { return false; }
+				if (!Character::isNumericUtf(cp)) { return false; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the 32-bit string are numeric characters.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if all characters are numeric characters and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isNumericUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return false; }
+
+			for (auto cp : input) {
+				if (!Character::isNumericUtf(cp)) { return false; }
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the UTF-8 string are printable.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if all characters are printable or the string is empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isPrintableUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) { return true; }
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { return false; }
+				if (!Character::isPrintableUtf(cp)) { return false; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the 32-bit string are printable.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if all characters are printable or the string is empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isPrintableUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return true; }
+
+			for (auto cp : input) {
+				if (!Character::isPrintableUtf(cp)) { return false; }
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the UTF-8 string are whitespace characters.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if all characters are whitespace and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isSpaceUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) { return false; }
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { return false; }
+				if (!Character::isSpaceUtf(cp)) { return false; }
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if all characters in the 32-bit string are whitespace characters.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if all characters are whitespace and the string is not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isSpaceUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return false; }
+
+			for (auto cp : input) {
+				if (!Character::isSpaceUtf(cp)) { return false; }
+			}
+
+			return true;
+		}
+
+		/**
+		 * Checks if the UTF-8 string is title-cased.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns true if the string is title-cased and not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isTitleUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) {
+				return false;
+			}
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			bool prevCased = false;
+			bool foundCased = false;
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) {
+					return false;
+				}
+
+				bool isUpper = Character::isUpperUtf(cp);
+				bool isLower = Character::isLowerUtf(cp);
+
+				if (isUpper || isLower) {
+					foundCased = true;
+					if (isUpper && prevCased) {
+						return false;
+					}
+					if (isLower && !prevCased) {
+						return false;
+					}
+					prevCased = true;
+				}
+				else {
+					prevCased = false;
+				}
+
+				ptr += eaten;
+				remaining -= eaten;
+			}
+
+			return foundCased;
+		}
+
+		/**
+		 * Checks if the 32-bit string is title-cased.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns true if the string is title-cased and not empty.
+		 **/
+		template <typename StringT>
+		static inline bool				isTitleUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			if (input.empty()) { return false; }
+
+			bool prevCased = false;
+			bool foundCased = false;
+
+			for (auto cp : input) {
+				bool isUpper = Character::isUpperUtf(cp);
+				bool isLower = Character::isLowerUtf(cp);
+
+				if (isUpper || isLower) {
+					foundCased = true;
+					if (isUpper && prevCased) { return false; }
+					if (isLower && !prevCased) { return false; }
+					prevCased = true;
+				}
+				else {
+					prevCased = false;
+				}
+			}
+
+			return foundCased;
+		}
+
+		/**
+		 * Left-justifies a UTF-8 string in a field of a given width.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param width			The total width of the resulting string in characters.
+		 * \param fillChar		The UTF-32 code point of the fill character (default is space).
+		 * \return				Returns the left-justified string.
+		 **/
+		template <typename StringT>
+		static inline StringT			ljustUtf8(std::basic_string_view<typename StringT::value_type> input, size_t width, uint32_t fillChar = ' ') {
+			using CharT = typename StringT::value_type;
+
+			size_t charCount = 0;
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) {
+					break;
+				}
+
+				ptr += eaten;
+				remaining -= eaten;
+				charCount++;
+			}
+
+			if (width <= charCount) {
+				return StringT(input);
+			}
+
+			StringT result(input);
+			char fillBytes[4];
+			size_t fillLen = writeUtf8(fillChar, fillBytes);
+
+			size_t pads = width - charCount;
+
+			for (size_t i = 0; i < pads; ++i) {
+				result.append(reinterpret_cast<const CharT*>(fillBytes), fillLen);
+			}
+
+			return result;
+		}
+
+		/**
+		 * Left-justifies a 32-bit string in a field of a given width.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param width			The total width of the resulting string in characters.
+		 * \param fillChar		The UTF-32 code point of the fill character (default is space).
+		 * \return				Returns the left-justified string.
+		 **/
+		template <typename StringT>
+		static inline StringT			ljustUtf32(std::basic_string_view<typename StringT::value_type> input, size_t width, uint32_t fillChar = ' ') {
+			if (width <= input.length()) { return StringT(input); }
+
+			StringT result(input);
+			result.append(width - input.length(), static_cast<typename StringT::value_type>(fillChar));
+			
+			return result;
+		}
+
+		/**
+		 * Converts an 8-bit UTF-8 string to lowercase.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns the lowercase UTF-8 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			lowerUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "lowerUtf8 requires an 8-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			
+			const CharT* ptr = input.data();
+			const CharT* end = ptr + input.length();
+			
+			while (ptr < end) {
+				size_t size;
+				uint32_t cp = nextUtf8Char(ptr, end - ptr, &size);
+				ptr += size;
+				
+				if (cp == UTF_INVALID) { continue; }
+				
+				char32_t outSeq[3];
+				uint32_t lowerCount = Case::getLowerSequence(static_cast<char32_t>(cp), outSeq);
+				
+				if (lowerCount > 0) {
+					for (uint32_t j = 0; j < lowerCount; ++j) {
+						appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+					}
+				}
+				else {
+					appendUtf8(result, toLower(cp));
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Converts a 32-bit UTF-32 string to lowercase.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns the lowercase UTF-32 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			lowerUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 4, "lowerUtf32 requires a 32-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			
+			for (auto cp : input) {
+				char32_t outSeq[3];
+				uint32_t lowerCount = Case::getLowerSequence(static_cast<char32_t>(cp), outSeq);
+				
+				if (lowerCount > 0) {
+					for (uint32_t j = 0; j < lowerCount; ++j) {
+						result.push_back(static_cast<CharT>(outSeq[j]));
+					}
+				}
+				else {
+					result.push_back(static_cast<CharT>(toLower(uint32_t(cp))));
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Returns a copy of the UTF-8 string with leading characters removed.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param chars			The set of characters to remove. If empty, whitespace is removed.
+		 * \return				Returns the stripped string.
+		 **/
+		template <typename StringT>
+		static inline StringT			lstripUtf8(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> chars = {}) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) { return StringT(input); }
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			size_t startOffset = 0;
+
+			if (chars.empty()) {
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+					if (eaten == 0) { break; }
+
+					if (!Character::isSpaceUtf(cp)) { break; }
+
+					ptr += eaten;
+					remaining -= eaten;
+					startOffset += eaten;
+				}
+			}
+			else {
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+					if (eaten == 0) { break; }
+
+					bool found = false;
+					const CharT* cPtr = chars.data();
+					size_t cRem = chars.length();
+
+					while (cRem > 0) {
+						size_t cEaten = 0;
+						uint32_t cCp = nextUtf8Char(cPtr, cRem, &cEaten);
+
+						if (cEaten == 0) { break; }
+
+						if (cp == cCp) {
+							found = true;
+							break;
+						}
+
+						cPtr += cEaten;
+						cRem -= cEaten;
+					}
+
+					if (!found) { break; }
+
+					ptr += eaten;
+					remaining -= eaten;
+					startOffset += eaten;
+				}
+			}
+
+			return StringT(input.substr(startOffset));
+		}
+
+		/**
+		 * Returns a copy of the 32-bit string with leading characters removed.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param chars			The set of characters to remove. If empty, whitespace is removed.
+		 * \return				Returns the stripped string.
+		 **/
+		template <typename StringT>
+		static inline StringT			lstripUtf32(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> chars = {}) {
+			if (input.empty()) { return StringT(input); }
+
+			size_t startOffset = 0;
+
+			if (chars.empty()) {
+				for (auto cp : input) {
+					if (!Character::isSpaceUtf(cp)) { break; }
+					startOffset++;
+				}
+			}
+			else {
+				for (auto cp : input) {
+					bool found = false;
+					for (auto c : chars) {
+						if (cp == c) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) { break; }
+					startOffset++;
+				}
+			}
+
+			return StringT(input.substr(startOffset));
+		}
+
+		/**
+		 * Replaces occurrences of a substring with another substring within a UTF-8 string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param oldStr		The substring to find.
+		 * \param newStr		The substring to replace with.
+		 * \param count			The maximum number of replacements. -1 for unlimited.
+		 * \return				Returns the resulting string.
+		 **/
+		template <typename StringT>
+		static inline StringT			replaceUtf8(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> oldStr, std::basic_string_view<typename StringT::value_type> newStr, int64_t count = -1) {
+			if (count == 0) { return StringT(input); }
+
+			StringT result;
+
+			if (oldStr.empty()) {
+				const typename StringT::value_type* ptr = input.data();
+				size_t remaining = input.length();
+				int64_t replaced = 0;
+
+				while (true) {
+					if (count >= 0 && replaced >= count) {
+						result.append(ptr, remaining);
+						break;
+					}
+					
+					result.append(newStr);
+					replaced++;
+
+					if (remaining == 0) { break; }
+
+					size_t eaten = 0;
+					nextUtf8Char(ptr, remaining, &eaten);
+					
+					if (eaten == 0) { break; }
+
+					result.append(ptr, eaten);
+					ptr += eaten;
+					remaining -= eaten;
+				}
+				
+				return result;
+			}
+
+			size_t startPos = 0;
+			int64_t replaced = 0;
+
+			while (startPos < input.length()) {
+				if (count >= 0 && replaced >= count) { break; }
+				
+				size_t pos = input.find(oldStr, startPos);
+				
+				if (pos == std::basic_string_view<typename StringT::value_type>::npos) { break; }
+				
+				result.append(input.substr(startPos, pos - startPos));
+				result.append(newStr);
+				replaced++;
+				startPos = pos + oldStr.length();
+			}
+			
+			result.append(input.substr(startPos));
+			return result;
+		}
+
+		/**
+		 * Replaces occurrences of a substring with another substring within a 32-bit string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param oldStr		The substring to find.
+		 * \param newStr		The substring to replace with.
+		 * \param count			The maximum number of replacements. -1 for unlimited.
+		 * \return				Returns the resulting string.
+		 **/
+		template <typename StringT>
+		static inline StringT			replaceUtf32(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> oldStr, std::basic_string_view<typename StringT::value_type> newStr, int64_t count = -1) {
+			if (count == 0) { return StringT(input); }
+
+			StringT result;
+
+			if (oldStr.empty()) {
+				size_t i = 0;
+				int64_t replaced = 0;
+				
+				while (true) {
+					if (count >= 0 && replaced >= count) {
+						result.append(input.substr(i));
+						break;
+					}
+					
+					result.append(newStr);
+					replaced++;
+					
+					if (i == input.length()) { break; }
+					
+					result.push_back(input[i]);
+					i++;
+				}
+				
+				return result;
+			}
+
+			size_t startPos = 0;
+			int64_t replaced = 0;
+
+			while (startPos < input.length()) {
+				if (count >= 0 && replaced >= count) { break; }
+				
+				size_t pos = input.find(oldStr, startPos);
+				
+				if (pos == std::basic_string_view<typename StringT::value_type>::npos) { break; }
+				
+				result.append(input.substr(startPos, pos - startPos));
+				result.append(newStr);
+				replaced++;
+				startPos = pos + oldStr.length();
+			}
+			
+			result.append(input.substr(startPos));
+			return result;
+		}
+
+		/**
+		 * Returns the highest index in the UTF-8 string where a substring is found within the given boundaries.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param sub			The substring to search for.
+		 * \param start			The starting character index.
+		 * \param end			The ending character index.
+		 * \return				Returns the highest index of the substring, or -1 if not found.
+		 **/
+		template <typename StringT>
+		static inline int64_t			rfindUtf8(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> sub, int64_t start = 0, int64_t end = INT64_MAX) {
+			using CharT = typename StringT::value_type;
+			
+			std::vector<size_t> charToByte;
+			charToByte.reserve(input.length() + 1);
+			
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			size_t byteOffset = 0;
+			
+			while (remaining > 0) {
+				charToByte.push_back(byteOffset);
+				size_t eaten = 0;
+				nextUtf8Char(ptr, remaining, &eaten);
+				
+				if (eaten == 0) { break; }
+				
+				ptr += eaten;
+				remaining -= eaten;
+				byteOffset += eaten;
+			}
+			charToByte.push_back(byteOffset);
+			
+			int64_t len = static_cast<int64_t>(charToByte.size() - 1);
+			
+			if (start < 0) {
+				start += len;
+				if (start < 0) { start = 0; }
+			}
+			else if (start > len) { start = len; }
+			
+			if (end < 0) {
+				end += len;
+				if (end < 0) { end = 0; }
+			}
+			else if (end > len) { end = len; }
+			
+			if (start > end) { return -1; }
+			
+			size_t startByte = charToByte[static_cast<size_t>(start)];
+			size_t endByte = charToByte[static_cast<size_t>(end)];
+			
+			std::basic_string_view<CharT> slice = input.substr(startByte, endByte - startByte);
+			size_t bytePos = slice.rfind(sub);
+			
+			if (bytePos == std::basic_string_view<CharT>::npos) {
+				return -1;
+			}
+			
+			size_t absoluteBytePos = startByte + bytePos;
+			
+			for (size_t i = 0; i < charToByte.size(); ++i) {
+				if (charToByte[i] == absoluteBytePos) {
+					return static_cast<int64_t>(i);
+				}
+			}
+			
+			return -1;
+		}
+
+		/**
+		 * Returns the highest index in the 32-bit string where a substring is found within the given boundaries.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param sub			The substring to search for.
+		 * \param start			The starting character index.
+		 * \param end			The ending character index.
+		 * \return				Returns the highest index of the substring, or -1 if not found.
+		 **/
+		template <typename StringT>
+		static inline int64_t			rfindUtf32(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> sub, int64_t start = 0, int64_t end = INT64_MAX) {
+			int64_t len = static_cast<int64_t>(input.length());
+			
+			if (start < 0) {
+				start += len;
+				if (start < 0) { start = 0; }
+			}
+			else if (start > len) { start = len; }
+			
+			if (end < 0) {
+				end += len;
+				if (end < 0) { end = 0; }
+			}
+			else if (end > len) { end = len; }
+			
+			if (start > end) { return -1; }
+			
+			std::basic_string_view<typename StringT::value_type> slice = input.substr(static_cast<size_t>(start), static_cast<size_t>(end - start));
+			size_t pos = slice.rfind(sub);
+			
+			if (pos == std::basic_string_view<typename StringT::value_type>::npos) { return -1; }
+			
+			return start + static_cast<int64_t>(pos);
+		}
+
+		/**
+		 * Right-justifies a UTF-8 string in a field of a given width.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param width			The total width of the resulting string in characters.
+		 * \param fillChar		The UTF-32 code point of the fill character (default is space).
+		 * \return				Returns the right-justified string.
+		 **/
+		template <typename StringT>
+		static inline StringT			rjustUtf8(std::basic_string_view<typename StringT::value_type> input, size_t width, uint32_t fillChar = ' ') {
+			using CharT = typename StringT::value_type;
+
+			size_t charCount = 0;
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { break; }
+
+				ptr += eaten;
+				remaining -= eaten;
+				charCount++;
+			}
+
+			if (width <= charCount) { return StringT(input); }
+
+			StringT result;
+			char fillBytes[4];
+			size_t fillLen = writeUtf8(fillChar, fillBytes);
+			size_t pads = width - charCount;
+
+			for (size_t i = 0; i < pads; ++i) {
+				result.append(reinterpret_cast<const CharT*>(fillBytes), fillLen);
+			}
+
+			result.append(input);
+
+			return result;
+		}
+
+		/**
+		 * Right-justifies a 32-bit string in a field of a given width.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param width			The total width of the resulting string in characters.
+		 * \param fillChar		The UTF-32 code point of the fill character (default is space).
+		 * \return				Returns the right-justified string.
+		 **/
+		template <typename StringT>
+		static inline StringT			rjustUtf32(std::basic_string_view<typename StringT::value_type> input, size_t width, uint32_t fillChar = ' ') {
+			if (width <= input.length()) { return StringT(input); }
+
+			StringT result;
+			result.append(width - input.length(), static_cast<typename StringT::value_type>(fillChar));
+			result.append(input);
+
+			return result;
+		}
+
+		/**
+		 * Returns a copy of the UTF-8 string with trailing characters removed.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param chars			The set of characters to remove. If empty, whitespace is removed.
+		 * \return				Returns the stripped string.
+		 **/
+		template <typename StringT>
+		static inline StringT			rstripUtf8(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> chars = {}) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) {
+				return StringT(input);
+			}
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			size_t currentOffset = 0;
+			size_t lastKeptOffset = 0;
+
+			if (chars.empty()) {
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+					if (eaten == 0) {
+						break;
+					}
+
+					if (!Character::isSpaceUtf(cp)) {
+						lastKeptOffset = currentOffset + eaten;
+					}
+
+					ptr += eaten;
+					remaining -= eaten;
+					currentOffset += eaten;
+				}
+			}
+			else {
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+					if (eaten == 0) {
+						break;
+					}
+
+					bool found = false;
+					const CharT* cPtr = chars.data();
+					size_t cRem = chars.length();
+
+					while (cRem > 0) {
+						size_t cEaten = 0;
+						uint32_t cCp = nextUtf8Char(cPtr, cRem, &cEaten);
+
+						if (cEaten == 0) {
+							break;
+						}
+
+						if (cp == cCp) {
+							found = true;
+							break;
+						}
+
+						cPtr += cEaten;
+						cRem -= cEaten;
+					}
+
+					if (!found) {
+						lastKeptOffset = currentOffset + eaten;
+					}
+
+					ptr += eaten;
+					remaining -= eaten;
+					currentOffset += eaten;
+				}
+			}
+
+			return StringT(input.substr(0, lastKeptOffset));
+		}
+
+		/**
+		 * Returns a copy of the 32-bit string with trailing characters removed.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param chars			The set of characters to remove. If empty, whitespace is removed.
+		 * \return				Returns the stripped string.
+		 **/
+		template <typename StringT>
+		static inline StringT			rstripUtf32(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> chars = {}) {
+			if (input.empty()) {
+				return StringT(input);
+			}
+
+			size_t keepLength = input.length();
+
+			if (chars.empty()) {
+				while (keepLength > 0) {
+					if (!Character::isSpaceUtf(input[keepLength - 1])) {
+						break;
+					}
+					keepLength--;
+				}
+			}
+			else {
+				while (keepLength > 0) {
+					bool found = false;
+					for (auto c : chars) {
+						if (input[keepLength - 1] == c) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						break;
+					}
+					keepLength--;
+				}
+			}
+
+			return StringT(input.substr(0, keepLength));
+		}
+
+		/**
+		 * Checks if the UTF-8 string slice begins with the given prefix.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param prefix		The prefix substring to search for.
+		 * \param start			The starting character index.
+		 * \param end			The ending character index.
+		 * \return				Returns true if the slice begins with the prefix, false otherwise.
+		 **/
+		template <typename StringT>
+		static inline bool				startsWithUtf8(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> prefix, int64_t start = 0, int64_t end = INT64_MAX) {
+			using CharT = typename StringT::value_type;
+			
+			std::vector<size_t> charToByte;
+			charToByte.reserve(input.length() + 1);
+			
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			size_t byteOffset = 0;
+			
+			while (remaining > 0) {
+				charToByte.push_back(byteOffset);
+				size_t eaten = 0;
+				nextUtf8Char(ptr, remaining, &eaten);
+				
+				if (eaten == 0) { break; }
+				
+				ptr += eaten;
+				remaining -= eaten;
+				byteOffset += eaten;
+			}
+			charToByte.push_back(byteOffset);
+			
+			int64_t len = static_cast<int64_t>(charToByte.size() - 1);
+			
+			if (start < 0) {
+				start += len;
+				if (start < 0) { start = 0; }
+			}
+			else if (start > len) { start = len; }
+			
+			if (end < 0) {
+				end += len;
+				if (end < 0) { end = 0; }
+			}
+			else if (end > len) { end = len; }
+			
+			if (start > end) { return false; }
+			
+			size_t startByte = charToByte[static_cast<size_t>(start)];
+			size_t endByte = charToByte[static_cast<size_t>(end)];
+			
+			std::basic_string_view<CharT> slice = input.substr(startByte, endByte - startByte);
+			
+			if (slice.length() < prefix.length()) { return false; }
+			
+			return slice.substr(0, prefix.length()) == prefix;
+		}
+
+		/**
+		 * Checks if the 32-bit string slice begins with the given prefix.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param prefix		The prefix substring to search for.
+		 * \param start			The starting character index.
+		 * \param end			The ending character index.
+		 * \return				Returns true if the slice begins with the prefix, false otherwise.
+		 **/
+		template <typename StringT>
+		static inline bool				startsWithUtf32(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> prefix, int64_t start = 0, int64_t end = INT64_MAX) {
+			int64_t len = static_cast<int64_t>(input.length());
+			
+			if (start < 0) {
+				start += len;
+				if (start < 0) { start = 0; }
+			}
+			else if (start > len) { start = len; }
+			
+			if (end < 0) {
+				end += len;
+				if (end < 0) { end = 0; }
+			}
+			else if (end > len) { end = len; }
+			
+			if (start > end) { return false; }
+			
+			std::basic_string_view<typename StringT::value_type> slice = input.substr(static_cast<size_t>(start), static_cast<size_t>(end - start));
+			
+			if (slice.length() < prefix.length()) { return false; }
+			
+			return slice.substr(0, prefix.length()) == prefix;
+		}
+
+		/**
+		 * Returns a copy of the UTF-8 string with leading and trailing characters removed.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param chars			The set of characters to remove. If empty, whitespace is removed.
+		 * \return				Returns the stripped string.
+		 **/
+		template <typename StringT>
+		static inline StringT			stripUtf8(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> chars = {}) {
+			using CharT = typename StringT::value_type;
+
+			if (input.empty()) {
+				return StringT(input);
+			}
+
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+			size_t startOffset = 0;
+
+			if (chars.empty()) {
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+					if (eaten == 0) { break; }
+
+					if (!Character::isSpaceUtf(cp)) { break; }
+
+					ptr += eaten;
+					remaining -= eaten;
+					startOffset += eaten;
+				}
+			}
+			else {
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+					if (eaten == 0) { break; }
+
+					bool found = false;
+					const CharT* cPtr = chars.data();
+					size_t cRem = chars.length();
+
+					while (cRem > 0) {
+						size_t cEaten = 0;
+						uint32_t cCp = nextUtf8Char(cPtr, cRem, &cEaten);
+
+						if (cEaten == 0) { break; }
+
+						if (cp == cCp) {
+							found = true;
+							break;
+						}
+
+						cPtr += cEaten;
+						cRem -= cEaten;
+					}
+
+					if (!found) { break; }
+
+					ptr += eaten;
+					remaining -= eaten;
+					startOffset += eaten;
+				}
+			}
+
+			if (remaining == 0) {
+				return StringT();
+			}
+
+			size_t currentOffset = 0;
+			size_t lastKeptOffset = 0;
+
+			if (chars.empty()) {
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+					if (eaten == 0) { break; }
+
+					if (!Character::isSpaceUtf(cp)) {
+						lastKeptOffset = currentOffset + eaten;
+					}
+
+					ptr += eaten;
+					remaining -= eaten;
+					currentOffset += eaten;
+				}
+			}
+			else {
+				while (remaining > 0) {
+					size_t eaten = 0;
+					uint32_t cp = nextUtf8Char(ptr, remaining, &eaten);
+
+					if (eaten == 0) { break; }
+
+					bool found = false;
+					const CharT* cPtr = chars.data();
+					size_t cRem = chars.length();
+
+					while (cRem > 0) {
+						size_t cEaten = 0;
+						uint32_t cCp = nextUtf8Char(cPtr, cRem, &cEaten);
+
+						if (cEaten == 0) { break; }
+
+						if (cp == cCp) {
+							found = true;
+							break;
+						}
+
+						cPtr += cEaten;
+						cRem -= cEaten;
+					}
+
+					if (!found) {
+						lastKeptOffset = currentOffset + eaten;
+					}
+
+					ptr += eaten;
+					remaining -= eaten;
+					currentOffset += eaten;
+				}
+			}
+
+			return StringT(input.substr(startOffset, lastKeptOffset));
+		}
+
+		/**
+		 * Returns a copy of the 32-bit string with leading and trailing characters removed.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param chars			The set of characters to remove. If empty, whitespace is removed.
+		 * \return				Returns the stripped string.
+		 **/
+		template <typename StringT>
+		static inline StringT			stripUtf32(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> chars = {}) {
+			if (input.empty()) { return StringT(input); }
+
+			size_t startOffset = 0;
+			size_t keepLength = input.length();
+
+			if (chars.empty()) {
+				for (auto cp : input) {
+					if (!Character::isSpaceUtf(cp)) { break; }
+					startOffset++;
+				}
+				
+				while (keepLength > startOffset) {
+					if (!Character::isSpaceUtf(input[keepLength-1])) { break; }
+					keepLength--;
+				}
+			}
+			else {
+				for (auto cp : input) {
+					bool found = false;
+					for (auto c : chars) {
+						if (cp == c) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) { break; }
+					startOffset++;
+				}
+				
+				while (keepLength > startOffset) {
+					bool found = false;
+					for (auto c : chars) {
+						if (input[keepLength - 1] == c) {
+							found = true;
+							break;
+						}
+					}
+					if (!found) { break; }
+					keepLength--;
+				}
+			}
+
+			return StringT(input.substr(startOffset, keepLength - startOffset));
+		}
+
+		/**
+		 * Swaps the case of all cased characters in a UTF-8 string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns the case-swapped UTF-8 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			swapcaseUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "swapcaseUtf8 requires an 8-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			
+			const CharT* ptr = input.data();
+			const CharT* end = ptr + input.length();
+			
+			while (ptr < end) {
+				size_t size;
+				uint32_t cp = nextUtf8Char(ptr, end - ptr, &size);
+				ptr += size;
+				
+				if (cp == UTF_INVALID) {
+					continue;
+				}
+				
+				if (Character::isUpperUtf(cp)) {
+					char32_t outSeq[3];
+					uint32_t lowerCount = Case::getLowerSequence(static_cast<char32_t>(cp), outSeq);
+					
+					if (lowerCount > 0) {
+						for (uint32_t j = 0; j < lowerCount; ++j) {
+							appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+						}
+					}
+					else {
+						appendUtf8(result, toLower(cp));
+					}
+				}
+				else if (Character::isLowerUtf(cp)) {
+					char32_t outSeq[3];
+					uint32_t upperCount = Case::getUpperSequence(static_cast<char32_t>(cp), outSeq);
+					
+					if (upperCount > 0) {
+						for (uint32_t j = 0; j < upperCount; ++j) {
+							appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+						}
+					}
+					else {
+						appendUtf8(result, toUpper(cp));
+					}
+				}
+				else {
+					appendUtf8(result, cp);
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Swaps the case of all cased characters in a 32-bit UTF-32 string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns the case-swapped UTF-32 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			swapcaseUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 4, "swapcaseUtf32 requires a 32-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			
+			for (auto cp : input) {
+				if (Character::isUpperUtf(cp)) {
+					char32_t outSeq[3];
+					uint32_t lowerCount = Case::getLowerSequence(static_cast<char32_t>(cp), outSeq);
+					
+					if (lowerCount > 0) {
+						for (uint32_t j = 0; j < lowerCount; ++j) {
+							result.push_back(static_cast<CharT>(outSeq[j]));
+						}
+					}
+					else {
+						result.push_back(static_cast<CharT>(toLower(uint32_t(cp))));
+					}
+				}
+				else if (Character::isLowerUtf(cp)) {
+					char32_t outSeq[3];
+					uint32_t upperCount = Case::getUpperSequence(static_cast<char32_t>(cp), outSeq);
+					
+					if (upperCount > 0) {
+						for (uint32_t j = 0; j < upperCount; ++j) {
+							result.push_back(static_cast<CharT>(outSeq[j]));
+						}
+					}
+					else {
+						result.push_back(static_cast<CharT>(toUpper(uint32_t(cp))));
+					}
+				}
+				else {
+					result.push_back(static_cast<CharT>(cp));
+				}
+			}
+			
+			return result;
 		}
 
 

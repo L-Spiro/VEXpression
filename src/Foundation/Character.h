@@ -1,6 +1,8 @@
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
+#include <iterator>
 #include <string>
 
 namespace ve {
@@ -147,6 +149,16 @@ namespace ve {
 		}
 
 		/**
+		 * Determines if a given character is a valid ASCII character.
+		 * 
+		 * \param val		The character to check.
+		 * \return			Returns true if the character is in the ASCII range (0-127).
+		 **/
+		static inline bool			isAscii(char val) {
+			return static_cast<unsigned char>(val) <= 127;
+		}
+
+		/**
 		 * Validates if a character is valid within an identifier, properly enforcing the first-character rule.
 		 * 
 		 * \param val		The character to check.
@@ -184,7 +196,198 @@ namespace ve {
 			return true;
 		}
 
+		/**
+		 * Determines if the given Unicode character is a lower-case character.
+		 * 
+		 * \param val		The character to check for being lower-case.
+		 * \return			Returns true if the given character is a lower-case character.
+		 **/
+		template <typename CharT>
+		static bool					isLowerUtf(CharT val) {
+			uint32_t codePoint = static_cast<uint32_t>(val);
+			const uint32_t* begin = unicodeLowercaseTable;
+			const uint32_t* end = unicodeLowercaseTable + unicodeLowercaseTableSize;
+
+			return std::binary_search(
+				begin, 
+				end,
+				codePoint
+			);
+		}
+
+		/**
+		 * Determines if the given Unicode character is a upper-case character.
+		 * 
+		 * \param val		The character to check for being upper-case.
+		 * \return			Returns true if the given character is a upper-case character.
+		 **/
+		template <typename CharT>
+		static bool					isUpperUtf(CharT val) {
+			uint32_t codePoint = static_cast<uint32_t>(val);
+			const uint32_t* begin = unicodeUppercaseTable;
+			const uint32_t* end = unicodeUppercaseTable + unicodeUppercaseTableSize;
+
+			return std::binary_search(
+				begin, 
+				end, 
+				codePoint
+			);
+		}
+
+		/**
+		 * Determines if the given Unicode character is a numeric character.
+		 * 
+		 * \param val		The character to check for being numeric.
+		 * \return			Returns true if the given character is a numeric character.
+		 **/
+		template <typename CharT>
+		static bool					isNumericUtf(CharT val) {
+			uint32_t codePoint = static_cast<uint32_t>(val);
+			const uint32_t* begin = unicodeNumericTable;
+			const uint32_t* end = unicodeNumericTable + unicodeNumericTableSize;
+
+			return std::binary_search(
+				begin, 
+				end, 
+				codePoint
+			);
+		}
+
+		/**
+		 * Determines if the given Unicode character is a alpha character.
+		 * 
+		 * \param val		The character to check for being alpha.
+		 * \return			Returns true if the given character is a alpha character.
+		 **/
+		template <typename CharT>
+		static bool					isAlphaUtf(CharT val) {
+#ifdef VE_FULL_STRINGS
+			uint32_t codePoint = static_cast<uint32_t>(val);
+			const uint32_t* begin = unicodeAlphaTable;
+			const uint32_t* end = unicodeAlphaTable + unicodeAlphaTableSize;
+
+			return std::binary_search(
+				begin, 
+				end, 
+				codePoint
+			);
+#else	// #ifdef VE_FULL_STRINGS
+			return std::islower(int(val));
+#endif	// #ifdef VE_FULL_STRINGS
+		}
+
+		/**
+		 * Determines if the given Unicode character is a digit character.
+		 * 
+		 * \param val		The character to check for being digit.
+		 * \return			Returns true if the given character is a digit character.
+		 **/
+		template <typename CharT>
+		static bool					isDigitUtf(CharT val) {
+			uint32_t codePoint = static_cast<uint32_t>(val);
+			const uint32_t* begin = unicodeDigitTable;
+			const uint32_t* end = unicodeDigitTable + unicodeDigitTableSize;
+
+			return std::binary_search(
+				begin, 
+				end, 
+				codePoint
+			);
+		}
+
+		/**
+		 * Determines if the given Unicode character is a decimal character.
+		 * 
+		 * \param val		The character to check for being decimal.
+		 * \return			Returns true if the given character is a decimal character.
+		 **/
+		template <typename CharT>
+		static bool					isDecimalUtf(CharT val) {
+			const auto end = unicodeDecimalRanges + unicodeDecimalTableSize;
+			auto it = std::lower_bound(unicodeDecimalRanges, end, uint32_t(val),
+				[](const UnicodeRange& range, uint32_t val) {
+					return range.end < val;
+				});
+
+			return (it != end && uint32_t(val) >= it->start);
+		}
+
+		/**
+		 * Determines if the given Unicode character is a printable character.
+		 * 
+		 * \param val		The character to check for being printable.
+		 * \return			Returns true if the given character is a printable character.
+		 **/
+		template <typename CharT>
+		static bool					isPrintableUtf(CharT val) {
+			const auto end = unicodePrintableRanges + unicodePrintableTableSize;
+			auto it = std::lower_bound(unicodePrintableRanges, end, uint32_t(val),
+				[](const UnicodeRange& range, uint32_t val) {
+					return range.end < val;
+				});
+
+			return (it != end && uint32_t(val) >= it->start);
+		}
+
+		/**
+		 * Determines if the given Unicode character is a whitespace character.
+		 * 
+		 * \param val		The character to check for being whitespace.
+		 * \return			Returns true if the given character is a whitespace character.
+		 **/
+		template <typename CharT>
+		static bool					isSpaceUtf(CharT val) {
+			const auto end = unicodeSpaceRanges + unicodeSpaceTableSize;
+			auto it = std::lower_bound(unicodeSpaceRanges, end, uint32_t(val),
+				[](const UnicodeRange& range, uint32_t val) {
+					return range.end < val;
+				});
+
+			return (it != end && uint32_t(val) >= it->start);
+		}
+
 	protected :
+		// == Types.
+		/** A range of characters. */
+		struct UnicodeRange {
+			uint32_t				start;
+			uint32_t				end;
+		};
+
+
+		// == Members.
+		/** The table of alpha characters. */
+		static const uint32_t		unicodeAlphaTable[];
+		/** Necessary size of the alpha table. */
+		static const size_t			unicodeAlphaTableSize;
+		/** The table of digit characters. */
+		static const uint32_t		unicodeDigitTable[];
+		/** Necessary size of the digit table. */
+		static const size_t			unicodeDigitTableSize;
+		/** The table of lower-cased characters. */
+		static const uint32_t		unicodeLowercaseTable[];
+		/** Necessary size of the lower-case table. */
+		static const size_t			unicodeLowercaseTableSize;
+		/** The table of upper-cased characters. */
+		static const uint32_t		unicodeUppercaseTable[];
+		/** Necessary size of the upper-case table. */
+		static const size_t			unicodeUppercaseTableSize;
+		/** The table of numeric characters. */
+		static const uint32_t		unicodeNumericTable[];
+		/** Necessary size of the numeric table. */
+		static const size_t			unicodeNumericTableSize;
+		/** A range of printable characters. */
+		static const UnicodeRange	unicodePrintableRanges[];
+		/** Necessary size of the printable table. */
+		static const size_t			unicodePrintableTableSize;
+		/** A range of decimal characters. */
+		static const UnicodeRange	unicodeDecimalRanges[];
+		/** Necessary size of the decimal table. */
+		static const size_t			unicodeDecimalTableSize;
+		/** A range of whitespace characters. */
+		static const UnicodeRange	unicodeSpaceRanges[];
+		/** Necessary size of the whitespace table. */
+		static const size_t			unicodeSpaceTableSize;
 
 	private :
 	};

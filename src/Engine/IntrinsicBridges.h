@@ -1516,12 +1516,8 @@ namespace ve {
 					return Result{ .type = NumericConstant::Invalid };
 				}
 			}
-			
-			int64_t occurrences = strObj->count(subObj, start, end);
 				
-			Result res;
-			res.type = NumericConstant::Signed;
-			res.value.intVal = occurrences;
+			Result res = Result::make(strObj->count(subObj, start, end));
 			return res;
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -1665,11 +1661,7 @@ namespace ve {
 			}
 			
 			try {
-				bool result = strObj->endsWith(suffixObj, start, end);
-				
-				Result res;
-				res.type = NumericConstant::Signed;
-				res.value.intVal = result ? 1 : 0;
+				Result res = Result::make(strObj->endsWith(suffixObj, start, end));
 				return res;
 			}
 			catch (...) {
@@ -1762,11 +1754,7 @@ namespace ve {
 			}
 			
 			try {
-				int64_t index = strObj->find(subObj, start, end);
-				
-				Result res;
-				res.type = NumericConstant::Signed;
-				res.value.intVal = index;
+				Result res = Result::make(strObj->find(subObj, start, end));
 				return res;
 			}
 			catch (...) {
@@ -1813,26 +1801,945 @@ namespace ve {
 		/**
 		 * Bridge for String.isalnum().
 		 * Must be called within a try/catch block.
-		 * * \param ctx		The runtime execution context.
+		 * 
+		 * \param ctx		The runtime execution context.
 		 * \param args		A vector containing the evaluated arguments.
 		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
 		 **/
 		static Result		isAlnumBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isAlphaUtf(args[0].value.uintVal) || Character::isNumericUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isAlphaUtf(args[0].value.intVal) || Character::isNumericUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					Result res = Result::make(strObj->isalnum());
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isalpha().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isAlphaBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isAlphaUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isAlphaUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					Result res = Result::make(strObj->isalpha());
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isascii().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isAsciiBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(args[0].value.uintVal <= 127 && Character::isAscii(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(args[0].value.intVal <= 127 && args[0].value.intVal >= 0 && Character::isAscii(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					Result res = Result::make(strObj->isAscii());
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isdecimal().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isDecimalBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isDecimalUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isDecimalUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					Result res = Result::make(strObj->isdecimal());
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isdigit().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isDigitBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isDigitUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isDigitUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					bool result = strObj->isdigit();
+				
+					Result res;
+					res.type = NumericConstant::Signed;
+					res.value.intVal = result ? 1 : 0;
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isidentifier().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isIdentifierBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
 			if (args.size() != 1) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
 				return Result{ .type = NumericConstant::Invalid };
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
 			
 			try {
-				bool result = strObj->isalnum();
+				Result res = Result::make(strObj->isidentifier());
+				return res;
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.islower().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isLowerBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isLowerUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isLowerUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					Result res = Result::make(strObj->islower());
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isnumeric().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isNumericBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isNumericUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isNumericUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					Result res = Result::make(strObj->isnumeric());
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isprintable().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isPrintableBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isPrintableUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isPrintableUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					bool result = strObj->isprintable();
+				
+					Result res;
+					res.type = NumericConstant::Signed;
+					res.value.intVal = result ? 1 : 0;
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isspace().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isSpaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isSpaceUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isSpaceUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					bool result = strObj->isspace();
+				
+					Result res;
+					res.type = NumericConstant::Signed;
+					res.value.intVal = result ? 1 : 0;
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.istitle().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isTitleBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				bool result = strObj->istitle();
 				
 				Result res;
 				res.type = NumericConstant::Signed;
 				res.value.intVal = result ? 1 : 0;
 				return res;
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.isupper().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		isUpperBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				return Result::make(Character::isSpaceUtf(args[0].value.uintVal));
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				return Result::make(Character::isSpaceUtf(args[0].value.intVal));
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					bool result = strObj->isupper();
+				
+					Result res;
+					res.type = NumericConstant::Signed;
+					res.value.intVal = result ? 1 : 0;
+					return res;
+				}
+				catch (...) {
+				}
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.ljust().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly justified String.
+		 **/
+		static Result		ljustBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() < 2 || args.size() > 3) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			int64_t width = 0;
+
+			if (args[1].type == NumericConstant::Signed) {
+				width = args[1].value.intVal;
+			}
+			else if (args[1].type == NumericConstant::Unsigned) {
+				width = static_cast<int64_t>(args[1].value.uintVal);
+			}
+			else {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			uint32_t fillCharCp = ' ';
+
+			if (args.size() == 3) {
+				if (args[2].type == NumericConstant::Unsigned) {
+					fillCharCp = uint32_t(args[2].value.uintVal);
+				}
+				else if (args[2].type == NumericConstant::Signed) {
+					fillCharCp = uint32_t(args[2].value.intVal);
+				}
+				else {
+					if (args[2].type != NumericConstant::Object || 
+						args[2].value.objectVal == nullptr || 
+						!(args[2].value.objectVal->type() & BuiltInType_String)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+				
+					String* fillStr = static_cast<String*>(args[2].value.objectVal);
+				
+					if (fillStr->arrayLength() != 1) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+				
+					fillCharCp = fillStr->getCodePoint(0);
+				}
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				size_t validWidth = width > 0 ? static_cast<size_t>(width) : 0;
+				String* resultStr = strObj->ljust(validWidth, fillCharCp);
+				if (resultStr) {
+					return resultStr->createResult();
+				}
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.lower().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly lowercased String.
+		 **/
+		static Result		lowerBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				char32_t outSeq[3];
+				auto lowerCount = Case::getLowerSequence(char32_t(args[0].value.uintVal), outSeq);
+				if (lowerCount == 1) {
+					return Result::make(uint64_t(outSeq[0]));
+				}
+				else if (lowerCount) {
+					std::string result;
+					try {
+						for (uint32_t j = 0; j < lowerCount; ++j) {
+							Text::appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+						}
+
+						String* newStr = ctx->allocateObject<String>();
+						if (newStr) {
+							if (!newStr->assignUtf8(result.data(), result.length())) {
+								ctx->deallocateObject(newStr);
+								throw ErrorCode::Object_Initialization_Failed;
+							}
+							return newStr->createResult();
+						}
+					}
+					catch (...) {}
+					return Result{};	// Creates an invalid return.
+				}
+				return args[0];
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				char32_t outSeq[3];
+				auto lowerCount = Case::getLowerSequence(char32_t(args[0].value.uintVal), outSeq);
+				if (lowerCount == 1) {
+					return Result::make(int64_t(outSeq[0]));
+				}
+				else if (lowerCount) {
+					std::string result;
+					try {
+						for (uint32_t j = 0; j < lowerCount; ++j) {
+							Text::appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+						}
+
+						String* newStr = ctx->allocateObject<String>();
+						if (newStr) {
+							if (!newStr->assignUtf8(result.data(), result.length())) {
+								ctx->deallocateObject(newStr);
+								throw ErrorCode::Object_Initialization_Failed;
+							}
+							return newStr->createResult();
+						}
+					}
+					catch (...) {}
+					return Result{};	// Creates an invalid return.
+				}
+				return args[0];
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					String* resultStr = strObj->lower(ctx);
+				
+					if (resultStr) {
+						return resultStr->createResult();
+					}
+				}
+				catch (...) {
+				}
+			}
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.lstrip().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly stripped String.
+		 **/
+		static Result		lstripBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 1 || args.size() > 2) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			std::u32string stripChars;
+			
+			if (args.size() == 2) {
+				if (args[1].type != NumericConstant::Object || 
+					args[1].value.objectVal == nullptr || 
+					!(args[1].value.objectVal->type() & BuiltInType_String)) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				
+				String* charStr = static_cast<String*>(args[1].value.objectVal);
+				stripChars = charStr->getUtf32();
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				String* resultStr = strObj->lstrip(ctx, stripChars);
+				
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.replace().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly replaced String.
+		 **/
+		static Result		replaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3 || args.size() > 4) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[1].type != NumericConstant::Object || 
+				args[1].value.objectVal == nullptr || 
+				!(args[1].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[2].type != NumericConstant::Object || 
+				args[2].value.objectVal == nullptr || 
+				!(args[2].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			int64_t count = -1;
+			
+			if (args.size() == 4) {
+				if (args[3].type == NumericConstant::Signed) {
+					count = args[3].value.intVal;
+				}
+				else if (args[3].type == NumericConstant::Unsigned) {
+					count = static_cast<int64_t>(args[3].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			String* oldStr = static_cast<String*>(args[1].value.objectVal);
+			String* newStr = static_cast<String*>(args[2].value.objectVal);
+			
+			try {
+				String* resultStr = strObj->replace(ctx, oldStr->getUtf32(), newStr->getUtf32(), count);
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.rfind().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing the found index, or -1.
+		 **/
+		static Result		rfindBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() < 2 || args.size() > 4) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (args[1].type != NumericConstant::Object || 
+				args[1].value.objectVal == nullptr || 
+				!(args[1].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			int64_t start = 0;
+			int64_t end = -1;
+			
+			if (args.size() >= 3) {
+				if (args[2].type == NumericConstant::Signed) {
+					start = args[2].value.intVal;
+				}
+				else if (args[2].type == NumericConstant::Unsigned) {
+					start = static_cast<int64_t>(args[2].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			if (args.size() == 4) {
+				if (args[3].type == NumericConstant::Signed) {
+					end = args[3].value.intVal;
+				}
+				else if (args[3].type == NumericConstant::Unsigned) {
+					end = static_cast<int64_t>(args[3].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			String* subObj = static_cast<String*>(args[1].value.objectVal);
+			
+			try {
+				int64_t resultIdx = strObj->rfind(subObj->getUtf32(), start, end);
+				
+				Result res;
+				res.type = NumericConstant::Signed;
+				res.value.intVal = resultIdx;
+				return res;
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.rjust().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly justified String.
+		 **/
+		static Result		rjustBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args.size() > 3) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			int64_t width = 0;
+
+			if (args[1].type == NumericConstant::Signed) {
+				width = args[1].value.intVal;
+			}
+			else if (args[1].type == NumericConstant::Unsigned) {
+				width = static_cast<int64_t>(args[1].value.uintVal);
+			}
+			else {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			uint32_t fillCharCp = ' ';
+
+			if (args.size() == 3) {
+				if (args[2].type != NumericConstant::Object || 
+					args[2].value.objectVal == nullptr || 
+					!(args[2].value.objectVal->type() & BuiltInType_String)) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				
+				String* fillStr = static_cast<String*>(args[2].value.objectVal);
+				
+				if (fillStr->arrayLength() != 1) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				
+				fillCharCp = fillStr->getCodePoint(0);
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				size_t validWidth = width > 0 ? static_cast<size_t>(width) : 0;
+				String* resultStr = strObj->rjust(ctx, validWidth, fillCharCp);
+				
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.rstrip().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly stripped String.
+		 **/
+		static Result		rstripBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 1 || args.size() > 2) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			std::u32string stripChars;
+			
+			if (args.size() == 2) {
+				if (args[1].type != NumericConstant::Object || 
+					args[1].value.objectVal == nullptr || 
+					!(args[1].value.objectVal->type() & BuiltInType_String)) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				
+				String* charStr = static_cast<String*>(args[1].value.objectVal);
+				stripChars = charStr->getUtf32();
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				String* resultStr = strObj->rstrip(ctx, stripChars);
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.startswith().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Signed Integer Result containing 1 for true, 0 for false.
+		 **/
+		static Result		startsWithBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			static_cast<void>(ctx);
+			
+			if (args.size() < 2 || args.size() > 4) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			int64_t start = 0;
+			int64_t end = -1;
+			
+			if (args.size() >= 3) {
+				if (args[2].type == NumericConstant::Signed) {
+					start = args[2].value.intVal;
+				}
+				else if (args[2].type == NumericConstant::Unsigned) {
+					start = static_cast<int64_t>(args[2].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			if (args.size() == 4) {
+				if (args[3].type == NumericConstant::Signed) {
+					end = args[3].value.intVal;
+				}
+				else if (args[3].type == NumericConstant::Unsigned) {
+					end = static_cast<int64_t>(args[3].value.uintVal);
+				}
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			String* prefixObj = static_cast<String*>(args[1].value.objectVal);
+			
+			try {
+				return Result::make(strObj->startswith(prefixObj->getUtf32(), start, end));
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.strip().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly stripped String.
+		 **/
+		static Result		stripBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 1 || args.size() > 2) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			std::u32string stripChars;
+			
+			if (args.size() == 2) {
+				if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+				
+				String* charStr = static_cast<String*>(args[1].value.objectVal);
+				stripChars = charStr->getUtf32();
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				String* resultStr = strObj->strip(ctx, stripChars);
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.swapcase().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the case-swapped String.
+		 **/
+		static Result		swapcaseBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				String* resultStr = strObj->swapcase(ctx);
+				if (resultStr) { return resultStr->createResult(); }
 			}
 			catch (...) {
 			}

@@ -31,9 +31,7 @@ namespace ve {
 			lastResult.type = NumericConstant::Invalid;
 
 			while (true) {
-				Result condRes;
-				condRes.type = NumericConstant::Signed;
-				condRes.value.intVal = 1;
+				Result condRes = Result::make(true);
 
 				if (condNode != static_cast<size_t>(-1)) {
 					condRes = context.getArena().nodes[condNode]->evaluate(context);

@@ -73,24 +73,26 @@ namespace ve {
 			}
 		}
 		else if (rhs.type == NumericConstant::Signed) {
-			std::string str = getUtf8();
+			std::u32string str = getUtf32();
 			Text::appendUtf32(str, uint32_t(rhs.value.intVal));
 			String* newStr = context->allocateObject<String>();
 					
 			if (newStr) {
-				if (newStr->assignUtf8(str.c_str(), str.size())) {
+				std::string utf8 = Text::utf32ToUtf8(str);
+				if (newStr->assignUtf8(utf8.c_str(), utf8.size())) {
 					return newStr->createResult();
 				}
 				context->deallocateObject(newStr);
 			}
 		}
 		else if (rhs.type == NumericConstant::Unsigned) {
-			std::string str = getUtf8();
+			std::u32string str = getUtf32();
 			Text::appendUtf32(str, uint32_t(rhs.value.uintVal));
 			String* newStr = context->allocateObject<String>();
 					
 			if (newStr) {
-				if (newStr->assignUtf8(str.c_str(), str.size())) {
+				std::string utf8 = Text::utf32ToUtf8(str);
+				if (newStr->assignUtf8(utf8.c_str(), utf8.size())) {
 					return newStr->createResult();
 				}
 				context->deallocateObject(newStr);
@@ -439,7 +441,7 @@ namespace ve {
 	 * \return				Returns a new String object.
 	 **/
 	String* String::casefold(ExecutionContext* ctx) const {
-		std::string foldedStr = Text::casefoldUtf8<std::string>(this->getUtf8());
+		std::string foldedStr = Text::utf32ToUtf8(Text::casefoldUtf32<std::u32string>(this->getUtf32()));
 		
 		String* newStr = ctx->allocateObject<String>();
 		if (newStr) {
@@ -534,10 +536,10 @@ namespace ve {
 	 * Optional arguments start and end are interpreted as in slice notation.
 	 * Must be called within a try/catch block.
 	 *
-	 * \param suffix	The suffix string to check for.
-	 * \param start		The starting index (character-based, handles negative).
-	 * \param end		The ending index (character-based, handles negative).
-	 * \return			Returns true if the string ends with the suffix.
+	 * \param suffix		The suffix string to check for.
+	 * \param start			The starting index (character-based, handles negative).
+	 * \param end			The ending index (character-based, handles negative).
+	 * \return				Returns true if the string ends with the suffix.
 	 **/
 	bool String::endsWith(const String* suffix, int64_t start, int64_t end) const {
 		int64_t len = static_cast<int64_t>(this->charCount);
@@ -572,9 +574,9 @@ namespace ve {
 	 * Returns a copy of the string where all tab characters are replaced by one or more spaces.
 	 * Must be called within a try/catch block.
 	 *
-	 * \param ctx		The runtime execution context.
-	 * \param tabSize	The size of each tab stop (defaults to 8).
-	 * \return			Returns the newly expanded String.
+	 * \param ctx			The runtime execution context.
+	 * \param tabSize		The size of each tab stop (defaults to 8).
+	 * \return				Returns the newly expanded String.
 	 **/
 	String* String::expandtabs(ExecutionContext* ctx, int64_t tabSize) const {
 		std::string currentUtf8 = this->getUtf8();
@@ -595,10 +597,10 @@ namespace ve {
 	 * Returns the lowest index in the string where substring sub is found within the slice [start, end].
 	 * Must be called within a try/catch block.
 	 *
-	 * \param sub		The substring to search for.
-	 * \param start		The starting index (character-based, handles negative).
-	 * \param end		The ending index (character-based, handles negative).
-	 * \return			Returns the character index of the match, or -1 if not found.
+	 * \param sub			The substring to search for.
+	 * \param start			The starting index (character-based, handles negative).
+	 * \param end			The ending index (character-based, handles negative).
+	 * \return				Returns the character index of the match, or -1 if not found.
 	 **/
 	int64_t String::find(const String* sub, int64_t start, int64_t end) const {
 		int64_t len = static_cast<int64_t>(this->charCount);
@@ -643,9 +645,9 @@ namespace ve {
 	 * Returns a formatted version of the string, replacing {} and {N} placeholders with arguments.
 	 * Must be called within a try/catch block.
 	 *
-	 * \param ctx		The runtime execution context.
-	 * \param args		A vector of UTF-8 string representations of the arguments.
-	 * \return			Returns the newly formatted String.
+	 * \param ctx			The runtime execution context.
+	 * \param args			A vector of UTF-8 string representations of the arguments.
+	 * \return				Returns the newly formatted String.
 	 **/
 	String* String::format(ExecutionContext* ctx, const std::vector<Result>& args) const {
 		std::string currentUtf8 = this->getUtf8();
@@ -705,9 +707,361 @@ namespace ve {
 	 * \return				Returns true if the string is alphanumeric, false otherwise.
 	 **/
 	bool String::isalnum() const {
-		std::string currentUtf8 = this->getUtf8();
+		auto currentUtf32 = this->getUtf32();
 		
-		return Text::isAlnumUtf8<std::string>(currentUtf8);
+		return Text::isAlnumUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if all characters in the string are alphabetic and there is at least one character.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is alphabetic, false otherwise.
+	 **/
+	bool String::isalpha() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isAlphaUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if the string is empty or all characters in the string are ASCII, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is ASCII, false otherwise.
+	 **/
+	bool String::isAscii() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isAsciiUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if all characters in the string are decimal characters and there is at least one character, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is decimal, false otherwise.
+	 **/
+	bool String::isdecimal() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isDecimalUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if all characters in the string are digits and there is at least one character, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is composed entirely of digits, false otherwise.
+	 **/
+	bool String::isdigit() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isDigitUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if the string is a valid identifier and is not empty, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is a valid identifier, false otherwise.
+	 **/
+	bool String::isidentifier() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isIdentifierUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if all cased characters in the string are lowercase and there is at least one cased character, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is lowercase, false otherwise.
+	 **/
+	bool String::islower() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isLowerUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if all characters in the string are numeric characters and there is at least one character, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is numeric, false otherwise.
+	 **/
+	bool String::isnumeric() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isNumericUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if all characters in the string are printable or the string is empty, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is printable, false otherwise.
+	 **/
+	bool String::isprintable() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isPrintableUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if all characters in the string are whitespace characters and there is at least one character, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is whitespace, false otherwise.
+	 **/
+	bool String::isspace() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isSpaceUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if the string is a title-cased string and there is at least one character, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is title-cased, false otherwise.
+	 **/
+	bool String::istitle() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isTitleUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns true if all cased characters in the string are uppercase and there is at least one cased character, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \return				Returns true if the string is uppercase, false otherwise.
+	 **/
+	bool String::isupper() const {
+		auto currentUtf32 = this->getUtf32();
+		
+		return Text::isUpperUtf32<decltype(currentUtf32)>(currentUtf32);
+	}
+
+	/**
+	 * Returns a left-justified string of length width. 
+	 * Padding is done using the specified fill character (default is an ASCII space).
+	 * Must be called within a try/catch block.
+	 *
+	 * \param width			The total length of the newly justified string.
+	 * \param fillchar		The UTF-32 code point of the padding character.
+	 * \return				Returns the justified string as a new String.
+	 **/
+	String* String::ljust(size_t width, uint32_t fillchar) const {
+		auto currentUtf32 = this->getUtf32();
+		
+		auto newStr8 = Text::utf32ToUtf8(Text::ljustUtf32<std::u32string>(currentUtf32, width, fillchar));
+		String* newStr = context->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(newStr8.data(), newStr8.length())) {
+				context->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+
+		return newStr;
+	}
+
+	/**
+	 * Creates a lowercased copy of the string.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::lower(ExecutionContext* ctx) const {
+		std::string lowerStr = Text::utf32ToUtf8(Text::lowerUtf32<std::u32string>(this->getUtf32()));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(lowerStr.data(), lowerStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns a copy of the string with leading characters removed.
+	 * If chars is omitted or empty, whitespace characters are removed.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param chars			The characters to remove.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::lstrip(ExecutionContext* ctx, const std::u32string& chars) const {
+		std::string strippedStr = Text::utf32ToUtf8(Text::lstripUtf32<std::u32string>(this->getUtf32(), chars));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(strippedStr.data(), strippedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns a copy of the string with all occurrences of substring old replaced by new.
+	 * If the optional argument count is given, only the first count occurrences are replaced.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param oldStr		The substring to find.
+	 * \param newStr		The substring to replace with.
+	 * \param count			The maximum number of replacements to perform (-1 for unlimited).
+	 * \return				Returns a new String object.
+	 **/
+	String* String::replace(ExecutionContext* ctx, const std::u32string& oldStr, const std::u32string& newStr, int64_t count) const {
+		std::string replacedStr = Text::utf32ToUtf8(Text::replaceUtf32<std::u32string>(this->getUtf32(), oldStr, newStr, count));
+		
+		String* newStrObj = ctx->allocateObject<String>();
+		if (newStrObj) {
+			if (!newStrObj->assignUtf8(replacedStr.data(), replacedStr.length())) {
+				ctx->deallocateObject(newStrObj);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStrObj;
+	}
+
+	/**
+	 * Returns the highest index in the string where a substring is found within the given boundaries.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param sub			The substring to search for.
+	 * \param start			The starting character index.
+	 * \param end			The ending character index.
+	 * \return				Returns the index of the substring, or -1 if not found.
+	 **/
+	int64_t String::rfind(const std::u32string& sub, int64_t start, int64_t end) const {
+		auto currentUtf32 = this->getUtf32();
+
+		start = arrayIndexToLinearIndex(start, this->charCount);
+		end = arrayIndexToLinearIndex(end, this->charCount) + 1;
+		
+		return Text::rfindUtf32<decltype(currentUtf32)>(currentUtf32, sub, start, end);
+	}
+
+	/**
+	 * Returns a right-justified string of length width.
+	 * Padding is done using the specified fill character (default is an ASCII space).
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param width			The total length of the newly justified string.
+	 * \param fillchar		The UTF-32 code point of the padding character.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::rjust(ExecutionContext* ctx, size_t width, uint32_t fillchar) const {
+		std::string justifiedStr = Text::utf32ToUtf8(Text::rjustUtf32<std::u32string>(this->getUtf32(), width, fillchar));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(justifiedStr.data(), justifiedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns a copy of the string with trailing characters removed.
+	 * If chars is omitted or empty, whitespace characters are removed.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param chars			The characters to remove.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::rstrip(ExecutionContext* ctx, const std::u32string& chars) const {
+		std::string strippedStr = Text::utf32ToUtf8(Text::rstripUtf32<std::u32string>(this->getUtf32(), chars));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(strippedStr.data(), strippedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns true if the string slice begins with the specified prefix, false otherwise.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param prefix		The prefix substring to check for.
+	 * \param start			The starting character index.
+	 * \param end			The ending character index.
+	 * \return				Returns true if the string starts with the prefix.
+	 **/
+	bool String::startswith(const std::u32string& prefix, int64_t start, int64_t end) const {
+		auto currentUtf32 = this->getUtf32();
+
+		start = arrayIndexToLinearIndex(start, this->charCount);
+		end = arrayIndexToLinearIndex(end, this->charCount) + 1;
+		
+		return Text::startsWithUtf32<decltype(currentUtf32)>(currentUtf32, prefix, start, end);
+	}
+
+	/**
+	 * Returns a copy of the string with leading and trailing characters removed.
+	 * If chars is omitted or empty, whitespace characters are removed.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param chars			The characters to remove.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::strip(ExecutionContext* ctx, const std::u32string& chars) const {
+		std::string strippedStr = Text::utf32ToUtf8(Text::stripUtf32<std::u32string>(this->getUtf32(), chars));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(strippedStr.data(), strippedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Creates a copy of the string with uppercase characters converted to lowercase and vice versa.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::swapcase(ExecutionContext* ctx) const {
+		std::string swappedStr = Text::utf32ToUtf8(Text::swapcaseUtf32<std::u32string>(this->getUtf32()));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(swappedStr.data(), swappedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
 	}
 
 	/**

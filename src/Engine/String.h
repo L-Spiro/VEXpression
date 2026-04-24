@@ -207,22 +207,22 @@ namespace ve {
 
 					// Must be the same length.
 					if (charCount != rhsString->charCount) {
-						return Result{ .type = NumericConstant::Signed, .value = { .intVal = 0 } };
+						return Result::make(false);
 					}
 
 					// Must have the same character widths.
 					if (bufferWidth != rhsString->bufferWidth) {
-						return Result{ .type = NumericConstant::Signed, .value = { .intVal = 0 } };
+						return Result::make(false);
 					}
 
 					// Same width and length. Do a raw memory compare.
 					if (buffer == rhsString->buffer) {
-						return Result{ .type = NumericConstant::Signed, .value = { .intVal = 1 } };
+						return Result::make(true);
 					}
 				}
 			}
 
-			return Result{ .type = NumericConstant::Signed, .value = { .intVal = 0 } };
+			return Result::make(false);
 		}
 
 		/**
@@ -235,7 +235,8 @@ namespace ve {
 			Result eq = operator==(rhs);
 			
 			if (eq.type == NumericConstant::Signed) {
-				return Result{ .type = NumericConstant::Signed, .value = { .intVal = (eq.value.intVal == 0) ? 1 : 0 } };
+				//return Result{ .type = NumericConstant::Signed, .value = { .intVal = (eq.value.intVal == 0) ? 1 : 0 } };
+				return Result::make(eq.value.uintVal == 0);
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -252,7 +253,7 @@ namespace ve {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
 				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					int cmp = compareString(static_cast<const String*>(rhs.value.objectVal));
-					return Result{ .type = NumericConstant::Signed, .value = { .intVal = (cmp < 0) ? 1 : 0 } };
+					return Result::make(cmp < 0);
 				}
 			}
 			
@@ -270,7 +271,7 @@ namespace ve {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
 				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					int cmp = compareString(static_cast<const String*>(rhs.value.objectVal));
-					return Result{ .type = NumericConstant::Signed, .value = { .intVal = (cmp > 0) ? 1 : 0 } };
+					return Result::make(cmp > 0);
 				}
 			}
 			
@@ -288,7 +289,7 @@ namespace ve {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
 				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					int cmp = compareString(static_cast<const String*>(rhs.value.objectVal));
-					return Result{ .type = NumericConstant::Signed, .value = { .intVal = (cmp <= 0) ? 1 : 0 } };
+					return Result::make(cmp <= 0);
 				}
 			}
 			
@@ -306,7 +307,7 @@ namespace ve {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
 				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					int cmp = compareString(static_cast<const String*>(rhs.value.objectVal));
-					return Result{ .type = NumericConstant::Signed, .value = { .intVal = (cmp >= 0) ? 1 : 0 } };
+					return Result::make(cmp >= 0);
 				}
 			}
 			
@@ -758,6 +759,23 @@ namespace ve {
 			return result;
 		}
 
+		/**
+		 * Converts the internal string representation into a UTF-8 encoded standard string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns a std::string containing the UTF-8 encoded characters.
+		 **/
+		std::u32string						getUtf32() const {
+			std::u32string result;
+			result.reserve(charCount);
+			
+			for (size_t i = 0; i < charCount; ++i) {
+				Text::appendUtf32(result, getCodePoint(i));
+			}
+			
+			return result;
+		}
+
 
 		// == API Functions.
 		/**
@@ -871,6 +889,203 @@ namespace ve {
 		 * \return				Returns true if the string is alphanumeric, false otherwise.
 		 **/
 		bool								isalnum() const;
+
+		/**
+		 * Returns true if all characters in the string are alphabetic and there is at least one character.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is alphabetic, false otherwise.
+		 **/
+		bool								isalpha() const;
+
+		/**
+		 * Returns true if the string is empty or all characters in the string are ASCII, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is ASCII, false otherwise.
+		 **/
+		bool								isAscii() const;
+
+		/**
+		 * Returns true if all characters in the string are decimal characters and there is at least one character, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is decimal, false otherwise.
+		 **/
+		bool								isdecimal() const;
+
+		/**
+		 * Returns true if all characters in the string are digits and there is at least one character, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is composed entirely of digits, false otherwise.
+		 **/
+		bool								isdigit() const;
+
+		/**
+		 * Returns true if the string is a valid identifier and is not empty, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is a valid identifier, false otherwise.
+		 **/
+		bool								isidentifier() const;
+
+		/**
+		 * Returns true if all cased characters in the string are lowercase and there is at least one cased character, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is lowercase, false otherwise.
+		 **/
+		bool								islower() const;
+
+		/**
+		 * Returns true if all characters in the string are numeric characters and there is at least one character, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is numeric, false otherwise.
+		 **/
+		bool								isnumeric() const;
+
+		/**
+		 * Returns true if all characters in the string are printable or the string is empty, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is printable, false otherwise.
+		 **/
+		bool								isprintable() const;
+
+		/**
+		 * Returns true if all characters in the string are whitespace characters and there is at least one character, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is whitespace, false otherwise.
+		 **/
+		bool								isspace() const;
+
+		/**
+		 * Returns true if the string is a title-cased string and there is at least one character, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is title-cased, false otherwise.
+		 **/
+		bool								istitle() const;
+
+		/**
+		 * Returns true if all cased characters in the string are uppercase and there is at least one cased character, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return				Returns true if the string is uppercase, false otherwise.
+		 **/
+		bool								isupper() const;
+
+		/**
+		 * Returns a left-justified string of length width. 
+		 * Padding is done using the specified fill character (default is an ASCII space).
+		 * Must be called within a try/catch block.
+		 *
+		 * \param width			The total length of the newly justified string.
+		 * \param fillchar		The UTF-32 code point of the padding character.
+		 * \return				Returns the justified string as a new String.
+		 **/
+		String*								ljust(size_t width, uint32_t fillchar = ' ') const;
+
+		/**
+		 * Creates a lowercased copy of the string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \return				Returns a new String object.
+		 **/
+		String*								lower(ExecutionContext* ctx) const;
+
+		/**
+		 * Returns a copy of the string with leading characters removed.
+		 * If chars is omitted or empty, whitespace characters are removed.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param chars			The characters to remove.
+		 * \return				Returns a new String object.
+		 **/
+		String*								lstrip(ExecutionContext* ctx, const std::u32string& chars = {}) const;
+
+		/**
+		 * Returns a copy of the string with all occurrences of substring old replaced by new.
+		 * If the optional argument count is given, only the first count occurrences are replaced.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param oldStr		The substring to find.
+		 * \param newStr		The substring to replace with.
+		 * \param count			The maximum number of replacements to perform (-1 for unlimited).
+		 * \return				Returns a new String object.
+		 **/
+		String*								replace(ExecutionContext* ctx, const std::u32string& oldStr, const std::u32string& newStr, int64_t count = -1) const;
+
+		/**
+		 * Returns the highest index in the string where a substring is found within the given boundaries.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param sub			The substring to search for.
+		 * \param start			The starting character index.
+		 * \param end			The ending character index.
+		 * \return				Returns the index of the substring, or -1 if not found.
+		 **/
+		int64_t								rfind(const std::u32string& sub, int64_t start = 0, int64_t end = -1) const;
+
+		/**
+		 * Returns a right-justified string of length width.
+		 * Padding is done using the specified fill character (default is an ASCII space).
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param width			The total length of the newly justified string.
+		 * \param fillchar		The UTF-32 code point of the padding character.
+		 * \return				Returns a new String object.
+		 **/
+		String*								rjust(ExecutionContext* ctx, size_t width, uint32_t fillchar = ' ') const;
+
+		/**
+		 * Returns a copy of the string with trailing characters removed.
+		 * If chars is omitted or empty, whitespace characters are removed.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param chars			The characters to remove.
+		 * \return				Returns a new String object.
+		 **/
+		String*								rstrip(ExecutionContext* ctx, const std::u32string& chars = {}) const;
+
+		/**
+		 * Returns true if the string slice begins with the specified prefix, false otherwise.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param prefix		The prefix substring to check for.
+		 * \param start			The starting character index.
+		 * \param end			The ending character index.
+		 * \return				Returns true if the string starts with the prefix.
+		 **/
+		bool								startswith(const std::u32string& prefix, int64_t start = 0, int64_t end = -1) const;
+
+		/**
+		 * Returns a copy of the string with leading and trailing characters removed.
+		 * If chars is omitted or empty, whitespace characters are removed.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param chars			The characters to remove.
+		 * \return				Returns a new String object.
+		 **/
+		String*								strip(ExecutionContext* ctx, const std::u32string& chars = {}) const;
+
+		/**
+		 * Creates a copy of the string with uppercase characters converted to lowercase and vice versa.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \return				Returns a new String object.
+		 **/
+		String*								swapcase(ExecutionContext* ctx) const;
 		
 		/**
 		 * Internal helper to fetch a UTF-32 code point at a linear index.

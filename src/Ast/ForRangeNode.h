@@ -45,9 +45,7 @@ namespace ve {
 			}
 
 			if (blockNode == static_cast<size_t>(-1) || lastResult.type == NumericConstant::Invalid) {
-				Result falseRes;
-				falseRes.type = NumericConstant::Signed;
-				falseRes.value.intVal = 0;
+				Result falseRes = Result::make(false);
 				return falseRes;
 			}
 
