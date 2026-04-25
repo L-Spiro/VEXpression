@@ -59,8 +59,8 @@ int main() {
 	ve::ExecutionContext context;
 	auto Cool = HUGE_VALF / 2;
 	
-	std::u8string testExprU8 = std::u8string( u8"a = \"Hello My Name Is PETER!!?\";\r\n"
-"a.swapcase()");
+	std::u8string testExprU8 = std::u8string( u8"a = \"Hello My Name Is PETER!!?H\";\r\n"
+"a.replace(\"H\", \"‘\")");
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";

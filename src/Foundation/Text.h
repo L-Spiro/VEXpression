@@ -2293,6 +2293,74 @@ namespace ve {
 		}
 
 		/**
+		 * Removes a prefix from a UTF-8 string if it is present.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param prefix		The prefix substring to remove.
+		 * \return				Returns the string with the prefix removed, or a copy of the original.
+		 **/
+		template <typename StringT>
+		static inline StringT			removePrefixUtf8(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> prefix) {
+			if (input.length() >= prefix.length() && input.substr(0, prefix.length()) == prefix) {
+				return StringT(input.substr(prefix.length()));
+			}
+			
+			return StringT(input);
+		}
+
+		/**
+		 * Removes a prefix from a 32-bit UTF-32 string if it is present.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param prefix		The prefix substring to remove.
+		 * \return				Returns the string with the prefix removed, or a copy of the original.
+		 **/
+		template <typename StringT>
+		static inline StringT			removePrefixUtf32(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> prefix) {
+			if (input.length() >= prefix.length() && input.substr(0, prefix.length()) == prefix) {
+				return StringT(input.substr(prefix.length()));
+			}
+			
+			return StringT(input);
+		}
+
+		/**
+		 * Removes a suffix from a UTF-8 string if it is present.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param suffix		The suffix substring to remove.
+		 * \return				Returns the string with the suffix removed, or a copy of the original.
+		 **/
+		template <typename StringT>
+		static inline StringT			removeSuffixUtf8(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> suffix) {
+			if (input.length() >= suffix.length() && input.substr(input.length() - suffix.length()) == suffix) {
+				return StringT(input.substr(0, input.length() - suffix.length()));
+			}
+			
+			return StringT(input);
+		}
+
+		/**
+		 * Removes a suffix from a 32-bit UTF-32 string if it is present.
+		 *
+		 * \tparam StringT		The type of the 32-bit string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param suffix		The suffix substring to remove.
+		 * \return				Returns the string with the suffix removed, or a copy of the original.
+		 **/
+		template <typename StringT>
+		static inline StringT			removeSuffixUtf32(std::basic_string_view<typename StringT::value_type> input, std::basic_string_view<typename StringT::value_type> suffix) {
+			if (input.length() >= suffix.length() && input.substr(input.length() - suffix.length()) == suffix) {
+				return StringT(input.substr(0, input.length() - suffix.length()));
+			}
+			
+			return StringT(input);
+		}
+
+		/**
 		 * Replaces occurrences of a substring with another substring within a UTF-8 string.
 		 * Must be called within a try/catch block.
 		 *
@@ -3109,6 +3177,285 @@ namespace ve {
 				}
 			}
 			
+			return result;
+		}
+
+		/**
+		 * Converts a UTF-8 string to title case.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns the titlecased UTF-8 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			titleUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "titleUtf8 requires an 8-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			
+			const CharT* ptr = input.data();
+			const CharT* end = ptr + input.length();
+			bool prevAlpha = false;
+			
+			while (ptr < end) {
+				size_t size;
+				uint32_t cp = nextUtf8Char(ptr, end - ptr, &size);
+				ptr += size;
+				
+				if (cp == UTF_INVALID) {
+					continue;
+				}
+				
+				if (Character::isAlphaUtf(cp)) {
+					if (!prevAlpha) {
+						char32_t outSeq[3];
+						uint32_t upperCount = Case::getUpperSequence(static_cast<char32_t>(cp), outSeq);
+						
+						if (upperCount > 0) {
+							for (uint32_t j = 0; j < upperCount; ++j) {
+								appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+							}
+						}
+						else {
+							appendUtf8(result, toUpper(cp));
+						}
+					}
+					else {
+						char32_t outSeq[3];
+						uint32_t lowerCount = Case::getLowerSequence(static_cast<char32_t>(cp), outSeq);
+						
+						if (lowerCount > 0) {
+							for (uint32_t j = 0; j < lowerCount; ++j) {
+								appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+							}
+						}
+						else {
+							appendUtf8(result, toLower(cp));
+						}
+					}
+					prevAlpha = true;
+				}
+				else {
+					appendUtf8(result, cp);
+					prevAlpha = false;
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Converts a 32-bit UTF-32 string to title case.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns the titlecased UTF-32 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			titleUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 4, "titleUtf32 requires a 32-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			bool prevAlpha = false;
+			
+			for (auto cp : input) {
+				if (Character::isAlphaUtf(cp)) {
+					if (!prevAlpha) {
+						char32_t outSeq[3];
+						uint32_t upperCount = Case::getUpperSequence(static_cast<char32_t>(cp), outSeq);
+						
+						if (upperCount > 0) {
+							for (uint32_t j = 0; j < upperCount; ++j) {
+								result.push_back(static_cast<CharT>(outSeq[j]));
+							}
+						}
+						else {
+							result.push_back(static_cast<CharT>(toUpper(uint32_t(cp))));
+						}
+					}
+					else {
+						char32_t outSeq[3];
+						uint32_t lowerCount = Case::getLowerSequence(static_cast<char32_t>(cp), outSeq);
+						
+						if (lowerCount > 0) {
+							for (uint32_t j = 0; j < lowerCount; ++j) {
+								result.push_back(static_cast<CharT>(outSeq[j]));
+							}
+						}
+						else {
+							result.push_back(static_cast<CharT>(toLower(uint32_t(cp))));
+						}
+					}
+					prevAlpha = true;
+				}
+				else {
+					result.push_back(static_cast<CharT>(cp));
+					prevAlpha = false;
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Converts an 8-bit UTF-8 string to uppercase.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \return				Returns the uppercase UTF-8 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			upperUtf8(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 1, "upperUtf8 requires an 8-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			
+			const CharT* ptr = input.data();
+			const CharT* end = ptr + input.length();
+			
+			while (ptr < end) {
+				size_t size;
+				uint32_t cp = nextUtf8Char(ptr, end - ptr, &size);
+				ptr += size;
+				
+				if (cp == UTF_INVALID) {
+					continue;
+				}
+				
+				char32_t outSeq[3];
+				uint32_t upperCount = Case::getUpperSequence(static_cast<char32_t>(cp), outSeq);
+				
+				if (upperCount > 0) {
+					for (uint32_t j = 0; j < upperCount; ++j) {
+						appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+					}
+				}
+				else {
+					appendUtf8(result, toUpper(cp));
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Converts a 32-bit UTF-32 string to uppercase.
+		 * Must be called within a try/catch block.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \return				Returns the uppercase UTF-32 string matching the requested StringT.
+		 **/
+		template <typename StringT>
+		static inline StringT			upperUtf32(std::basic_string_view<typename StringT::value_type> input) {
+			using CharT = typename StringT::value_type;
+			static_assert(sizeof(CharT) == 4, "upperUtf32 requires a 32-bit character string type.");
+			
+			StringT result;
+			result.reserve(input.length());
+			
+			for (auto cp : input) {
+				char32_t outSeq[3];
+				uint32_t upperCount = Case::getUpperSequence(static_cast<char32_t>(cp), outSeq);
+				
+				if (upperCount > 0) {
+					for (uint32_t j = 0; j < upperCount; ++j) {
+						result.push_back(static_cast<CharT>(outSeq[j]));
+					}
+				}
+				else {
+					result.push_back(static_cast<CharT>(toUpper(uint32_t(cp))));
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Pads a UTF-8 string on the left with zeros to fill a specified width.
+		 * Handles leading signs by inserting zeros after the sign.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
+		 * \param input			The input UTF-8 string view.
+		 * \param width			The target total length of the string.
+		 * \return				Returns the zero-padded UTF-8 string.
+		 **/
+		template <typename StringT>
+		static inline StringT			zfillUtf8(std::basic_string_view<typename StringT::value_type> input, size_t width) {
+			using CharT = typename StringT::value_type;
+			
+			size_t charCount = 0;
+			const CharT* ptr = input.data();
+			size_t remaining = input.length();
+
+			while (remaining > 0) {
+				size_t eaten = 0;
+				nextUtf8Char(ptr, remaining, &eaten);
+
+				if (eaten == 0) { break; }
+
+				ptr += eaten;
+				remaining -= eaten;
+				charCount++;
+			}
+
+			if (width <= charCount) { return StringT(input); }
+
+			StringT result;
+			size_t pads = width - charCount;
+
+			if (!input.empty() && (input[0] == static_cast<CharT>('+') || input[0] == static_cast<CharT>('-'))) {
+				result.push_back(input[0]);
+				result.append(pads, static_cast<CharT>('0'));
+				result.append(input.substr(1));
+			}
+			else {
+				result.append(pads, static_cast<CharT>('0'));
+				result.append(input);
+			}
+
+			return result;
+		}
+
+		/**
+		 * Pads a 32-bit UTF-32 string on the left with zeros to fill a specified width.
+		 * Handles leading signs by inserting zeros after the sign.
+		 *
+		 * \tparam StringT		The type of the string (e.g., std::u32string).
+		 * \param input			The input UTF-32 string view.
+		 * \param width			The target total length of the string.
+		 * \return				Returns the zero-padded UTF-32 string.
+		 **/
+		template <typename StringT>
+		static inline StringT			zfillUtf32(std::basic_string_view<typename StringT::value_type> input, size_t width) {
+			using CharT = typename StringT::value_type;
+
+			size_t charCount = input.length();
+
+			if (width <= charCount) { return StringT(input); }
+
+			StringT result;
+			size_t pads = width - charCount;
+
+			if (!input.empty() && (input[0] == static_cast<CharT>('+') || input[0] == static_cast<CharT>('-'))) {
+				result.push_back(input[0]);
+				result.append(pads, static_cast<CharT>('0'));
+				result.append(input.substr(1));
+			}
+			else {
+				result.append(pads, static_cast<CharT>('0'));
+				result.append(input);
+			}
+
 			return result;
 		}
 

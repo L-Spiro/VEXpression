@@ -48,6 +48,7 @@ expr
     | <assoc=right> expr '?' expr ':' expr                          # ternary
     | <assoc=right> IDENTIFIER op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # assignment
     | '(' expr ')'                                                  # parens
+    | LBRACE (exprList ','?)? RBRACE                                # vectorExpr
 	| IF '(' expr ')' block (ELSE block)?                           # ifElseExpr
 	| FOR '(' init=expr? ';' cond=expr? ';' step=expr? ')' block    # forStandardExpr
     | FOR '(' IDENTIFIER IN expr ')' block                          # forRangeExpr

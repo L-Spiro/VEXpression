@@ -168,33 +168,11 @@ namespace ve {
 		int64_t endIdx = static_cast<int64_t>(charCount);
 
 		if (mask & ArrayExFlag_Start) {
-			startIdx = idx0;
-				
-			if (startIdx < 0) {
-				startIdx += static_cast<int64_t>(charCount);
-			}
-				
-			if (startIdx < 0) {
-				startIdx = 0;
-			}
-			else if (startIdx > static_cast<int64_t>(charCount)) {
-				startIdx = static_cast<int64_t>(charCount);
-			}
+			startIdx = arrayIndexToLinearIndex(idx0, this->charCount);
 		}
 
 		if (mask & ArrayExFlag_End) {
-			endIdx = idx1;
-				
-			if (endIdx < 0) {
-				endIdx += static_cast<int64_t>(charCount);
-			}
-				
-			if (endIdx < 0) {
-				endIdx = 0;
-			}
-			else if (endIdx > static_cast<int64_t>(charCount)) {
-				endIdx = static_cast<int64_t>(charCount);
-			}
+			endIdx = arrayIndexToLinearIndex(idx1, this->charCount) + 1;
 		}
 
 		// Python slicing behavior: an invalid range simply results in an empty string.
@@ -913,6 +891,50 @@ namespace ve {
 	}
 
 	/**
+	 * Returns a copy of the string with the given prefix removed if it is present.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param prefix		The prefix string to remove.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::removeprefix(ExecutionContext* ctx, const std::u32string& prefix) const {
+		std::string removedStr = Text::utf32ToUtf8(Text::removePrefixUtf32<std::u32string>(this->getUtf32(), prefix));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(removedStr.data(), removedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns a copy of the string with the given suffix removed if it is present.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param suffix		The suffix string to remove.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::removesuffix(ExecutionContext* ctx, const std::u32string& suffix) const {
+		std::string removedStr = Text::utf32ToUtf8(Text::removeSuffixUtf32<std::u32string>(this->getUtf32(), suffix));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(removedStr.data(), removedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
 	 * Returns a copy of the string with all occurrences of substring old replaced by new.
 	 * If the optional argument count is given, only the first count occurrences are replaced.
 	 * Must be called within a try/catch block.
@@ -1056,6 +1078,70 @@ namespace ve {
 		String* newStr = ctx->allocateObject<String>();
 		if (newStr) {
 			if (!newStr->assignUtf8(swappedStr.data(), swappedStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Creates a titlecased copy of the string.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::title(ExecutionContext* ctx) const {
+		std::string titledStr = Text::utf32ToUtf8(Text::titleUtf32<std::u32string>(this->getUtf32()));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(titledStr.data(), titledStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Creates an uppercase copy of the string.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::upper(ExecutionContext* ctx) const {
+		std::string upperStr = Text::utf32ToUtf8(Text::upperUtf32<std::u32string>(this->getUtf32()));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(upperStr.data(), upperStr.length())) {
+				ctx->deallocateObject(newStr);
+				throw ErrorCode::Object_Initialization_Failed;
+			}
+		}
+		
+		return newStr;
+	}
+
+	/**
+	 * Returns a copy of the string left-filled with zeros to a length of width.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param ctx			The execution context for allocation.
+	 * \param width			The target total length of the newly padded string.
+	 * \return				Returns a new String object.
+	 **/
+	String* String::zfill(ExecutionContext* ctx, size_t width) const {
+		std::string paddedStr = Text::utf32ToUtf8(Text::zfillUtf32<std::u32string>(this->getUtf32(), width));
+		
+		String* newStr = ctx->allocateObject<String>();
+		if (newStr) {
+			if (!newStr->assignUtf8(paddedStr.data(), paddedStr.length())) {
 				ctx->deallocateObject(newStr);
 				throw ErrorCode::Object_Initialization_Failed;
 			}

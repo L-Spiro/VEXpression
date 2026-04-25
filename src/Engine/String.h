@@ -1010,6 +1010,26 @@ namespace ve {
 		String*								lstrip(ExecutionContext* ctx, const std::u32string& chars = {}) const;
 
 		/**
+		 * Returns a copy of the string with the given prefix removed if it is present.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param prefix		The prefix string to remove.
+		 * \return				Returns a new String object.
+		 **/
+		String*								removeprefix(ExecutionContext* ctx, const std::u32string& prefix) const;
+
+		/**
+		 * Returns a copy of the string with the given suffix removed if it is present.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param suffix		The suffix string to remove.
+		 * \return				Returns a new String object.
+		 **/
+		String*								removesuffix(ExecutionContext* ctx, const std::u32string& suffix) const;
+
+		/**
 		 * Returns a copy of the string with all occurrences of substring old replaced by new.
 		 * If the optional argument count is given, only the first count occurrences are replaced.
 		 * Must be called within a try/catch block.
@@ -1086,6 +1106,34 @@ namespace ve {
 		 * \return				Returns a new String object.
 		 **/
 		String*								swapcase(ExecutionContext* ctx) const;
+
+		/**
+		 * Creates a titlecased copy of the string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \return				Returns a new String object.
+		 **/
+		String*								title(ExecutionContext* ctx) const;
+
+		/**
+		 * Creates an uppercase copy of the string.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \return				Returns a new String object.
+		 **/
+		String*								upper(ExecutionContext* ctx) const;
+
+		/**
+		 * Returns a copy of the string left-filled with zeros to a length of width.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx			The execution context for allocation.
+		 * \param width			The target total length of the newly padded string.
+		 * \return				Returns a new String object.
+		 **/
+		String*								zfill(ExecutionContext* ctx, size_t width) const;
 		
 		/**
 		 * Internal helper to fetch a UTF-32 code point at a linear index.

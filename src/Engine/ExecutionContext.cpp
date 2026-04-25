@@ -462,6 +462,8 @@ namespace ve {
 		{ "lower", StringId::Desc_String_Lower, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::lowerBridge },
 		{ "lstrip", StringId::Desc_String_LStrip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::lstripBridge },
 		{ "lstrip", StringId::Desc_String_LStrip, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "chars", StringId::String_Param_Chars } }, IntrinsicBridges::lstripBridge },
+		{ "removeprefix", StringId::Desc_String_RemovePrefix, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix } }, IntrinsicBridges::removePrefixBridge },
+		{ "removesuffix", StringId::Desc_String_RemoveSuffix, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "suffix", StringId::String_Param_Suffix_RemoveSuffix } }, IntrinsicBridges::removeSuffixBridge },
 		{ "replace", StringId::Desc_String_Replace, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "old", StringId::String_Param_Old }, { DataType::String, "new", StringId::String_Param_New } }, IntrinsicBridges::replaceBridge },
 		{ "replace", StringId::Desc_String_Replace, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "old", StringId::String_Param_Old }, { DataType::String, "new", StringId::String_Param_New }, { DataType::Int64, "count", StringId::String_Param_Count } }, IntrinsicBridges::replaceBridge },
 		{ "rfind", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind } }, IntrinsicBridges::rfindBridge },
@@ -480,6 +482,9 @@ namespace ve {
 		{ "strip", StringId::Desc_String_Strip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::stripBridge },
 		{ "strip", StringId::Desc_String_Strip, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "chars", StringId::String_Param_Chars } }, IntrinsicBridges::stripBridge },
 		{ "swapcase", StringId::Desc_String_SwapCase, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::swapcaseBridge },
+		{ "title", StringId::Desc_String_Title, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::titleBridge },
+		{ "upper", StringId::Desc_String_Upper, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::upperBridge },
+		{ "zfill", StringId::Desc_String_ZFill, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::zfillBridge },
 	};
 
 	// == Functions.
@@ -589,6 +594,76 @@ namespace ve {
 		rootIndex = 0;
 
 		// Don’t change settings such as treatAllAsHex.
+	}
+
+	/**
+	 * Converts a Result into its string representation.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param res			The Result to convert.
+	 * \param depth			The recursion depth for stringifying nested objects (defaults to 1).
+	 * \param flags			Bitmask defining formatting rules (defaults to 0).
+	 * \return				Returns the string representation of the Result.
+	 **/
+	std::string ExecutionContext::toString(const Result& res, int32_t depth, uint32_t flags) const {
+		switch (res.type) {
+			case NumericConstant::Unsigned : {
+				return Text::toUnsigned(res.value.uintVal);
+			}
+			case NumericConstant::Signed : {
+				return Text::toSigned(res.value.intVal);
+			}
+			case NumericConstant::Floating : {
+				return Text::toDouble(res.value.doubleVal);
+			}
+			case NumericConstant::Object : {
+				if (res.value.objectVal) {
+					std::string utf8Str;
+					if (res.value.objectVal->toString(utf8Str, depth, flags)) {
+						return utf8Str;
+					}
+					return "[Object String Conversion Failed]";
+				}
+				return "<null>";
+			}
+			case NumericConstant::Invalid : {}
+			default : {
+				return "[Invalid or Uninitialized]";
+			}
+		}
+	}
+
+	/**
+	 * Converts a Result into its formatted string representation.
+	 * Must be called within a try/catch block.
+	 *
+	 * \param res			The Result to convert.
+	 * \param formatStr		The format string to apply.
+	 * \param flags			Bitmask defining formatting rules (defaults to 0).
+	 * \return				Returns the formatted string representation of the Result.
+	 **/
+	std::string ExecutionContext::formattedString(const Result& res, const std::string& formatStr, uint32_t flags) const {
+		switch (res.type) {
+			case NumericConstant::Unsigned : {
+				return std::vformat(formatStr, std::make_format_args(res.value.uintVal));
+			}
+			case NumericConstant::Signed : {
+				return std::vformat(formatStr, std::make_format_args(res.value.intVal));
+			}
+			case NumericConstant::Floating : {
+				return std::vformat(formatStr, std::make_format_args(res.value.doubleVal));
+			}
+			case NumericConstant::Object : {
+				if (res.value.objectVal) {
+					return res.value.objectVal->formattedString(formatStr, flags);
+				}
+				return "<null>";
+			}
+			case NumericConstant::Invalid :
+			default : {
+				return "";
+			}
+		}
 	}
 
 	/**

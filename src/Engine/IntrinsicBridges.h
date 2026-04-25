@@ -1389,6 +1389,7 @@ namespace ve {
 				}
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -1602,6 +1603,7 @@ namespace ve {
 				}
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -1665,6 +1667,7 @@ namespace ve {
 				return res;
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -1712,6 +1715,7 @@ namespace ve {
 				}
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -1758,6 +1762,7 @@ namespace ve {
 				return res;
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -1793,6 +1798,7 @@ namespace ve {
 				}
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -1825,6 +1831,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			return Result{ .type = NumericConstant::Invalid };
@@ -1857,6 +1864,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			return Result{ .type = NumericConstant::Invalid };
@@ -1889,6 +1897,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			return Result{ .type = NumericConstant::Invalid };
@@ -1921,6 +1930,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			return Result{ .type = NumericConstant::Invalid };
@@ -1957,6 +1967,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			return Result{ .type = NumericConstant::Invalid };
@@ -1990,6 +2001,7 @@ namespace ve {
 				return res;
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2022,6 +2034,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			
@@ -2055,6 +2068,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			return Result{ .type = NumericConstant::Invalid };
@@ -2091,6 +2105,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			
@@ -2128,6 +2143,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			
@@ -2164,6 +2180,7 @@ namespace ve {
 				return res;
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2200,6 +2217,7 @@ namespace ve {
 					return res;
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			
@@ -2275,6 +2293,7 @@ namespace ve {
 				}
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2312,7 +2331,7 @@ namespace ve {
 							return newStr->createResult();
 						}
 					}
-					catch (...) {}
+					catch (...) { throw ErrorCode::Out_Of_Memory; }
 					return Result{};	// Creates an invalid return.
 				}
 				return args[0];
@@ -2339,7 +2358,7 @@ namespace ve {
 							return newStr->createResult();
 						}
 					}
-					catch (...) {}
+					catch (...) { throw ErrorCode::Out_Of_Memory; }
 					return Result{};	// Creates an invalid return.
 				}
 				return args[0];
@@ -2356,6 +2375,7 @@ namespace ve {
 					}
 				}
 				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
 				}
 			}
 			return Result{ .type = NumericConstant::Invalid };
@@ -2399,6 +2419,63 @@ namespace ve {
 				if (resultStr) { return resultStr->createResult(); }
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.removeprefix().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly formatted String.
+		 **/
+		static Result		removePrefixBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			String* prefixObj = static_cast<String*>(args[1].value.objectVal);
+			
+			try {
+				String* resultStr = strObj->removeprefix(ctx, prefixObj->getUtf32());
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.removesuffix().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly formatted String.
+		 **/
+		static Result		removeSuffixBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			String* suffixObj = static_cast<String*>(args[1].value.objectVal);
+			
+			try {
+				String* resultStr = strObj->removesuffix(ctx, suffixObj->getUtf32());
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2456,6 +2533,7 @@ namespace ve {
 				if (resultStr) { return resultStr->createResult(); }
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2525,6 +2603,7 @@ namespace ve {
 				return res;
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2586,6 +2665,7 @@ namespace ve {
 				if (resultStr) { return resultStr->createResult(); }
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2628,6 +2708,7 @@ namespace ve {
 				if (resultStr) { return resultStr->createResult(); }
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2683,6 +2764,7 @@ namespace ve {
 				return Result::make(strObj->startswith(prefixObj->getUtf32(), start, end));
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2717,6 +2799,7 @@ namespace ve {
 				if (resultStr) { return resultStr->createResult(); }
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
@@ -2742,6 +2825,151 @@ namespace ve {
 				if (resultStr) { return resultStr->createResult(); }
 			}
 			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.title().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the titlecased String.
+		 **/
+		static Result		titleBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				String* resultStr = strObj->title(ctx);
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.upper().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the uppercase String.
+		 **/
+		static Result		upperBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type == NumericConstant::Unsigned) {
+				char32_t outSeq[3];
+				auto lowerCount = Case::getUpperSequence(char32_t(args[0].value.uintVal), outSeq);
+				if (lowerCount == 1) {
+					return Result::make(uint64_t(outSeq[0]));
+				}
+				else if (lowerCount) {
+					std::string result;
+					try {
+						for (uint32_t j = 0; j < lowerCount; ++j) {
+							Text::appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+						}
+
+						String* newStr = ctx->allocateObject<String>();
+						if (newStr) {
+							if (!newStr->assignUtf8(result.data(), result.length())) {
+								ctx->deallocateObject(newStr);
+								throw ErrorCode::Object_Initialization_Failed;
+							}
+							return newStr->createResult();
+						}
+					}
+					catch (...) { throw ErrorCode::Out_Of_Memory; }
+					return Result{};	// Creates an invalid return.
+				}
+				return args[0];
+			}
+			else if (args[0].type == NumericConstant::Signed) {
+				char32_t outSeq[3];
+				auto lowerCount = Case::getUpperSequence(char32_t(args[0].value.uintVal), outSeq);
+				if (lowerCount == 1) {
+					return Result::make(int64_t(outSeq[0]));
+				}
+				else if (lowerCount) {
+					std::string result;
+					try {
+						for (uint32_t j = 0; j < lowerCount; ++j) {
+							Text::appendUtf8(result, static_cast<uint32_t>(outSeq[j]));
+						}
+
+						String* newStr = ctx->allocateObject<String>();
+						if (newStr) {
+							if (!newStr->assignUtf8(result.data(), result.length())) {
+								ctx->deallocateObject(newStr);
+								throw ErrorCode::Object_Initialization_Failed;
+							}
+							return newStr->createResult();
+						}
+					}
+					catch (...) { throw ErrorCode::Out_Of_Memory; }
+					return Result{};	// Creates an invalid return.
+				}
+				return args[0];
+			}
+			else if (args[0].type == NumericConstant::Object && args[0].value.objectVal && (args[0].value.objectVal->type() & BuiltInType_String)) {
+			
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+				try {
+					String* resultStr = strObj->upper(ctx);
+					if (resultStr) { return resultStr->createResult(); }
+				}
+				catch (...) {
+					throw ErrorCode::Out_Of_Memory;
+				}
+			}
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for String.zfill().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the newly zero-padded String.
+		 **/
+		static Result		zfillBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+
+			int64_t width = 0;
+
+			if (args[1].type == NumericConstant::Signed) {
+				width = args[1].value.intVal;
+			}
+			else if (args[1].type == NumericConstant::Unsigned) {
+				width = static_cast<int64_t>(args[1].value.uintVal);
+			}
+			else {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			
+			try {
+				size_t validWidth = width > 0 ? static_cast<size_t>(width) : 0;
+				String* resultStr = strObj->zfill(ctx, validWidth);
+				if (resultStr) { return resultStr->createResult(); }
+			}
+			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };

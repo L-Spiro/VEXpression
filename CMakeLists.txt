@@ -144,6 +144,7 @@ set(APP_HEADERS
 	src/Ast/UnaryMinusNode.h
 	src/Ast/UnaryPlusNode.h
 	src/Ast/VarNode.h
+	src/Ast/VectorNode.h
     src/Compiler/AstBuilderVisitor.h
 	src/Foundation/Case.h
 	src/Foundation/Character.h
@@ -166,12 +167,14 @@ set(APP_HEADERS
 	src/Engine/String.h
 	src/Strings/Strings.h
 	src/Strings/StringEnum.inl
+	src/Engine/Vector.h
 	src/OS/OS.h
 )
 
 set(APP_SOURCES
 	src/Engine/ExecutionContext.cpp
 	src/Engine/String.cpp
+	src/Engine/Vector.cpp
 	src/Foundation/Case.cpp
 	src/Foundation/Character.cpp
 	src/Foundation/Encode.cpp

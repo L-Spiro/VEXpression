@@ -55,7 +55,12 @@ namespace ve {
 		 * Treats the output as a C-style string literal, escaping quotes and other characters as needed.
 		 * Example: Hey "Bob" -> "Hey \"Bob\""
 		 **/
-		ToStringFlag_CString				= (1 << 0)
+		ToStringFlag_CString				= (1 << 0),
+
+		/**
+		 * Formats floating-point numbers with lower precision instead of the default high precision (%.17g).
+		 **/
+		ToStringFlag_LowQualityFloat		= (1 << 1),
 	};
 
 

@@ -40,6 +40,7 @@
 #include "../Ast/UnaryMinusNode.h"
 #include "../Ast/UnaryPlusNode.h"
 #include "../Ast/VarNode.h"
+#include "../Ast/VectorNode.h"
 #include "../Engine/ExecutionContext.h"
 #include "../Engine/Result.h"
 #include "../Engine/String.h"
@@ -586,6 +587,24 @@ namespace ve {
 		 **/
 		std::any					visitParens(ExprParser::ParensContext* ctx) override {
 			return visit(ctx->expr());
+		}
+
+		/**
+		 * Visits a vector initializer list expression.
+		 *
+		 * \param ctx		The parser context for the vector expression.
+		 * \return			Returns an AST node representing the vector.
+		 **/
+		virtual std::any			visitVectorExpr(ExprParser::VectorExprContext* ctx) override {
+			std::vector<AstNode*> elements;
+			
+			if (ctx->exprList()) {
+				for (auto* exprCtx : ctx->exprList()->expr()) {
+					elements.push_back(std::any_cast<AstNode*>(visit(exprCtx)));
+				}
+			}
+			
+			return context.addNode<VectorNode>(elements);
 		}
 
 		/**
