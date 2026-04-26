@@ -8,33 +8,37 @@
 namespace ve {
 
 	/**
-	 * Represents a division operation between two child nodes.
+	 * Represents a compound bitwise OR assignment operation (|=).
 	 **/
-	class DivNode : public AstNode {
+	class BitOrAssignNode : public AstNode {
 	public :
-		DivNode(size_t left, size_t right) : leftIndex(left), rightIndex(right) {}
+		BitOrAssignNode(size_t var, size_t right) : varIndex(var), rightIndex(right) {}
 
-		
+
 		// == Functions.
 		/**
-		 * Evaluates the division of the left child node by the right child node.
-		 * Safely returns 0 if an integer division by zero is attempted.
+		 * Evaluates the compound bitwise OR assignment of the variable and right child node.
 		 * 
 		 * \param context	The execution context containing variables and runtime states.
-		 * \return			Returns the quotient of the evaluated left and right nodes.
+		 * \return			Returns the new assigned value.
 		 * \throws			ErrorCode::Unknown_Numeric_Type if the resolved common type is not supported.
 		 **/
 		Result						evaluate(ExecutionContext& context) const override {
-			Result leftVal = context.getArena().nodes[leftIndex]->evaluate(context);
+			Result leftVal = context.getVariable(varIndex);
 			Result rightVal = context.getArena().nodes[rightIndex]->evaluate(context);
 
 			Result out;
 			if (leftVal.type == NumericConstant::Object) {
 				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				out = (*leftVal.value.objectVal) / rightVal;
+				out = leftVal.value.objectVal->operator|=(rightVal);
 
-				// The operation probably created a new object.
-				VE_DELETE_SWAP(out, lastObject);
+				// Only trigger memory garbage-collecting tracking if operator|= allocated a completely new object.
+				if (out.value.objectVal != leftVal.value.objectVal) {
+					VE_DELETE_SWAP(out, lastObject);
+				}
+				
+				context.setVariable(varIndex, out);
+				return out;
 			}
 
 			NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
@@ -44,34 +48,33 @@ namespace ve {
 			out.type = common;
 
 			if (common == NumericConstant::Floating) {
-				out.value.doubleVal = l.value.doubleVal / r.value.doubleVal;
+				return Result{ .type = NumericConstant::Invalid };
 			}
 			else if (common == NumericConstant::Signed) {
-				out.value.intVal = (r.value.intVal == 0) ? 0 : (l.value.intVal / r.value.intVal);
+				out.value.intVal = l.value.intVal | r.value.intVal;
 			}
 			else if (common == NumericConstant::Unsigned) {
-				out.value.uintVal = (r.value.uintVal == 0) ? 0 : (l.value.uintVal / r.value.uintVal);
+				out.value.uintVal = l.value.uintVal | r.value.uintVal;
 			}
 			else if (common == NumericConstant::Object) {
-				if (!l.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				if (!r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				out = (*l.value.objectVal) / r;
+				if (!l.value.objectVal || !r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+				out = l.value.objectVal->operator|=(r);
 
-				// The operation probably created a new object.
-				VE_DELETE_SWAP(out, lastObject);
+				if (out.value.objectVal != l.value.objectVal) {
+					VE_DELETE_SWAP(out, lastObject);
+				}
 			}
 			else {
-				throw ErrorCode::Unknown_Numeric_Type;
+				return Result{ .type = NumericConstant::Invalid };
 			}
 
+			context.setVariable(varIndex, out);
 			return out;
 		}
 
 	protected :
-
-	private :
 		// == Members.
-		size_t						leftIndex;
+		size_t						varIndex;
 		size_t						rightIndex;
 		mutable Object*				lastObject = nullptr;
 	};

@@ -39,6 +39,15 @@ namespace ve {
 
 		// == Functions.
 		/**
+		 * Determines if the Result is a primitive type (Unsigned, Signed, or Floating).
+		 * 
+		 * \return		Returns true if the type is Unsigned, Signed, or Floating.
+		 **/
+		inline bool		isPrimitive() const {
+			return type == NumericConstant::Signed || type == NumericConstant::Unsigned || type == NumericConstant::Floating;
+		}
+
+		/**
 		 * Creates a Result object directly from a C++ arithmetic type.
 		 * Resolves the underlying NumericConstant type and union assignment at compile time.
 		 * 
@@ -66,6 +75,9 @@ namespace ve {
 
 			return out;
 		}
+
+		
+		
 	};
 
 }	// namespace ve

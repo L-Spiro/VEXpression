@@ -30,6 +30,14 @@ namespace ve {
 			
 			for (size_t stmtIndex : statements) {
 				lastResult = context.getArena().nodes[stmtIndex]->evaluate(context);
+
+				// Handle continue, break, or return.
+				if (context.getFlowState() == FlowState::Return) {
+					return context.getReturnValue();
+				}
+				if (context.getFlowState() != FlowState::Normal) {
+					break;
+				}
 			}
 			
 			return lastResult;

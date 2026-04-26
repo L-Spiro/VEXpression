@@ -5,6 +5,7 @@
 #include "../Foundation/Text.h"
 #include "Result.h"
 #include "String.h"
+#include "Vector.h"
 
 #include <bit>
 #include <cmath>
@@ -2973,6 +2974,439 @@ namespace ve {
 			}
 			
 			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Object.at().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Object Result containing the element.
+		 **/
+		static Result		atBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			int64_t index = 0;
+			if (args[1].type == NumericConstant::Signed) {
+				index = args[1].value.intVal;
+			}
+			else if (args[1].type == NumericConstant::Unsigned) {
+				index = static_cast<int64_t>(args[1].value.uintVal);
+			}
+			else {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			Object* obj = args[0].value.objectVal;
+			
+			try {
+				if (obj->type() & BuiltInType_Vector) {
+					return static_cast<Vector*>(obj)->at(index);
+				}
+				else if (obj->type() & BuiltInType_String) {
+					return static_cast<String*>(obj)->at(index);
+				}
+			}
+			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Object.size() and len(Object).
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Unsigned Result containing the length of the object.
+		 **/
+		static Result		lengthBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			Object* obj = args[0].value.objectVal;
+			
+			try {
+				Result res;
+				res.type = NumericConstant::Unsigned;
+				res.value.uintVal = static_cast<uint64_t>(obj->arrayLength());
+				return res;
+			}
+			catch (...) {
+				throw ErrorCode::Out_Of_Memory;
+			}
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Object.push_back().
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns an Invalid Result (void return).
+		 **/
+		static Result		pushBackBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			Object* obj = args[0].value.objectVal;
+			
+			try {
+				if (obj->type() & BuiltInType_Vector) {
+					static_cast<Vector*>(obj)->pushBack(args[1]);
+				}
+				else if (obj->type() & BuiltInType_String) {
+					static_cast<String*>(obj)->pushBack(args[1]);
+				}
+			}
+			catch (...) { throw ErrorCode::Out_Of_Memory; }
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+
+		// =======================================================================================================
+		// MATH BRIDGES
+		// =======================================================================================================
+
+		/**
+		 * Bridge for Math::min.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the minimum value.
+		 **/
+		static Result		minBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			NumericConstant common = ExecutionContext::getCastType(args[0].type, args[1].type);
+			Result l = ctx->convertResult(args[0], common);
+			Result r = ctx->convertResult(args[1], common);
+			
+			if (common == NumericConstant::Floating) { return Result::make(Math::min(l.value.doubleVal, r.value.doubleVal)); }
+			if (common == NumericConstant::Signed) { return Result::make(Math::min(l.value.intVal, r.value.intVal)); }
+			if (common == NumericConstant::Unsigned) { return Result::make(Math::min(l.value.uintVal, r.value.uintVal)); }
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Math::max.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the maximum value.
+		 **/
+		static Result		maxBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			NumericConstant common = ExecutionContext::getCastType(args[0].type, args[1].type);
+			Result l = ctx->convertResult(args[0], common);
+			Result r = ctx->convertResult(args[1], common);
+			
+			if (common == NumericConstant::Floating) { return Result::make(Math::max(l.value.doubleVal, r.value.doubleVal)); }
+			if (common == NumericConstant::Signed) { return Result::make(Math::max(l.value.intVal, r.value.intVal)); }
+			if (common == NumericConstant::Unsigned) { return Result::make(Math::max(l.value.uintVal, r.value.uintVal)); }
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Math::clamp.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the clamped value.
+		 **/
+		static Result		clampBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			NumericConstant common = ExecutionContext::getCastType(ExecutionContext::getCastType(args[0].type, args[1].type), args[2].type);
+			Result v = ctx->convertResult(args[0], common);
+			Result minVal = ctx->convertResult(args[1], common);
+			Result maxVal = ctx->convertResult(args[2], common);
+			
+			if (common == NumericConstant::Floating) { return Result::make(Math::clamp(v.value.doubleVal, minVal.value.doubleVal, maxVal.value.doubleVal)); }
+			if (common == NumericConstant::Signed) { return Result::make(Math::clamp(v.value.intVal, minVal.value.intVal, maxVal.value.intVal)); }
+			if (common == NumericConstant::Unsigned) { return Result::make(Math::clamp(v.value.uintVal, minVal.value.uintVal, maxVal.value.uintVal)); }
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Math::frac.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the fractional part.
+		 **/
+		static Result		fracBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			Result val = ctx->convertResult(args[0], NumericConstant::Floating);
+			return Result::make(Math::frac(val.value.doubleVal));
+		}
+
+		/**
+		 * Bridge for Math::step.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the calculated step.
+		 **/
+		static Result		stepBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			Result edge = ctx->convertResult(args[0], NumericConstant::Floating);
+			Result x = ctx->convertResult(args[1], NumericConstant::Floating);
+			return Result::make(Math::step(edge.value.doubleVal, x.value.doubleVal));
+		}
+
+		/**
+		 * Bridge for Math::sinc.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the sinc evaluation.
+		 **/
+		static Result		sincBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			Result val = ctx->convertResult(args[0], NumericConstant::Floating);
+			return Result::make(Math::sinc(val.value.doubleVal));
+		}
+
+		/**
+		 * Bridge for Math::relativeEpsilon.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing 1 if the values are within epsilon distance, otherwise 0.
+		 **/
+		static Result		relativeEpsilonBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+			
+			double left = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double right = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			double epsilon = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+			
+			bool isEqual = Math::relativeEpsilon(left, right, epsilon);
+			
+			return Result::make(static_cast<int64_t>(isEqual ? 1 : 0));
+		}
+
+		/**
+		 * Bridge for Math::sinExact.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the exact sine.
+		 **/
+		static Result		sinExactBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			Result val = ctx->convertResult(args[0], NumericConstant::Floating);
+			return Result::make(Math::sinExact(val.value.doubleVal));
+		}
+
+		/**
+		 * Bridge for Math::cosExact.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the exact cosine.
+		 **/
+		static Result		cosExactBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			Result val = ctx->convertResult(args[0], NumericConstant::Floating);
+			return Result::make(Math::cosExact(val.value.doubleVal));
+		}
+
+		/**
+		 * Bridge for Math::lcm.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the least common multiple.
+		 **/
+		static Result		lcmBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			NumericConstant common = ExecutionContext::getCastType(args[0].type, args[1].type);
+			if (common == NumericConstant::Floating) { common = NumericConstant::Signed; }
+			
+			Result l = ctx->convertResult(args[0], common);
+			Result r = ctx->convertResult(args[1], common);
+			
+			if (common == NumericConstant::Signed) { return Result::make(Math::lcm(l.value.intVal, r.value.intVal)); }
+			if (common == NumericConstant::Unsigned) { return Result::make(Math::lcm(l.value.uintVal, r.value.uintVal)); }
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Math::lcmChecked.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the checked least common multiple.
+		 **/
+		/*static Result		lcmCheckedBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			NumericConstant common = ExecutionContext::getCastType(args[0].type, args[1].type);
+			if (common == NumericConstant::Floating) { common = NumericConstant::Signed; }
+			
+			Result l = ctx->convertResult(args[0], common);
+			Result r = ctx->convertResult(args[1], common);
+			
+			if (common == NumericConstant::Signed) { return Result::make(Math::lcmChecked(l.value.intVal, r.value.intVal)); }
+			if (common == NumericConstant::Unsigned) { return Result::make(Math::lcmChecked(l.value.uintVal, r.value.uintVal)); }
+			
+			return Result{ .type = NumericConstant::Invalid };
+		}*/
+
+
+		// =======================================================================================================
+		// COLOR / GAMMA TRANSFER BRIDGES
+		// =======================================================================================================
+		/**
+		 * Macro helper to automatically generate uniform execution context bridges for single-argument Math functions.
+		 * Provides the requisite type conversion and Result generation.
+		 * * \param funcName		The name of the Math function to bridge.
+		 **/
+#define VE_MATH_GAMMA_BRIDGE(funcName) \
+		static Result funcName##Bridge(ExecutionContext* ctx, const std::vector<Result>& args) { \
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; } \
+			Result val = ctx->convertResult(args[0], NumericConstant::Floating); \
+			return Result::make(Math::funcName(val.value.doubleVal)); \
+		}
+
+		VE_MATH_GAMMA_BRIDGE(linearToSRgb)
+		VE_MATH_GAMMA_BRIDGE(sRgbToLinear)
+		VE_MATH_GAMMA_BRIDGE(pow2_2ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToPow2_2)
+		VE_MATH_GAMMA_BRIDGE(smpte240MToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToSmpte240M)
+		VE_MATH_GAMMA_BRIDGE(sLog2ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToSLog2)
+		VE_MATH_GAMMA_BRIDGE(canonLogToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToCanonLog)
+		VE_MATH_GAMMA_BRIDGE(viperToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToViper)
+		VE_MATH_GAMMA_BRIDGE(acesCgToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToAcesCg)
+		VE_MATH_GAMMA_BRIDGE(sRgbToLinearPrecise)
+		VE_MATH_GAMMA_BRIDGE(linearToSRgbPrecise)
+		VE_MATH_GAMMA_BRIDGE(colorLcdToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToColorLcd)
+		VE_MATH_GAMMA_BRIDGE(smpte170MToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToSmpte170M)
+		VE_MATH_GAMMA_BRIDGE(smpte170MToLinearPrecise)
+		VE_MATH_GAMMA_BRIDGE(linearToSmpte170MPrecise)
+		VE_MATH_GAMMA_BRIDGE(dciP3ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToDciP3)
+		VE_MATH_GAMMA_BRIDGE(genericRgbToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToGenericRgb)
+		VE_MATH_GAMMA_BRIDGE(pow2_8ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToPow2_8)
+		VE_MATH_GAMMA_BRIDGE(adobeRgbToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToAdobeRgb)
+		VE_MATH_GAMMA_BRIDGE(smpte240MToLinearPrecise)
+		VE_MATH_GAMMA_BRIDGE(linearToSmpte240MPrecise)
+		VE_MATH_GAMMA_BRIDGE(acesCcToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToAcesCc)
+		VE_MATH_GAMMA_BRIDGE(rommRgbToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToRommRgb)
+		VE_MATH_GAMMA_BRIDGE(rimmRgbToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToRimmRgb)
+		VE_MATH_GAMMA_BRIDGE(erimmRgbToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToErimmRgb)
+		VE_MATH_GAMMA_BRIDGE(sLogToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToSLog)
+		VE_MATH_GAMMA_BRIDGE(sLog3ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToSLog3)
+		VE_MATH_GAMMA_BRIDGE(protuneToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToProtune)
+		VE_MATH_GAMMA_BRIDGE(canonLog2ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToCanonLog2)
+		VE_MATH_GAMMA_BRIDGE(canonLog3ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToCanonLog3)
+		VE_MATH_GAMMA_BRIDGE(aribStdB67ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToAribStdB67)
+		VE_MATH_GAMMA_BRIDGE(panalogToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToPanalog)
+		VE_MATH_GAMMA_BRIDGE(crtProper2ToLinear)
+		VE_MATH_GAMMA_BRIDGE(linearToCrtProper2)
+
+#undef VE_MATH_GAMMA_BRIDGE
+
+		/**
+		 * Bridge for Math::crtProperToLinear.
+		 * Allows up to 3 arguments, resolving defaults for omitted parameters.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the linear converted value.
+		 **/
+		static Result		crtProperToLinearBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args.size() > 3) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			for (const auto& arg : args) {
+				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			}
+			
+			double val = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double lw = 1.0;
+			double b = 0.0181;
+			
+			if (args.size() > 1) { lw = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal; }
+			if (args.size() > 2) { b = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal; }
+			
+			return Result::make(Math::crtProperToLinear(val, lw, b));
+		}
+
+		/**
+		 * Bridge for Math::linearToCrtProper.
+		 * Allows up to 3 arguments, resolving defaults for omitted parameters.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the proper CRT converted value.
+		 **/
+		static Result		linearToCrtProperBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args.size() > 3) { return Result{ .type = NumericConstant::Invalid }; }
+			
+			for (const auto& arg : args) {
+				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			}
+			
+			double val = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double lw = 1.0;
+			double b = 0.0181;
+			
+			if (args.size() > 1) { lw = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal; }
+			if (args.size() > 2) { b = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal; }
+			
+			return Result::make(Math::linearToCrtProper(val, lw, b));
 		}
 	};
 

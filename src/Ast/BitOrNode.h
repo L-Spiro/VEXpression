@@ -27,20 +27,23 @@ namespace ve {
 			Result leftVal = context.getArena().nodes[leftIndex]->evaluate(context);
 			Result rightVal = context.getArena().nodes[rightIndex]->evaluate(context);
 
+			Result out;
 			if (leftVal.type == NumericConstant::Object) {
 				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				return (*leftVal.value.objectVal) | rightVal;
+				out = (*leftVal.value.objectVal) | rightVal;
 			}
 
 			NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
 			Result l = context.convertResult(leftVal, common);
 			Result r = context.convertResult(rightVal, common);
 
-			Result out;
 			if (common == NumericConstant::Floating) {
 				/*out.type = NumericConstant::Signed;
 				out.value.intVal = static_cast<int64_t>(l.value.doubleVal) | static_cast<int64_t>(r.value.doubleVal);*/
 				out.type = NumericConstant::Invalid;
+
+				// The operation probably created a new object.
+				VE_DELETE_SWAP(out, lastObject);
 			}
 			else if (common == NumericConstant::Signed) {
 				out.type = NumericConstant::Signed;
@@ -54,6 +57,9 @@ namespace ve {
 				if (!l.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
 				if (!r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
 				out = (*l.value.objectVal) | r;
+
+				// The operation probably created a new object.
+				VE_DELETE_SWAP(out, lastObject);
 			}
 			else {
 				throw ErrorCode::Unknown_Numeric_Type;
@@ -68,6 +74,7 @@ namespace ve {
 		// == Members.
 		size_t						leftIndex;
 		size_t						rightIndex;
+		mutable Object*				lastObject = nullptr;
 	};
 
 }	// namespace ve

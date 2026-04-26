@@ -8,16 +8,20 @@ prog: statement_list EOF ;
 
 // Evaluates the sequential blocks similar to traditional compound statements.
 statement_list
-    : statement+ expr                                               # listWithExpr
-    | statement+                                                    # listStatements
-    | expr                                                          # listExpr
-    | /* empty */                                                   # listEmpty
+    : statement+ expr                                                     # listWithExpr
+    | statement+                                                          # listStatements
+    | expr                                                                # listExpr
+    | /* empty */                                                         # listEmpty
     ;
 
 // A statement strictly demands a semicolon, terminating the greedy loops above.
 statement
-    : expr SEMI                                                     # exprStmt
-    | SEMI                                                          # emptyStmt
+    : expr SEMI                                                           # exprStmt
+    | IF LPAREN expr RPAREN block (ELSE block)?                           # ifElseStmt
+    | FOR LPAREN init=expr? ';' cond=expr? ';' step=expr? RPAREN block    # forStandardStmt
+    | FOR LPAREN IDENTIFIER IN expr RPAREN block                          # forRangeStmt
+    | FOR LPAREN IDENTIFIER ':' expr RPAREN block                         # forCppRangeStmt
+    | SEMI                                                                # emptyStmt
     ;
 
 block
@@ -29,32 +33,35 @@ exprList
     ;
 
 expr
-    : IDENTIFIER op=(INC | DEC)                                     # postfix
-    | op=(INC | DEC) IDENTIFIER                                     # prefixIncDec
-    | expr DOT IDENTIFIER '(' exprList? ')'                         # methodCall
-    | expr '(' exprList? ')'                                        # functionCall
-    | op=(ADD | SUB | LOG_NOT | BIT_NOT) expr                       # unary
-    | expr op=(MUL | DIV | MOD) expr                                # mulDiv
-    | expr op=(ADD | SUB) expr                                      # addSub
-    | expr op=(SHL | SHR) expr                                      # bitShift
-    | expr op=SPACESHIP expr                                        # spaceship
-    | expr op=(LT | LE | GT | GE) expr                              # relational
-    | expr op=(EQ | NE) expr                                        # equality
-    | expr op=BIT_AND expr                                          # bitAnd
-    | expr op=BIT_XOR expr                                          # bitXor
-    | expr op=BIT_OR expr                                           # bitOr
-    | expr op=LOG_AND expr                                          # logAnd
-    | expr op=LOG_OR expr                                           # logOr
-    | <assoc=right> expr '?' expr ':' expr                          # ternary
+    : IDENTIFIER op=(INC | DEC)                                           # postfix
+    | op=(INC | DEC) IDENTIFIER                                           # prefixIncDec
+    | expr DOT IDENTIFIER LPAREN exprList? RPAREN                         # methodCall
+    | expr LPAREN exprList? RPAREN                                        # functionCall
+    | expr LBRACKET expr RBRACKET                                         # arrayAccess
+    | expr LBRACKET start=expr? ':' end=expr? RBRACKET                    # arrayAccessEx
+    | op=(ADD | SUB | LOG_NOT | BIT_NOT) expr                             # unary
+    | expr op=(MUL | DIV | MOD) expr                                      # mulDiv
+    | expr op=(ADD | SUB) expr                                            # addSub
+    | expr op=(SHL | SHR) expr                                            # bitShift
+    | expr op=SPACESHIP expr                                              # spaceship
+    | expr op=(LT | LE | GT | GE) expr                                    # relational
+    | expr op=(EQ | NE) expr                                              # equality
+    | expr op=BIT_AND expr                                                # bitAnd
+    | expr op=BIT_XOR expr                                                # bitXor
+    | expr op=BIT_OR expr                                                 # bitOr
+    | expr op=LOG_AND expr                                                # logAnd
+    | expr op=LOG_OR expr                                                 # logOr
+    | <assoc=right> expr '?' expr ':' expr                                # ternary
     | <assoc=right> IDENTIFIER op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # assignment
-    | '(' expr ')'                                                  # parens
-    | LBRACE (exprList ','?)? RBRACE                                # vectorExpr
-	| IF '(' expr ')' block (ELSE block)?                           # ifElseExpr
-	| FOR '(' init=expr? ';' cond=expr? ';' step=expr? ')' block    # forStandardExpr
-    | FOR '(' IDENTIFIER IN expr ')' block                          # forRangeExpr
-    | FOR '(' IDENTIFIER ':' expr ')' block                         # forCppRangeExpr
-    | IDENTIFIER                                                    # identifier
-    | constant                                                      # constValue
+    | <assoc=right> expr LBRACKET expr RBRACKET op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # arrayAssignment
+    | <assoc=right> expr LBRACKET start=expr? ':' end=expr? RBRACKET op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # arrayExAssignment
+	| BREAK                                                               # breakExpr
+    | CONTINUE                                                            # continueExpr
+    | RETURN expr?                                                        # returnExpr
+    | LPAREN expr RPAREN                                                  # parens
+    | LBRACE (exprList ','?)? RBRACE                                      # vectorExpr
+    | IDENTIFIER                                                          # identifier
+    | constant                                                            # constValue
     ;
 
 // =========================================================================

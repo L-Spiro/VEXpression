@@ -105,15 +105,26 @@ add_custom_command(
 
 ### Hand-written Source and Header Files.
 set(APP_HEADERS
+	src/Ast/AddAssignNode.h
     src/Ast/AddNode.h
+	src/Ast/ArrayAccessExNode.h
+	src/Ast/ArrayAccessNode.h
+	src/Ast/ArrayAssignNode.h
+	src/Ast/ArrayExAssignNode.h
 	src/Ast/AssignNode.h
     src/Ast/AstArena.h
     src/Ast/AstNode.h
+	src/Ast/BitAndAssignNode.h
 	src/Ast/BitAndNode.h
 	src/Ast/BitNotNode.h
+	src/Ast/BitOrAssignNode.h
 	src/Ast/BitOrNode.h
+	src/Ast/BitXorAssignNode.h
 	src/Ast/BitXorNode.h
+	src/Ast/BreakNode.h
     src/Ast/ConstantNode.h
+	src/Ast/ContinueNode.h
+	src/Ast/DivAssignNode.h
 	src/Ast/DivNode.h
 	src/Ast/EqNode.h
 	src/Ast/ForNode.h
@@ -128,17 +139,23 @@ set(APP_HEADERS
 	src/Ast/LogOrNode.h
 	src/Ast/LtNode.h
 	src/Ast/MethodCallNode.h
+	src/Ast/ModAssignNode.h
 	src/Ast/ModNode.h
+	src/Ast/MulAssignNode.h
 	src/Ast/MulNode.h
 	src/Ast/NeNode.h
 	src/Ast/PostDecNode.h
 	src/Ast/PostIncNode.h
 	src/Ast/PreDecNode.h
 	src/Ast/PreIncNode.h
+	src/Ast/ReturnNode.h
 	src/Ast/SequenceNode.h
+	src/Ast/ShlAssignNode.h
 	src/Ast/ShlNode.h
+	src/Ast/ShrAssignNode.h
 	src/Ast/ShrNode.h
 	src/Ast/SpaceshipNode.h
+	src/Ast/SubAssignNode.h
 	src/Ast/SubNode.h
 	src/Ast/TernaryNode.h
 	src/Ast/UnaryMinusNode.h

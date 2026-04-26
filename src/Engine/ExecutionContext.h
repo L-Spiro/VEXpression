@@ -12,6 +12,26 @@
 
 namespace ve {
 
+	// A helper macro for memory management.
+#define VE_DELETE_SWAP( oldPtr, newPtr )																\
+	if (oldPtr.type == NumericConstant::Object) {														\
+		if (oldPtr.value.objectVal != newPtr && newPtr) {												\
+			if (!newPtr->getRef()) { context.deallocateObject(newPtr); }								\
+		}																								\
+		newPtr = oldPtr.value.objectVal;																\
+	}
+
+	// == Enumerations.
+	/**
+	 * Represents the current control flow state of the execution context.
+	 **/
+	enum class FlowState : uint8_t {
+		Normal,							/**< Standard sequential execution. */
+		Break,							/**< A break statement was encountered, seeking the nearest loop exit. */
+		Continue,						/**< A continue statement was encountered, seeking the nearest loop start. */
+		Return							/**< A return statement was encountered, seeking the function exit. */
+	};
+
 	/**
 	 * The master engine object. It parses text, holds the AST arena, 
 	 * manages the lifetime of allocated objects, and provides conversion utilities.
@@ -95,6 +115,55 @@ namespace ve {
 		 * \return				Returns a newly formatted Result containing the truncated/casted value.
 		 **/
 		Result							castArgument(const Result& rawVal, DataType targetType) const;
+
+		/**
+		 * Retrieves the current control flow state.
+		 *
+		 * \return				Returns the active FlowState.
+		 **/
+		inline FlowState				getFlowState() const { return flowState; }
+
+		/**
+		 * Triggers a break signal.
+		 **/
+		inline void						setBreak() { flowState = FlowState::Break; }
+
+		/**
+		 * Triggers a continue signal.
+		 **/
+		inline void						setContinue() { flowState = FlowState::Continue; }
+
+		/**
+		 * Triggers a return signal and stores the result.
+		 *
+		 * \param res			The result to return from the function.
+		 **/
+		inline void						setReturn(const Result& res) { 
+			flowState = FlowState::Return; 
+			returnValue = res; 
+		}
+
+		/**
+		 * Clears the current control flow signal, restoring normal execution.
+		 **/
+		inline void						clearFlowState() { flowState = FlowState::Normal; }
+
+		/**
+		 * Retrieves the value stored by a return statement.
+		 *
+		 * \return				Returns the stored return Result.
+		 **/
+		inline Result					getReturnValue() const { return returnValue; }
+
+		/**
+		 * Centralized evaluation helper for all math and compound operations.
+		 *
+		 * \param leftVal		The left operand.
+		 * \param rightVal		The right operand.
+		 * \param opType		The ExprLexer token representing the operation (e.g. ADD_ASSIGN).
+		 * \return				Returns the resulting evaluation.
+		 **/
+		Result							evaluateMath(const Result& leftVal, const Result& rightVal, int opType) const;
 		
 		/**
 		 * Provides access to the AstArena where nodes are allocated.
@@ -298,6 +367,7 @@ namespace ve {
 					objects.erase(objects.begin() + i);
 					return true;
 				}
+				return true;
 			}
 			
 			return false;
@@ -334,12 +404,19 @@ namespace ve {
 		std::map<FunctionSignature, FunctionDef>
 										registeredFunctions;
 		/** Tracked objects managed by the execution context. **/
-		mutable std::vector<std::unique_ptr<Object>>
+		std::vector<std::unique_ptr<Object>>
 										objects;
+		/** The state of execution (continue, break, return, or normal). */
+		FlowState						flowState = FlowState::Normal;
+		/** The return value if return is used. */
+		Result							returnValue;
 		/** The arena index of the root AST node to execute. **/
 		size_t							rootIndex = 0;
+		/** The initiale size of the objects array. */
+		size_t							initialObjectsTotal = 0;
 		/** Treat standard integers as hex? */
 		bool							treatAllAsHex = false;
+		
 
 
 	private :

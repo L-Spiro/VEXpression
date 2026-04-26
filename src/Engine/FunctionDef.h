@@ -26,6 +26,7 @@ namespace ve {
 		Pointer,
 		Object,
 		String,
+		Integer,
 		Any,
 		Variadic
 	};

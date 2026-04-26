@@ -42,13 +42,16 @@ namespace ve {
 			else {
 				throw ErrorCode::Unknown_Numeric_Type;
 			}
-
+			
+			Result out;
 			if (leftVal.type == NumericConstant::Object) {
 				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				return (*leftVal.value.objectVal) << Result{ .type = NumericConstant::Unsigned, .value { .uintVal = shift } };
+				out = (*leftVal.value.objectVal) << Result{ .type = NumericConstant::Unsigned, .value { .uintVal = shift } };
+
+				// The operation probably created a new object.
+				VE_DELETE_SWAP(out, lastObject);
 			}
 
-			Result out;
 			if (leftVal.type == NumericConstant::Floating || rightVal.type == NumericConstant::Floating) {
 				NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
 				Result l = context.convertResult(leftVal, common);
@@ -86,6 +89,7 @@ namespace ve {
 		// == Members.
 		size_t						leftIndex;
 		size_t						rightIndex;
+		mutable Object*				lastObject = nullptr;
 	};
 
 }	// namespace ve

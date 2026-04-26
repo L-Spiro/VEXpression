@@ -14,6 +14,37 @@ namespace ve {
 	 **/
 	class Math {
 	public :
+		// == Enumerations.
+		/** Window types. */
+		enum class WindowType {
+			bartlett,
+			blackman,
+			blackmanHarris,
+			blackmanNuttal,
+			bohman,
+			boxcar,
+			chebwin,
+			cosine,
+			dpss,
+			exponential,
+			flatTop,
+			gaussian,
+			generalCosine,
+			generalGaussian,
+			generalHamming,
+			hann,
+			hamming,
+			kaiser,
+			kaiserBesselDerived,
+			lanczos,
+			nuttall,
+			parzen,
+			taylor,
+			triang,
+			tukey,
+		};
+
+
 		// == Types.
 		/**
 		 * Function pointer definition for generating window filters.

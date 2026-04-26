@@ -201,85 +201,107 @@ namespace ve {
 		 * \return				Returns a Result containing the boolean evaluation.
 		 **/
 		virtual Result						operator>=(const Result& rhs) const override;
+		
 		/**
-		 * Evaluates the addition (concatenation) operation against a right-hand operand.
+		 * Evaluates the addition operation against a right-hand operand.
+		 * 
+		 * If the right-hand operand is a Vector, the two vectors are concatenated.
+		 * Otherwise, the addition operation is applied element-wise against the operand.
 		 * 
 		 * \param rhs			The right-hand side operand.
-		 * \return				Returns a Result containing the concatenated Vector.
+		 * \return				Returns a Result containing the new resulting Vector.
 		 **/
 		virtual Result						operator+(const Result& rhs) const override;
 
 		/**
 		 * Evaluates the subtraction operation against a right-hand operand.
-		 *
+		 * 
+		 * The subtraction operation is applied element-wise against the operand.
+		 * 
 		 * \param rhs			The right-hand side operand.
-		 * \return				Returns a Result containing the computed difference.
+		 * \return				Returns a Result containing the new resulting Vector.
 		 **/
 		virtual Result						operator-(const Result& rhs) const override;
 
 		/**
-		 * Evaluates the multiplication (repetition) operation against a right-hand operand.
+		 * Evaluates the multiplication operation against a right-hand operand.
+		 * 
+		 * The multiplication operation is applied element-wise against the operand.
 		 * 
 		 * \param rhs			The right-hand side operand.
-		 * \return				Returns a Result containing the repeated Vector.
+		 * \return				Returns a Result containing the new resulting Vector.
 		 **/
 		virtual Result						operator*(const Result& rhs) const override;
 
 		/**
 		 * Evaluates the division operation against a right-hand operand.
-		 *
+		 * 
+		 * The division operation is applied element-wise against the operand.
+		 * 
 		 * \param rhs			The right-hand side operand.
-		 * \return				Returns a Result containing the computed quotient.
+		 * \return				Returns a Result containing the new resulting Vector.
 		 **/
 		virtual Result						operator/(const Result& rhs) const override;
 
 		/**
 		 * Evaluates the modulo operation against a right-hand operand.
-		 *
+		 * 
+		 * The modulo operation is applied element-wise against the operand.
+		 * 
 		 * \param rhs			The right-hand side operand.
-		 * \return				Returns a Result containing the computed remainder.
+		 * \return				Returns a Result containing the new resulting Vector.
 		 **/
 		virtual Result						operator%(const Result& rhs) const override;
 
 		/**
-		 * Evaluates the bitwise left-shift operation against a right-hand operand.
-		 *
-		 * \param rhs			The right-hand side operand indicating the shift amount.
-		 * \return				Returns a Result containing the shifted value.
-		 **/
-		virtual Result						operator<<(const Result& rhs) const override;
-
-		/**
-		 * Evaluates the bitwise right-shift operation against a right-hand operand.
-		 *
-		 * \param rhs			The right-hand side operand indicating the shift amount.
-		 * \return				Returns a Result containing the shifted value.
-		 **/
-		virtual Result						operator>>(const Result& rhs) const override;
-
-		/**
 		 * Evaluates the bitwise AND operation against a right-hand operand.
-		 *
+		 * 
+		 * The bitwise AND operation is applied element-wise against the operand.
+		 * 
 		 * \param rhs			The right-hand side operand.
-		 * \return				Returns a Result containing the computed bitwise AND.
+		 * \return				Returns a Result containing the new resulting Vector.
 		 **/
 		virtual Result						operator&(const Result& rhs) const override;
 
 		/**
 		 * Evaluates the bitwise OR operation against a right-hand operand.
-		 *
+		 * 
+		 * The bitwise OR operation is applied element-wise against the operand.
+		 * 
 		 * \param rhs			The right-hand side operand.
-		 * \return				Returns a Result containing the computed bitwise OR.
+		 * \return				Returns a Result containing the new resulting Vector.
 		 **/
 		virtual Result						operator|(const Result& rhs) const override;
 
 		/**
 		 * Evaluates the bitwise XOR operation against a right-hand operand.
-		 *
+		 * 
+		 * The bitwise XOR operation is applied element-wise against the operand.
+		 * 
 		 * \param rhs			The right-hand side operand.
-		 * \return				Returns a Result containing the computed bitwise XOR.
+		 * \return				Returns a Result containing the new resulting Vector.
 		 **/
 		virtual Result						operator^(const Result& rhs) const override;
+
+		/**
+		 * Evaluates the bitwise shift-left operation against a right-hand operand.
+		 * 
+		 * The shift-left operation is applied element-wise against the operand.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the new resulting Vector.
+		 **/
+		virtual Result						operator<<(const Result& rhs) const override;
+
+		/**
+		 * Evaluates the bitwise shift-right operation against a right-hand operand.
+		 * 
+		 * The shift-right operation is applied element-wise against the operand.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the new resulting Vector.
+		 **/
+		virtual Result						operator>>(const Result& rhs) const override;
 
 
 		// == Assignment Operators
@@ -289,80 +311,100 @@ namespace ve {
 		 * \param rhs			The right-hand side operand to add.
 		 * \return				Returns true if the assignment was successful, false otherwise.
 		 **/
-		virtual bool						operator+=(const Result& rhs) override;
+		virtual Result						operator+=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the subtraction-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand to subtract.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound subtraction assignment operation against a right-hand operand.
+		 * 
+		 * The subtraction operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator-=(const Result& rhs) override;
+		virtual Result						operator-=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the multiplication-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand to multiply.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound multiplication assignment operation against a right-hand operand.
+		 * 
+		 * The multiplication operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator*=(const Result& rhs) override;
+		virtual Result						operator*=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the division-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand to divide by.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound division assignment operation against a right-hand operand.
+		 * 
+		 * The division operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator/=(const Result& rhs) override;
+		virtual Result						operator/=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the modulo-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand to divide by for the remainder.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound modulo assignment operation against a right-hand operand.
+		 * 
+		 * The modulo operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator%=(const Result& rhs) override;
+		virtual Result						operator%=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the bitwise left-shift-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand indicating the shift amount.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound bitwise AND assignment operation against a right-hand operand.
+		 * 
+		 * The bitwise AND operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator<<=(const Result& rhs) override;
+		virtual Result						operator&=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the bitwise right-shift-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand indicating the shift amount.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound bitwise OR assignment operation against a right-hand operand.
+		 * 
+		 * The bitwise OR operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator>>=(const Result& rhs) override;
+		virtual Result						operator|=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the bitwise AND-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand to bitwise AND with.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound bitwise XOR assignment operation against a right-hand operand.
+		 * 
+		 * The bitwise XOR operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator&=(const Result& rhs) override;
+		virtual Result						operator^=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the bitwise OR-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand to bitwise OR with.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound bitwise shift-left assignment operation against a right-hand operand.
+		 * 
+		 * The shift-left operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator|=(const Result& rhs) override;
+		virtual Result						operator<<=(const Result& rhs) override;
 
 		/**
-		 * Evaluates the bitwise XOR-assignment operation and updates the object's state.
-		 *
-		 * \param rhs			The right-hand side operand to bitwise XOR with.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * Evaluates the compound bitwise shift-right assignment operation against a right-hand operand.
+		 * 
+		 * The shift-right operation is applied element-wise against the operand, modifying this vector in-place.
+		 * 
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing this vector after modification.
 		 **/
-		virtual bool						operator^=(const Result& rhs) override;
+		virtual Result						operator>>=(const Result& rhs) override;
 
+
+		// == Functions.
 		/**
 		 * Retrieves an element at the specified index.
 		 * 
@@ -382,6 +424,34 @@ namespace ve {
 		virtual Result						arrayAccessEx(int64_t startIdx, int64_t endIdx, uint32_t flags) override;
 
 		/**
+		 * Assigns a value directly to a specified index, modifying the vector in-place.
+		 *
+		 * \param index			The zero-based or negative offset index.
+		 * \param rhs			The result to insert or overwrite with.
+		 * \return				Returns the assigned value on success, or Invalid on failure.
+		 **/
+		virtual Result						arrayAssign(int64_t index, const Result& rhs) override;
+
+		/**
+		 * Assigns a value or merges an array into a sliced range, modifying the vector in-place.
+		 *
+		 * \param startIdx		The starting index of the slice.
+		 * \param endIdx		The ending index of the slice.
+		 * \param flags			Bitmask defining slice boundary rules.
+		 * \param rhs			The result to insert or overwrite with.
+		 * \return				Returns the assigned value on success, or Invalid on failure.
+		 **/
+		virtual Result						arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) override;
+
+		/**
+		 * Retrieves the element at the specified index.
+		 *
+		 * \param index			The zero-based or negative offset index.
+		 * \return				Returns the Result at the given index, or Invalid if out of bounds.
+		 **/
+		Result								at(int64_t index) const;
+
+		/**
 		 * Pushes an expression to the back of the vector.
 		 * 
 		 * \param result		The result to push.
@@ -390,6 +460,62 @@ namespace ve {
 		inline bool							pushBack(const Result &result ) {
 			try {
 				elements.push_back(result);
+				return true;
+			}
+			catch (...) { return false; }
+		}
+
+		/**
+		 * Converts the internal vector to a standard C++ vector of primitives.
+		 * 
+		 * \tparam T			The standard C++ primitive type to convert the elements into.
+		 * \tparam targetType	The internal NumericConstant type to cast the elements to before conversion.
+		 * \param outVec		The standard array to fill with the converted values.
+		 * \return				Returns true if the array was allocated and all values were successfully cast to the target type.
+		 **/
+		template <typename T, NumericConstant targetType>
+		bool								toPrimitiveArray(std::vector<T>& outVec) const {
+			try {
+				if (elements.empty()) {
+					outVec.clear();
+					return true;
+				}
+				
+				outVec.resize(elements.size());
+				
+				for (size_t i = elements.size(); i--; ) {
+					Result tempResult = context->convertResult(elements[i], targetType);
+					
+					if (tempResult.type != targetType) { return false; }
+					
+					if constexpr (targetType == NumericConstant::Signed) { outVec[i] = static_cast<T>(tempResult.value.intVal); }
+					else if constexpr (targetType == NumericConstant::Unsigned) { outVec[i] = static_cast<T>(tempResult.value.uintVal); }
+					else if constexpr (targetType == NumericConstant::Floating) { outVec[i] = static_cast<T>(tempResult.value.doubleVal); }
+				}
+			}
+			catch (...) { return false;  }
+			
+			return true;
+		}
+
+		/**
+		 * Populates the internal vector based on a standard C++ vector of primitives.
+		 * 
+		 * \tparam T			The standard C++ primitive type of the incoming vector elements.
+		 * \param inVec			The array of primitives to be used to fill this vector.
+		 * \return				Returns true if this vector was successfully sized and populated.
+		 **/
+		template <typename T>
+		bool								fromPrimitiveArray(const std::vector<T>& array) {
+			try {
+				if (!array.size()) {
+					elements.clear();
+					return true;
+				}
+				elements.resize(array.size());
+				for (size_t i = 0; i < array.size(); ++i) {
+					elements[i] = Result::make<T>(array[i]);
+				}
 				return true;
 			}
 			catch (...) { return false; }

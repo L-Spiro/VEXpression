@@ -26,17 +26,20 @@ namespace ve {
 		Result						evaluate(ExecutionContext& context) const override {
 			Result leftVal = context.getArena().nodes[leftIndex]->evaluate(context);
 			Result rightVal = context.getArena().nodes[rightIndex]->evaluate(context);
-
+			
+			Result out;
 			if (leftVal.type == NumericConstant::Object) {
 				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				return (*leftVal.value.objectVal) >= rightVal;
+				out = (*leftVal.value.objectVal) >= rightVal;
+
+				// The operation probably created a new object.
+				VE_DELETE_SWAP(out, lastObject);
 			}
 
 			NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
 			Result l = context.convertResult(leftVal, common);
 			Result r = context.convertResult(rightVal, common);
 
-			Result out;
 			out.type = NumericConstant::Signed;
 
 			if (common == NumericConstant::Floating) {
@@ -66,6 +69,7 @@ namespace ve {
 		// == Members.
 		size_t						leftIndex;
 		size_t						rightIndex;
+		mutable Object*				lastObject = nullptr;
 	};
 
 }	// namespace ve

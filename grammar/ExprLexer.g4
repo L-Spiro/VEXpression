@@ -72,6 +72,10 @@ IN                  : 'in' ;
 DO                  : 'do' ;
 WHILE               : 'while' ;
 
+BREAK               : 'break' ;
+CONTINUE            : 'continue' ;
+RETURN              : 'return' ;
+
 IDENTIFIER          : L (L | D)* ;
 
 PUREDEC_CONSTANT    : '#' D+ IS? ;

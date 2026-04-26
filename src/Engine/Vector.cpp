@@ -1,3 +1,4 @@
+#include "../generated/ExprLexer.h"
 #include "Vector.h"
 
 
@@ -161,103 +162,212 @@ namespace ve {
 	}
 
 	/**
-	 * Evaluates the addition (concatenation) operation against a right-hand operand.
+	 * Evaluates the addition operation against a right-hand operand.
+	 * 
+	 * If the right-hand operand is a Vector, the two vectors are concatenated.
+	 * Otherwise, the addition operation is applied element-wise against the operand.
 	 * 
 	 * \param rhs			The right-hand side operand.
-	 * \return				Returns a Result containing the concatenated Vector.
+	 * \return				Returns a Result containing the new resulting Vector.
 	 **/
 	Result Vector::operator+(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			newVec->elements.reserve(elements.size() + rVec->elements.size());
+			newVec->elements.insert(newVec->elements.end(), elements.begin(), elements.end());
+			newVec->elements.insert(newVec->elements.end(), rVec->elements.begin(), rVec->elements.end());
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::ADD));
+			}
+		}
+
+		return newVec->createResult();
 	}
 
 	/**
 	 * Evaluates the subtraction operation against a right-hand operand.
-	 *
+	 * 
+	 * The subtraction operation is applied element-wise against the operand.
+	 * 
 	 * \param rhs			The right-hand side operand.
-	 * \return				Returns a Result containing the computed difference.
+	 * \return				Returns a Result containing the new resulting Vector.
 	 **/
 	Result Vector::operator-(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::SUB));
+		}
+
+		return newVec->createResult();
 	}
 
 	/**
-	 * Evaluates the multiplication (repetition) operation against a right-hand operand.
+	 * Evaluates the multiplication operation against a right-hand operand.
+	 * 
+	 * The multiplication operation is applied element-wise against the operand.
 	 * 
 	 * \param rhs			The right-hand side operand.
-	 * \return				Returns a Result containing the repeated Vector.
+	 * \return				Returns a Result containing the new resulting Vector.
 	 **/
 	Result Vector::operator*(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::MUL));
+		}
+
+		return newVec->createResult();
 	}
 
 	/**
 	 * Evaluates the division operation against a right-hand operand.
-	 *
+	 * 
+	 * The division operation is applied element-wise against the operand.
+	 * 
 	 * \param rhs			The right-hand side operand.
-	 * \return				Returns a Result containing the computed quotient.
+	 * \return				Returns a Result containing the new resulting Vector.
 	 **/
 	Result Vector::operator/(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::DIV));
+		}
+
+		return newVec->createResult();
 	}
 
 	/**
 	 * Evaluates the modulo operation against a right-hand operand.
-	 *
+	 * 
+	 * The modulo operation is applied element-wise against the operand.
+	 * 
 	 * \param rhs			The right-hand side operand.
-	 * \return				Returns a Result containing the computed remainder.
+	 * \return				Returns a Result containing the new resulting Vector.
 	 **/
 	Result Vector::operator%(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
-	}
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
 
-	/**
-	 * Evaluates the bitwise left-shift operation against a right-hand operand.
-	 *
-	 * \param rhs			The right-hand side operand indicating the shift amount.
-	 * \return				Returns a Result containing the shifted value.
-	 **/
-	Result Vector::operator<<(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
-	}
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::MOD));
+		}
 
-	/**
-	 * Evaluates the bitwise right-shift operation against a right-hand operand.
-	 *
-	 * \param rhs			The right-hand side operand indicating the shift amount.
-	 * \return				Returns a Result containing the shifted value.
-	 **/
-	Result Vector::operator>>(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		return newVec->createResult();
 	}
 
 	/**
 	 * Evaluates the bitwise AND operation against a right-hand operand.
-	 *
+	 * 
+	 * The bitwise AND operation is applied element-wise against the operand.
+	 * 
 	 * \param rhs			The right-hand side operand.
-	 * \return				Returns a Result containing the computed bitwise AND.
+	 * \return				Returns a Result containing the new resulting Vector.
 	 **/
 	Result Vector::operator&(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_AND));
+		}
+
+		return newVec->createResult();
 	}
 
 	/**
 	 * Evaluates the bitwise OR operation against a right-hand operand.
-	 *
+	 * 
+	 * The bitwise OR operation is applied element-wise against the operand.
+	 * 
 	 * \param rhs			The right-hand side operand.
-	 * \return				Returns a Result containing the computed bitwise OR.
+	 * \return				Returns a Result containing the new resulting Vector.
 	 **/
 	Result Vector::operator|(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_OR));
+		}
+
+		return newVec->createResult();
 	}
 
 	/**
 	 * Evaluates the bitwise XOR operation against a right-hand operand.
-	 *
+	 * 
+	 * The bitwise XOR operation is applied element-wise against the operand.
+	 * 
 	 * \param rhs			The right-hand side operand.
-	 * \return				Returns a Result containing the computed bitwise XOR.
+	 * \return				Returns a Result containing the new resulting Vector.
 	 **/
 	Result Vector::operator^(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_XOR));
+		}
+
+		return newVec->createResult();
+	}
+
+	/**
+	 * Evaluates the bitwise shift-left operation against a right-hand operand.
+	 * 
+	 * The shift-left operation is applied element-wise against the operand.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing the new resulting Vector.
+	 **/
+	Result Vector::operator<<(const Result& rhs) const {
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::SHL));
+		}
+
+		return newVec->createResult();
+	}
+
+	/**
+	 * Evaluates the bitwise shift-right operation against a right-hand operand.
+	 * 
+	 * The shift-right operation is applied element-wise against the operand.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing the new resulting Vector.
+	 **/
+	Result Vector::operator>>(const Result& rhs) const {
+		Vector* newVec = context->allocateObject<Vector>();
+		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+
+		newVec->elements.reserve(elements.size());
+		for (size_t i = 0; i < elements.size(); ++i) {
+			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::SHR));
+		}
+
+		return newVec->createResult();
 	}
 
 
@@ -268,98 +378,152 @@ namespace ve {
 	 * \param rhs			The right-hand side operand to add.
 	 * \return				Returns true if the assignment was successful, false otherwise.
 	 **/
-	bool Vector::operator+=(const Result& rhs) {
-		return false;
+	Result Vector::operator+=(const Result& rhs) {
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			elements.reserve(elements.size() + rVec->elements.size());
+			for (size_t i = 0; i < rVec->elements.size(); ++i) {
+				elements.push_back(rVec->elements[i]);
+			}
+			return createResult();
+		}
+		pushBack(rhs);
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the subtraction-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand to subtract.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound subtraction assignment operation against a right-hand operand.
+	 * 
+	 * The subtraction operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator-=(const Result& rhs) {
-		return false;
+	Result Vector::operator-=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::SUB_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the multiplication-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand to multiply.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound multiplication assignment operation against a right-hand operand.
+	 * 
+	 * The multiplication operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator*=(const Result& rhs) {
-		return false;
+	Result Vector::operator*=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::MUL_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the division-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand to divide by.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound division assignment operation against a right-hand operand.
+	 * 
+	 * The division operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator/=(const Result& rhs) {
-		return false;
+	Result Vector::operator/=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::DIV_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the modulo-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand to divide by for the remainder.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound modulo assignment operation against a right-hand operand.
+	 * 
+	 * The modulo operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator%=(const Result& rhs) {
-		return false;
+	Result Vector::operator%=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::MOD_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the bitwise left-shift-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand indicating the shift amount.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound bitwise AND assignment operation against a right-hand operand.
+	 * 
+	 * The bitwise AND operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator<<=(const Result& rhs) {
-		return false;
+	Result Vector::operator&=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::AND_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the bitwise right-shift-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand indicating the shift amount.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound bitwise OR assignment operation against a right-hand operand.
+	 * 
+	 * The bitwise OR operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator>>=(const Result& rhs) {
-		return false;
+	Result Vector::operator|=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::OR_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the bitwise AND-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand to bitwise AND with.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound bitwise XOR assignment operation against a right-hand operand.
+	 * 
+	 * The bitwise XOR operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator&=(const Result& rhs) {
-		return false;
+	Result Vector::operator^=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::XOR_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the bitwise OR-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand to bitwise OR with.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound bitwise shift-left assignment operation against a right-hand operand.
+	 * 
+	 * The shift-left operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator|=(const Result& rhs) {
-		return false;
+	Result Vector::operator<<=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::SHL_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
-	 * Evaluates the bitwise XOR-assignment operation and updates the object's state.
-	 *
-	 * \param rhs			The right-hand side operand to bitwise XOR with.
-	 * \return				Returns true if the assignment was successful, false otherwise.
+	 * Evaluates the compound bitwise shift-right assignment operation against a right-hand operand.
+	 * 
+	 * The shift-right operation is applied element-wise against the operand, modifying this vector in-place.
+	 * 
+	 * \param rhs			The right-hand side operand.
+	 * \return				Returns a Result containing this vector after modification.
 	 **/
-	bool Vector::operator^=(const Result& rhs) {
-		return false;
+	Result Vector::operator>>=(const Result& rhs) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::SHR_ASSIGN);
+		}
+		return createResult();
 	}
 
 	/**
@@ -385,7 +549,107 @@ namespace ve {
 	 * \return				Returns a Result containing the sliced Vector.
 	 **/
 	Result Vector::arrayAccessEx(int64_t startIdx, int64_t endIdx, uint32_t flags) {
+		int64_t idx0 = 0;
+		int64_t idx1 = static_cast<int64_t>(elements.size());
+
+		if (flags & ArrayExFlags::ArrayExFlag_Start) {
+			size_t lin = arrayIndexToLinearIndex(startIdx, elements.size());
+			if (lin != InvalidIndex) {
+				idx0 = static_cast<int64_t>(lin);
+			}
+			else {  return Result{ .type = NumericConstant::Invalid }; }
+		}
+
+		if (flags & ArrayExFlags::ArrayExFlag_End) {
+			size_t lin = arrayIndexToLinearIndex(endIdx, elements.size());
+			if (lin != InvalidIndex) {
+				idx1 = static_cast<int64_t>(lin) + 1;
+			}
+			else { return Result{ .type = NumericConstant::Invalid }; }
+		}
+
+		if (idx0 > idx1) { idx0 = idx1; }
+
+		size_t newElemCount = static_cast<size_t>(idx1 - idx0);
+		Vector* newVec = context->allocateObject<Vector>();
+			
+		if (newVec) {
+			if (newElemCount > 0) {
+				newVec->elements.reserve(newElemCount);
+				newVec->elements.insert(newVec->elements.end(), elements.begin() + idx0, elements.begin() + idx1);
+			}
+			return newVec->createResult();
+		}
+			
 		return Result{ .type = NumericConstant::Invalid };
+	}
+
+	/**
+	 * Assigns a value directly to a specified index, modifying the vector in-place.
+	 *
+	 * \param index			The zero-based or negative offset index.
+	 * \param rhs			The result to insert or overwrite with.
+	 * \return				Returns the assigned value on success, or Invalid on failure.
+	 **/
+	Result Vector::arrayAssign(int64_t index, const Result& rhs) {
+		size_t lin = Object::arrayIndexToLinearIndex(index, elements.size());
+		if (lin == Object::InvalidIndex) { return Result{ .type = NumericConstant::Invalid }; }
+		
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			elements.erase(elements.begin() + lin);
+			elements.insert(elements.begin() + lin, rVec->elements.begin(), rVec->elements.end());
+		} 
+		else {
+			elements[lin] = rhs;
+		}
+		
+		return rhs;
+	}
+
+	/**
+	 * Assigns a value or merges an array into a sliced range, modifying the vector in-place.
+	 *
+	 * \param startIdx		The starting index of the slice.
+	 * \param endIdx		The ending index of the slice.
+	 * \param flags			Bitmask defining slice boundary rules.
+	 * \param rhs			The result to insert or overwrite with.
+	 * \return				Returns the assigned value on success, or Invalid on failure.
+	 **/
+	Result Vector::arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) {
+		size_t idx0, idx1;
+		if (!Object::resolveSliceBounds(startIdx, endIdx, flags, elements.size(), idx0, idx1)) {
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		elements.erase(elements.begin() + idx0, elements.begin() + idx1);
+
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			elements.insert(elements.begin() + idx0, rVec->elements.begin(), rVec->elements.end());
+		} 
+		else {
+			// Matches Python's slice insertion rule
+			elements.insert(elements.begin() + idx0, rhs);
+		}
+		
+		return rhs;
+	}
+
+	/**
+	 * Retrieves the element at the specified index.
+	 *
+	 * \param index			The zero-based or negative offset index.
+	 * \return				Returns the Result at the given index, or Invalid if out of bounds.
+	 **/
+	Result Vector::at(int64_t index) const {
+		size_t linearIndex = Object::arrayIndexToLinearIndex(index, elements.size());
+		
+		if (linearIndex == Object::InvalidIndex) {
+			return Result{ .type = NumericConstant::Invalid };
+		}
+		
+		return elements[linearIndex];
 	}
 
 }	// namespace ve

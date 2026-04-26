@@ -23,7 +23,22 @@ namespace ve {
 		 **/
 		Result						evaluate(ExecutionContext& context) const override {
 			Result val = context.getArena().nodes[exprIndex]->evaluate(context);
-			context.getVariable(varIndex) = val;
+
+			// Increase references before decreasing references.
+			if (val.type == NumericConstant::Object && val.value.objectVal) {
+				val.value.objectVal->incRef();
+			}
+
+			Result& var = context.getVariable(varIndex);
+			if (var.type == NumericConstant::Object && var.value.objectVal) {
+				var.value.objectVal->decRef();
+				// Delete it.
+				if (!var.value.objectVal->getRef()) {
+					context.deallocateObject(var.value.objectVal);
+				}
+			}
+			var = val;
+			
 			return val;
 		}
 

@@ -16,7 +16,9 @@ namespace ve {
 		 * 
 		 * \param res		The parsed numeric result value.
 		 **/
-		ConstantNode(const Result& res) : value(res) {}
+		ConstantNode(const Result& res) : value(res) {
+			volatile int hghg  =0;
+		}
 		
 		
 		// == Functions.

@@ -42,6 +42,19 @@ namespace ve {
 				if (blockNode != static_cast<size_t>(-1)) {
 					lastResult = context.getArena().nodes[blockNode]->evaluate(context);
 				}
+
+				FlowState state = context.getFlowState();
+				if (state == FlowState::Break) {
+					context.clearFlowState();
+					break;
+				}
+				else if (state == FlowState::Continue) {
+					context.clearFlowState();
+					continue;
+				}
+				else if (state == FlowState::Return) {
+					return context.getReturnValue();
+				}
 			}
 
 			if (blockNode == static_cast<size_t>(-1) || lastResult.type == NumericConstant::Invalid) {

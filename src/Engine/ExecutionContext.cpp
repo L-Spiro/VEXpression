@@ -1,8 +1,8 @@
-#include "ExecutionContext.h"
-#include "IntrinsicBridges.h"
-#include "../Compiler/AstBuilderVisitor.h"
 #include "../../generated/ExprLexer.h"
 #include "../../generated/ExprParser.h"
+#include "../Compiler/AstBuilderVisitor.h"
+#include "ExecutionContext.h"
+#include "IntrinsicBridges.h"
 
 #include <cfloat>
 #include <climits>
@@ -465,26 +465,109 @@ namespace ve {
 		{ "removeprefix", StringId::Desc_String_RemovePrefix, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix } }, IntrinsicBridges::removePrefixBridge },
 		{ "removesuffix", StringId::Desc_String_RemoveSuffix, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "suffix", StringId::String_Param_Suffix_RemoveSuffix } }, IntrinsicBridges::removeSuffixBridge },
 		{ "replace", StringId::Desc_String_Replace, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "old", StringId::String_Param_Old }, { DataType::String, "new", StringId::String_Param_New } }, IntrinsicBridges::replaceBridge },
-		{ "replace", StringId::Desc_String_Replace, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "old", StringId::String_Param_Old }, { DataType::String, "new", StringId::String_Param_New }, { DataType::Int64, "count", StringId::String_Param_Count } }, IntrinsicBridges::replaceBridge },
+		{ "replace", StringId::Desc_String_Replace, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "old", StringId::String_Param_Old }, { DataType::String, "new", StringId::String_Param_New }, { DataType::Integer, "count", StringId::String_Param_Count } }, IntrinsicBridges::replaceBridge },
 		{ "rfind", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind } }, IntrinsicBridges::rfindBridge },
-		{ "rfind", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Int64, "start", StringId::String_Param_Start_RFind } }, IntrinsicBridges::rfindBridge },
-		{ "rfind", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Int64, "start", StringId::String_Param_Start_RFind }, { DataType::Int64, "end", StringId::String_Param_End_RFind } }, IntrinsicBridges::rfindBridge },
+		{ "rfind", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Integer, "start", StringId::String_Param_Start_RFind } }, IntrinsicBridges::rfindBridge },
+		{ "rfind", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Integer, "start", StringId::String_Param_Start_RFind }, { DataType::Integer, "end", StringId::String_Param_End_RFind } }, IntrinsicBridges::rfindBridge },
 		{ "rindex", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind } }, IntrinsicBridges::rfindBridge },
-		{ "rindex", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Int64, "start", StringId::String_Param_Start_RFind } }, IntrinsicBridges::rfindBridge },
-		{ "rindex", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Int64, "start", StringId::String_Param_Start_RFind }, { DataType::Int64, "end", StringId::String_Param_End_RFind } }, IntrinsicBridges::rfindBridge },
+		{ "rindex", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Integer, "start", StringId::String_Param_Start_RFind } }, IntrinsicBridges::rfindBridge },
+		{ "rindex", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Integer, "start", StringId::String_Param_Start_RFind }, { DataType::Integer, "end", StringId::String_Param_End_RFind } }, IntrinsicBridges::rfindBridge },
 		{ "rjust", StringId::Desc_String_RJust, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::rjustBridge },
 		{ "rjust", StringId::Desc_String_RJust, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width }, { DataType::String, "fillchar", StringId::String_Param_Fillchar } }, IntrinsicBridges::rjustBridge },
 		{ "rstrip", StringId::Desc_String_RStrip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::rstripBridge },
 		{ "rstrip", StringId::Desc_String_RStrip, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "chars", StringId::String_Param_Chars } }, IntrinsicBridges::rstripBridge },
 		{ "startswith", StringId::Desc_String_StartsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix } }, IntrinsicBridges::startsWithBridge },
-		{ "startswith", StringId::Desc_String_StartsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix }, { DataType::Int64, "start", StringId::String_Param_Start } }, IntrinsicBridges::startsWithBridge },
-		{ "startswith", StringId::Desc_String_StartsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix }, { DataType::Int64, "start", StringId::String_Param_Start }, { DataType::Int64, "end", StringId::String_Param_End } }, IntrinsicBridges::startsWithBridge },
+		{ "startswith", StringId::Desc_String_StartsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix }, { DataType::Integer, "start", StringId::String_Param_Start } }, IntrinsicBridges::startsWithBridge },
+		{ "startswith", StringId::Desc_String_StartsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix }, { DataType::Integer, "start", StringId::String_Param_Start }, { DataType::Integer, "end", StringId::String_Param_End } }, IntrinsicBridges::startsWithBridge },
 		{ "strip", StringId::Desc_String_Strip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::stripBridge },
 		{ "strip", StringId::Desc_String_Strip, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "chars", StringId::String_Param_Chars } }, IntrinsicBridges::stripBridge },
 		{ "swapcase", StringId::Desc_String_SwapCase, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::swapcaseBridge },
 		{ "title", StringId::Desc_String_Title, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::titleBridge },
 		{ "upper", StringId::Desc_String_Upper, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::upperBridge },
 		{ "zfill", StringId::Desc_String_ZFill, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::zfillBridge },
+
+		// == Strings/Vectors
+		{ "at", StringId::Desc_Object_At, { { DataType::Any, "obj", StringId::String_Param_Target }, { DataType::Integer, "index", StringId::String_Param_Index } }, IntrinsicBridges::atBridge },
+		{ "len", StringId::Desc_Object_Len, { { DataType::Any, "obj", StringId::String_Param_Target } }, IntrinsicBridges::lengthBridge },
+		{ "push_back", StringId::Desc_Object_PushBack, { { DataType::Any, "obj", StringId::String_Param_Target }, { DataType::Any, "val", StringId::String_Param_Item } }, IntrinsicBridges::pushBackBridge },
+		{ "size", StringId::Desc_Object_Size, { { DataType::Any, "obj", StringId::String_Param_Target } }, IntrinsicBridges::lengthBridge },
+
+		// == Custom API.
+		{ "min", StringId::Desc_Math_Min, { { DataType::Any, "x", StringId::Math_Param_X }, { DataType::Any, "y", StringId::Math_Param_Y } }, IntrinsicBridges::minBridge },
+		{ "max", StringId::Desc_Math_Max, { { DataType::Any, "x", StringId::Math_Param_X }, { DataType::Any, "y", StringId::Math_Param_Y } }, IntrinsicBridges::maxBridge },
+		{ "clamp", StringId::Desc_Math_Clamp, { { DataType::Any, "val", StringId::Math_Param_Val }, { DataType::Any, "minVal", StringId::Math_Param_Min }, { DataType::Any, "maxVal", StringId::Math_Param_Max } }, IntrinsicBridges::clampBridge },
+		{ "frac", StringId::Desc_Math_Frac, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::fracBridge },
+		{ "step", StringId::Desc_Math_Step, { { DataType::Double, "edge", StringId::Math_Param_Edge }, { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::stepBridge },
+		{ "sinc", StringId::Desc_Math_Sinc, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sincBridge },
+		{ "relativeEpsilon", StringId::Desc_Math_RelativeEpsilon, { { DataType::Double, "left", StringId::Math_Param_Left }, { DataType::Double, "right", StringId::Math_Param_Right }, { DataType::Double, "epsilon", StringId::Math_Param_Epsilon } }, IntrinsicBridges::relativeEpsilonBridge },
+		{ "sinExact", StringId::Desc_Math_SinExact, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sinExactBridge },
+		{ "cosExact", StringId::Desc_Math_CosExact, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::cosExactBridge },
+		{ "lcm", StringId::Desc_Math_Lcm, { { DataType::Integer, "x", StringId::Math_Param_X }, { DataType::Integer, "y", StringId::Math_Param_Y } }, IntrinsicBridges::lcmBridge },
+		//{ "lcmChecked", StringId::Desc_Math_LcmChecked, { { DataType::Integer, "x", StringId::Math_Param_X }, { DataType::Integer, "y", StringId::Math_Param_Y } }, IntrinsicBridges::lcmCheckedBridge },
+
+		// == Gamma Functions.
+		{ "linearToSRgb", StringId::Desc_Math_LinearToSRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSRgbBridge },
+		{ "sRgbToLinear", StringId::Desc_Math_SRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sRgbToLinearBridge },
+		{ "pow2_2ToLinear", StringId::Desc_Math_Pow2_2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::pow2_2ToLinearBridge },
+		{ "linearToPow2_2", StringId::Desc_Math_LinearToPow2_2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPow2_2Bridge },
+		{ "smpte240MToLinear", StringId::Desc_Math_Smpte240MToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte240MToLinearBridge },
+		{ "linearToSmpte240M", StringId::Desc_Math_LinearToSmpte240M, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte240MBridge },
+		{ "sLog2ToLinear", StringId::Desc_Math_SLog2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLog2ToLinearBridge },
+		{ "linearToSLog2", StringId::Desc_Math_LinearToSLog2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLog2Bridge },
+		{ "canonLogToLinear", StringId::Desc_Math_CanonLogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLogToLinearBridge },
+		{ "linearToCanonLog", StringId::Desc_Math_LinearToCanonLog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLogBridge },
+		{ "viperToLinear", StringId::Desc_Math_ViperToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::viperToLinearBridge },
+		{ "linearToViper", StringId::Desc_Math_LinearToViper, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToViperBridge },
+		{ "acesCgToLinear", StringId::Desc_Math_AcesCgToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::acesCgToLinearBridge },
+		{ "linearToAcesCg", StringId::Desc_Math_LinearToAcesCg, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAcesCgBridge },
+		{ "sRgbToLinearPrecise", StringId::Desc_Math_SRgbToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sRgbToLinearPreciseBridge },
+		{ "linearToSRgbPrecise", StringId::Desc_Math_LinearToSRgbPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSRgbPreciseBridge },
+		{ "colorLcdToLinear", StringId::Desc_Math_ColorLcdToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::colorLcdToLinearBridge },
+		{ "linearToColorLcd", StringId::Desc_Math_LinearToColorLcd, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToColorLcdBridge },
+		{ "smpte170MToLinear", StringId::Desc_Math_Smpte170MToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte170MToLinearBridge },
+		{ "linearToSmpte170M", StringId::Desc_Math_LinearToSmpte170M, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte170MBridge },
+		{ "smpte170MToLinearPrecise", StringId::Desc_Math_Smpte170MToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte170MToLinearPreciseBridge },
+		{ "linearToSmpte170MPrecise", StringId::Desc_Math_LinearToSmpte170MPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte170MPreciseBridge },
+		{ "dciP3ToLinear", StringId::Desc_Math_DciP3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::dciP3ToLinearBridge },
+		{ "linearToDciP3", StringId::Desc_Math_LinearToDciP3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToDciP3Bridge },
+		{ "genericRgbToLinear", StringId::Desc_Math_GenericRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::genericRgbToLinearBridge },
+		{ "linearToGenericRgb", StringId::Desc_Math_LinearToGenericRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToGenericRgbBridge },
+		{ "pow2_8ToLinear", StringId::Desc_Math_Pow2_8ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::pow2_8ToLinearBridge },
+		{ "linearToPow2_8", StringId::Desc_Math_LinearToPow2_8, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPow2_8Bridge },
+		{ "adobeRgbToLinear", StringId::Desc_Math_AdobeRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::adobeRgbToLinearBridge },
+		{ "linearToAdobeRgb", StringId::Desc_Math_LinearToAdobeRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAdobeRgbBridge },
+		{ "smpte240MToLinearPrecise", StringId::Desc_Math_Smpte240MToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte240MToLinearPreciseBridge },
+		{ "linearToSmpte240MPrecise", StringId::Desc_Math_LinearToSmpte240MPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte240MPreciseBridge },
+		{ "acesCcToLinear", StringId::Desc_Math_AcesCcToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::acesCcToLinearBridge },
+		{ "linearToAcesCc", StringId::Desc_Math_LinearToAcesCc, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAcesCcBridge },
+		{ "rommRgbToLinear", StringId::Desc_Math_RommRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::rommRgbToLinearBridge },
+		{ "linearToRommRgb", StringId::Desc_Math_LinearToRommRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToRommRgbBridge },
+		{ "rimmRgbToLinear", StringId::Desc_Math_RimmRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::rimmRgbToLinearBridge },
+		{ "linearToRimmRgb", StringId::Desc_Math_LinearToRimmRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToRimmRgbBridge },
+		{ "erimmRgbToLinear", StringId::Desc_Math_ErimmRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::erimmRgbToLinearBridge },
+		{ "linearToErimmRgb", StringId::Desc_Math_LinearToErimmRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToErimmRgbBridge },
+		{ "sLogToLinear", StringId::Desc_Math_SLogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLogToLinearBridge },
+		{ "linearToSLog", StringId::Desc_Math_LinearToSLog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLogBridge },
+		{ "sLog3ToLinear", StringId::Desc_Math_SLog3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLog3ToLinearBridge },
+		{ "linearToSLog3", StringId::Desc_Math_LinearToSLog3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLog3Bridge },
+		{ "protuneToLinear", StringId::Desc_Math_ProtuneToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::protuneToLinearBridge },
+		{ "linearToProtune", StringId::Desc_Math_LinearToProtune, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToProtuneBridge },
+		{ "canonLog2ToLinear", StringId::Desc_Math_CanonLog2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLog2ToLinearBridge },
+		{ "linearToCanonLog2", StringId::Desc_Math_LinearToCanonLog2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLog2Bridge },
+		{ "canonLog3ToLinear", StringId::Desc_Math_CanonLog3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLog3ToLinearBridge },
+		{ "linearToCanonLog3", StringId::Desc_Math_LinearToCanonLog3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLog3Bridge },
+		{ "aribStdB67ToLinear", StringId::Desc_Math_AribStdB67ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::aribStdB67ToLinearBridge },
+		{ "linearToAribStdB67", StringId::Desc_Math_LinearToAribStdB67, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAribStdB67Bridge },
+		{ "panalogToLinear", StringId::Desc_Math_PanalogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::panalogToLinearBridge },
+		{ "linearToPanalog", StringId::Desc_Math_LinearToPanalog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPanalogBridge },
+		{ "crtProperToLinear", StringId::Desc_Math_CrtProperToLinear, { { DataType::Double, "val", StringId::Math_Param_Val } }, IntrinsicBridges::crtProperToLinearBridge },
+		{ "crtProperToLinear", StringId::Desc_Math_CrtProperToLinear, { { DataType::Double, "val", StringId::Math_Param_Val }, { DataType::Double, "lw", StringId::Math_Param_Lw } }, IntrinsicBridges::crtProperToLinearBridge },
+		{ "crtProperToLinear", StringId::Desc_Math_CrtProperToLinear, { { DataType::Double, "val", StringId::Math_Param_Val }, { DataType::Double, "lw", StringId::Math_Param_Lw }, { DataType::Double, "b", StringId::Math_Param_B } }, IntrinsicBridges::crtProperToLinearBridge },
+		{ "linearToCrtProper", StringId::Desc_Math_LinearToCrtProper, { { DataType::Double, "val", StringId::Math_Param_Val } }, IntrinsicBridges::linearToCrtProperBridge },
+		{ "linearToCrtProper", StringId::Desc_Math_LinearToCrtProper, { { DataType::Double, "val", StringId::Math_Param_Val }, { DataType::Double, "lw", StringId::Math_Param_Lw } }, IntrinsicBridges::linearToCrtProperBridge },
+		{ "linearToCrtProper", StringId::Desc_Math_LinearToCrtProper, { { DataType::Double, "val", StringId::Math_Param_Val }, { DataType::Double, "lw", StringId::Math_Param_Lw }, { DataType::Double, "b", StringId::Math_Param_B } }, IntrinsicBridges::linearToCrtProperBridge },
+		{ "crtProper2ToLinear", StringId::Desc_Math_CrtProper2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::crtProper2ToLinearBridge },
+		{ "linearToCrtProper2", StringId::Desc_Math_LinearToCrtProper2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCrtProper2Bridge },
 	};
 
 	// == Functions.
@@ -523,6 +606,7 @@ namespace ve {
 
 			if (resultAny.has_value()) {
 				rootIndex = std::any_cast<size_t>(resultAny);
+				initialObjectsTotal = objects.size();
 				return true;
 			}
 			else {
@@ -576,6 +660,8 @@ namespace ve {
 			emptyRes.type = NumericConstant::Invalid;
 			return emptyRes;
 		}
+		// All run-time-allocated objects will follow compile-time objects, and compile-time objects are never deleted.
+		objects.resize(initialObjectsTotal);
 		return arena.nodes[rootIndex]->evaluate(*this);
 	}
 
@@ -586,6 +672,7 @@ namespace ve {
 		// Clear objects first.  Who knows what kinds of resources they may need to access, so
 		// don’t clear resources until objects are already gone.
 		objects.clear();
+		initialObjectsTotal = 0;
 
 		arena.nodes.clear();
 		variables.clear();
@@ -775,6 +862,9 @@ namespace ve {
 	 * \return				Returns a newly formatted Result containing the truncated/casted value.
 	 **/
 	Result ExecutionContext::castArgument(const Result& rawVal, DataType targetType) const {
+		if (rawVal.type == NumericConstant::Invalid) {
+			return Result{};
+		}
 		Result out;
 		
 		// Helper lambda: Extracts the raw result as a double.
@@ -886,6 +976,27 @@ namespace ve {
 				}
 				break;
 			}
+			case DataType::Integer : {
+				if (rawVal.type == NumericConstant::Unsigned || rawVal.type == NumericConstant::Signed) {
+					out = rawVal;
+				}
+				else if (rawVal.type == NumericConstant::Object) {
+					out.type = NumericConstant::Invalid;
+					out.value.uintVal = 0;
+					/*if (!rawVal.value.objectVal) {
+						out.type = NumericConstant::Invalid;
+						out.value.uintVal = 0;
+					}
+					else {
+						out = rawVal.value.objectVal->convertTo(NumericConstant::Signed);
+					}*/
+				}
+				else {
+					out.type = NumericConstant::Signed;
+					out.value.intVal = static_cast<int16_t>(getAsInt64());
+				}
+				break;
+			}
 			case DataType::Any : {
 				out = rawVal;
 				break;
@@ -896,6 +1007,146 @@ namespace ve {
 			}
 		}
 		
+		return out;
+	}
+
+	/**
+	 * Centralized evaluation helper for all math and compound operations.
+	 *
+	 * \param leftVal		The left operand.
+	 * \param rightVal		The right operand.
+	 * \param opType		The ExprLexer token representing the operation (e.g. ADD_ASSIGN).
+	 * \return				Returns the resulting evaluation.
+	 **/
+	Result ExecutionContext::evaluateMath(const Result& leftVal, const Result& rightVal, int opType) const {
+		if (leftVal.type == NumericConstant::Object) {
+			if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			switch (opType) {
+				case ExprLexer::ADD_ASSIGN : { return leftVal.value.objectVal->operator+=(rightVal); }
+				case ExprLexer::SUB_ASSIGN : { return leftVal.value.objectVal->operator-=(rightVal); }
+				case ExprLexer::MUL_ASSIGN : { return leftVal.value.objectVal->operator*=(rightVal); }
+				case ExprLexer::DIV_ASSIGN : { return leftVal.value.objectVal->operator/=(rightVal); }
+				case ExprLexer::MOD_ASSIGN : { return leftVal.value.objectVal->operator%=(rightVal); }
+				case ExprLexer::AND_ASSIGN : { return leftVal.value.objectVal->operator&=(rightVal); }
+				case ExprLexer::XOR_ASSIGN : { return leftVal.value.objectVal->operator^=(rightVal); }
+				case ExprLexer::OR_ASSIGN :  { return leftVal.value.objectVal->operator|=(rightVal); }
+				case ExprLexer::SHL_ASSIGN : { return leftVal.value.objectVal->operator<<=(rightVal); }
+				case ExprLexer::SHR_ASSIGN : { return leftVal.value.objectVal->operator>>=(rightVal); }
+				case ExprLexer::ADD : { return leftVal.value.objectVal->operator+(rightVal); }
+				case ExprLexer::SUB : { return leftVal.value.objectVal->operator-(rightVal); }
+				case ExprLexer::MUL : { return leftVal.value.objectVal->operator*(rightVal); }
+				case ExprLexer::DIV : { return leftVal.value.objectVal->operator/(rightVal); }
+				case ExprLexer::MOD : { return leftVal.value.objectVal->operator%(rightVal); }
+				case ExprLexer::BIT_AND : { return leftVal.value.objectVal->operator&(rightVal); }
+				case ExprLexer::BIT_XOR : { return leftVal.value.objectVal->operator^(rightVal); }
+				case ExprLexer::BIT_OR :  { return leftVal.value.objectVal->operator|(rightVal); }
+				case ExprLexer::SHL : { return leftVal.value.objectVal->operator<<(rightVal); }
+				case ExprLexer::SHR : { return leftVal.value.objectVal->operator>>(rightVal); }
+				default : { return Result{ .type = NumericConstant::Invalid }; }
+			}
+		}
+
+		NumericConstant common = getCastType(leftVal.type, rightVal.type);
+		Result l = const_cast<ExecutionContext*>(this)->convertResult(leftVal, common);
+		Result r = const_cast<ExecutionContext*>(this)->convertResult(rightVal, common);
+		Result out;
+		out.type = common;
+
+		if (common == NumericConstant::Floating) {
+			switch (opType) {
+				case ExprLexer::ADD_ASSIGN : {}
+				case ExprLexer::ADD : { out.value.doubleVal = l.value.doubleVal + r.value.doubleVal; break; }
+				case ExprLexer::SUB_ASSIGN : {}
+				case ExprLexer::SUB : { out.value.doubleVal = l.value.doubleVal - r.value.doubleVal; break; }
+				case ExprLexer::MUL_ASSIGN : {}
+				case ExprLexer::MUL : { out.value.doubleVal = l.value.doubleVal * r.value.doubleVal; break; }
+				case ExprLexer::DIV_ASSIGN : {}
+				case ExprLexer::DIV : { out.value.doubleVal = l.value.doubleVal / r.value.doubleVal; break; }
+				case ExprLexer::MOD_ASSIGN : {}
+				case ExprLexer::MOD : { out.value.doubleVal = std::fmod(l.value.doubleVal, r.value.doubleVal); break; }
+				default : { return Result{ .type = NumericConstant::Invalid }; }
+			}
+		}
+		else if (common == NumericConstant::Signed) {
+			switch (opType) {
+				case ExprLexer::ADD_ASSIGN : {}
+				case ExprLexer::ADD : { out.value.intVal = l.value.intVal + r.value.intVal; break; }
+				case ExprLexer::SUB_ASSIGN : {}
+				case ExprLexer::SUB : { out.value.intVal = l.value.intVal - r.value.intVal; break; }
+				case ExprLexer::MUL_ASSIGN : {}
+				case ExprLexer::MUL : { out.value.intVal = l.value.intVal * r.value.intVal; break; }
+				case ExprLexer::DIV_ASSIGN : {}
+				case ExprLexer::DIV : { out.value.intVal = l.value.intVal / r.value.intVal; break; }
+				case ExprLexer::MOD_ASSIGN : {}
+				case ExprLexer::MOD : { out.value.intVal = l.value.intVal % r.value.intVal; break; }
+				case ExprLexer::AND_ASSIGN : {}
+				case ExprLexer::BIT_AND : { out.value.intVal = l.value.intVal & r.value.intVal; break; }
+				case ExprLexer::XOR_ASSIGN : {}
+				case ExprLexer::BIT_XOR : { out.value.intVal = l.value.intVal ^ r.value.intVal; break; }
+				case ExprLexer::OR_ASSIGN :  {}
+				case ExprLexer::BIT_OR :  { out.value.intVal = l.value.intVal | r.value.intVal; break; }
+				case ExprLexer::SHL_ASSIGN : {}
+				case ExprLexer::SHL : { out.value.intVal = l.value.intVal << r.value.intVal; break; }
+				case ExprLexer::SHR_ASSIGN : {}
+				case ExprLexer::SHR : { out.value.intVal = l.value.intVal >> r.value.intVal; break; }
+				default : { return Result{ .type = NumericConstant::Invalid }; }
+			}
+		}
+		else if (common == NumericConstant::Unsigned) {
+			switch (opType) {
+				case ExprLexer::ADD_ASSIGN : {}
+				case ExprLexer::ADD : { out.value.uintVal = l.value.uintVal + r.value.uintVal; break; }
+				case ExprLexer::SUB_ASSIGN : {}
+				case ExprLexer::SUB : { out.value.uintVal = l.value.uintVal - r.value.uintVal; break; }
+				case ExprLexer::MUL_ASSIGN : {}
+				case ExprLexer::MUL : { out.value.uintVal = l.value.uintVal * r.value.uintVal; break; }
+				case ExprLexer::DIV_ASSIGN : {}
+				case ExprLexer::DIV : { out.value.uintVal = l.value.uintVal / r.value.uintVal; break; }
+				case ExprLexer::MOD_ASSIGN : {}
+				case ExprLexer::MOD : { out.value.uintVal = l.value.uintVal % r.value.uintVal; break; }
+				case ExprLexer::AND_ASSIGN : {}
+				case ExprLexer::BIT_AND : { out.value.uintVal = l.value.uintVal & r.value.uintVal; break; }
+				case ExprLexer::XOR_ASSIGN : {}
+				case ExprLexer::BIT_XOR : { out.value.uintVal = l.value.uintVal ^ r.value.uintVal; break; }
+				case ExprLexer::OR_ASSIGN :  {}
+				case ExprLexer::BIT_OR :  { out.value.uintVal = l.value.uintVal | r.value.uintVal; break; }
+				case ExprLexer::SHL_ASSIGN : {}
+				case ExprLexer::SHL : { out.value.uintVal = l.value.uintVal << r.value.uintVal; break; }
+				case ExprLexer::SHR_ASSIGN : {}
+				case ExprLexer::SHR : { out.value.uintVal = l.value.uintVal >> r.value.uintVal; break; }
+				default : { return Result{ .type = NumericConstant::Invalid }; }
+			}
+		}
+		else if (common == NumericConstant::Object) {
+			if (!l.value.objectVal || !r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			switch (opType) {
+				case ExprLexer::ADD_ASSIGN : { return l.value.objectVal->operator+=(r); }
+				case ExprLexer::SUB_ASSIGN : { return l.value.objectVal->operator-=(r); }
+				case ExprLexer::MUL_ASSIGN : { return l.value.objectVal->operator*=(r); }
+				case ExprLexer::DIV_ASSIGN : { return l.value.objectVal->operator/=(r); }
+				case ExprLexer::MOD_ASSIGN : { return l.value.objectVal->operator%=(r); }
+				case ExprLexer::AND_ASSIGN : { return l.value.objectVal->operator&=(r); }
+				case ExprLexer::XOR_ASSIGN : { return l.value.objectVal->operator^=(r); }
+				case ExprLexer::OR_ASSIGN :  { return l.value.objectVal->operator|=(r); }
+				case ExprLexer::SHL_ASSIGN : { return l.value.objectVal->operator<<=(r); }
+				case ExprLexer::SHR_ASSIGN : { return l.value.objectVal->operator>>=(r); }
+				case ExprLexer::ADD : { return l.value.objectVal->operator+(r); }
+				case ExprLexer::SUB : { return l.value.objectVal->operator-(r); }
+				case ExprLexer::MUL : { return l.value.objectVal->operator*(r); }
+				case ExprLexer::DIV : { return l.value.objectVal->operator/(r); }
+				case ExprLexer::MOD : { return l.value.objectVal->operator%(r); }
+				case ExprLexer::BIT_AND : { return l.value.objectVal->operator&(r); }
+				case ExprLexer::BIT_XOR : { return l.value.objectVal->operator^(r); }
+				case ExprLexer::BIT_OR :  { return l.value.objectVal->operator|(r); }
+				case ExprLexer::SHL : { return l.value.objectVal->operator<<(r); }
+				case ExprLexer::SHR : { return l.value.objectVal->operator>>(r); }
+				default : { return Result{ .type = NumericConstant::Invalid }; }
+			}
+		}
+		else {
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
 		return out;
 	}
 

@@ -37,6 +37,20 @@ namespace ve {
 					condRes = context.getArena().nodes[condNode]->evaluate(context);
 				}
 
+				FlowState state = context.getFlowState();
+				if (state == FlowState::Break) {
+					context.clearFlowState();
+					break;
+				}
+				else if (state == FlowState::Continue) {
+					context.clearFlowState();
+					continue;
+				}
+				else if (state == FlowState::Return) {
+					return context.getReturnValue();
+				}
+
+
 				bool isTrue = false;
 
 				if (condRes.type == NumericConstant::Floating) {

@@ -366,84 +366,84 @@ namespace ve {
 
 		// == Assignment Operators
 		/**
-		 * Evaluates the addition-assignment operation and updates the object's state.
+		 * Evaluates the compound addition assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand to add.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator+=(const Result& rhs) = 0;
+		virtual Result						operator+=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the subtraction-assignment operation and updates the object's state.
+		 * Evaluates the compound subtraction assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand to subtract.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator-=(const Result& rhs) = 0;
+		virtual Result						operator-=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the multiplication-assignment operation and updates the object's state.
+		 * Evaluates the compound multiplication assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand to multiply.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator*=(const Result& rhs) = 0;
+		virtual Result						operator*=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the division-assignment operation and updates the object's state.
+		 * Evaluates the compound division assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand to divide by.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator/=(const Result& rhs) = 0;
+		virtual Result						operator/=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the modulo-assignment operation and updates the object's state.
+		 * Evaluates the compound modulo assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand to divide by for the remainder.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator%=(const Result& rhs) = 0;
+		virtual Result						operator%=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the bitwise left-shift-assignment operation and updates the object's state.
+		 * Evaluates the compound bitwise AND assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand indicating the shift amount.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator<<=(const Result& rhs) = 0;
+		virtual Result						operator&=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the bitwise right-shift-assignment operation and updates the object's state.
+		 * Evaluates the compound bitwise OR assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand indicating the shift amount.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator>>=(const Result& rhs) = 0;
+		virtual Result						operator|=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the bitwise AND-assignment operation and updates the object's state.
+		 * Evaluates the compound bitwise XOR assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand to bitwise AND with.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator&=(const Result& rhs) = 0;
+		virtual Result						operator^=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the bitwise OR-assignment operation and updates the object's state.
+		 * Evaluates the compound bitwise shift left assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand to bitwise OR with.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator|=(const Result& rhs) = 0;
+		virtual Result						operator<<=(const Result& rhs) = 0;
 
 		/**
-		 * Evaluates the bitwise XOR-assignment operation and updates the object's state.
+		 * Evaluates the compound bitwise shift right assignment operation against a right-hand operand.
 		 *
-		 * \param rhs			The right-hand side operand to bitwise XOR with.
-		 * \return				Returns true if the assignment was successful, false otherwise.
+		 * \param rhs			The right-hand side operand.
+		 * \return				Returns a Result containing the modified Object.
 		 **/
-		virtual bool						operator^=(const Result& rhs) = 0;
+		virtual Result						operator>>=(const Result& rhs) = 0;
 
 
 		// == Functions.
@@ -463,6 +463,27 @@ namespace ve {
 		 **/
 		Result								createResult() const {
 			return Result{ .type = NumericConstant::Object, .value = { .objectVal = const_cast<Object*>(this) } };
+		}
+
+		/**
+		 * Increases the reference count.
+		 **/
+		inline void							incRef() const {
+			++refCnt;
+		}
+
+		/**
+		 * Decreases the reference count.
+		 **/
+		inline void							decRef() const {
+			--refCnt;
+		}
+
+		/**
+		 * Gets the reference count.
+		 **/
+		inline uint64_t						getRef() const {
+			return refCnt;
 		}
 
 		/**
@@ -494,9 +515,67 @@ namespace ve {
 			return static_cast<size_t>(signedIdx);
 		}
 
+		/**
+		 * Helper utility to safely resolve slice boundaries into valid zero-based linear indices.
+		 *
+		 * \param startIdx		The requested start index.
+		 * \param endIdx		The requested end index.
+		 * \param flags			Bitmask defining which indices are active.
+		 * \param length		The total length of the array/string.
+		 * \param outStart		The output resolved linear start index.
+		 * \param outEnd		The output resolved linear end index.
+		 * \return				Returns true if bounds are valid, false if out of range.
+		 **/
+		static bool						resolveSliceBounds(int64_t startIdx, int64_t endIdx, uint32_t flags, size_t length, size_t& outStart, size_t& outEnd) {
+			int64_t idx0 = 0;
+			int64_t idx1 = static_cast<int64_t>(length);
+
+			if (flags & ArrayExFlag_Start) {
+				size_t lin = arrayIndexToLinearIndex(startIdx, length);
+				if (lin != InvalidIndex) { idx0 = static_cast<int64_t>(lin); }
+				else { return false; }
+			}
+
+			if (flags & ArrayExFlag_End) {
+				size_t lin = arrayIndexToLinearIndex(endIdx, length);
+				if (lin != InvalidIndex) { idx1 = static_cast<int64_t>(lin) + 1; }
+				else { return false; }
+			}
+
+			if (idx0 > idx1) { idx0 = idx1; }
+			
+			outStart = static_cast<size_t>(idx0);
+			outEnd = static_cast<size_t>(idx1);
+			return true;
+		}
+
+
+		// == Virtual Assignment Overrides.
+		/**
+		 * Assigns a value directly to a specified index.
+		 *
+		 * \param index			The zero-based or negative offset index.
+		 * \param rhs			The result to insert or overwrite with.
+		 * \return				Returns the assigned value on success, or Invalid on failure.
+		 **/
+		virtual Result					arrayAssign(int64_t index, const Result& rhs) { return Result{ .type = NumericConstant::Invalid }; }
+
+		/**
+		 * Assigns a value or merges an array into a sliced range.
+		 *
+		 * \param startIdx		The starting index of the slice.
+		 * \param endIdx		The ending index of the slice.
+		 * \param flags			Bitmask defining slice boundary rules.
+		 * \param rhs			The result to insert or overwrite with.
+		 * \return				Returns the assigned value on success, or Invalid on failure.
+		 **/
+		virtual Result					arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) { return Result{ .type = NumericConstant::Invalid }; }
+
 	protected :
 		// == Members.
-		ExecutionContext*					context;
+		ExecutionContext*					context;		/**< The engine pointer. */
+		mutable uint64_t					refCnt = 0;		/**< The reference counter. */
+
 
 	private :
 	};

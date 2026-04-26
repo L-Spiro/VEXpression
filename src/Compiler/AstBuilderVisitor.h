@@ -2,14 +2,25 @@
 
 #include "../../generated/ExprLexer.h"
 #include "../../generated/ExprParserBaseVisitor.h"
+#include "../Ast/AddAssignNode.h"
 #include "../Ast/AddNode.h"
+#include "../Ast/ArrayAccessNode.h"
+#include "../Ast/ArrayAccessExNode.h"
+#include "../Ast/ArrayAssignNode.h"
+#include "../Ast/ArrayExAssignNode.h"
 #include "../Ast/AssignNode.h"
 #include "../Ast/AstArena.h"
+#include "../Ast/BitAndAssignNode.h"
 #include "../Ast/BitAndNode.h"
 #include "../Ast/BitNotNode.h"
+#include "../Ast/BitOrAssignNode.h"
 #include "../Ast/BitOrNode.h"
+#include "../Ast/BitXorAssignNode.h"
 #include "../Ast/BitXorNode.h"
+#include "../Ast/BreakNode.h"
 #include "../Ast/ConstantNode.h"
+#include "../Ast/ContinueNode.h"
+#include "../Ast/DivAssignNode.h"
 #include "../Ast/DivNode.h"
 #include "../Ast/EqNode.h"
 #include "../Ast/ForNode.h"
@@ -24,17 +35,23 @@
 #include "../Ast/LogOrNode.h"
 #include "../Ast/LtNode.h"
 #include "../Ast/MethodCallNode.h"
+#include "../Ast/ModAssignNode.h"
 #include "../Ast/ModNode.h"
+#include "../Ast/MulAssignNode.h"
 #include "../Ast/MulNode.h"
 #include "../Ast/NeNode.h"
 #include "../Ast/PostDecNode.h"
 #include "../Ast/PostIncNode.h"
 #include "../Ast/PreDecNode.h"
 #include "../Ast/PreIncNode.h"
+#include "../Ast/ReturnNode.h"
 #include "../Ast/SequenceNode.h"
+#include "../Ast/ShlAssignNode.h"
 #include "../Ast/ShlNode.h"
+#include "../Ast/ShrAssignNode.h"
 #include "../Ast/ShrNode.h"
 #include "../Ast/SpaceshipNode.h"
+#include "../Ast/SubAssignNode.h"
 #include "../Ast/SubNode.h"
 #include "../Ast/TernaryNode.h"
 #include "../Ast/UnaryMinusNode.h"
@@ -158,6 +175,117 @@ namespace ve {
 		 **/
 		virtual std::any			visitExprStmt(ExprParser::ExprStmtContext* ctx) override {
 			return visit(ctx->expr());
+		}
+
+		/**
+		 * Visits an if/else expression, extracting the condition and block contents.
+		 * Empty blocks are safely detected and skipped, enforcing fallback logic.
+		 *
+		 * \param ctx		The parser context containing the if/else expression.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitIfElseStmt(ExprParser::IfElseStmtContext* ctx) override {
+			size_t condNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			size_t trueBlockNode = static_cast<size_t>(-1);
+			if (ctx->block(0)) {
+				// Structurally verify the block actually contains statements
+				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block(0)->statement_list())) {
+					trueBlockNode = std::any_cast<size_t>(visit(ctx->block(0)));
+				}
+			}
+			
+			size_t falseBlockNode = static_cast<size_t>(-1);
+			if (ctx->ELSE()) {
+				if (ctx->block(1)) {
+					// Structurally verify the block actually contains statements
+					if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block(1)->statement_list())) {
+						falseBlockNode = std::any_cast<size_t>(visit(ctx->block(1)));
+					}
+				}
+			}
+			
+			return context.addNode<IfNode>(condNode, trueBlockNode, falseBlockNode);
+		}
+
+		/**
+		 * Visits a standard for loop, parsing optional initialization, condition, and step expressions.
+		 *
+		 * \param ctx		The parser context containing the standard for loop.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitForStandardStmt(ExprParser::ForStandardStmtContext* ctx) override {
+			size_t initNode = static_cast<size_t>(-1);
+			if (ctx->init) {
+				initNode = std::any_cast<size_t>(visit(ctx->init));
+			}
+			
+			size_t condNode = static_cast<size_t>(-1);
+			if (ctx->cond) {
+				condNode = std::any_cast<size_t>(visit(ctx->cond));
+			}
+			
+			size_t stepNode = static_cast<size_t>(-1);
+			if (ctx->step) {
+				stepNode = std::any_cast<size_t>(visit(ctx->step));
+			}
+			
+			size_t blockNode = static_cast<size_t>(-1);
+			if (ctx->block()) {
+				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+					blockNode = std::any_cast<size_t>(visit(ctx->block()));
+				}
+			}
+			
+			return context.addNode<ForNode>(initNode, condNode, stepNode, blockNode);
+		}
+
+		/**
+		 * Visits a ranged for loop, parsing the identifier and the target range object.
+		 *
+		 * \param ctx		The parser context containing the ranged for loop.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitForRangeStmt(ExprParser::ForRangeStmtContext* ctx) override {
+			std::string varName = ctx->IDENTIFIER()->getText();
+			
+			// Resolve the string to a numeric index using your compiler's existing symbol table logic.
+			size_t varIdx = getOrCreateVariable(varName); 
+			
+			size_t objNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			size_t blockNode = static_cast<size_t>(-1);
+			if (ctx->block()) {
+				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+					blockNode = std::any_cast<size_t>(visit(ctx->block()));
+				}
+			}
+			
+			return context.addNode<ForRangeNode>(varIdx, objNode, blockNode);
+		}
+
+		/**
+		 * Visits a C++ style ranged for loop (for (var : obj)), parsing the identifier and target range object.
+		 *
+		 * \param ctx		The parser context containing the C++ style ranged for loop.
+		 * \return			Returns an std::any containing the allocated AstNode index.
+		 **/
+		virtual std::any			visitForCppRangeStmt(ExprParser::ForCppRangeStmtContext* ctx) override {
+			std::string varName = ctx->IDENTIFIER()->getText();
+			
+			// Resolve the string to a numeric index using your compiler's existing symbol table logic.
+			size_t varIdx = getOrCreateVariable(varName); 
+			
+			size_t objNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			size_t blockNode = static_cast<size_t>(-1);
+			if (ctx->block()) {
+				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+					blockNode = std::any_cast<size_t>(visit(ctx->block()));
+				}
+			}
+			
+			return context.addNode<ForRangeNode>(varIdx, objNode, blockNode);
 		}
 
 		/**
@@ -290,6 +418,79 @@ namespace ve {
 			}
 
 			return context.addNode<FunctionCallNode>(funcDef, args);
+		}
+
+		/**
+		 * Visits a standard array access expression.
+		 *
+		 * \param ctx		The parser context for the expression.
+		 * \return			Returns an AST node representing the access operation.
+		 **/
+		virtual std::any			visitArrayAccess(ExprParser::ArrayAccessContext* ctx) override {
+			size_t targetIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
+			size_t argIndex = std::any_cast<size_t>(visit(ctx->expr(1)));
+			
+			return context.addNode<ArrayAccessNode>(targetIndex, argIndex);
+		}
+
+		/**
+		 * Visits an extended (sliced) array access expression.
+		 *
+		 * \param ctx		The parser context for the expression.
+		 * \return			Returns an AST node representing the slice operation.
+		 **/
+		virtual std::any			visitArrayAccessEx(ExprParser::ArrayAccessExContext* ctx) override {
+			size_t targetIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
+			size_t startIndex = static_cast<size_t>(-1);
+			size_t endIndex = static_cast<size_t>(-1);
+			uint32_t mask = 0;
+
+			if (ctx->start) {
+				startIndex = std::any_cast<size_t>(visit(ctx->start));
+				mask |= ArrayExFlags::ArrayExFlag_Start;
+			}
+			if (ctx->end) {
+				endIndex = std::any_cast<size_t>(visit(ctx->end));
+				mask |= ArrayExFlags::ArrayExFlag_End;
+			}
+
+			return context.addNode<ArrayAccessExNode>(targetIndex, startIndex, endIndex, mask);
+		}
+		
+		/**
+		 * Visits a break expression.
+		 *
+		 * \param ctx		The parser context for the expression.
+		 * \return			Returns an AST node representing the break operation.
+		 **/
+		virtual std::any			visitBreakExpr(ExprParser::BreakExprContext* ctx) override {
+			return context.addNode<BreakNode>();
+		}
+
+		/**
+		 * Visits a continue expression.
+		 *
+		 * \param ctx		The parser context for the expression.
+		 * \return			Returns an AST node representing the continue operation.
+		 **/
+		virtual std::any			visitContinueExpr(ExprParser::ContinueExprContext* ctx) override {
+			return context.addNode<ContinueNode>();
+		}
+
+		/**
+		 * Visits a return expression.
+		 *
+		 * \param ctx		The parser context for the expression.
+		 * \return			Returns an AST node representing the return operation.
+		 **/
+		virtual std::any			visitReturnExpr(ExprParser::ReturnExprContext* ctx) override {
+			size_t exprIndex = Object::InvalidIndex;
+			
+			if (ctx->expr()) {
+				exprIndex = std::any_cast<size_t>(visit(ctx->expr()));
+			}
+			
+			return context.addNode<ReturnNode>(exprIndex);
 		}
 
 		/**
@@ -536,12 +737,10 @@ namespace ve {
 		}
 
 		/**
-		 * Visits an assignment node in the parse tree and allocates the AssignNode.
-		 * Supports compound assignments (e.g., +=, -=) by desugaring them into an underlying binary operation.
-		 * 
-		 * \param ctx		The ANTLR parser context for the assignment operation.
-		 * \return			Returns an std::any containing the size_t index of the allocated AssignNode.
-		 * \throws			ErrorCode::Invalid_LValue if attempting to assign to a registered constant.
+		 * Visits an assignment or compound assignment expression.
+		 *
+		 * \param ctx		The parser context for the assignment expression.
+		 * \return			Returns an AST node representing the assignment.
 		 **/
 		virtual std::any			visitAssignment(ExprParser::AssignmentContext* ctx) override {
 			std::string varName = ctx->IDENTIFIER()->getText();
@@ -554,29 +753,64 @@ namespace ve {
 			size_t varId = (opType == ExprLexer::ASSIGN) ? getOrCreateVariable(varName) : getVariable(varName);
 			if (size_t(-1) != varId) {
 				size_t rightIndex = std::any_cast<size_t>(visit(ctx->expr()));
-				size_t finalExprIndex = rightIndex;
 
-			
+				if (opType == ExprLexer::ASSIGN) { return context.addNode<AssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::ADD_ASSIGN) { return context.addNode<AddAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::SUB_ASSIGN) { return context.addNode<SubAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::MUL_ASSIGN) { return context.addNode<MulAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::DIV_ASSIGN) { return context.addNode<DivAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::MOD_ASSIGN) { return context.addNode<ModAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::AND_ASSIGN) { return context.addNode<BitAndAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::XOR_ASSIGN) { return context.addNode<BitXorAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::OR_ASSIGN)  { return context.addNode<BitOrAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::SHL_ASSIGN) { return context.addNode<ShlAssignNode>(varId, rightIndex); }
+				else if (opType == ExprLexer::SHR_ASSIGN) { return context.addNode<ShrAssignNode>(varId, rightIndex); }
 
-				// If it is a compound assignment, synthesize the mathematical subtree (e.g., A = A + B).
-				if (opType != ExprLexer::ASSIGN) {
-					size_t leftIndex = context.addNode<VarNode>(varId);
-
-					if (opType == ExprLexer::ADD_ASSIGN) { finalExprIndex = context.addNode<AddNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::SUB_ASSIGN) { finalExprIndex = context.addNode<SubNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::MUL_ASSIGN) { finalExprIndex = context.addNode<MulNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::DIV_ASSIGN) { finalExprIndex = context.addNode<DivNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::MOD_ASSIGN) { finalExprIndex = context.addNode<ModNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::AND_ASSIGN) { finalExprIndex = context.addNode<BitAndNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::XOR_ASSIGN) { finalExprIndex = context.addNode<BitXorNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::OR_ASSIGN)  { finalExprIndex = context.addNode<BitOrNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::SHL_ASSIGN) { finalExprIndex = context.addNode<ShlNode>(leftIndex, rightIndex); }
-					else if (opType == ExprLexer::SHR_ASSIGN) { finalExprIndex = context.addNode<ShrNode>(leftIndex, rightIndex); }
-				}
-
-				return context.addNode<AssignNode>(varId, finalExprIndex);
+				throw ErrorCode::Invalid_LValue;
 			}
 			throw ErrorCode::Invalid_LValue;
+		}
+
+		/**
+		 * Visits an array index assignment expression.
+		 *
+		 * \param ctx		The parser context for the expression.
+		 * \return			Returns an AST node representing the operation.
+		 **/
+		virtual std::any			visitArrayAssignment(ExprParser::ArrayAssignmentContext* ctx) override {
+			size_t targetIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
+			size_t indexIndex = std::any_cast<size_t>(visit(ctx->expr(1)));
+			size_t rightIndex = std::any_cast<size_t>(visit(ctx->expr(2)));
+			int opType = ctx->op->getType();
+			
+			return context.addNode<ArrayAssignNode>(targetIndex, indexIndex, rightIndex, opType);
+		}
+
+		/**
+		 * Visits an array slice assignment expression.
+		 *
+		 * \param ctx		The parser context for the expression.
+		 * \return			Returns an AST node representing the operation.
+		 **/
+		virtual std::any			visitArrayExAssignment(ExprParser::ArrayExAssignmentContext* ctx) override {
+			size_t targetIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
+			size_t startIndex = static_cast<size_t>(-1);
+			size_t endIndex = static_cast<size_t>(-1);
+			uint32_t mask = 0;
+
+			if (ctx->start) {
+				startIndex = std::any_cast<size_t>(visit(ctx->start));
+				mask |= ArrayExFlags::ArrayExFlag_Start;
+			}
+			if (ctx->end) {
+				endIndex = std::any_cast<size_t>(visit(ctx->end));
+				mask |= ArrayExFlags::ArrayExFlag_End;
+			}
+
+			size_t rightIndex = std::any_cast<size_t>(visit(ctx->expr().back()));
+			int opType = ctx->op->getType();
+
+			return context.addNode<ArrayExAssignNode>(targetIndex, startIndex, endIndex, mask, rightIndex, opType);
 		}
 
 		/**
@@ -605,117 +839,6 @@ namespace ve {
 			}
 			
 			return context.addNode<VectorNode>(elements);
-		}
-
-		/**
-		 * Visits an if/else expression, extracting the condition and block contents.
-		 * Empty blocks are safely detected and skipped, enforcing fallback logic.
-		 *
-		 * \param ctx		The parser context containing the if/else expression.
-		 * \return			Returns an std::any containing the allocated AstNode index.
-		 **/
-		virtual std::any			visitIfElseExpr(ExprParser::IfElseExprContext* ctx) override {
-			size_t condNode = std::any_cast<size_t>(visit(ctx->expr()));
-			
-			size_t trueBlockNode = static_cast<size_t>(-1);
-			if (ctx->block(0)) {
-				// Structurally verify the block actually contains statements
-				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block(0)->statement_list())) {
-					trueBlockNode = std::any_cast<size_t>(visit(ctx->block(0)));
-				}
-			}
-			
-			size_t falseBlockNode = static_cast<size_t>(-1);
-			if (ctx->ELSE()) {
-				if (ctx->block(1)) {
-					// Structurally verify the block actually contains statements
-					if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block(1)->statement_list())) {
-						falseBlockNode = std::any_cast<size_t>(visit(ctx->block(1)));
-					}
-				}
-			}
-			
-			return context.addNode<IfNode>(condNode, trueBlockNode, falseBlockNode);
-		}
-
-		/**
-		 * Visits a standard for loop, parsing optional initialization, condition, and step expressions.
-		 *
-		 * \param ctx		The parser context containing the standard for loop.
-		 * \return			Returns an std::any containing the allocated AstNode index.
-		 **/
-		virtual std::any			visitForStandardExpr(ExprParser::ForStandardExprContext* ctx) override {
-			size_t initNode = static_cast<size_t>(-1);
-			if (ctx->init) {
-				initNode = std::any_cast<size_t>(visit(ctx->init));
-			}
-			
-			size_t condNode = static_cast<size_t>(-1);
-			if (ctx->cond) {
-				condNode = std::any_cast<size_t>(visit(ctx->cond));
-			}
-			
-			size_t stepNode = static_cast<size_t>(-1);
-			if (ctx->step) {
-				stepNode = std::any_cast<size_t>(visit(ctx->step));
-			}
-			
-			size_t blockNode = static_cast<size_t>(-1);
-			if (ctx->block()) {
-				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
-					blockNode = std::any_cast<size_t>(visit(ctx->block()));
-				}
-			}
-			
-			return context.addNode<ForNode>(initNode, condNode, stepNode, blockNode);
-		}
-
-		/**
-		 * Visits a ranged for loop, parsing the identifier and the target range object.
-		 *
-		 * \param ctx		The parser context containing the ranged for loop.
-		 * \return			Returns an std::any containing the allocated AstNode index.
-		 **/
-		virtual std::any			visitForRangeExpr(ExprParser::ForRangeExprContext* ctx) override {
-			std::string varName = ctx->IDENTIFIER()->getText();
-			
-			// Resolve the string to a numeric index using your compiler's existing symbol table logic.
-			size_t varIdx = getOrCreateVariable(varName); 
-			
-			size_t objNode = std::any_cast<size_t>(visit(ctx->expr()));
-			
-			size_t blockNode = static_cast<size_t>(-1);
-			if (ctx->block()) {
-				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
-					blockNode = std::any_cast<size_t>(visit(ctx->block()));
-				}
-			}
-			
-			return context.addNode<ForRangeNode>(varIdx, objNode, blockNode);
-		}
-
-		/**
-		 * Visits a C++ style ranged for loop (for (var : obj)), parsing the identifier and target range object.
-		 *
-		 * \param ctx		The parser context containing the C++ style ranged for loop.
-		 * \return			Returns an std::any containing the allocated AstNode index.
-		 **/
-		virtual std::any			visitForCppRangeExpr(ExprParser::ForCppRangeExprContext* ctx) override {
-			std::string varName = ctx->IDENTIFIER()->getText();
-			
-			// Resolve the string to a numeric index using your compiler's existing symbol table logic.
-			size_t varIdx = getOrCreateVariable(varName); 
-			
-			size_t objNode = std::any_cast<size_t>(visit(ctx->expr()));
-			
-			size_t blockNode = static_cast<size_t>(-1);
-			if (ctx->block()) {
-				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
-					blockNode = std::any_cast<size_t>(visit(ctx->block()));
-				}
-			}
-			
-			return context.addNode<ForRangeNode>(varIdx, objNode, blockNode);
 		}
 
 		/**
@@ -980,6 +1103,7 @@ namespace ve {
 			
 			if (strObj) {
 				strObj->assignUtf8(combinedUtf8.data(), combinedUtf8.length());
+				strObj->incRef();
 				return context.addNode<ConstantNode>(strObj->createResult());
 			}
 			else {

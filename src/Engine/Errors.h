@@ -23,7 +23,8 @@ namespace ve {
 
 		// == Runtime Errors.
 		Unknown_Numeric_Type,
-		Object_Initialization_Failed
+		Object_Initialization_Failed,
+		Object_Deletion_Failed,
 	};
 
 }	// namespace ve

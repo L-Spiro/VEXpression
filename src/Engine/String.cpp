@@ -221,6 +221,82 @@ namespace ve {
 	}
 
 	/**
+	 * Assigns a value directly to a specified index, modifying the string in-place.
+	 *
+	 * \param index			The zero-based or negative offset index.
+	 * \param rhs			The result containing the code point or string to insert.
+	 * \return				Returns the assigned value on success, or Invalid on failure.
+	 **/
+	Result String::arrayAssign(int64_t index, const Result& rhs) {
+		size_t lin = Object::arrayIndexToLinearIndex(index, charCount);
+		if (lin == Object::InvalidIndex) { return Result{ .type = NumericConstant::Invalid }; }
+
+		std::u32string u32; 
+		u32.reserve(charCount);
+		for (size_t i = 0; i < charCount; ++i) { u32.push_back(getCodePoint(i)); }
+
+		u32.erase(lin, 1);
+
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_String)) {
+			String* rStr = static_cast<String*>(rhs.value.objectVal);
+			std::u32string ru32; 
+			ru32.reserve(rStr->charCount);
+			for (size_t i = 0; i < rStr->charCount; ++i) { ru32.push_back(rStr->getCodePoint(i)); }
+			u32.insert(lin, ru32);
+		} 
+		else {
+			uint32_t cp = 0;
+			if (rhs.type == NumericConstant::Unsigned) { cp = static_cast<uint32_t>(rhs.value.uintVal); }
+			else if (rhs.type == NumericConstant::Signed) { cp = static_cast<uint32_t>(rhs.value.intVal); }
+			else { return Result{ .type = NumericConstant::Invalid }; }
+			u32.insert(u32.begin() + lin, cp);
+		}
+
+		std::string u8 = Text::utf32ToUtf8(u32);
+		assignUtf8(u8.data(), u8.length());
+		return rhs;
+	}
+
+	/**
+	 * Assigns a value or merges a string into a sliced range, modifying the string in-place.
+	 *
+	 * \param startIdx		The starting index of the slice.
+	 * \param endIdx		The ending index of the slice.
+	 * \param flags			Bitmask defining slice boundary rules.
+	 * \param rhs			The result containing the string or code point to merge.
+	 * \return				Returns the assigned value on success, or Invalid on failure.
+	 **/
+	Result String::arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) {
+		size_t idx0, idx1;
+		if (!Object::resolveSliceBounds(startIdx, endIdx, flags, charCount, idx0, idx1)) {
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		std::u32string u32 = getUtf32();
+
+		u32.erase(u32.begin() + idx0, u32.begin() + idx1);
+
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_String)) {
+			String* rStr = static_cast<String*>(rhs.value.objectVal);
+			std::u32string ru32; 
+			ru32.reserve(rStr->charCount);
+			for (size_t i = 0; i < rStr->charCount; ++i) { ru32.push_back(rStr->getCodePoint(i)); }
+			u32.insert(idx0, ru32);
+		} 
+		else {
+			uint32_t cp = 0;
+			if (rhs.type == NumericConstant::Unsigned) { cp = static_cast<uint32_t>(rhs.value.uintVal); }
+			else if (rhs.type == NumericConstant::Signed) { cp = static_cast<uint32_t>(rhs.value.intVal); }
+			else { return Result{ .type = NumericConstant::Invalid }; }
+			u32.insert(u32.begin() + idx0, cp);
+		}
+
+		std::string u8 = Text::utf32ToUtf8(u32);
+		assignUtf8(u8.data(), u8.length());
+		return rhs;
+	}
+
+	/**
 	 * Serializes the string into a wide string representation.
 	 *
 	 * \param returnString	The output parameter to overwrite with the string content.
@@ -1148,6 +1224,43 @@ namespace ve {
 		}
 		
 		return newStr;
+	}
+
+	/**
+	 * Retrieves the character code point at the specified index.
+	 *
+	 * \param index			The zero-based or negative offset index.
+	 * \return				Returns a Result containing the code point, or Invalid if out of bounds.
+	 **/
+	Result String::at(int64_t index) const {
+		size_t linearIndex = Object::arrayIndexToLinearIndex(index, charCount);
+		
+		if (linearIndex == Object::InvalidIndex) {
+			return Result{ .type = NumericConstant::Invalid };
+		}
+		
+		Result res;
+		res.type = NumericConstant::Unsigned;
+		res.value.uintVal = static_cast<uint64_t>(getCodePoint(linearIndex));
+		return res;
+	}
+
+	/**
+	 * Pushes a string expression to the back of the string.
+	 * 
+	 * \param result		The result to push.
+	 * \return				Returns true if the item was added. False indicates a memory failure or incompatible type.
+	 **/
+	bool String::pushBack(const Result& result) {
+		try {
+			auto res = (*this) += result;
+			if (res.type == NumericConstant::Invalid) { return false; }
+			
+			return true;
+		}
+		catch (...) {
+			return false;
+		}
 	}
 
 	/**

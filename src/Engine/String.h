@@ -456,7 +456,7 @@ namespace ve {
 		 * \param rhs			The right-hand side operand to append.
 		 * \return				Returns true if successful, false otherwise.
 		 **/
-		virtual bool						operator+=(const Result& rhs) override {
+		virtual Result						operator+=(const Result& rhs) override {
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
 				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					const String* rhsString = static_cast<const String*>(rhs.value.objectVal);
@@ -507,23 +507,37 @@ namespace ve {
 					buffer = std::move(newBuffer);
 					bufferWidth = newWidth;
 					charCount = newCharCount;
-					return true;
+					return createResult();
 				}
 			}
 			else if (rhs.type == NumericConstant::Signed) {
-				std::string str = getUtf8();
-				Text::appendUtf32(str, uint32_t(rhs.value.intVal));
-				assignUtf8(str.c_str(), str.size());
-				return true;
+				if (bufferWidth == Width_32) {
+					buffer.resize(buffer.size() + sizeof(char32_t));
+					(*reinterpret_cast<char32_t*>(&buffer[buffer.size()-sizeof(char32_t)])) = char32_t(rhs.value.intVal);
+				}
+				else {
+					auto str = getUtf32();
+					Text::appendUtf32(str, uint32_t(rhs.value.intVal));
+					auto utf8 = Text::utf32ToUtf8(str);
+					assignUtf8(utf8.c_str(), utf8.size());
+				}
+				return createResult();
 			}
 			else if (rhs.type == NumericConstant::Unsigned) {
-				std::string str = getUtf8();
-				Text::appendUtf32(str, uint32_t(rhs.value.uintVal));
-				assignUtf8(str.c_str(), str.size());
-				return true;
+				if (bufferWidth == Width_32) {
+					buffer.resize(buffer.size() + sizeof(char32_t));
+					(*reinterpret_cast<char32_t*>(&buffer[buffer.size()-sizeof(char32_t)])) = char32_t(rhs.value.uintVal);
+				}
+				else {
+					auto str = getUtf32();
+					Text::appendUtf32(str, uint32_t(rhs.value.uintVal));
+					auto utf8 = Text::utf32ToUtf8(str);
+					assignUtf8(utf8.c_str(), utf8.size());
+				}
+				return createResult();
 			}
 
-			return false;
+			return Result{};
 		}
 
 		/**
@@ -532,8 +546,8 @@ namespace ve {
 		 * \param rhs			The right-hand side operand.
 		 * \return				Returns false.
 		 **/
-		virtual bool						operator-=(const Result& rhs) override {
-			return false;
+		virtual Result						operator-=(const Result& rhs) override {
+			return Result{};
 		}
 
 		/**
@@ -543,7 +557,7 @@ namespace ve {
 		 * \param rhs			The right-hand side operand indicating the repeat count.
 		 * \return				Returns true if successful, false otherwise.
 		 **/
-		virtual bool						operator*=(const Result& rhs) override {
+		virtual Result						operator*=(const Result& rhs) override {
 			uint64_t count = 0;
 			
 			if (rhs.type == NumericConstant::Unsigned) {
@@ -553,16 +567,16 @@ namespace ve {
 				count = static_cast<uint64_t>(rhs.value.intVal);
 			}
 			else {
-				return false;
+				return Result{};
 			}
 
 			if (count == 0) {
 				buffer.clear();
 				charCount = 0;
-				return true;
+				return createResult();
 			}
 			else if (count == 1) {
-				return true;
+				return createResult();
 			}
 
 			size_t originalSize = buffer.size();
@@ -573,7 +587,7 @@ namespace ve {
 			}
 			charCount *= count;
 
-			return true;
+			return createResult();
 		}
 
 		/**
@@ -582,8 +596,8 @@ namespace ve {
 		 * \param rhs			The right-hand side operand.
 		 * \return				Returns false.
 		 **/
-		virtual bool						operator/=(const Result& rhs) override {
-			return false;
+		virtual Result						operator/=(const Result& rhs) override {
+			return Result{};
 		}
 
 		/**
@@ -592,8 +606,8 @@ namespace ve {
 		 * \param rhs			The right-hand side operand.
 		 * \return				Returns false.
 		 **/
-		virtual bool						operator%=(const Result& rhs) override {
-			return false;
+		virtual Result						operator%=(const Result& rhs) override {
+			return Result{};
 		}
 
 		/**
@@ -602,8 +616,8 @@ namespace ve {
 		 * \param rhs			The right-hand side operand.
 		 * \return				Returns false.
 		 **/
-		virtual bool						operator<<=(const Result& rhs) override {
-			return false;
+		virtual Result						operator<<=(const Result& rhs) override {
+			return Result{};
 		}
 
 		/**
@@ -612,8 +626,8 @@ namespace ve {
 		 * \param rhs			The right-hand side operand.
 		 * \return				Returns false.
 		 **/
-		virtual bool						operator>>=(const Result& rhs) override {
-			return false;
+		virtual Result						operator>>=(const Result& rhs) override {
+			return Result{};
 		}
 
 		/**
@@ -622,8 +636,8 @@ namespace ve {
 		 * \param rhs			The right-hand side operand.
 		 * \return				Returns false.
 		 **/
-		virtual bool						operator&=(const Result& rhs) override {
-			return false;
+		virtual Result						operator&=(const Result& rhs) override {
+			return Result{};
 		}
 
 		/**
@@ -632,8 +646,8 @@ namespace ve {
 		 * \param rhs			The right-hand side operand.
 		 * \return				Returns false.
 		 **/
-		virtual bool						operator|=(const Result& rhs) override {
-			return false;
+		virtual Result						operator|=(const Result& rhs) override {
+			return Result{};
 		}
 
 		/**
@@ -642,8 +656,8 @@ namespace ve {
 		 * \param rhs			The right-hand side operand.
 		 * \return				Returns false.
 		 **/
-		virtual bool						operator^=(const Result& rhs) override {
-			return false;
+		virtual Result						operator^=(const Result& rhs) override {
+			return Result{};
 		}
 
 
@@ -681,6 +695,26 @@ namespace ve {
 		 * \return				Returns a Result containing the new extracted String slice.
 		 **/
 		virtual Result						arrayAccessEx(int64_t idx0, int64_t idx1, uint32_t mask) override;
+
+		/**
+		 * Assigns a value directly to a specified index, modifying the string in-place.
+		 *
+		 * \param index			The zero-based or negative offset index.
+		 * \param rhs			The result containing the code point or string to insert.
+		 * \return				Returns the assigned value on success, or Invalid on failure.
+		 **/
+		virtual Result						arrayAssign(int64_t index, const Result& rhs) override;
+
+		/**
+		 * Assigns a value or merges a string into a sliced range, modifying the string in-place.
+		 *
+		 * \param startIdx		The starting index of the slice.
+		 * \param endIdx		The ending index of the slice.
+		 * \param flags			Bitmask defining slice boundary rules.
+		 * \param rhs			The result containing the string or code point to merge.
+		 * \return				Returns the assigned value on success, or Invalid on failure.
+		 **/
+		virtual Result						arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) override;
 
 		/**
 		 * Serializes the string into a wide string representation.
@@ -1134,6 +1168,22 @@ namespace ve {
 		 * \return				Returns a new String object.
 		 **/
 		String*								zfill(ExecutionContext* ctx, size_t width) const;
+
+		/**
+		 * Retrieves the character code point at the specified index.
+		 *
+		 * \param index			The zero-based or negative offset index.
+		 * \return				Returns a Result containing the code point, or Invalid if out of bounds.
+		 **/
+		Result								at(int64_t index) const;
+
+		/**
+		 * Pushes a string expression to the back of the string.
+		 * 
+		 * \param result		The result to push.
+		 * \return				Returns true if the item was added. False indicates a memory failure or incompatible type.
+		 **/
+		bool								pushBack(const Result& result);
 		
 		/**
 		 * Internal helper to fetch a UTF-32 code point at a linear index.
