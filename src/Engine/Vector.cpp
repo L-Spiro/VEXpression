@@ -202,9 +202,19 @@ namespace ve {
 		Vector* newVec = context->allocateObject<Vector>();
 		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::SUB));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->elements.push_back(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SUB));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::SUB));
+			}
 		}
 
 		return newVec->createResult();
@@ -222,9 +232,19 @@ namespace ve {
 		Vector* newVec = context->allocateObject<Vector>();
 		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::MUL));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->elements.push_back(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::MUL));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::MUL));
+			}
 		}
 
 		return newVec->createResult();

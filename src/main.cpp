@@ -59,8 +59,9 @@ int main() {
 	ve::ExecutionContext context;
 	auto Cool = HUGE_VALF / 2;
 	
-	std::u8string testExprU8 = std::u8string( u8"Cnt = 0;a = {};for ( I = 0; I < 0xFFFFF; ++I ) { if ( isprintable( I ) ) { a += I; Cnt++; } }\"{} is {} characters long. Cnt: {}.\".format(a, a.size(), a[12:13]); return 67\r\n"
-"//a.replace(\"H\", \"‘\")");
+	std::u8string testExprU8 = std::u8string( u8"Y = linspace(0.0, 1.0, 99999999, true);\r\n"
+	u8"Y = sqrt( 1 - Y * Y );\r\n"
+	u8"simpson( Y, 1.0 / (Y.size() - 1) ) * 4" );
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";

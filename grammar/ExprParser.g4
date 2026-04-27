@@ -77,8 +77,10 @@ constant
     | float_constant
     | string_constant
     | char_constant
+    | bool_constant
     ;
 
+bool_constant    : KW_TRUE | KW_FALSE ;
 puredec_constant : PUREDEC_CONSTANT ;
 bin_constant     : BIN_CONSTANT ;
 oct_constant     : OCT_CONSTANT ;

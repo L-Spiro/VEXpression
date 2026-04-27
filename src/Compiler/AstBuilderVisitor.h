@@ -879,6 +879,26 @@ namespace ve {
 		// Constant Node Visitors
 		// =========================================================================
 		/**
+		 * Visits a boolean constant node in the AST, evaluates its logical value, and adds it to the context.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The parser context containing the boolean token.
+		 * \return			Returns an std::any containing the allocated node reference/index.
+		 **/
+		virtual std::any			visitBool_constant(ExprParser::Bool_constantContext* ctx) override {
+			Result res;
+
+			if (ctx->KW_TRUE()) {
+				res = Result::make(true);
+			}
+			else {
+				res = Result::make(false);
+			}
+			
+			return context.addNode<ConstantNode>(res);
+		}
+
+		/**
 		 * Visits a pure decimal constant node in the AST, evaluates its numeric value, and adds it to the context.
 		 * Must be called within a try/catch block.
 		 *

@@ -54,6 +54,7 @@ namespace ve {
 		std::vector<ParameterDef>	parameters;
 		IntrinsicCallback			callback = nullptr;
 		bool						variadic = false;
+		bool						operateOnVectorElements = false;
 	};
 
 }	// namespace ve

@@ -521,6 +521,28 @@ namespace ve {
 			catch (...) { return false; }
 		}
 
+		/**
+		 * Gives direct access to an array element. Misuse can cause bugs. Index is not verified.
+		 * 
+		 * \param idx			The index of the element being accessed.
+		 * \return				Returns a reference to the requested item.
+		 **/
+		Result &							directAccess(size_t idx) { return elements[idx]; }
+
+		/**
+		 * Resizes the vector to the given length.  Each new element is invalid initially.
+		 * 
+		 * \param size			The new length of the vector.
+		 * \return				Returns false if the resize fails.
+		 **/
+		bool								resize(size_t size) {
+			try {
+				elements.resize(size);
+				return true;
+			}
+			catch (...) { return false; }
+		}
+
 	protected :
 		// == Members.
 		std::vector<Result>					elements;

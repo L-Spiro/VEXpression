@@ -3408,6 +3408,807 @@ namespace ve {
 			
 			return Result::make(Math::linearToCrtProper(val, lw, b));
 		}
+
+
+		// =======================================================================================================
+		// SCIPY BRIDGES
+		// =======================================================================================================
+		/**
+		 * Bridge for Math::simpson1D and Math::simpsonStrided.
+		 * Dynamically identifies and routes to the correct Simpson integration overload.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the integrated value.
+		 **/
+		static Result		simpsonBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || (args.size() != 1 && args.size() != 2 && args.size() != 4 && args.size() != 5)) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			// The first argument must always be the Y array.
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> yVals;
+			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			// Overload 1: simpson(y) -> defaults to dx = 1.0
+			if (args.size() == 1) {
+				return Result::make(Math::simpson1D(yVals));
+			}
+
+			// Overload 2: simpson(y, dx) OR simpson(y, xArray)
+			if (args.size() == 2) {
+				if (args[1].type == NumericConstant::Object && args[1].value.objectVal && (args[1].value.objectVal->type() & BuiltInType_Vector)) {
+					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
+					std::vector<double> xVals;
+					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					return Result::make(Math::simpson1D(yVals, xVals));
+				}
+				else if (args[1].isPrimitive()) {
+					double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+					return Result::make(Math::simpson1D(yVals, dx));
+				}
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			// Overload 3: simpson(y, start, count, stride) OR simpson(y, start, stride, xArray)
+			if (args.size() == 4) {
+				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+				
+				if (args[3].type == NumericConstant::Object && args[3].value.objectVal && (args[3].value.objectVal->type() & BuiltInType_Vector)) {
+					size_t stride = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+					Vector* xVec = static_cast<Vector*>(args[3].value.objectVal);
+					std::vector<double> xVals;
+					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					return Result::make(Math::simpsonStrided(yVals, start, stride, xVals));
+				}
+				else if (args[2].isPrimitive() && args[3].isPrimitive()) {
+					size_t count = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+					size_t stride = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Signed).value.intVal);
+					return Result::make(Math::simpsonStrided(yVals, start, count, stride));
+				}
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			// Overload 4: simpson(y, start, count, stride, dx)
+			if (args.size() == 5) {
+				if (!args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive() || !args[4].isPrimitive()) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				
+				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+				size_t count = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+				size_t stride = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Signed).value.intVal);
+				double dx = ctx->convertResult(args[4], NumericConstant::Floating).value.doubleVal;
+				
+				return Result::make(Math::simpsonStrided(yVals, start, count, stride, dx));
+			}
+
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Math::cumulativeSimpson1D.
+		 * Dynamically identifies and routes to the correct cumulative Simpson integration overload.
+		 * Returns a new Vector containing the cumulative integrals.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new integrated Vector.
+		 **/
+		static Result		cumulativeSimpsonBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args.size() > 3) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			// The first argument must always be the Y array.
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> yVals;
+			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			std::vector<double> outVals;
+
+			// Overload 1: cumulative_simpson(y) -> defaults to dx = 1.0
+			if (args.size() == 1) {
+				outVals = Math::cumulativeSimpson1D(yVals);
+			}
+			// Overload 2 & 3: cumulative_simpson(y, dx) OR cumulative_simpson(y, xArray)
+			else if (args.size() == 2) {
+				if (args[1].type == NumericConstant::Object && args[1].value.objectVal && (args[1].value.objectVal->type() & BuiltInType_Vector)) {
+					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
+					std::vector<double> xVals;
+					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					outVals = Math::cumulativeSimpson1D(yVals, xVals);
+				}
+				else if (args[1].isPrimitive()) {
+					double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+					outVals = Math::cumulativeSimpson1D(yVals, dx);
+				} 
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			// Overload 4 & 5: cumulative_simpson(y, dx, initial) OR cumulative_simpson(y, xArray, initial)
+			else if (args.size() == 3) {
+				if (!args[2].isPrimitive()) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				
+				double initial = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+
+				if (args[1].type == NumericConstant::Object && args[1].value.objectVal && (args[1].value.objectVal->type() & BuiltInType_Vector)) {
+					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
+					std::vector<double> xVals;
+					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					outVals = Math::cumulativeSimpson1D(yVals, xVals, initial);
+				}
+				else if (args[1].isPrimitive()) {
+					double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+					outVals = Math::cumulativeSimpson1D(yVals, dx, initial);
+				} 
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+
+			// Allocate the resulting script Vector and convert the std::vector back into it.
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec || !resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::trapezoid1D and Math::trapezoidStrided.
+		 * Dynamically identifies and routes to the correct trapezoid integration overload.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the integrated scalar value.
+		 **/
+		static Result		trapezoidBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || (args.size() != 1 && args.size() != 2 && args.size() != 4 && args.size() != 5)) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			// The first argument must always be the Y array.
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> yVals;
+			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			// Overload 1: trapezoid(y) -> defaults to dx = 1.0
+			if (args.size() == 1) {
+				return Result::make(Math::trapezoid1D(yVals));
+			}
+
+			// Overload 2: trapezoid(y, dx) OR trapezoid(y, xArray)
+			if (args.size() == 2) {
+				if (args[1].type == NumericConstant::Object && args[1].value.objectVal && (args[1].value.objectVal->type() & BuiltInType_Vector)) {
+					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
+					std::vector<double> xVals;
+					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					return Result::make(Math::trapezoid1D(yVals, xVals));
+				}
+				else if (args[1].isPrimitive()) {
+					double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+					return Result::make(Math::trapezoid1D(yVals, dx));
+				}
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			// Overload 3: trapezoid(y, start, count, stride) OR trapezoid(y, start, stride, xArray)
+			if (args.size() == 4) {
+				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+				
+				if (args[3].type == NumericConstant::Object && args[3].value.objectVal && (args[3].value.objectVal->type() & BuiltInType_Vector)) {
+					size_t stride = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+					Vector* xVec = static_cast<Vector*>(args[3].value.objectVal);
+					std::vector<double> xVals;
+					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					return Result::make(Math::trapezoidStrided(yVals, start, stride, xVals));
+				}
+				else if (args[2].isPrimitive() && args[3].isPrimitive()) {
+					size_t count = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+					size_t stride = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Signed).value.intVal);
+					return Result::make(Math::trapezoidStrided(yVals, start, count, stride));
+				}
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			// Overload 4: trapezoid(y, start, count, stride, dx)
+			if (args.size() == 5) {
+				if (!args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive() || !args[4].isPrimitive()) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				
+				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+				size_t count = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+				size_t stride = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Signed).value.intVal);
+				double dx = ctx->convertResult(args[4], NumericConstant::Floating).value.doubleVal;
+				
+				return Result::make(Math::trapezoidStrided(yVals, start, count, stride, dx));
+			}
+
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+		/**
+		 * Bridge for Math::cumulativeTrapezoid1D.
+		 * Dynamically identifies and routes to the correct cumulative trapezoid integration overload.
+		 * Returns a new Vector containing the cumulative integrals.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new integrated Vector.
+		 **/
+		static Result		cumulativeTrapezoidBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args.size() > 3) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			// The first argument must always be the Y array.
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> yVals;
+			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			std::vector<double> outVals;
+
+			// Overload 1: cumulative_trapezoid(y) -> defaults to dx = 1.0
+			if (args.size() == 1) {
+				outVals = Math::cumulativeTrapezoid1D(yVals);
+			}
+			// Overload 2 & 3: cumulative_trapezoid(y, dx) OR cumulative_trapezoid(y, xArray)
+			else if (args.size() == 2) {
+				if (args[1].type == NumericConstant::Object && args[1].value.objectVal && (args[1].value.objectVal->type() & BuiltInType_Vector)) {
+					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
+					std::vector<double> xVals;
+					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					outVals = Math::cumulativeTrapezoid1D(yVals, xVals);
+				}
+				else if (args[1].isPrimitive()) {
+					double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+					outVals = Math::cumulativeTrapezoid1D(yVals, dx);
+				} 
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+			// Overload 4 & 5: cumulative_trapezoid(y, dx, initial) OR cumulative_trapezoid(y, xArray, initial)
+			else if (args.size() == 3) {
+				if (!args[2].isPrimitive()) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				
+				double initial = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+
+				if (args[1].type == NumericConstant::Object && args[1].value.objectVal && (args[1].value.objectVal->type() & BuiltInType_Vector)) {
+					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
+					std::vector<double> xVals;
+					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
+						return Result{ .type = NumericConstant::Invalid };
+					}
+					outVals = Math::cumulativeTrapezoid1D(yVals, xVals, initial);
+				}
+				else if (args[1].isPrimitive()) {
+					double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+					outVals = Math::cumulativeTrapezoid1D(yVals, dx, initial);
+				} 
+				else {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+			}
+
+			// Allocate the resulting script Vector and convert the std::vector back into it.
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::romb1D and Math::rombStrided.
+		 * Dynamically identifies and routes to the correct Romberg integration overload.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the integrated scalar value.
+		 **/
+		static Result		rombBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || (args.size() != 1 && args.size() != 2 && args.size() != 4 && args.size() != 5)) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			// The first argument must always be the Y array.
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> yVals;
+			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			// Overload 1: romb(y) -> defaults to dx = 1.0
+			if (args.size() == 1) {
+				return Result::make(Math::romb1D(yVals));
+			}
+
+			// Overload 2: romb(y, dx)
+			if (args.size() == 2) {
+				if (!args[1].isPrimitive()) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+				return Result::make(Math::romb1D(yVals, dx));
+			}
+
+			// Overload 3: romb(y, start, count, stride)
+			if (args.size() == 4) {
+				if (!args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive()) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+				size_t count = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+				size_t stride = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Signed).value.intVal);
+				
+				return Result::make(Math::rombStrided(yVals, start, count, stride));
+			}
+
+			// Overload 4: romb(y, start, count, stride, dx)
+			if (args.size() == 5) {
+				if (!args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive() || !args[4].isPrimitive()) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+				size_t count = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+				size_t stride = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Signed).value.intVal);
+				double dx = ctx->convertResult(args[4], NumericConstant::Floating).value.doubleVal;
+				
+				return Result::make(Math::rombStrided(yVals, start, count, stride, dx));
+			}
+
+			return Result{ .type = NumericConstant::Invalid };
+		}
+
+
+		// =======================================================================================================
+		// NUMPY BRIDGES
+		// =======================================================================================================
+		/**
+		 * Bridge for Math::linspace.
+		 * Dynamically identifies and routes to the correct linspace overload, handling default arguments.
+		 * Returns a new Vector containing the generated sequence.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		linspaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args.size() > 4) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			for (const auto& arg : args) {
+				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			}
+
+			double start = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double stop = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			
+			size_t num = 50;
+			if (args.size() >= 3) {
+				num = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+			}
+
+			bool endpoint = true;
+			if (args.size() == 4) {
+				endpoint = ctx->convertResult(args[3], NumericConstant::Signed).value.intVal != 0;
+			}
+
+			// Generate the sequence (we leave the step pointer out as it is unnecessary for the script return).
+			std::vector<double> outVals = Math::linspace<double>(start, stop, num, endpoint, nullptr);
+
+			// Allocate the resulting script Vector and convert the std::vector back into it.
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec || !resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::arange.
+		 * Dynamically identifies and routes to the correct arange overload based on argument count.
+		 * Returns a new Vector containing the generated sequence.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		arangeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args.size() > 3) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			for (const auto& arg : args) {
+				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			}
+
+			std::vector<double> outVals;
+
+			// Overload 1: arange(stop)
+			if (args.size() == 1) {
+				double stop = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+				outVals = Math::arange<double>(stop);
+			}
+			// Overload 2: arange(start, stop)
+			else if (args.size() == 2) {
+				double start = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+				double stop = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+				outVals = Math::arange<double, double, double, double>(start, stop, 1.0);
+			}
+			// Overload 3: arange(start, stop, step)
+			else if (args.size() == 3) {
+				double start = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+				double stop = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+				double step = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+				
+				// Prevent C++ std::invalid_argument throw and handle it gracefully for the script context.
+				if (step == 0.0) {
+					return Result{ .type = NumericConstant::Invalid };
+				}
+				outVals = Math::arange<double, double, double, double>(start, stop, step);
+			}
+
+			// Allocate the resulting script Vector and convert the std::vector back into it.
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec || !resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::logspace.
+		 * Dynamically identifies and routes to the correct logspace overload, handling default arguments.
+		 * Returns a new Vector containing the generated log-scaled sequence.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		logspaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args.size() > 5) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			for (const auto& arg : args) {
+				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			}
+
+			double start = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double stop = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			
+			size_t num = 50;
+			if (args.size() >= 3) {
+				num = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+			}
+
+			bool endpoint = true;
+			if (args.size() >= 4) {
+				endpoint = ctx->convertResult(args[3], NumericConstant::Signed).value.intVal != 0;
+			}
+
+			double base = 10.0;
+			if (args.size() == 5) {
+				base = ctx->convertResult(args[4], NumericConstant::Floating).value.doubleVal;
+			}
+
+			// Generate the log-scaled sequence.
+			std::vector<double> outVals = Math::logspace<double, double, double>(start, stop, num, endpoint, base);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec || !resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::geomspace.
+		 * Dynamically identifies and routes to the correct geomspace overload, handling default arguments.
+		 * Returns a new Vector containing the generated geometric progression.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		geomspaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args.size() > 4) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			for (const auto& arg : args) {
+				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			}
+
+			double start = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double stop = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			
+			size_t num = 50;
+			if (args.size() >= 3) {
+				num = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+			}
+
+			bool endpoint = true;
+			if (args.size() == 4) {
+				endpoint = ctx->convertResult(args[3], NumericConstant::Signed).value.intVal != 0;
+			}
+
+			// Generate the geometric progression sequence.
+			std::vector<double> outVals = Math::geomspace<double>(start, stop, num, endpoint);
+
+			// Allocate the resulting script Vector and convert the std::vector back into it.
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		// =======================================================================================================
+		// ARRAY CREATION BRIDGES
+		// =======================================================================================================
+
+		/**
+		 * Bridge for Math::ones.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new Vector filled with ones.
+		 **/
+		static Result		onesBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1 || !args[0].isPrimitive()) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
+			std::vector<double> outVals = Math::ones<double>(count);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::onesLike.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new Vector filled with ones matching the reference.
+		 **/
+		static Result		onesLikeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			Vector* refVec = static_cast<Vector*>(args[0].value.objectVal);
+
+			std::vector<double> outVals = Math::ones<double>(refVec->arrayLength());
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::zeros.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new Vector filled with zeros.
+		 **/
+		static Result		zerosBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1 || !args[0].isPrimitive()) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
+			std::vector<double> outVals = Math::zeros<double>(count);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::zerosLike.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new Vector filled with zeros matching the reference.
+		 **/
+		static Result		zerosLikeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 1 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			Vector* refVec = static_cast<Vector*>(args[0].value.objectVal);
+
+			std::vector<double> outVals = Math::zeros<double>(refVec->arrayLength());
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::full.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new Vector filled with the constant value.
+		 **/
+		static Result		fullBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { 
+				return Result{ .type = NumericConstant::Invalid }; 
+			}
+
+			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
+			double fillValue = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			
+			std::vector<double> outVals = Math::full<double>(count, fillValue);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::fullLike.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a Result containing the new Vector filled with the constant value matching the reference array.
+		 **/
+		static Result		fullLikeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector) || !args[1].isPrimitive()) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			Vector* refVec = static_cast<Vector*>(args[0].value.objectVal);
+			double fillValue = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			
+			std::vector<double> outVals = Math::full<double>(refVec->arrayLength(), fillValue);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{ .type = NumericConstant::Invalid };
+			}
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{ .type = NumericConstant::Invalid };
+			}
+
+			return resVec->createResult();
+		}
 	};
 
 }	// namespace ve

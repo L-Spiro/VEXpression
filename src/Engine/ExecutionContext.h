@@ -267,11 +267,12 @@ namespace ve {
 		/**
 		 * Registers a new built-in function to the execution context.
 		 * 
-		 * \param name			The string identifier used in the script.
-		 * \param params		A vector defining the expected type, name, and description of each argument.
-		 * \param callback		The C++ function pointer to execute at runtime.
+		 * \param name				The string identifier used in the script.
+		 * \param params			A vector defining the expected type, name, and description of each argument.
+		 * \param callback			The C++ function pointer to execute at runtime.
+		 * \param vectorElements	If true, the function can be called on each element of a vector instead of on a single non-vector parameter.
 		 **/
-		void							registerFunction(const char* name, const std::vector<ParameterDef>& params, IntrinsicCallback callback) {
+		void							registerFunction(const char* name, const std::vector<ParameterDef>& params, IntrinsicCallback callback, bool vectorElements) {
 			try {
 				FunctionDef def;
 				def.name = name;
@@ -279,6 +280,7 @@ namespace ve {
 				def.parameters = params;
 				def.callback = callback;
 				def.variadic = params.size() && params[params.size()-1].type == DataType::Variadic;
+				def.operateOnVectorElements = vectorElements;
 
 				FunctionSignature sig = { name, params.size(), def.variadic };
 				registeredFunctions[sig] = def;
@@ -361,6 +363,7 @@ namespace ve {
 		 * \return				Returns true if the object was found and deleted, false otherwise.
 		 **/
 		bool							deallocateObject(Object* obj) {
+			if (!obj) { return true; }
 			// Reverse search because it is most likely the immediate deletion of a temporary object.
 			for (size_t i = objects.size(); i--; ) {
 				if (objects[i].get() == obj) {

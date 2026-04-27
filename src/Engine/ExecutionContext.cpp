@@ -276,101 +276,101 @@ namespace ve {
 	/** The static list of built-in functions. */
 	const FunctionDef ExecutionContext::builtInFunctions[] = {
 		// == Pow
-		{ "pow", StringId::Desc_Pow, { { DataType::Double, "x", StringId::Desc_MathParam_PowX }, { DataType::Double, "y", StringId::VE_STR_POW_PARAM_Y } }, IntrinsicBridges::powBridge },
-		{ "powf", StringId::Desc_Pow, { { DataType::Float, "x", StringId::Desc_MathParam_PowX }, { DataType::Float, "y", StringId::VE_STR_POW_PARAM_Y } }, IntrinsicBridges::powfBridge },
+		{ "pow", StringId::Desc_Pow, { { DataType::Double, "x", StringId::Desc_MathParam_PowX }, { DataType::Double, "y", StringId::VE_STR_POW_PARAM_Y } }, IntrinsicBridges::powBridge, false },
+		{ "powf", StringId::Desc_Pow, { { DataType::Float, "x", StringId::Desc_MathParam_PowX }, { DataType::Float, "y", StringId::VE_STR_POW_PARAM_Y } }, IntrinsicBridges::powfBridge, false },
 
 		// == Trigonometry
-		{ "sin", StringId::Desc_Sin, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinBridge },
-		{ "sinf", StringId::Desc_Sin, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinfBridge },
+		{ "sin", StringId::Desc_Sin, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinBridge, false, true },
+		{ "sinf", StringId::Desc_Sin, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinfBridge, false, true },
 		
-		{ "cos", StringId::Desc_Cos, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::cosBridge },
-		{ "cosf", StringId::Desc_Cos, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::cosfBridge },
+		{ "cos", StringId::Desc_Cos, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::cosBridge, false, true },
+		{ "cosf", StringId::Desc_Cos, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::cosfBridge, false, true },
 		
-		{ "tan", StringId::Desc_Tan, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanBridge },
-		{ "tanf", StringId::Desc_Tan, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanfBridge },
+		{ "tan", StringId::Desc_Tan, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanBridge, false, true },
+		{ "tanf", StringId::Desc_Tan, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanfBridge, false, true },
 
 		// == Inverse Trigonometry
-		{ "asin", StringId::Desc_Asin, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinBridge },
-		{ "asinf", StringId::Desc_Asin, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinfBridge },
+		{ "asin", StringId::Desc_Asin, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinBridge, false, true },
+		{ "asinf", StringId::Desc_Asin, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinfBridge, false, true },
 		
-		{ "acos", StringId::Desc_Acos, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acosBridge },
-		{ "acosf", StringId::Desc_Acos, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acosfBridge },
+		{ "acos", StringId::Desc_Acos, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acosBridge, false, true },
+		{ "acosf", StringId::Desc_Acos, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acosfBridge, false, true },
 		
-		{ "atan", StringId::Desc_Atan, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanBridge },
-		{ "atanf", StringId::Desc_Atan, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanfBridge },
+		{ "atan", StringId::Desc_Atan, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanBridge, false, true },
+		{ "atanf", StringId::Desc_Atan, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanfBridge, false, true },
 		
 		{ "atan2", StringId::Desc_Atan2, { { DataType::Double, "y", StringId::Desc_MathParam_Y }, { DataType::Double, "x", StringId::Desc_MathParam_X } }, IntrinsicBridges::atan2Bridge },
 		{ "atan2f", StringId::Desc_Atan2, { { DataType::Float, "y", StringId::Desc_MathParam_Y }, { DataType::Float, "x", StringId::Desc_MathParam_X } }, IntrinsicBridges::atan2fBridge },
 
 		// == Exponential & Logarithmic
-		{ "exp", StringId::Desc_Exp, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expBridge },
-		{ "expf", StringId::Desc_Exp, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expfBridge },
+		{ "exp", StringId::Desc_Exp, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expBridge, false, true },
+		{ "expf", StringId::Desc_Exp, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expfBridge, false, true },
 		
-		{ "log", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logBridge },
-		{ "logf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logfBridge },
+		{ "log", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logBridge, false, true },
+		{ "logf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logfBridge, false, true },
 		
-		{ "log10", StringId::Desc_Log10, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log10Bridge },
-		{ "log10f", StringId::Desc_Log10, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log10fBridge },
+		{ "log10", StringId::Desc_Log10, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log10Bridge, false, true },
+		{ "log10f", StringId::Desc_Log10, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log10fBridge, false, true },
 
 		// == Roots
-		{ "sqrt", StringId::Desc_Sqrt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::sqrtBridge },
-		{ "sqrtf", StringId::Desc_Sqrt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::sqrtfBridge },
+		{ "sqrt", StringId::Desc_Sqrt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::sqrtBridge, false, true },
+		{ "sqrtf", StringId::Desc_Sqrt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::sqrtfBridge, false, true },
 		
-		{ "cbrt", StringId::Desc_Cbrt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::cbrtBridge },
-		{ "cbrtf", StringId::Desc_Cbrt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::cbrtfBridge },
+		{ "cbrt", StringId::Desc_Cbrt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::cbrtBridge, false, true },
+		{ "cbrtf", StringId::Desc_Cbrt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::cbrtfBridge, false, true },
 
 		// == Rounding & Absolute Value
-		{ "ceil", StringId::Desc_Ceil, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ceilBridge },
-		{ "ceilf", StringId::Desc_Ceil, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ceilfBridge },
+		{ "ceil", StringId::Desc_Ceil, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ceilBridge, false, true },
+		{ "ceilf", StringId::Desc_Ceil, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ceilfBridge, false, true },
 		
-		{ "floor", StringId::Desc_Floor, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::floorBridge },
-		{ "floorf", StringId::Desc_Floor, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::floorfBridge },
+		{ "floor", StringId::Desc_Floor, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::floorBridge, false, true },
+		{ "floorf", StringId::Desc_Floor, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::floorfBridge, false, true },
 		
-		{ "abs", StringId::Desc_Abs, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::absBridge },
-		{ "fabs", StringId::Desc_Abs, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::fabsBridge },
-		{ "fabsf", StringId::Desc_Abs, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::fabsfBridge },
+		{ "abs", StringId::Desc_Abs, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::absBridge, false, true },
+		{ "fabs", StringId::Desc_Abs, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::fabsBridge, false, true },
+		{ "fabsf", StringId::Desc_Abs, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::fabsfBridge, false, true },
 
 		// == Hyperbolics
-		{ "cosh", StringId::Desc_CosH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::coshBridge },
-		{ "coshf", StringId::Desc_CosH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::coshfBridge },
-		{ "sinh", StringId::Desc_SinH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinhBridge },
-		{ "sinhf", StringId::Desc_SinH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinhfBridge },
-		{ "tanh", StringId::Desc_TanH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanhBridge },
-		{ "tanhf", StringId::Desc_TanH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanhfBridge },
-		{ "acosh", StringId::Desc_AcosH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acoshBridge },
-		{ "acoshf", StringId::Desc_AcosH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acoshfBridge },
-		{ "asinh", StringId::Desc_AsinH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinhBridge },
-		{ "asinhf", StringId::Desc_AsinH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinhfBridge },
-		{ "atanh", StringId::Desc_AtanH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanhBridge },
-		{ "atanhf", StringId::Desc_AtanH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanhfBridge },
+		{ "cosh", StringId::Desc_CosH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::coshBridge, false, true },
+		{ "coshf", StringId::Desc_CosH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::coshfBridge, false, true },
+		{ "sinh", StringId::Desc_SinH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinhBridge, false, true },
+		{ "sinhf", StringId::Desc_SinH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::sinhfBridge, false, true },
+		{ "tanh", StringId::Desc_TanH, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanhBridge, false, true },
+		{ "tanhf", StringId::Desc_TanH, { { DataType::Float, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::tanhfBridge, false, true },
+		{ "acosh", StringId::Desc_AcosH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acoshBridge, false, true },
+		{ "acoshf", StringId::Desc_AcosH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::acoshfBridge, false, true },
+		{ "asinh", StringId::Desc_AsinH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinhBridge, false, true },
+		{ "asinhf", StringId::Desc_AsinH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::asinhfBridge, false, true },
+		{ "atanh", StringId::Desc_AtanH, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanhBridge, false, true },
+		{ "atanhf", StringId::Desc_AtanH, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::atanhfBridge, false, true },
 
 		// == Extended Exponents & Logs
-		{ "log2", StringId::Desc_Log2, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log2Bridge },
-		{ "log2f", StringId::Desc_Log2, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log2fBridge },
-		{ "exp2", StringId::Desc_Exp2, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::exp2Bridge },
-		{ "exp2f", StringId::Desc_Exp2, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::exp2fBridge },
-		{ "expm1", StringId::Desc_ExpM1, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expm1Bridge },
-		{ "expm1f", StringId::Desc_ExpM1, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expm1fBridge },
-		{ "ilogb", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ilogbBridge },
-		{ "ilogbf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ilogbfBridge },
-		{ "log1p", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log1pBridge },
-		{ "log1pf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log1pfBridge },
-		{ "logb", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logbBridge },
-		{ "logbf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logbfBridge },
+		{ "log2", StringId::Desc_Log2, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log2Bridge, false, true },
+		{ "log2f", StringId::Desc_Log2, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log2fBridge, false, true },
+		{ "exp2", StringId::Desc_Exp2, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::exp2Bridge, false, true },
+		{ "exp2f", StringId::Desc_Exp2, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::exp2fBridge, false, true },
+		{ "expm1", StringId::Desc_ExpM1, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expm1Bridge, false, true },
+		{ "expm1f", StringId::Desc_ExpM1, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::expm1fBridge, false, true },
+		{ "ilogb", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ilogbBridge, false, true },
+		{ "ilogbf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::ilogbfBridge, false, true },
+		{ "log1p", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log1pBridge, false, true },
+		{ "log1pf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::log1pfBridge, false, true },
+		{ "logb", StringId::Desc_Log, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logbBridge, false, true },
+		{ "logbf", StringId::Desc_Log, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::logbfBridge, false, true },
 
 		// == Misc Math
 		{ "hypot", StringId::Desc_Hypot, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::hypotBridge },
 		{ "hypotf", StringId::Desc_Hypot, { { DataType::Float, "x", StringId::Desc_MathParam_X }, { DataType::Float, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::hypotfBridge },
-		{ "tgamma", StringId::Desc_TGamma, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::tgammaBridge },
-		{ "tgammaf", StringId::Desc_TGamma, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::tgammafBridge },
-		{ "lgamma", StringId::Desc_LGamma, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::lgammaBridge },
-		{ "lgammaf", StringId::Desc_LGamma, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::lgammafBridge },
-		{ "trunc", StringId::Desc_Trunc, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::truncBridge },
-		{ "truncf", StringId::Desc_Trunc, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::truncfBridge },
-		{ "round", StringId::Desc_Round, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::roundBridge },
-		{ "roundf", StringId::Desc_Round, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::roundfBridge },
-		{ "nearbyint", StringId::Desc_NearbyInt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::nearbyintBridge },
-		{ "nearbyintf", StringId::Desc_NearbyInt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::nearbyintfBridge },
+		{ "tgamma", StringId::Desc_TGamma, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::tgammaBridge, false, true },
+		{ "tgammaf", StringId::Desc_TGamma, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::tgammafBridge, false, true },
+		{ "lgamma", StringId::Desc_LGamma, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::lgammaBridge, false, true },
+		{ "lgammaf", StringId::Desc_LGamma, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::lgammafBridge, false, true },
+		{ "trunc", StringId::Desc_Trunc, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::truncBridge, false, true },
+		{ "truncf", StringId::Desc_Trunc, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::truncfBridge, false, true },
+		{ "round", StringId::Desc_Round, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::roundBridge, false, true },
+		{ "roundf", StringId::Desc_Round, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::roundfBridge, false, true },
+		{ "nearbyint", StringId::Desc_NearbyInt, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::nearbyintBridge, false, true },
+		{ "nearbyintf", StringId::Desc_NearbyInt, { { DataType::Float, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::nearbyintfBridge, false, true },
 
 		// == Mod / Remainder
 		{ "mod", StringId::Desc_Fmod, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y } }, IntrinsicBridges::fmodBridge },
@@ -394,39 +394,39 @@ namespace ve {
 		{ "fma", StringId::Desc_Fma, { { DataType::Double, "x", StringId::Desc_MathParam_X }, { DataType::Double, "y", StringId::Desc_MathParam_Y }, { DataType::Double, "z", StringId::Desc_MathParam_Z } }, IntrinsicBridges::fmaBridge },
 		
 		// == Type Identification / Logic
-		{ "isnan", StringId::Desc_IsNan, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::isnanBridge },
-		{ "isinf", StringId::Desc_IsInf, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::isinfBridge },
+		{ "isnan", StringId::Desc_IsNan, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::isnanBridge, false, true },
+		{ "isinf", StringId::Desc_IsInf, { { DataType::Double, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::isinfBridge, false, true },
 
 		// == Custom Helpers
 		{ "rand", StringId::Desc_Rand, { }, IntrinsicBridges::randBridge },
-		{ "deg", StringId::Desc_Deg, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::degBridge },
-		{ "rad", StringId::Desc_Rad, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::radBridge },
+		{ "deg", StringId::Desc_Deg, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::degBridge, false, true },
+		{ "rad", StringId::Desc_Rad, { { DataType::Double, "x", StringId::Desc_MathParam_Angle } }, IntrinsicBridges::radBridge, false, true },
 
 		// == Bit Manipulation (<bit>)
-		{ "byteswap16", StringId::Desc_ByteSwap16, { { DataType::UInt16, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap16Bridge },
-		{ "byteswap32", StringId::Desc_ByteSwap32, { { DataType::UInt32, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap32Bridge },
-		{ "byteswap64", StringId::Desc_ByteSwap, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap64Bridge },
-		{ "byteswap", StringId::Desc_ByteSwap, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap64Bridge },
-		{ "has_single_bit", StringId::Desc_HasSingleBit, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::has_single_bitBridge },
-		{ "bit_ceil", StringId::Desc_BitCeil, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_ceilBridge },
-		{ "bit_floor", StringId::Desc_BitFloor, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_floorBridge },
-		{ "bit_width", StringId::Desc_BitWidth, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_widthBridge },
+		{ "byteswap16", StringId::Desc_ByteSwap16, { { DataType::UInt16, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap16Bridge, false, true },
+		{ "byteswap32", StringId::Desc_ByteSwap32, { { DataType::UInt32, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap32Bridge, false, true },
+		{ "byteswap64", StringId::Desc_ByteSwap, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap64Bridge, false, true },
+		{ "byteswap", StringId::Desc_ByteSwap, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::byteswap64Bridge, false, true },
+		{ "has_single_bit", StringId::Desc_HasSingleBit, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::has_single_bitBridge, false, true },
+		{ "bit_ceil", StringId::Desc_BitCeil, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_ceilBridge, false, true },
+		{ "bit_floor", StringId::Desc_BitFloor, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_floorBridge, false, true },
+		{ "bit_width", StringId::Desc_BitWidth, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::bit_widthBridge, false, true },
 		{ "rotl", StringId::Desc_RotL, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val }, { DataType::Int32, "s", StringId::Desc_BitParamS } }, IntrinsicBridges::rotlBridge },
 		{ "rotr", StringId::Desc_RotR, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val }, { DataType::Int32, "s", StringId::Desc_BitParamS } }, IntrinsicBridges::rotrBridge },
-		{ "countl_zero", StringId::Desc_CountLZero, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countl_zeroBridge },
-		{ "countl_one", StringId::Desc_CountLOne, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countl_oneBridge },
-		{ "countr_zero", StringId::Desc_CountRZero, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countr_zeroBridge },
-		{ "countr_one", StringId::Desc_CountROne, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countr_oneBridge },
-		{ "popcount", StringId::Desc_PopCount, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::popcountBridge },
+		{ "countl_zero", StringId::Desc_CountLZero, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countl_zeroBridge, false, true },
+		{ "countl_one", StringId::Desc_CountLOne, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countl_oneBridge, false, true },
+		{ "countr_zero", StringId::Desc_CountRZero, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countr_zeroBridge, false, true },
+		{ "countr_one", StringId::Desc_CountROne, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::countr_oneBridge, false, true },
+		{ "popcount", StringId::Desc_PopCount, { { DataType::UInt64, "x", StringId::Desc_MathParam_Val } }, IntrinsicBridges::popcountBridge, false, true },
 
 		// == HTML
 		{ "htmlCount", StringId::Desc_HtmlCount, {}, IntrinsicBridges::htmlCountBridge },
-		{ "htmlName", StringId::Desc_HtmlName, { { DataType::Int64, "index", StringId::Desc_HtmlName_Index } }, IntrinsicBridges::htmlNameBridge },
-		{ "htmlChar", StringId::Desc_HtmlChar, { { DataType::Int64, "indexOrName", StringId::Desc_HtmlChar_Arg } }, IntrinsicBridges::htmlCharBridge },
+		{ "htmlName", StringId::Desc_HtmlName, { { DataType::Int64, "index", StringId::Desc_HtmlName_Index } }, IntrinsicBridges::htmlNameBridge, false, true },
+		{ "htmlChar", StringId::Desc_HtmlChar, { { DataType::Int64, "indexOrName", StringId::Desc_HtmlChar_Arg } }, IntrinsicBridges::htmlCharBridge, false, true },
 
 		// == Strings
-		{ "capitalize", StringId::Desc_String_Capitalize, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::capitalizeBridge },
-		{ "casefold", StringId::Desc_String_Casefold, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::casefoldBridge },
+		{ "capitalize", StringId::Desc_String_Capitalize, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::capitalizeBridge, false, true },
+		{ "casefold", StringId::Desc_String_Casefold, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::casefoldBridge, false, true },
 		{ "center", StringId::Desc_String_Center, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::centerBridge },
 		{ "center", StringId::Desc_String_Center, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width }, { DataType::Any, "fillchar", StringId::String_Param_FillChar } }, IntrinsicBridges::centerBridge },
 		{ "count", StringId::Desc_String_Count, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub } }, IntrinsicBridges::countBridge },
@@ -446,21 +446,21 @@ namespace ve {
 		{ "index", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub } }, IntrinsicBridges::findBridge },
 		{ "index", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start } }, IntrinsicBridges::findBridge },
 		{ "index", StringId::Desc_String_Find, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Any, "sub", StringId::String_Param_Sub }, { DataType::Any, "start", StringId::String_Param_Start }, { DataType::Any, "end", StringId::String_Param_End } }, IntrinsicBridges::findBridge },
-		{ "isalnum", StringId::Desc_String_IsAlnum, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isAlnumBridge },
-		{ "isalpha", StringId::Desc_String_IsAlpha, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isAlphaBridge },
-		{ "isascii", StringId::Desc_String_IsAscii, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isAsciiBridge },
-		{ "isdecimal", StringId::Desc_String_IsDecimal, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isDecimalBridge },
-		{ "isdigit", StringId::Desc_String_IsDigit, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isDigitBridge },
-		{ "isidentifier", StringId::Desc_String_IsIdentifier, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::isIdentifierBridge },
-		{ "isnumeric", StringId::Desc_String_IsNumeric, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isNumericBridge },
-		{ "isprintable", StringId::Desc_String_IsPrintable, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isPrintableBridge },
-		{ "isspace", StringId::Desc_String_IsSpace, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isSpaceBridge },
-		{ "istitle", StringId::Desc_String_IsTitle, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::isTitleBridge },
-		{ "isupper", StringId::Desc_String_IsUpper, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isUpperBridge },
+		{ "isalnum", StringId::Desc_String_IsAlnum, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isAlnumBridge, false, true },
+		{ "isalpha", StringId::Desc_String_IsAlpha, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isAlphaBridge, false, true },
+		{ "isascii", StringId::Desc_String_IsAscii, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isAsciiBridge, false, true },
+		{ "isdecimal", StringId::Desc_String_IsDecimal, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isDecimalBridge, false, true },
+		{ "isdigit", StringId::Desc_String_IsDigit, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isDigitBridge, false, true },
+		{ "isidentifier", StringId::Desc_String_IsIdentifier, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::isIdentifierBridge, false, true },
+		{ "isnumeric", StringId::Desc_String_IsNumeric, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isNumericBridge, false, true },
+		{ "isprintable", StringId::Desc_String_IsPrintable, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isPrintableBridge, false, true },
+		{ "isspace", StringId::Desc_String_IsSpace, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isSpaceBridge, false, true },
+		{ "istitle", StringId::Desc_String_IsTitle, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::isTitleBridge, false, true },
+		{ "isupper", StringId::Desc_String_IsUpper, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::isUpperBridge, false, true },
 		{ "ljust", StringId::Desc_String_LJust, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::ljustBridge },
 		{ "ljust", StringId::Desc_String_LJust, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width }, { DataType::Any, "fillchar", StringId::String_Param_Fillchar } }, IntrinsicBridges::ljustBridge },
-		{ "lower", StringId::Desc_String_Lower, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::lowerBridge },
-		{ "lstrip", StringId::Desc_String_LStrip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::lstripBridge },
+		{ "lower", StringId::Desc_String_Lower, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::lowerBridge, false, true },
+		{ "lstrip", StringId::Desc_String_LStrip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::lstripBridge, false, true },
 		{ "lstrip", StringId::Desc_String_LStrip, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "chars", StringId::String_Param_Chars } }, IntrinsicBridges::lstripBridge },
 		{ "removeprefix", StringId::Desc_String_RemovePrefix, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix } }, IntrinsicBridges::removePrefixBridge },
 		{ "removesuffix", StringId::Desc_String_RemoveSuffix, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "suffix", StringId::String_Param_Suffix_RemoveSuffix } }, IntrinsicBridges::removeSuffixBridge },
@@ -474,16 +474,16 @@ namespace ve {
 		{ "rindex", StringId::Desc_String_RFind, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "sub", StringId::String_Param_Sub_RFind }, { DataType::Integer, "start", StringId::String_Param_Start_RFind }, { DataType::Integer, "end", StringId::String_Param_End_RFind } }, IntrinsicBridges::rfindBridge },
 		{ "rjust", StringId::Desc_String_RJust, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::rjustBridge },
 		{ "rjust", StringId::Desc_String_RJust, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width }, { DataType::String, "fillchar", StringId::String_Param_Fillchar } }, IntrinsicBridges::rjustBridge },
-		{ "rstrip", StringId::Desc_String_RStrip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::rstripBridge },
+		{ "rstrip", StringId::Desc_String_RStrip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::rstripBridge, false, true },
 		{ "rstrip", StringId::Desc_String_RStrip, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "chars", StringId::String_Param_Chars } }, IntrinsicBridges::rstripBridge },
 		{ "startswith", StringId::Desc_String_StartsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix } }, IntrinsicBridges::startsWithBridge },
 		{ "startswith", StringId::Desc_String_StartsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix }, { DataType::Integer, "start", StringId::String_Param_Start } }, IntrinsicBridges::startsWithBridge },
 		{ "startswith", StringId::Desc_String_StartsWith, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "prefix", StringId::String_Param_Prefix }, { DataType::Integer, "start", StringId::String_Param_Start }, { DataType::Integer, "end", StringId::String_Param_End } }, IntrinsicBridges::startsWithBridge },
-		{ "strip", StringId::Desc_String_Strip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::stripBridge },
+		{ "strip", StringId::Desc_String_Strip, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::stripBridge, false, true },
 		{ "strip", StringId::Desc_String_Strip, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::String, "chars", StringId::String_Param_Chars } }, IntrinsicBridges::stripBridge },
-		{ "swapcase", StringId::Desc_String_SwapCase, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::swapcaseBridge },
-		{ "title", StringId::Desc_String_Title, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::titleBridge },
-		{ "upper", StringId::Desc_String_Upper, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::upperBridge },
+		{ "swapcase", StringId::Desc_String_SwapCase, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::swapcaseBridge, false, true },
+		{ "title", StringId::Desc_String_Title, { { DataType::String, "str", StringId::String_Param_Target } }, IntrinsicBridges::titleBridge, false, true },
+		{ "upper", StringId::Desc_String_Upper, { { DataType::Any, "str", StringId::String_Param_Target } }, IntrinsicBridges::upperBridge, false, true },
 		{ "zfill", StringId::Desc_String_ZFill, { { DataType::String, "str", StringId::String_Param_Target }, { DataType::Int64, "width", StringId::String_Param_Width } }, IntrinsicBridges::zfillBridge },
 
 		// == Strings/Vectors
@@ -496,9 +496,9 @@ namespace ve {
 		{ "min", StringId::Desc_Math_Min, { { DataType::Any, "x", StringId::Math_Param_X }, { DataType::Any, "y", StringId::Math_Param_Y } }, IntrinsicBridges::minBridge },
 		{ "max", StringId::Desc_Math_Max, { { DataType::Any, "x", StringId::Math_Param_X }, { DataType::Any, "y", StringId::Math_Param_Y } }, IntrinsicBridges::maxBridge },
 		{ "clamp", StringId::Desc_Math_Clamp, { { DataType::Any, "val", StringId::Math_Param_Val }, { DataType::Any, "minVal", StringId::Math_Param_Min }, { DataType::Any, "maxVal", StringId::Math_Param_Max } }, IntrinsicBridges::clampBridge },
-		{ "frac", StringId::Desc_Math_Frac, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::fracBridge },
+		{ "frac", StringId::Desc_Math_Frac, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::fracBridge, false, true },
 		{ "step", StringId::Desc_Math_Step, { { DataType::Double, "edge", StringId::Math_Param_Edge }, { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::stepBridge },
-		{ "sinc", StringId::Desc_Math_Sinc, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sincBridge },
+		{ "sinc", StringId::Desc_Math_Sinc, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sincBridge, false, true },
 		{ "relativeEpsilon", StringId::Desc_Math_RelativeEpsilon, { { DataType::Double, "left", StringId::Math_Param_Left }, { DataType::Double, "right", StringId::Math_Param_Right }, { DataType::Double, "epsilon", StringId::Math_Param_Epsilon } }, IntrinsicBridges::relativeEpsilonBridge },
 		{ "sinExact", StringId::Desc_Math_SinExact, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sinExactBridge },
 		{ "cosExact", StringId::Desc_Math_CosExact, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::cosExactBridge },
@@ -506,68 +506,125 @@ namespace ve {
 		//{ "lcmChecked", StringId::Desc_Math_LcmChecked, { { DataType::Integer, "x", StringId::Math_Param_X }, { DataType::Integer, "y", StringId::Math_Param_Y } }, IntrinsicBridges::lcmCheckedBridge },
 
 		// == Gamma Functions.
-		{ "linearToSRgb", StringId::Desc_Math_LinearToSRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSRgbBridge },
-		{ "sRgbToLinear", StringId::Desc_Math_SRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sRgbToLinearBridge },
-		{ "pow2_2ToLinear", StringId::Desc_Math_Pow2_2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::pow2_2ToLinearBridge },
-		{ "linearToPow2_2", StringId::Desc_Math_LinearToPow2_2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPow2_2Bridge },
-		{ "smpte240MToLinear", StringId::Desc_Math_Smpte240MToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte240MToLinearBridge },
-		{ "linearToSmpte240M", StringId::Desc_Math_LinearToSmpte240M, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte240MBridge },
-		{ "sLog2ToLinear", StringId::Desc_Math_SLog2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLog2ToLinearBridge },
-		{ "linearToSLog2", StringId::Desc_Math_LinearToSLog2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLog2Bridge },
-		{ "canonLogToLinear", StringId::Desc_Math_CanonLogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLogToLinearBridge },
-		{ "linearToCanonLog", StringId::Desc_Math_LinearToCanonLog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLogBridge },
-		{ "viperToLinear", StringId::Desc_Math_ViperToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::viperToLinearBridge },
-		{ "linearToViper", StringId::Desc_Math_LinearToViper, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToViperBridge },
-		{ "acesCgToLinear", StringId::Desc_Math_AcesCgToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::acesCgToLinearBridge },
-		{ "linearToAcesCg", StringId::Desc_Math_LinearToAcesCg, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAcesCgBridge },
-		{ "sRgbToLinearPrecise", StringId::Desc_Math_SRgbToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sRgbToLinearPreciseBridge },
-		{ "linearToSRgbPrecise", StringId::Desc_Math_LinearToSRgbPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSRgbPreciseBridge },
-		{ "colorLcdToLinear", StringId::Desc_Math_ColorLcdToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::colorLcdToLinearBridge },
-		{ "linearToColorLcd", StringId::Desc_Math_LinearToColorLcd, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToColorLcdBridge },
-		{ "smpte170MToLinear", StringId::Desc_Math_Smpte170MToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte170MToLinearBridge },
-		{ "linearToSmpte170M", StringId::Desc_Math_LinearToSmpte170M, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte170MBridge },
-		{ "smpte170MToLinearPrecise", StringId::Desc_Math_Smpte170MToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte170MToLinearPreciseBridge },
-		{ "linearToSmpte170MPrecise", StringId::Desc_Math_LinearToSmpte170MPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte170MPreciseBridge },
-		{ "dciP3ToLinear", StringId::Desc_Math_DciP3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::dciP3ToLinearBridge },
-		{ "linearToDciP3", StringId::Desc_Math_LinearToDciP3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToDciP3Bridge },
-		{ "genericRgbToLinear", StringId::Desc_Math_GenericRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::genericRgbToLinearBridge },
-		{ "linearToGenericRgb", StringId::Desc_Math_LinearToGenericRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToGenericRgbBridge },
-		{ "pow2_8ToLinear", StringId::Desc_Math_Pow2_8ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::pow2_8ToLinearBridge },
-		{ "linearToPow2_8", StringId::Desc_Math_LinearToPow2_8, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPow2_8Bridge },
-		{ "adobeRgbToLinear", StringId::Desc_Math_AdobeRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::adobeRgbToLinearBridge },
-		{ "linearToAdobeRgb", StringId::Desc_Math_LinearToAdobeRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAdobeRgbBridge },
-		{ "smpte240MToLinearPrecise", StringId::Desc_Math_Smpte240MToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte240MToLinearPreciseBridge },
-		{ "linearToSmpte240MPrecise", StringId::Desc_Math_LinearToSmpte240MPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte240MPreciseBridge },
-		{ "acesCcToLinear", StringId::Desc_Math_AcesCcToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::acesCcToLinearBridge },
-		{ "linearToAcesCc", StringId::Desc_Math_LinearToAcesCc, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAcesCcBridge },
-		{ "rommRgbToLinear", StringId::Desc_Math_RommRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::rommRgbToLinearBridge },
-		{ "linearToRommRgb", StringId::Desc_Math_LinearToRommRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToRommRgbBridge },
-		{ "rimmRgbToLinear", StringId::Desc_Math_RimmRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::rimmRgbToLinearBridge },
-		{ "linearToRimmRgb", StringId::Desc_Math_LinearToRimmRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToRimmRgbBridge },
-		{ "erimmRgbToLinear", StringId::Desc_Math_ErimmRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::erimmRgbToLinearBridge },
-		{ "linearToErimmRgb", StringId::Desc_Math_LinearToErimmRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToErimmRgbBridge },
-		{ "sLogToLinear", StringId::Desc_Math_SLogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLogToLinearBridge },
-		{ "linearToSLog", StringId::Desc_Math_LinearToSLog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLogBridge },
-		{ "sLog3ToLinear", StringId::Desc_Math_SLog3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLog3ToLinearBridge },
-		{ "linearToSLog3", StringId::Desc_Math_LinearToSLog3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLog3Bridge },
-		{ "protuneToLinear", StringId::Desc_Math_ProtuneToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::protuneToLinearBridge },
-		{ "linearToProtune", StringId::Desc_Math_LinearToProtune, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToProtuneBridge },
-		{ "canonLog2ToLinear", StringId::Desc_Math_CanonLog2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLog2ToLinearBridge },
-		{ "linearToCanonLog2", StringId::Desc_Math_LinearToCanonLog2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLog2Bridge },
-		{ "canonLog3ToLinear", StringId::Desc_Math_CanonLog3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLog3ToLinearBridge },
-		{ "linearToCanonLog3", StringId::Desc_Math_LinearToCanonLog3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLog3Bridge },
-		{ "aribStdB67ToLinear", StringId::Desc_Math_AribStdB67ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::aribStdB67ToLinearBridge },
-		{ "linearToAribStdB67", StringId::Desc_Math_LinearToAribStdB67, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAribStdB67Bridge },
-		{ "panalogToLinear", StringId::Desc_Math_PanalogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::panalogToLinearBridge },
-		{ "linearToPanalog", StringId::Desc_Math_LinearToPanalog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPanalogBridge },
-		{ "crtProperToLinear", StringId::Desc_Math_CrtProperToLinear, { { DataType::Double, "val", StringId::Math_Param_Val } }, IntrinsicBridges::crtProperToLinearBridge },
+		{ "linearToSRgb", StringId::Desc_Math_LinearToSRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSRgbBridge, false, true },
+		{ "sRgbToLinear", StringId::Desc_Math_SRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sRgbToLinearBridge, false, true },
+		{ "pow2_2ToLinear", StringId::Desc_Math_Pow2_2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::pow2_2ToLinearBridge, false, true },
+		{ "linearToPow2_2", StringId::Desc_Math_LinearToPow2_2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPow2_2Bridge, false, true },
+		{ "smpte240MToLinear", StringId::Desc_Math_Smpte240MToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte240MToLinearBridge, false, true },
+		{ "linearToSmpte240M", StringId::Desc_Math_LinearToSmpte240M, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte240MBridge, false, true },
+		{ "sLog2ToLinear", StringId::Desc_Math_SLog2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLog2ToLinearBridge, false, true },
+		{ "linearToSLog2", StringId::Desc_Math_LinearToSLog2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLog2Bridge, false, true },
+		{ "canonLogToLinear", StringId::Desc_Math_CanonLogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLogToLinearBridge, false, true },
+		{ "linearToCanonLog", StringId::Desc_Math_LinearToCanonLog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLogBridge, false, true },
+		{ "viperToLinear", StringId::Desc_Math_ViperToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::viperToLinearBridge, false, true },
+		{ "linearToViper", StringId::Desc_Math_LinearToViper, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToViperBridge, false, true },
+		{ "acesCgToLinear", StringId::Desc_Math_AcesCgToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::acesCgToLinearBridge, false, true },
+		{ "linearToAcesCg", StringId::Desc_Math_LinearToAcesCg, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAcesCgBridge, false, true },
+		{ "sRgbToLinearPrecise", StringId::Desc_Math_SRgbToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sRgbToLinearPreciseBridge, false, true },
+		{ "linearToSRgbPrecise", StringId::Desc_Math_LinearToSRgbPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSRgbPreciseBridge, false, true },
+		{ "colorLcdToLinear", StringId::Desc_Math_ColorLcdToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::colorLcdToLinearBridge, false, true },
+		{ "linearToColorLcd", StringId::Desc_Math_LinearToColorLcd, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToColorLcdBridge, false, true },
+		{ "smpte170MToLinear", StringId::Desc_Math_Smpte170MToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte170MToLinearBridge, false, true },
+		{ "linearToSmpte170M", StringId::Desc_Math_LinearToSmpte170M, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte170MBridge, false, true },
+		{ "smpte170MToLinearPrecise", StringId::Desc_Math_Smpte170MToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte170MToLinearPreciseBridge, false, true },
+		{ "linearToSmpte170MPrecise", StringId::Desc_Math_LinearToSmpte170MPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte170MPreciseBridge, false, true },
+		{ "dciP3ToLinear", StringId::Desc_Math_DciP3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::dciP3ToLinearBridge, false, true },
+		{ "linearToDciP3", StringId::Desc_Math_LinearToDciP3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToDciP3Bridge, false, true },
+		{ "genericRgbToLinear", StringId::Desc_Math_GenericRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::genericRgbToLinearBridge, false, true },
+		{ "linearToGenericRgb", StringId::Desc_Math_LinearToGenericRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToGenericRgbBridge, false, true },
+		{ "pow2_8ToLinear", StringId::Desc_Math_Pow2_8ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::pow2_8ToLinearBridge, false, true },
+		{ "linearToPow2_8", StringId::Desc_Math_LinearToPow2_8, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPow2_8Bridge, false, true },
+		{ "adobeRgbToLinear", StringId::Desc_Math_AdobeRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::adobeRgbToLinearBridge, false, true },
+		{ "linearToAdobeRgb", StringId::Desc_Math_LinearToAdobeRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAdobeRgbBridge, false, true },
+		{ "smpte240MToLinearPrecise", StringId::Desc_Math_Smpte240MToLinearPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::smpte240MToLinearPreciseBridge, false, true },
+		{ "linearToSmpte240MPrecise", StringId::Desc_Math_LinearToSmpte240MPrecise, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSmpte240MPreciseBridge, false, true },
+		{ "acesCcToLinear", StringId::Desc_Math_AcesCcToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::acesCcToLinearBridge, false, true },
+		{ "linearToAcesCc", StringId::Desc_Math_LinearToAcesCc, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAcesCcBridge, false, true },
+		{ "rommRgbToLinear", StringId::Desc_Math_RommRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::rommRgbToLinearBridge, false, true },
+		{ "linearToRommRgb", StringId::Desc_Math_LinearToRommRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToRommRgbBridge, false, true },
+		{ "rimmRgbToLinear", StringId::Desc_Math_RimmRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::rimmRgbToLinearBridge, false, true },
+		{ "linearToRimmRgb", StringId::Desc_Math_LinearToRimmRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToRimmRgbBridge, false, true },
+		{ "erimmRgbToLinear", StringId::Desc_Math_ErimmRgbToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::erimmRgbToLinearBridge, false, true },
+		{ "linearToErimmRgb", StringId::Desc_Math_LinearToErimmRgb, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToErimmRgbBridge, false, true },
+		{ "sLogToLinear", StringId::Desc_Math_SLogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLogToLinearBridge, false, true },
+		{ "linearToSLog", StringId::Desc_Math_LinearToSLog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLogBridge, false, true },
+		{ "sLog3ToLinear", StringId::Desc_Math_SLog3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::sLog3ToLinearBridge, false, true },
+		{ "linearToSLog3", StringId::Desc_Math_LinearToSLog3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToSLog3Bridge, false, true },
+		{ "protuneToLinear", StringId::Desc_Math_ProtuneToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::protuneToLinearBridge, false, true },
+		{ "linearToProtune", StringId::Desc_Math_LinearToProtune, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToProtuneBridge, false, true },
+		{ "canonLog2ToLinear", StringId::Desc_Math_CanonLog2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLog2ToLinearBridge, false, true },
+		{ "linearToCanonLog2", StringId::Desc_Math_LinearToCanonLog2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLog2Bridge, false, true },
+		{ "canonLog3ToLinear", StringId::Desc_Math_CanonLog3ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::canonLog3ToLinearBridge, false, true },
+		{ "linearToCanonLog3", StringId::Desc_Math_LinearToCanonLog3, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCanonLog3Bridge, false, true },
+		{ "aribStdB67ToLinear", StringId::Desc_Math_AribStdB67ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::aribStdB67ToLinearBridge, false, true },
+		{ "linearToAribStdB67", StringId::Desc_Math_LinearToAribStdB67, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToAribStdB67Bridge, false, true },
+		{ "panalogToLinear", StringId::Desc_Math_PanalogToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::panalogToLinearBridge, false, true },
+		{ "linearToPanalog", StringId::Desc_Math_LinearToPanalog, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToPanalogBridge, false, true },
+		{ "crtProperToLinear", StringId::Desc_Math_CrtProperToLinear, { { DataType::Double, "val", StringId::Math_Param_Val } }, IntrinsicBridges::crtProperToLinearBridge, false, true },
 		{ "crtProperToLinear", StringId::Desc_Math_CrtProperToLinear, { { DataType::Double, "val", StringId::Math_Param_Val }, { DataType::Double, "lw", StringId::Math_Param_Lw } }, IntrinsicBridges::crtProperToLinearBridge },
 		{ "crtProperToLinear", StringId::Desc_Math_CrtProperToLinear, { { DataType::Double, "val", StringId::Math_Param_Val }, { DataType::Double, "lw", StringId::Math_Param_Lw }, { DataType::Double, "b", StringId::Math_Param_B } }, IntrinsicBridges::crtProperToLinearBridge },
-		{ "linearToCrtProper", StringId::Desc_Math_LinearToCrtProper, { { DataType::Double, "val", StringId::Math_Param_Val } }, IntrinsicBridges::linearToCrtProperBridge },
+		{ "linearToCrtProper", StringId::Desc_Math_LinearToCrtProper, { { DataType::Double, "val", StringId::Math_Param_Val } }, IntrinsicBridges::linearToCrtProperBridge, false, true },
 		{ "linearToCrtProper", StringId::Desc_Math_LinearToCrtProper, { { DataType::Double, "val", StringId::Math_Param_Val }, { DataType::Double, "lw", StringId::Math_Param_Lw } }, IntrinsicBridges::linearToCrtProperBridge },
 		{ "linearToCrtProper", StringId::Desc_Math_LinearToCrtProper, { { DataType::Double, "val", StringId::Math_Param_Val }, { DataType::Double, "lw", StringId::Math_Param_Lw }, { DataType::Double, "b", StringId::Math_Param_B } }, IntrinsicBridges::linearToCrtProperBridge },
-		{ "crtProper2ToLinear", StringId::Desc_Math_CrtProper2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::crtProper2ToLinearBridge },
-		{ "linearToCrtProper2", StringId::Desc_Math_LinearToCrtProper2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCrtProper2Bridge },
+		{ "crtProper2ToLinear", StringId::Desc_Math_CrtProper2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::crtProper2ToLinearBridge, false, true },
+		{ "linearToCrtProper2", StringId::Desc_Math_LinearToCrtProper2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCrtProper2Bridge, false, true },
+
+		// == SciPy.
+		{ "simpson", StringId::Desc_Math_Simpson, { { DataType::Object, "y", StringId::Math_Param_Y } }, IntrinsicBridges::simpsonBridge },
+		{ "simpson", StringId::Desc_Math_Simpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::simpsonBridge },
+		{ "simpson", StringId::Desc_Math_Simpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "x", StringId::Math_Param_XArray } }, IntrinsicBridges::simpsonBridge },
+		{ "simpson", StringId::Desc_Math_Simpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::UInt64, "start", StringId::Math_Param_Start }, { DataType::UInt64, "count", StringId::Math_Param_Count }, { DataType::Any, "stride", StringId::Math_Param_Stride } }, IntrinsicBridges::simpsonBridge },
+		{ "simpson", StringId::Desc_Math_Simpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::UInt64, "start", StringId::Math_Param_Start }, { DataType::UInt64, "stride", StringId::Math_Param_Stride }, { DataType::Any, "x", StringId::Math_Param_XArray } }, IntrinsicBridges::simpsonBridge },
+		{ "simpson", StringId::Desc_Math_Simpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::UInt64, "start", StringId::Math_Param_Start }, { DataType::UInt64, "count", StringId::Math_Param_Count }, { DataType::UInt64, "stride", StringId::Math_Param_Stride }, { DataType::Double, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::simpsonBridge },
+
+		{ "cumulative_simpson", StringId::Desc_Math_CumulativeSimpson, { { DataType::Object, "y", StringId::Math_Param_Y } }, IntrinsicBridges::cumulativeSimpsonBridge },
+		{ "cumulative_simpson", StringId::Desc_Math_CumulativeSimpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::cumulativeSimpsonBridge },
+		{ "cumulative_simpson", StringId::Desc_Math_CumulativeSimpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "dx", StringId::Math_Param_Dx }, { DataType::Any, "initial", StringId::Math_Param_Initial } }, IntrinsicBridges::cumulativeSimpsonBridge },
+		{ "cumulative_simpson", StringId::Desc_Math_CumulativeSimpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "x", StringId::Math_Param_XArray } }, IntrinsicBridges::cumulativeSimpsonBridge },
+		{ "cumulative_simpson", StringId::Desc_Math_CumulativeSimpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "x", StringId::Math_Param_XArray }, { DataType::Any, "initial", StringId::Math_Param_Initial } }, IntrinsicBridges::cumulativeSimpsonBridge },
+
+		{ "trapezoid", StringId::Desc_Math_Trapezoid, { { DataType::Object, "y", StringId::Math_Param_Y } }, IntrinsicBridges::trapezoidBridge },
+		{ "trapezoid", StringId::Desc_Math_Trapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::trapezoidBridge },
+		{ "trapezoid", StringId::Desc_Math_Trapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "x", StringId::Math_Param_XArray } }, IntrinsicBridges::trapezoidBridge },
+		{ "trapezoid", StringId::Desc_Math_Trapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::UInt64, "start", StringId::Math_Param_Start }, { DataType::UInt64, "count", StringId::Math_Param_Count }, { DataType::Any, "stride", StringId::Math_Param_Stride } }, IntrinsicBridges::trapezoidBridge },
+		{ "trapezoid", StringId::Desc_Math_Trapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::UInt64, "start", StringId::Math_Param_Start }, { DataType::UInt64, "stride", StringId::Math_Param_Stride }, { DataType::Any, "x", StringId::Math_Param_XArray } }, IntrinsicBridges::trapezoidBridge },
+		{ "trapezoid", StringId::Desc_Math_Trapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::UInt64, "start", StringId::Math_Param_Start }, { DataType::UInt64, "count", StringId::Math_Param_Count }, { DataType::UInt64, "stride", StringId::Math_Param_Stride }, { DataType::Double, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::trapezoidBridge },
+
+		{ "cumulative_trapezoid", StringId::Desc_Math_CumulativeTrapezoid, { { DataType::Object, "y", StringId::Math_Param_Y } }, IntrinsicBridges::cumulativeTrapezoidBridge },
+		{ "cumulative_trapezoid", StringId::Desc_Math_CumulativeTrapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::cumulativeTrapezoidBridge },
+		{ "cumulative_trapezoid", StringId::Desc_Math_CumulativeTrapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "dx", StringId::Math_Param_Dx }, { DataType::Any, "initial", StringId::Math_Param_Initial } }, IntrinsicBridges::cumulativeTrapezoidBridge },
+		{ "cumulative_trapezoid", StringId::Desc_Math_CumulativeTrapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "x", StringId::Math_Param_XArray } }, IntrinsicBridges::cumulativeTrapezoidBridge },
+		{ "cumulative_trapezoid", StringId::Desc_Math_CumulativeTrapezoid, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "x", StringId::Math_Param_XArray }, { DataType::Any, "initial", StringId::Math_Param_Initial } }, IntrinsicBridges::cumulativeTrapezoidBridge },
+
+		{ "romb", StringId::Desc_Math_Romb, { { DataType::Object, "y", StringId::Math_Param_Y } }, IntrinsicBridges::rombBridge },
+		{ "romb", StringId::Desc_Math_Romb, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Double, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::rombBridge },
+		{ "romb", StringId::Desc_Math_Romb, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::UInt64, "start", StringId::Math_Param_Start }, { DataType::UInt64, "count", StringId::Math_Param_Count }, { DataType::UInt64, "stride", StringId::Math_Param_Stride } }, IntrinsicBridges::rombBridge },
+		{ "romb", StringId::Desc_Math_Romb, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::UInt64, "start", StringId::Math_Param_Start }, { DataType::UInt64, "count", StringId::Math_Param_Count }, { DataType::UInt64, "stride", StringId::Math_Param_Stride }, { DataType::Double, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::rombBridge },
+
+		// == NumPy.
+		{ "ones", StringId::Desc_Math_Ones, { { DataType::UInt64, "count", StringId::Math_Param_Count } }, IntrinsicBridges::onesBridge },
+		{ "ones_like", StringId::Desc_Math_OnesLike, { { DataType::Object, "ref", StringId::Math_Param_RefArray } }, IntrinsicBridges::onesLikeBridge },
+		{ "zeros", StringId::Desc_Math_Zeros, { { DataType::UInt64, "count", StringId::Math_Param_Count } }, IntrinsicBridges::zerosBridge },
+		{ "zeros_like", StringId::Desc_Math_ZerosLike, { { DataType::Object, "ref", StringId::Math_Param_RefArray } }, IntrinsicBridges::zerosLikeBridge },
+		{ "full", StringId::Desc_Math_Full, { { DataType::UInt64, "count", StringId::Math_Param_Count }, { DataType::Double, "fill_value", StringId::Math_Param_FillValue } }, IntrinsicBridges::fullBridge },
+		{ "full_like", StringId::Desc_Math_FullLike, { { DataType::Object, "ref", StringId::Math_Param_RefArray }, { DataType::Double, "fill_value", StringId::Math_Param_FillValue } }, IntrinsicBridges::fullLikeBridge },
+
+		{ "linspace", StringId::Desc_Math_Linspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop } }, IntrinsicBridges::linspaceBridge },
+		{ "linspace", StringId::Desc_Math_Linspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::UInt64, "num", StringId::Math_Param_Num } }, IntrinsicBridges::linspaceBridge },
+		{ "linspace", StringId::Desc_Math_Linspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::UInt64, "num", StringId::Math_Param_Num }, { DataType::Integer, "endpoint", StringId::Math_Param_Endpoint } }, IntrinsicBridges::linspaceBridge },
+
+		{ "logspace", StringId::Desc_Math_Logspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop } }, IntrinsicBridges::logspaceBridge },
+		{ "logspace", StringId::Desc_Math_Logspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::UInt64, "num", StringId::Math_Param_Num } }, IntrinsicBridges::logspaceBridge },
+		{ "logspace", StringId::Desc_Math_Logspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::UInt64, "num", StringId::Math_Param_Num }, { DataType::Integer, "endpoint", StringId::Math_Param_Endpoint } }, IntrinsicBridges::logspaceBridge },
+		{ "logspace", StringId::Desc_Math_Logspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::UInt64, "num", StringId::Math_Param_Num }, { DataType::Integer, "endpoint", StringId::Math_Param_Endpoint }, { DataType::Double, "base", StringId::Math_Param_Base } }, IntrinsicBridges::logspaceBridge },
+
+		{ "geomspace", StringId::Desc_Math_Geomspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop } }, IntrinsicBridges::geomspaceBridge },
+		{ "geomspace", StringId::Desc_Math_Geomspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::UInt64, "num", StringId::Math_Param_Num } }, IntrinsicBridges::geomspaceBridge },
+		{ "geomspace", StringId::Desc_Math_Geomspace, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::UInt64, "num", StringId::Math_Param_Num }, { DataType::Integer, "endpoint", StringId::Math_Param_Endpoint } }, IntrinsicBridges::geomspaceBridge },
+
+		{ "arange", StringId::Desc_Math_Arange, { { DataType::Double, "stop", StringId::Math_Param_Stop } }, IntrinsicBridges::arangeBridge },
+		{ "arange", StringId::Desc_Math_Arange, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop } }, IntrinsicBridges::arangeBridge },
+		{ "arange", StringId::Desc_Math_Arange, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::Double, "step", StringId::Math_Param_Step } }, IntrinsicBridges::arangeBridge },
 	};
 
 	// == Functions.
@@ -587,7 +644,7 @@ namespace ve {
 				registerConstant( builtInConsts[i].name, builtInConsts[i].result );
 			}
 			for (size_t i = 0; i < std::size(builtInFunctions); ++i) {
-				registerFunction(builtInFunctions[i].name, builtInFunctions[i].parameters, builtInFunctions[i].callback);
+				registerFunction(builtInFunctions[i].name, builtInFunctions[i].parameters, builtInFunctions[i].callback, builtInFunctions[i].operateOnVectorElements);
 			}
 
 			antlr4::ANTLRInputStream input(expression);
@@ -787,6 +844,7 @@ namespace ve {
 				}
 				case NumericConstant::Object : {
 					out.type = NumericConstant::Invalid;
+					out.value.objectVal = nullptr;
 					break;
 				}
 				default : { break; }
@@ -804,6 +862,7 @@ namespace ve {
 				}
 				case NumericConstant::Object : {
 					out.type = NumericConstant::Invalid;
+					out.value.objectVal = nullptr;
 					break;
 				}
 				default : { break; }
@@ -821,6 +880,7 @@ namespace ve {
 				}
 				case NumericConstant::Object : {
 					out.type = NumericConstant::Invalid;
+					out.value.objectVal = nullptr;
 					break;
 				}
 				default : { break; }
@@ -829,6 +889,7 @@ namespace ve {
 		else if (res.type == NumericConstant::Object) {
 			if (!res.value.objectVal) {
 				out.type = NumericConstant::Invalid;
+				out.value.objectVal = nullptr;
 			}
 			else {
 				out.type = NumericConstant::Invalid;
@@ -846,6 +907,7 @@ namespace ve {
 				else {
 					// TODO.
 					out.type = NumericConstant::Invalid;
+					out.value.objectVal = nullptr;
 				}
 			}
 		}
@@ -1044,6 +1106,52 @@ namespace ve {
 				case ExprLexer::SHR : { return leftVal.value.objectVal->operator>>(rightVal); }
 				default : { return Result{ .type = NumericConstant::Invalid }; }
 			}
+		}
+		if (rightVal.type == NumericConstant::Object && rightVal.value.objectVal && (rightVal.value.objectVal->type() & BuiltInType_Vector)) {
+			// Arithmatic applied to each element in the vector.
+			Vector* vec = static_cast<Vector*>(rightVal.value.objectVal);
+			switch (opType) {
+				// In-place assignment.
+				case ExprLexer::ADD_ASSIGN : {}
+				case ExprLexer::SUB_ASSIGN : {}
+				case ExprLexer::MUL_ASSIGN : {}
+				case ExprLexer::DIV_ASSIGN : {}
+				case ExprLexer::MOD_ASSIGN : {}
+				case ExprLexer::AND_ASSIGN : {}
+				case ExprLexer::XOR_ASSIGN : {}
+				case ExprLexer::OR_ASSIGN : {}
+				case ExprLexer::SHL_ASSIGN : {}
+				case ExprLexer::SHR_ASSIGN : {
+					for (auto i = vec->arrayLength(); i--; ) {
+						vec->directAccess(i) = evaluateMath(leftVal, vec->directAccess(i), opType);
+					}
+					return vec->createResult();
+				}
+				case ExprLexer::ADD : {}
+				case ExprLexer::SUB : {}
+				case ExprLexer::MUL : {}
+				case ExprLexer::DIV : {}
+				case ExprLexer::MOD : {}
+				case ExprLexer::BIT_AND : {}
+				case ExprLexer::BIT_XOR : {}
+				case ExprLexer::BIT_OR :  {}
+				case ExprLexer::SHL : {}
+				case ExprLexer::SHR : {
+					// Make a copy of the vector.
+					Vector* copy = const_cast<ExecutionContext*>(this)->allocateObject<Vector>();
+					if (!copy) { throw ErrorCode::Out_Of_Memory; }
+					if (!copy->resize(vec->arrayLength())) {
+						const_cast<ExecutionContext*>(this)->deallocateObject(copy);
+						return Result{};
+					}
+					for (auto i = vec->arrayLength(); i--; ) {
+						copy->directAccess(i) = evaluateMath(leftVal, vec->directAccess(i), opType);
+					}
+					return copy->createResult();
+				}
+				default : { return Result{ .type = NumericConstant::Invalid }; }
+			}
+			
 		}
 
 		NumericConstant common = getCastType(leftVal.type, rightVal.type);

@@ -29,9 +29,7 @@ namespace ve {
 		Result							evaluate(ExecutionContext& context) const override {
 			Result targetRes = context.getArena().nodes[targetNode]->evaluate(context);
 
-			if (targetRes.type == NumericConstant::Invalid) {
-				return targetRes;
-			}
+			if (targetRes.type == NumericConstant::Invalid) { return targetRes; }
 
 			std::vector<Result> evaluatedArgs;
 			evaluatedArgs.reserve(argNodes.size() + 1);
@@ -44,18 +42,30 @@ namespace ve {
 
 			FunctionDef funcDef;
 			
-			if (!context.getFunction(methodName, evaluatedArgs.size(), funcDef)) {
-				Result invalidRes;
-				invalidRes.type = NumericConstant::Invalid;
-				return invalidRes;
+			if (!context.getFunction(methodName, evaluatedArgs.size(), funcDef)) { return Result{}; }
+
+			// If it can operate on every element in a vector and we are being passed exactly 1 vector.
+			if (funcDef.operateOnVectorElements && evaluatedArgs.size() == 1) {
+				if (evaluatedArgs[0].type == NumericConstant::Object && evaluatedArgs[0].value.objectVal && (evaluatedArgs[0].value.objectVal->type() & BuiltInType_Vector)) {
+					Vector* vec = static_cast<Vector*>(evaluatedArgs[0].value.objectVal);
+					DataType expectedType = funcDef.parameters.empty() ? DataType::Double : funcDef.parameters[0].type;
+					
+					std::vector<Result> singleArg(1);
+					for (size_t i = 0; i < vec->arrayLength(); ++i ) {
+						singleArg[0] = context.castArgument(vec->directAccess(i), expectedType);
+						if (singleArg[0].type == NumericConstant::Invalid) { return Result{}; }
+						vec->directAccess(i) = funcDef.callback(&context, singleArg);
+					}
+					return vec->createResult();
+				}
 			}
 
-			if (!funcDef.parameters.empty()) {
-				if (funcDef.parameters[0].type == DataType::String) {
-					if (targetRes.type != NumericConstant::Object || targetRes.value.objectVal == nullptr || !(targetRes.value.objectVal->type() & BuiltInType_String)) {
-						Result invalidRes;
-						invalidRes.type = NumericConstant::Invalid;
-						return invalidRes;
+			// Cast all arguments to their expected types defined by the function signature.
+			for (size_t i = 0; i < evaluatedArgs.size(); ++i) {
+				if (i < funcDef.parameters.size()) {
+					evaluatedArgs[i] = context.castArgument(evaluatedArgs[i], funcDef.parameters[i].type);
+					if (evaluatedArgs[i].type == NumericConstant::Invalid) { 
+						return Result{}; 
 					}
 				}
 			}
@@ -65,9 +75,7 @@ namespace ve {
 			}
 			catch (...) {}
 
-			Result errorRes;
-			errorRes.type = NumericConstant::Invalid;
-			return errorRes;
+			return Result{};
 		}
 
 	protected :

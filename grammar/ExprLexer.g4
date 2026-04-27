@@ -75,6 +75,8 @@ WHILE               : 'while' ;
 BREAK               : 'break' ;
 CONTINUE            : 'continue' ;
 RETURN              : 'return' ;
+KW_TRUE             : 'true' ;
+KW_FALSE            : 'false' ;
 
 IDENTIFIER          : L (L | D)* ;
 

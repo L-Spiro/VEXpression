@@ -28,43 +28,46 @@ namespace ve {
 			Result rightVal = context.getArena().nodes[rightIndex]->evaluate(context);
 
 			Result out;
-			if (leftVal.type == NumericConstant::Object) {
-				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				out = (*leftVal.value.objectVal) & rightVal;
+			out = context.evaluateMath(leftVal, rightVal, ExprLexer::BIT_AND);
+			VE_DELETE_SWAP(out, lastObject);
 
-				// The operation probably created a new object.
-				VE_DELETE_SWAP(out, lastObject);
-			}
+			//if (leftVal.type == NumericConstant::Object) {
+			//	if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	out = (*leftVal.value.objectVal) & rightVal;
 
-			NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
-			Result l = context.convertResult(leftVal, common);
-			Result r = context.convertResult(rightVal, common);
+			//	// The operation probably created a new object.
+			//	VE_DELETE_SWAP(out, lastObject);
+			//}
 
-			
-			if (common == NumericConstant::Floating) {
-				/*out.type = NumericConstant::Signed;
-				out.value.intVal = static_cast<int64_t>(l.value.doubleVal) & static_cast<int64_t>(r.value.doubleVal);*/
-				out.type = NumericConstant::Invalid;
-			}
-			else if (common == NumericConstant::Signed) {
-				out.type = NumericConstant::Signed;
-				out.value.intVal = l.value.intVal & r.value.intVal;
-			}
-			else if (common == NumericConstant::Unsigned) {
-				out.type = NumericConstant::Unsigned;
-				out.value.uintVal = l.value.uintVal & r.value.uintVal;
-			}
-			else if (common == NumericConstant::Object) {
-				if (!l.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				if (!r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				out = (*l.value.objectVal) & r;
+			//NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
+			//Result l = context.convertResult(leftVal, common);
+			//Result r = context.convertResult(rightVal, common);
 
-				// The operation probably created a new object.
-				VE_DELETE_SWAP(out, lastObject);
-			}
-			else {
-				throw ErrorCode::Unknown_Numeric_Type;
-			}
+			//
+			//if (common == NumericConstant::Floating) {
+			//	/*out.type = NumericConstant::Signed;
+			//	out.value.intVal = static_cast<int64_t>(l.value.doubleVal) & static_cast<int64_t>(r.value.doubleVal);*/
+			//	out.type = NumericConstant::Invalid;
+			//}
+			//else if (common == NumericConstant::Signed) {
+			//	out.type = NumericConstant::Signed;
+			//	out.value.intVal = l.value.intVal & r.value.intVal;
+			//}
+			//else if (common == NumericConstant::Unsigned) {
+			//	out.type = NumericConstant::Unsigned;
+			//	out.value.uintVal = l.value.uintVal & r.value.uintVal;
+			//}
+			//else if (common == NumericConstant::Object) {
+			//	if (!l.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	if (!r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	out = (*l.value.objectVal) & r;
+
+			//	// The operation probably created a new object.
+			//	VE_DELETE_SWAP(out, lastObject);
+			//}
+			//else {
+			//	throw ErrorCode::Unknown_Numeric_Type;
+			//}
 
 			return out;
 		}

@@ -31,40 +31,43 @@ namespace ve {
 			Result rightVal = context.getArena().nodes[rightIndex]->evaluate(context);
 			
 			Result out;
-			if (leftVal.type == NumericConstant::Object) {
-				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				out = (*leftVal.value.objectVal) % rightVal;
+			out = context.evaluateMath(leftVal, rightVal, ExprLexer::MOD);
+			VE_DELETE_SWAP(out, lastObject);
 
-				// The operation probably created a new object.
-				VE_DELETE_SWAP(out, lastObject);
-			}
+			//if (leftVal.type == NumericConstant::Object) {
+			//	if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	out = (*leftVal.value.objectVal) % rightVal;
 
-			NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
-			Result l = context.convertResult(leftVal, common);
-			Result r = context.convertResult(rightVal, common);
+			//	// The operation probably created a new object.
+			//	VE_DELETE_SWAP(out, lastObject);
+			//}
 
-			out.type = common;
+			//NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
+			//Result l = context.convertResult(leftVal, common);
+			//Result r = context.convertResult(rightVal, common);
 
-			if (common == NumericConstant::Floating) {
-				out.value.doubleVal = std::fmod(l.value.doubleVal, r.value.doubleVal);
-			}
-			else if (common == NumericConstant::Signed) {
-				out.value.intVal = (r.value.intVal == 0) ? 0 : (l.value.intVal % r.value.intVal);
-			}
-			else if (common == NumericConstant::Unsigned) {
-				out.value.uintVal = (r.value.uintVal == 0) ? 0 : (l.value.uintVal % r.value.uintVal);
-			}
-			else if (common == NumericConstant::Object) {
-				if (!l.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				if (!r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				out = (*l.value.objectVal) % r;
+			//out.type = common;
 
-				// The operation probably created a new object.
-				VE_DELETE_SWAP(out, lastObject);
-			}
-			else {
-				throw ErrorCode::Unknown_Numeric_Type;
-			}
+			//if (common == NumericConstant::Floating) {
+			//	out.value.doubleVal = std::fmod(l.value.doubleVal, r.value.doubleVal);
+			//}
+			//else if (common == NumericConstant::Signed) {
+			//	out.value.intVal = (r.value.intVal == 0) ? 0 : (l.value.intVal % r.value.intVal);
+			//}
+			//else if (common == NumericConstant::Unsigned) {
+			//	out.value.uintVal = (r.value.uintVal == 0) ? 0 : (l.value.uintVal % r.value.uintVal);
+			//}
+			//else if (common == NumericConstant::Object) {
+			//	if (!l.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	if (!r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	out = (*l.value.objectVal) % r;
+
+			//	// The operation probably created a new object.
+			//	VE_DELETE_SWAP(out, lastObject);
+			//}
+			//else {
+			//	throw ErrorCode::Unknown_Numeric_Type;
+			//}
 
 			return out;
 		}

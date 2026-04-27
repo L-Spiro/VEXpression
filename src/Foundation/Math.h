@@ -2485,7 +2485,7 @@ namespace ve {
 				Type sum = y[0] + y[lastIndex];
 				for (size_t j = 1; j < intervals; ++j) {
 					const size_t idx = j * step;
-					sum += y[idx];
+					sum += Type(2) * y[idx];
 				}
 				const Type t = h * sum * Type(0.5);
 
@@ -2573,7 +2573,7 @@ namespace ve {
 				for (size_t j = 1; j < intervals; ++j) {
 					const size_t logicalIdx = j * step;
 					const size_t idx        = start + logicalIdx * stride;
-					sum += y[idx];
+					sum += Type(2) * y[idx];
 				}
 
 				const Type t = h * sum * Type(0.5);

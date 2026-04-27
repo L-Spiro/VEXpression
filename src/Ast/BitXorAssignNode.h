@@ -28,45 +28,48 @@ namespace ve {
 			Result rightVal = context.getArena().nodes[rightIndex]->evaluate(context);
 
 			Result out;
-			if (leftVal.type == NumericConstant::Object) {
-				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				out = leftVal.value.objectVal->operator^=(rightVal);
+			out = context.evaluateMath(leftVal, rightVal, ExprLexer::XOR_ASSIGN);
+			VE_DELETE_SWAP(out, lastObject);
 
-				// Only trigger memory garbage-collecting tracking if operator^= allocated a completely new object.
-				if (out.value.objectVal != leftVal.value.objectVal) {
-					VE_DELETE_SWAP(out, lastObject);
-				}
-				
-				context.setVariable(varIndex, out);
-				return out;
-			}
+			//if (leftVal.type == NumericConstant::Object) {
+			//	if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	out = leftVal.value.objectVal->operator^=(rightVal);
 
-			NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
-			Result l = context.convertResult(leftVal, common);
-			Result r = context.convertResult(rightVal, common);
+			//	// Only trigger memory garbage-collecting tracking if operator^= allocated a completely new object.
+			//	if (out.value.objectVal != leftVal.value.objectVal) {
+			//		VE_DELETE_SWAP(out, lastObject);
+			//	}
+			//	
+			//	context.setVariable(varIndex, out);
+			//	return out;
+			//}
 
-			out.type = common;
+			//NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
+			//Result l = context.convertResult(leftVal, common);
+			//Result r = context.convertResult(rightVal, common);
 
-			if (common == NumericConstant::Floating) {
-				return Result{ .type = NumericConstant::Invalid };
-			}
-			else if (common == NumericConstant::Signed) {
-				out.value.intVal = l.value.intVal ^ r.value.intVal;
-			}
-			else if (common == NumericConstant::Unsigned) {
-				out.value.uintVal = l.value.uintVal ^ r.value.uintVal;
-			}
-			else if (common == NumericConstant::Object) {
-				if (!l.value.objectVal || !r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				out = l.value.objectVal->operator^=(r);
+			//out.type = common;
 
-				if (out.value.objectVal != l.value.objectVal) {
-					VE_DELETE_SWAP(out, lastObject);
-				}
-			}
-			else {
-				return Result{ .type = NumericConstant::Invalid };
-			}
+			//if (common == NumericConstant::Floating) {
+			//	return Result{ .type = NumericConstant::Invalid };
+			//}
+			//else if (common == NumericConstant::Signed) {
+			//	out.value.intVal = l.value.intVal ^ r.value.intVal;
+			//}
+			//else if (common == NumericConstant::Unsigned) {
+			//	out.value.uintVal = l.value.uintVal ^ r.value.uintVal;
+			//}
+			//else if (common == NumericConstant::Object) {
+			//	if (!l.value.objectVal || !r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	out = l.value.objectVal->operator^=(r);
+
+			//	if (out.value.objectVal != l.value.objectVal) {
+			//		VE_DELETE_SWAP(out, lastObject);
+			//	}
+			//}
+			//else {
+			//	return Result{ .type = NumericConstant::Invalid };
+			//}
 
 			context.setVariable(varIndex, out);
 			return out;
