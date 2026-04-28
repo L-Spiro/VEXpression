@@ -96,6 +96,19 @@ TYPE_FLOAT16        : 'float16' | 'f16' ;
 TYPE_FLOAT          : 'float' | 'f32' ;
 TYPE_DOUBLE         : 'double' | 'f64' ;
 
+// SIMD Types
+TYPE_SIMD           : '__m64' | '__m128' | '__m128d' | '__m128i'
+                    | '__m256' | '__m256d' | '__m256i'
+                    | '__m512' | '__m512d' | '__m512i'
+                    | 'v128_t'
+                    | 'int8x8_t' | 'int16x4_t' | 'int32x2_t' | 'int64x1_t'
+                    | 'uint8x8_t' | 'uint16x4_t' | 'uint32x2_t' | 'uint64x1_t'
+                    | 'float32x2_t' | 'float64x1_t'
+                    | 'int8x16_t' | 'int16x8_t' | 'int32x4_t' | 'int64x2_t'
+                    | 'uint8x16_t' | 'uint16x8_t' | 'uint32x4_t' | 'uint64x2_t'
+                    | 'float32x4_t' | 'float64x2_t'
+                    ;
+
 IDENTIFIER          : L (L | D)* ;
 
 PUREDEC_CONSTANT    : '#' D+ IS? ;

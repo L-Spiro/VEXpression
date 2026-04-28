@@ -3,6 +3,7 @@
 #include "../Compiler/AstBuilderVisitor.h"
 #include "ExecutionContext.h"
 #include "IntrinsicBridges.h"
+#include "SimdBridges.h"
 
 #include <cfloat>
 #include <climits>
@@ -809,39 +810,6 @@ namespace ve {
 			case NumericConstant::Invalid : {}
 			default : {
 				return "[Invalid or Uninitialized]";
-			}
-		}
-	}
-
-	/**
-	 * Converts a Result into its formatted string representation.
-	 * Must be called within a try/catch block.
-	 *
-	 * \param res			The Result to convert.
-	 * \param formatStr		The format string to apply.
-	 * \param flags			Bitmask defining formatting rules (defaults to 0).
-	 * \return				Returns the formatted string representation of the Result.
-	 **/
-	std::string ExecutionContext::formattedString(const Result& res, const std::string& formatStr, uint32_t flags) const {
-		switch (res.type) {
-			case NumericConstant::Unsigned : {
-				return std::vformat(formatStr, std::make_format_args(res.value.uintVal));
-			}
-			case NumericConstant::Signed : {
-				return std::vformat(formatStr, std::make_format_args(res.value.intVal));
-			}
-			case NumericConstant::Floating : {
-				return std::vformat(formatStr, std::make_format_args(res.value.doubleVal));
-			}
-			case NumericConstant::Object : {
-				if (res.value.objectVal) {
-					return res.value.objectVal->formattedString(formatStr, flags);
-				}
-				return "<null>";
-			}
-			case NumericConstant::Invalid :
-			default : {
-				return "";
 			}
 		}
 	}

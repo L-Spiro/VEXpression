@@ -130,36 +130,6 @@ namespace ve {
 	}
 
 	/**
-	 * Generates a formatted string representation of the object.
-	 *
-	 * \param format		The format string specifying how the object should be presented.
-	 * \param flags			Formatting flags.
-	 * \return				Returns the formatted wide string.
-	 **/
-	std::string Map::formattedString(const std::string& format, uint32_t flags) const {
-		std::string ret;
-		
-		try {
-			ret = "{";
-			bool addedAnything = false;
-			for (const auto & i : internalMap ) {
-				if (addedAnything) {
-					ret += ", ";
-				}
-				ret += context->formattedString(i.first, format, flags);
-				ret += ":";
-				ret += context->formattedString(i.second, format, flags);
-				addedAnything = true;
-			}
-
-			ret += "}";
-		}
-		catch (...) {}
-		
-		return ret;
-	}
-
-	/**
 	 * Converts the object to a fundamental numeric constant type if possible.
 	 *
 	 * \param targetType	The target numeric type to convert to.

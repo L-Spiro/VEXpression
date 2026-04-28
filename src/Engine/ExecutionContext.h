@@ -78,17 +78,6 @@ namespace ve {
 		std::string						toString(const Result& res, int32_t depth = 1, uint32_t flags = 0) const;
 
 		/**
-		 * Converts a Result into its formatted string representation.
-		 * Must be called within a try/catch block.
-		 *
-		 * \param res			The Result to convert.
-		 * \param formatStr		The format string to apply.
-		 * \param flags			Bitmask defining formatting rules (defaults to 0).
-		 * \return				Returns the formatted string representation of the Result.
-		 **/
-		std::string						formattedString(const Result& res, const std::string& formatStr, uint32_t flags = 0) const;
-
-		/**
 		 * Determines the promotion type between two given numeric types.
 		 * 
 		 * \param left			The left operand type.

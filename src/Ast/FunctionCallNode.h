@@ -31,7 +31,6 @@ namespace ve {
 			std::vector<Result> evaluatedArgs;
 			evaluatedArgs.reserve(arguments.size());
 
-			
 
 			for (size_t i = 0; i < arguments.size(); ++i) {
 				Result rawResult = context.getArena().nodes[arguments[i]]->evaluate(context);

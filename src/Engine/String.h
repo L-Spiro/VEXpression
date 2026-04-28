@@ -582,39 +582,6 @@ namespace ve {
 		virtual bool						toString(std::string& returnString, uint32_t depth, uint32_t flags) const override;
 
 		/**
-		 * Generates a formatted string representation of the object.
-		 *
-		 * \param format		The format string specifying how the object should be presented.
-		 * \param flags			Formatting flags.
-		 * \return				Returns the formatted wide string.
-		 **/
-		virtual std::string					formattedString(const std::string& format, uint32_t flags) const override {
-			std::string wStr;
-
-			if (flags & ToStringFlag_CString) {
-				switch (bufferWidth) {
-					case Width_8 : {
-						wStr = Text::toEscaped<std::string>(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
-						break;
-					}
-					case Width_16 : {
-						wStr = Text::toEscaped<std::string>(reinterpret_cast<const char16_t*>(buffer.data()), charCount);
-						break;
-					}
-					case Width_32 : {
-						wStr = Text::toEscaped<std::string>(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
-						break;
-					}
-				}
-			}
-			else {
-				toString(wStr, 0, ToStringFlag_None);
-			}
-
-			return std::vformat(format, std::make_format_args(wStr));
-		}
-
-		/**
 		 * Converts the string to a specified numeric constant type.
 		 *
 		 * \param type			The requested target numeric type.

@@ -37,17 +37,29 @@ exprMapList
     ;
 
 expr
+    // =========================================================================
+    // Precedence 2: Postfix & Primary Constructors
+    // =========================================================================
     : IDENTIFIER op=(INC | DEC)                                           # postfix
-    | op=(INC | DEC) IDENTIFIER                                           # prefixIncDec
+    | type_name LPAREN exprList? RPAREN                                   # constructParenExpr
+    | type_name LBRACE exprList? RBRACE                                   # constructBraceExpr
     | expr DOT IDENTIFIER LPAREN exprList? RPAREN                         # methodCall
     | expr LPAREN exprList? RPAREN                                        # functionCall
     | expr LBRACKET expr RBRACKET                                         # arrayAccess
     | expr LBRACKET start=expr? ':' end=expr? RBRACKET                    # arrayAccessEx
+
+    // =========================================================================
+    // Precedence 3: Prefix & Unary
+    // =========================================================================
+    | op=(INC | DEC) IDENTIFIER                                           # prefixIncDec
     | DOLLAR expr                                                         # paramAccessExpr
     | op=(ADD | SUB | LOG_NOT | BIT_NOT) expr                             # unary
     | LPAREN type_name RPAREN expr                                        # cCastExpr
-    | type_name LPAREN expr RPAREN                                        # initCastExpr
     | STATIC_CAST LT type_name GT LPAREN expr RPAREN                      # staticCastExpr
+
+    // =========================================================================
+    // Precedence 5-15: Binary Operators
+    // =========================================================================
     | expr op=(MUL | DIV | MOD) expr                                      # mulDiv
     | expr op=(ADD | SUB) expr                                            # addSub
     | expr op=(SHL | SHR) expr                                            # bitShift
@@ -59,15 +71,27 @@ expr
     | expr op=BIT_OR expr                                                 # bitOr
     | expr op=LOG_AND expr                                                # logAnd
     | expr op=LOG_OR expr                                                 # logOr
+
+    // =========================================================================
+    // Precedence 16: Ternary
+    // =========================================================================
     | <assoc=right> expr '?' expr ':' expr                                # ternary
+
+    // =========================================================================
+    // Precedence 17: Assignment
+    // =========================================================================
     | <assoc=right> IDENTIFIER op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # assignment
     | <assoc=right> expr LBRACKET expr RBRACKET op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # arrayAssignment
     | <assoc=right> expr LBRACKET start=expr? ':' end=expr? RBRACKET op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # arrayExAssignment
+
+    // =========================================================================
+    // Control Flow, Grouping, and Literals
+    // =========================================================================
     | BREAK                                                               # breakExpr
     | CONTINUE                                                            # continueExpr
     | RETURN expr?                                                        # returnExpr
     | LPAREN expr RPAREN                                                  # parens
-	| LBRACE (exprMapList ','?)? RBRACE                                   # mapExpr
+    | LBRACE (exprMapList ','?)? RBRACE                                   # mapExpr
     | LBRACE (exprList ','?)? RBRACE                                      # vectorExpr
     | IDENTIFIER                                                          # identifier
     | DOLLAR_DOLLAR                                                       # totalParmsExpr
@@ -90,6 +114,7 @@ type_name
     | TYPE_INT64
     | TYPE_FLOAT
     | TYPE_DOUBLE
+    | TYPE_SIMD                                                           # typeSimd
     ;
 	
 // =========================================================================

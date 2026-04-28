@@ -69,15 +69,6 @@ namespace ve {
 		virtual bool						toString(std::string& returnString, uint32_t depth, uint32_t flags) const override;
 
 		/**
-		 * Generates a formatted string representation of the object.
-		 *
-		 * \param format		The format string specifying how the object should be presented.
-		 * \param flags			Formatting flags.
-		 * \return				Returns the formatted wide string.
-		 **/
-		virtual std::string					formattedString(const std::string& format, uint32_t flags) const override;
-
-		/**
 		 * Converts the object to a fundamental numeric constant type if possible.
 		 *
 		 * \param targetType	The target numeric type to convert to.

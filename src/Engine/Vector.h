@@ -39,16 +39,6 @@ namespace ve {
 		virtual bool						toString(std::string& outStr, uint32_t depth = 1, uint32_t flags = 0) const override;
 
 		/**
-		 * Creates a formatted string representation of the vector.
-		 * Must be called within a try/catch block.
-		 *
-		 * \param formatStr		The format string to apply to each element.
-		 * \param flags			Bitmask defining formatting rules (defaults to 0).
-		 * \return				Returns a string containing the formatted elements.
-		 **/
-		virtual std::string					formattedString(const std::string& formatStr, uint32_t flags = 0) const override;
-
-		/**
 		 * Converts the object to a fundamental numeric constant type if possible.
 		 *
 		 * \param targetType	The target numeric type to convert to.

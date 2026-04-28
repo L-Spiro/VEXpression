@@ -119,6 +119,8 @@ set(APP_HEADERS
     src/Ast/BreakNode.h
     src/Ast/CastNode.h
     src/Ast/ConstantNode.h
+	src/Ast/ConstructPrimitiveNode.h
+	src/Ast/ConstructSimdNode.h
     src/Ast/ContinueNode.h
     src/Ast/DivAssignNode.h
     src/Ast/DivNode.h
@@ -182,17 +184,22 @@ set(APP_HEADERS
     src/Engine/Map.h
     src/Engine/Object.h
     src/Engine/Result.h
+	src/Engine/SimdBridges.h
+	src/Engine/SimdBridgeTable.inc
     src/Engine/SimdIncludes.h
+	src/Engine/SimdObject.h
     src/Engine/String.h
-    src/Strings/Strings.h
-    src/Strings/StringEnum.inl
     src/Engine/Vector.h
+	src/Strings/Strings.h
+    src/Strings/StringEnum.inl
+	src/Strings/SimdDescriptions.inl
     src/OS/OS.h
 )
 
 set(APP_SOURCES
     src/Engine/ExecutionContext.cpp
     src/Engine/Map.cpp
+	src/Engine/SimdObject.cpp
     src/Engine/String.cpp
     src/Engine/Vector.cpp
     src/Foundation/Case.cpp

@@ -59,20 +59,23 @@ int main() {
 	ve::ExecutionContext context;
 	auto Cool = HUGE_VALF / 2;
 	
-	std::u8string testExprU8 = std::u8string( u8"{\"Cool\": 90, 90:\"Cool\"}[90]" );
+	std::u8string testExprU8 = std::u8string( u8"val = (float)uint32_t(90.2 * 1000)" );
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";
-	
-	context.compile(testExpr);
-	try {
-		context.setUserValue(ve::Result::make(3));
-		context.setParm(ve::Result::make(4.5), 9);
-		ve::Result res = context.execute();
-	
-		printResult(res);
+	if (!context.compile(testExpr)) {
+		std::cout << "Syntax Error\n";
 	}
-	catch (...) {
+	else {
+		try {
+			context.setUserValue(ve::Result::make(3));
+			context.setParm(ve::Result::make(4.5), 9);
+			ve::Result res = context.execute();
+	
+			printResult(res);
+		}
+		catch (...) {
+		}
 	}
 	
 	return 0;

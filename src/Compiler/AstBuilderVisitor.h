@@ -20,6 +20,8 @@
 #include "../Ast/BreakNode.h"
 #include "../Ast/CastNode.h"
 #include "../Ast/ConstantNode.h"
+#include "../Ast/ConstructPrimitiveNode.h"
+#include "../Ast/ConstructSimdNode.h"
 #include "../Ast/ContinueNode.h"
 #include "../Ast/DivAssignNode.h"
 #include "../Ast/DivNode.h"
@@ -67,6 +69,7 @@
 #include "../Engine/FunctionDef.h"
 #include "../Engine/Map.h"
 #include "../Engine/Result.h"
+#include "../Engine/SimdObject.h"
 #include "../Engine/String.h"
 #include "../Engine/Vector.h"
 #include "../Foundation/Character.h"
@@ -331,6 +334,26 @@ namespace ve {
 		}
 
 		/**
+		 * Visits a constructor expression utilizing parentheses syntax (e.g., uint32_t(10)).
+		 *
+		 * \param ctx			The parse tree context for the parentheses constructor.
+		 * \return				Returns the AST node ID representing the evaluated expression.
+		 **/
+		virtual std::any			visitConstructParenExpr(ExprParser::ConstructParenExprContext* ctx) override {
+			return buildConstructExpr(ctx->type_name(), ctx->exprList());
+		}
+
+		/**
+		 * Visits a constructor expression utilizing braces syntax (e.g., uint32_t{10}).
+		 *
+		 * \param ctx			The parse tree context for the braces constructor.
+		 * \return				Returns the AST node ID representing the evaluated expression.
+		 **/
+		virtual std::any			visitConstructBraceExpr(ExprParser::ConstructBraceExprContext* ctx) override {
+			return buildConstructExpr(ctx->type_name(), ctx->exprList());
+		}
+
+		/**
 		 * Visits a prefix increment or decrement node in the parse tree and allocates the corresponding operation node.
 		 * 
 		 * \param ctx		The ANTLR parser context for the prefix increment/decrement operation.
@@ -581,17 +604,17 @@ namespace ve {
 		 * \param ctx		The parser context containing the initialization-style cast expression.
 		 * \return			Returns an std::any containing the allocated node reference/index.
 		 **/
-		virtual std::any			visitInitCastExpr(ExprParser::InitCastExprContext* ctx) override {
-			// Extract the target type string (e.g., "uint32_t" or "u32") and resolve it to your internal DataType enum.
-			std::string typeStr = ctx->type_name()->getText();
-			DataType targetType = resolveDataType(typeStr); 
-			
-			// Evaluate the inner expression to get its node index.
-			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
-			
-			// Allocate a CastNode in the execution context arena.
-			return context.addNode<CastNode>(exprNode, targetType);
-		}
+		//virtual std::any			visitInitCastExpr(ExprParser::InitCastExprContext* ctx) override {
+		//	// Extract the target type string (e.g., "uint32_t" or "u32") and resolve it to your internal DataType enum.
+		//	std::string typeStr = ctx->type_name()->getText();
+		//	DataType targetType = resolveDataType(typeStr); 
+		//	
+		//	// Evaluate the inner expression to get its node index.
+		//	size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
+		//	
+		//	// Allocate a CastNode in the execution context arena.
+		//	return context.addNode<CastNode>(exprNode, targetType);
+		//}
 
 		/**
 		 * Visits a static_cast expression node in the AST, evaluates its inner expression, and casts it to the target type.
@@ -1277,6 +1300,107 @@ namespace ve {
 			if (typeStr == "double"   || typeStr == "f64") { return DataType::Double; }
 			
 			return DataType::Any; 
+		}
+
+		/**
+		 * Maps the raw token string from the lexer to the internal SimdRegisterType enum.
+		 *
+		 * \param typeName		The string representation of the SIMD type token.
+		 * \return				Returns the corresponding SimdRegisterType enumeration.
+		 **/
+		static SimdRegisterType		getSimdTypeFromString(const std::string& typeName) {
+			static const std::unordered_map<std::string, SimdRegisterType> typeMap = {
+				{ "__m64", Simd_m64 }, { "__m128", Simd_m128 }, { "__m128d", Simd_m128d }, { "__m128i", Simd_m128i },
+				{ "__m256", Simd_m256 }, { "__m256d", Simd_m256d }, { "__m256i", Simd_m256i },
+				{ "__m512", Simd_m512 }, { "__m512d", Simd_m512d }, { "__m512i", Simd_m512i },
+				{ "v128_t", Simd_v128 },
+				{ "int8x8_t", Simd_int8x8 }, { "int16x4_t", Simd_int16x4 }, { "int32x2_t", Simd_int32x2 }, { "int64x1_t", Simd_int64x1 },
+				{ "uint8x8_t", Simd_uint8x8 }, { "uint16x4_t", Simd_uint16x4 }, { "uint32x2_t", Simd_uint32x2 }, { "uint64x1_t", Simd_uint64x1 },
+				{ "float32x2_t", Simd_float32x2 }, { "float64x1_t", Simd_float64x1 },
+				{ "int8x16_t", Simd_int8x16 }, { "int16x8_t", Simd_int16x8 }, { "int32x4_t", Simd_int32x4 }, { "int64x2_t", Simd_int64x2 },
+				{ "uint8x16_t", Simd_uint8x16 }, { "uint16x8_t", Simd_uint16x8 }, { "uint32x4_t", Simd_uint32x4 }, { "uint64x2_t", Simd_uint64x2 },
+				{ "float32x4_t", Simd_float32x4 }, { "float64x2_t", Simd_float64x2 }
+			};
+
+			auto it = typeMap.find(typeName);
+			if (it != typeMap.end()) {
+				return it->second;
+			}
+		
+			return Simd_m128;
+		}
+
+		/**
+		 * Maps a parsed primitive type token to the internal DataType enum.
+		 *
+		 * \param typeCtx		The parse tree context containing the type identifier.
+		 * \return				Returns the corresponding DataType enumeration.
+		 **/
+		static DataType				getPrimitiveTypeFromContext(ExprParser::Type_nameContext* typeCtx) {
+			if (typeCtx->TYPE_INT8()) {
+				return DataType::Int8;
+			}
+			if (typeCtx->TYPE_UINT8()) {
+				return DataType::UInt8;
+			}
+			if (typeCtx->TYPE_INT16()) {
+				return DataType::Int16;
+			}
+			if (typeCtx->TYPE_UINT16()) {
+				return DataType::UInt16;
+			}
+			if (typeCtx->TYPE_INT32()) {
+				return DataType::Int32;
+			}
+			if (typeCtx->TYPE_UINT32()) {
+				return DataType::UInt32;
+			}
+			if (typeCtx->TYPE_INT64()) {
+				return DataType::Int64;
+			}
+			if (typeCtx->TYPE_UINT64()) {
+				return DataType::UInt64;
+			}
+			if (typeCtx->TYPE_FLOAT()) {
+				return DataType::Float;
+			}
+			if (typeCtx->TYPE_DOUBLE()) {
+				return DataType::Double;
+			}
+		
+			return DataType::Int32;
+		}
+
+		/**
+		 * Shared helper to process both constructor syntaxes (parentheses and braces).
+		 * Constructs the appropriate AST node depending on whether the target is a SIMD 
+		 * register or a primitive scalar type.
+		 *
+		 * \param typeCtx		The parse tree context defining the type name to construct.
+		 * \param exprListCtx	The parse tree context containing the initialization arguments.
+		 * \return				Returns the AST node ID representing the constructed expression.
+		 **/
+		std::any					buildConstructExpr(ExprParser::Type_nameContext* typeCtx, ExprParser::ExprListContext* exprListCtx) {
+			std::vector<size_t> args;
+		
+			if (exprListCtx) {
+				for (auto* exprCtx : exprListCtx->expr()) {
+					size_t argId = std::any_cast<size_t>(visit(exprCtx));
+					args.push_back(argId);
+				}
+			}
+
+			if (typeCtx->TYPE_SIMD()) {
+				std::string typeName = typeCtx->TYPE_SIMD()->getText();
+				SimdRegisterType simdType = getSimdTypeFromString(typeName);
+			
+				size_t nodeId = context.addNode<ConstructSimdNode>(simdType, args);
+				return nodeId;
+			}
+
+			DataType primType = getPrimitiveTypeFromContext(typeCtx);
+			size_t primNodeId = context.addNode<ConstructPrimitiveNode>(primType, args);
+			return primNodeId;
 		}
 
 	protected :

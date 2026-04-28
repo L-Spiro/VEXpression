@@ -723,7 +723,11 @@ namespace ve {
 							}
 							case NumericConstant::Object : {
 								if (args[argIndex].value.objectVal != nullptr) {
-									return args[argIndex].value.objectVal->formattedString(formatter, ToStringFlag_None);
+									std::string tmp;
+									if (!args[argIndex].value.objectVal->toString(tmp, 0, ToStringFlag_None/*ToStringFlag_CString | ToStringFlag_LowQualityFloat*/)) {
+										return std::vformat(formatter, std::make_format_args("<error>"));
+									}
+									return std::vformat(formatter, std::make_format_args(tmp));
 								}
 								return std::vformat(formatter, std::make_format_args("<null>"));
 							}

@@ -21,6 +21,8 @@ namespace ve {
 		UInt32,
 		Int64,
 		UInt64,
+		Float16,
+		BFloat16,
 		Float,
 		Double,
 		Pointer,

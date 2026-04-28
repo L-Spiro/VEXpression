@@ -27,7 +27,8 @@ namespace ve {
 		BuiltInType_String					= (1 << 1),
 		BuiltInType_Vector					= (1 << 2),
 		BuiltInType_Map						= (1 << 3),
-		BuiltInType_Set						= (1 << 4)
+		BuiltInType_Set						= (1 << 4),
+		BuiltInType_Simd					= (1 << 5),
 	};
 
 	/**
@@ -46,7 +47,7 @@ namespace ve {
 	/**
 	 * Flags controlling string conversion and formatting behaviors.
 	 *
-	 * These flags influence how toString() and formattedString() escape or present data.
+	 * These flags influence how toString() escape or present data.
 	 *
 	 * \note This is a bitmask enumeration. Multiple flags may be combined.
 	 **/
@@ -111,15 +112,6 @@ namespace ve {
 		 * \return				Returns true if the object was successfully converted to a string.
 		 **/
 		virtual bool						toString(std::string& returnString, uint32_t depth, uint32_t flags) const = 0;
-
-		/**
-		 * Generates a formatted string representation of the object.
-		 *
-		 * \param format		The format string specifying how the object should be presented.
-		 * \param flags			Formatting flags.
-		 * \return				Returns the formatted wide string.
-		 **/
-		virtual std::string					formattedString(const std::string& format, uint32_t flags) const = 0;
 
 		/**
 		 * Converts the object to a fundamental numeric constant type if possible.
@@ -462,7 +454,7 @@ namespace ve {
 		 * \param outEnd		The output resolved linear end index.
 		 * \return				Returns true if bounds are valid, false if out of range.
 		 **/
-		static bool						resolveSliceBounds(int64_t startIdx, int64_t endIdx, uint32_t flags, size_t length, size_t& outStart, size_t& outEnd) {
+		static bool							resolveSliceBounds(int64_t startIdx, int64_t endIdx, uint32_t flags, size_t length, size_t& outStart, size_t& outEnd) {
 			int64_t idx0 = 0;
 			int64_t idx1 = static_cast<int64_t>(length);
 
@@ -494,7 +486,7 @@ namespace ve {
 		 * \param rhs			The result to insert or overwrite with.
 		 * \return				Returns the assigned value on success, or Invalid on failure.
 		 **/
-		virtual Result					arrayAssign(int64_t index, const Result& rhs) { return Result{}; }
+		virtual Result						arrayAssign(int64_t index, const Result& rhs) { return Result{}; }
 
 		/**
 		 * Assigns a value or merges an array into a sliced range.
@@ -505,7 +497,7 @@ namespace ve {
 		 * \param rhs			The result to insert or overwrite with.
 		 * \return				Returns the assigned value on success, or Invalid on failure.
 		 **/
-		virtual Result					arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) { return Result{}; }
+		virtual Result						arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) { return Result{}; }
 
 	protected :
 		// == Members.
