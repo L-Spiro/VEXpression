@@ -23,7 +23,7 @@ namespace ve {
 		 **/
 		Result					evaluate(ExecutionContext& context) const override {
 			context.setBreak();
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 	};
 

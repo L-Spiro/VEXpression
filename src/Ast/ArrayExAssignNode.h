@@ -27,7 +27,11 @@ namespace ve {
 			Result target = context.getArena().nodes[targetIndex]->evaluate(context);
 
 			if (target.type != NumericConstant::Object || !target.value.objectVal) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
+			}
+
+			if (target.value.objectVal->type() & BuiltInType_Map) {
+				return Result{};
 			}
 
 			int64_t startIdx = 0;
@@ -35,16 +39,28 @@ namespace ve {
 
 			if (flagsMask & ArrayExFlags::ArrayExFlag_Start) {
 				Result sRes = context.getArena().nodes[startIndex]->evaluate(context);
-				if (sRes.type == NumericConstant::Signed) { startIdx = sRes.value.intVal; }
-				else if (sRes.type == NumericConstant::Unsigned) { startIdx = static_cast<int64_t>(sRes.value.uintVal); }
-				else { return Result{ .type = NumericConstant::Invalid }; }
+				if (sRes.type == NumericConstant::Signed) {
+					startIdx = sRes.value.intVal;
+				}
+				else if (sRes.type == NumericConstant::Unsigned) {
+					startIdx = static_cast<int64_t>(sRes.value.uintVal);
+				}
+				else {
+					return Result{};
+				}
 			}
 
 			if (flagsMask & ArrayExFlags::ArrayExFlag_End) {
 				Result eRes = context.getArena().nodes[endIndex]->evaluate(context);
-				if (eRes.type == NumericConstant::Signed) { endIdx = eRes.value.intVal; }
-				else if (eRes.type == NumericConstant::Unsigned) { endIdx = static_cast<int64_t>(eRes.value.uintVal); }
-				else { return Result{ .type = NumericConstant::Invalid }; }
+				if (eRes.type == NumericConstant::Signed) {
+					endIdx = eRes.value.intVal;
+				}
+				else if (eRes.type == NumericConstant::Unsigned) {
+					endIdx = static_cast<int64_t>(eRes.value.uintVal);
+				}
+				else {
+					return Result{};
+				}
 			}
 
 			Result rhs = context.getArena().nodes[rightIndex]->evaluate(context);
@@ -55,16 +71,13 @@ namespace ve {
 			else {
 				size_t outStart, outEnd;
 				if (!Object::resolveSliceBounds(startIdx, endIdx, flagsMask, target.value.objectVal->arrayLength(), outStart, outEnd)) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 
-				// Iterate backwards to prevent bounds shifting from corrupting the index targeting loop
 				for (size_t i = outEnd; i-- > outStart; ) {
 					Result oldVal = target.value.objectVal->arrayAccess(i);
 					Result newVal = context.evaluateMath(oldVal, rhs, opType);
 					
-					// CRITICAL FIX: If evaluateMath mutated the object in-place (e.g., Vector +=), 
-					// re-assigning it triggers Vector's slice-insertion logic and flattens/corrupts the array!
 					if (oldVal.type != NumericConstant::Object || oldVal.value.objectVal != newVal.value.objectVal) {
 						target.value.objectVal->arrayAssign(i, newVal);
 					}

@@ -29,7 +29,7 @@ namespace ve {
 			
 			Result out;
 			if (leftVal.type == NumericConstant::Object) {
-				if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!leftVal.value.objectVal) { return Result{}; }
 				out = (*leftVal.value.objectVal) < rightVal;
 
 				// The operation probably created a new object.
@@ -52,8 +52,8 @@ namespace ve {
 				out.value.intVal = int64_t(l.value.uintVal < r.value.uintVal);
 			}
 			else if (common == NumericConstant::Object) {
-				if (!l.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-				if (!r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!l.value.objectVal) { return Result{}; }
+				if (!r.value.objectVal) { return Result{}; }
 				out = (*l.value.objectVal) < r;
 
 				// The operation probably created a new object.

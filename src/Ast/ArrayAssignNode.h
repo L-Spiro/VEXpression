@@ -3,6 +3,7 @@
 #include "../../generated/ExprLexer.h"
 #include "../Engine/Errors.h"
 #include "../Engine/ExecutionContext.h"
+#include "../Engine/Map.h"
 #include "../Engine/Result.h"
 #include "AstNode.h"
 
@@ -29,26 +30,39 @@ namespace ve {
 			Result indexRes = context.getArena().nodes[indexIndex]->evaluate(context);
 			Result rhs = context.getArena().nodes[rightIndex]->evaluate(context);
 
-			if (target.type != NumericConstant::Object || !target.value.objectVal) {
-				return Result{ .type = NumericConstant::Invalid };
+			if (target.type != NumericConstant::Object || !target.value.objectVal) { return Result{}; }
+
+			if (target.value.objectVal->type() & BuiltInType_Map) {
+				Map* mapObj = static_cast<Map*>(target.value.objectVal);
+				Result valToAssign = rhs;
+				
+				if (opType != ExprLexer::ASSIGN) {
+					Result oldVal = mapObj->valueFromKey(indexRes);
+					valToAssign = context.evaluateMath(oldVal, rhs, opType);
+					
+					if (oldVal.type == NumericConstant::Object && oldVal.value.objectVal == valToAssign.value.objectVal) { return valToAssign; }
+
+					if (valToAssign.type == NumericConstant::Object) {
+						VE_DELETE_SWAP(valToAssign, lastObject);
+					}
+				}
+
+				mapObj->setValue(indexRes, valToAssign);
+				return valToAssign;
 			}
 
 			int64_t idx = 0;
 			if (indexRes.type == NumericConstant::Signed) { idx = indexRes.value.intVal; }
 			else if (indexRes.type == NumericConstant::Unsigned) { idx = static_cast<int64_t>(indexRes.value.uintVal); }
-			else { return Result{ .type = NumericConstant::Invalid }; }
+			else { return Result{}; }
 
 			Result valToAssign = rhs;
 			if (opType != ExprLexer::ASSIGN) {
 				Result oldVal = target.value.objectVal->arrayAccess(idx);
 				valToAssign = context.evaluateMath(oldVal, rhs, opType);
 				
-				// CRITICAL FIX: Prevent vector flattening/corruption if mutated in-place.
-				if (oldVal.type == NumericConstant::Object && oldVal.value.objectVal == valToAssign.value.objectVal) {
-					return valToAssign;
-				}
+				if (oldVal.type == NumericConstant::Object && oldVal.value.objectVal == valToAssign.value.objectVal) { return valToAssign; }
 
-				// Only swap memory if evaluateMath allocated a brand new dynamic object.
 				if (valToAssign.type == NumericConstant::Object) {
 					VE_DELETE_SWAP(valToAssign, lastObject);
 				}

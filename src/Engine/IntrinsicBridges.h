@@ -1239,7 +1239,7 @@ namespace ve {
 		 **/
 		static Result		htmlNameBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty()) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			size_t idx = 0;
@@ -1247,7 +1247,7 @@ namespace ve {
 			
 			if (arg.type == NumericConstant::Signed) {
 				if (arg.value.intVal < 0) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				idx = static_cast<size_t>(arg.value.intVal);
 			}
@@ -1255,7 +1255,7 @@ namespace ve {
 				idx = static_cast<size_t>(arg.value.uintVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			std::string name;
@@ -1270,7 +1270,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1282,7 +1282,7 @@ namespace ve {
 		 **/
 		static Result		htmlCharBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty()) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			const Result& arg = args[0];
@@ -1296,7 +1296,7 @@ namespace ve {
 						idx = static_cast<size_t>(arg.value.intVal);
 					}
 					else {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 				}
 				else {
@@ -1340,7 +1340,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 
@@ -1356,7 +1356,7 @@ namespace ve {
 		 **/
 		static Result		capitalizeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			// Ensure you perform whatever internal RTTI check you use for BuiltInType_String here if needed.
@@ -1367,7 +1367,7 @@ namespace ve {
 				return capStr->createResult();
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1379,7 +1379,7 @@ namespace ve {
 		 **/
 		static Result		casefoldBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -1393,7 +1393,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1408,7 +1408,7 @@ namespace ve {
 				args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -1417,7 +1417,7 @@ namespace ve {
 			size_t width = 0;
 			if (args[1].type == NumericConstant::Signed) {
 				if (args[1].value.intVal < 0) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				width = static_cast<size_t>(args[1].value.intVal);
 			}
@@ -1425,7 +1425,7 @@ namespace ve {
 				width = static_cast<size_t>(args[1].value.uintVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			// Optional fillChar.
@@ -1433,13 +1433,13 @@ namespace ve {
 			if (args.size() >= 3) {
 				if (args[2].type == NumericConstant::Signed) {
 					if (args[2].value.intVal < 0 || args[2].value.intVal > 0x10FFFF) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					fillChar = static_cast<uint32_t>(args[2].value.intVal);
 				}
 				else if (args[2].type == NumericConstant::Unsigned) {
 					if (args[2].value.uintVal > 0x10FFFF) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					fillChar = static_cast<uint32_t>(args[2].value.uintVal);
 				}
@@ -1451,13 +1451,13 @@ namespace ve {
 					
 					// Python requires fillchar to be exactly one character.
 					if (fillStr->arrayLength() != 1) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					
 					fillChar = fillStr->getCodePoint(0);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -1466,7 +1466,7 @@ namespace ve {
 				return centeredStr->createResult();
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1477,19 +1477,19 @@ namespace ve {
 		 * \return			Returns an Integer Result containing the count.
 		 **/
 		static Result		countBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() < 2 || args.size() > 4) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() < 2 || args.size() > 4) { return Result{}; }
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
 			
 			if (args[1].type != NumericConstant::Object || 
 				args[1].value.objectVal == nullptr || 
 				!(args[1].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			String* subObj = static_cast<String*>(args[1].value.objectVal);
 			
@@ -1502,7 +1502,7 @@ namespace ve {
 					start = static_cast<int64_t>(args[2].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -1515,14 +1515,14 @@ namespace ve {
 					end = static_cast<int64_t>(args[3].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 				
 			Result res = Result::make(strObj->count(subObj, start, end));
 			return res;
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1534,13 +1534,13 @@ namespace ve {
 		 **/
 		static Result		encodeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() < 2 || args.size() > 3) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -1553,7 +1553,7 @@ namespace ve {
 				String* encStr = static_cast<String*>(args[1].value.objectVal);
 				
 				if (!Encode::getCodePageId(encStr->getUtf8(), codePage)) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			else if (args[1].type == NumericConstant::Unsigned) {
@@ -1563,7 +1563,7 @@ namespace ve {
 				codePage = static_cast<CodePage>(args[1].value.intVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			EncodingErrorPolicy errorPolicy = EncodingErrorPolicy::Strict;
@@ -1589,11 +1589,11 @@ namespace ve {
 						errorPolicy = EncodingErrorPolicy::Replace;
 					}
 					else {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -1607,7 +1607,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1620,20 +1620,20 @@ namespace ve {
 		 **/
 		static Result		endsWithBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() < 2 || args.size() > 4) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
 			
 			if (args[1].type != NumericConstant::Object || 
 				args[1].value.objectVal == nullptr || 
 				!(args[1].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			String* suffixObj = static_cast<String*>(args[1].value.objectVal);
 			
@@ -1646,7 +1646,7 @@ namespace ve {
 					start = static_cast<int64_t>(args[2].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -1659,7 +1659,7 @@ namespace ve {
 					end = static_cast<int64_t>(args[3].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -1671,7 +1671,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1684,13 +1684,13 @@ namespace ve {
 		 **/
 		static Result		expandTabsBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || args.size() > 2) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -1705,7 +1705,7 @@ namespace ve {
 					tabSize = static_cast<int64_t>(args[1].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -1719,7 +1719,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1732,7 +1732,7 @@ namespace ve {
 		 **/
 		static Result		findBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() < 2 || args.size() > 4) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -1740,7 +1740,7 @@ namespace ve {
 			if (args[1].type != NumericConstant::Object || 
 				args[1].value.objectVal == nullptr || 
 				!(args[1].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			String* subObj = static_cast<String*>(args[1].value.objectVal);
 			
@@ -1748,14 +1748,14 @@ namespace ve {
 			if (args.size() >= 3) {
 				if (args[2].type == NumericConstant::Signed) { start = args[2].value.intVal; }
 				else if (args[2].type == NumericConstant::Unsigned) { start = static_cast<int64_t>(args[2].value.uintVal); }
-				else { return Result{ .type = NumericConstant::Invalid }; }
+				else { return Result{}; }
 			}
 			
 			int64_t end = -1;
 			if (args.size() == 4) {
 				if (args[3].type == NumericConstant::Signed) { end = args[3].value.intVal; }
 				else if (args[3].type == NumericConstant::Unsigned) { end = static_cast<int64_t>(args[3].value.uintVal); }
-				else { return Result{ .type = NumericConstant::Invalid }; }
+				else { return Result{}; }
 			}
 			
 			try {
@@ -1766,7 +1766,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1779,13 +1779,13 @@ namespace ve {
 		 **/
 		static Result		formatBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty()) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -1802,7 +1802,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1816,7 +1816,7 @@ namespace ve {
 		static Result		isAlnumBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isAlphaUtf(args[0].value.uintVal) || Character::isNumericUtf(args[0].value.uintVal));
 			}
@@ -1835,7 +1835,7 @@ namespace ve {
 					throw ErrorCode::Out_Of_Memory;
 				}
 			}
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1849,7 +1849,7 @@ namespace ve {
 		static Result		isAlphaBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isAlphaUtf(args[0].value.uintVal));
 			}
@@ -1868,7 +1868,7 @@ namespace ve {
 					throw ErrorCode::Out_Of_Memory;
 				}
 			}
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1882,7 +1882,7 @@ namespace ve {
 		static Result		isAsciiBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(args[0].value.uintVal <= 127 && Character::isAscii(args[0].value.uintVal));
 			}
@@ -1901,7 +1901,7 @@ namespace ve {
 					throw ErrorCode::Out_Of_Memory;
 				}
 			}
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1915,7 +1915,7 @@ namespace ve {
 		static Result		isDecimalBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isDecimalUtf(args[0].value.uintVal));
 			}
@@ -1934,7 +1934,7 @@ namespace ve {
 					throw ErrorCode::Out_Of_Memory;
 				}
 			}
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1948,7 +1948,7 @@ namespace ve {
 		static Result		isDigitBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isDigitUtf(args[0].value.uintVal));
 			}
@@ -1971,7 +1971,7 @@ namespace ve {
 					throw ErrorCode::Out_Of_Memory;
 				}
 			}
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -1986,13 +1986,13 @@ namespace ve {
 			static_cast<void>(ctx);
 			
 			if (args.size() != 1) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -2005,7 +2005,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2019,7 +2019,7 @@ namespace ve {
 		static Result		isLowerBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isLowerUtf(args[0].value.uintVal));
 			}
@@ -2039,7 +2039,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2053,7 +2053,7 @@ namespace ve {
 		static Result		isNumericBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isNumericUtf(args[0].value.uintVal));
 			}
@@ -2072,7 +2072,7 @@ namespace ve {
 					throw ErrorCode::Out_Of_Memory;
 				}
 			}
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2086,7 +2086,7 @@ namespace ve {
 		static Result		isPrintableBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isPrintableUtf(args[0].value.uintVal));
 			}
@@ -2110,7 +2110,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2124,7 +2124,7 @@ namespace ve {
 		static Result		isSpaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isSpaceUtf(args[0].value.uintVal));
 			}
@@ -2148,7 +2148,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2162,12 +2162,12 @@ namespace ve {
 		static Result		isTitleBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -2184,7 +2184,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2198,7 +2198,7 @@ namespace ve {
 		static Result		isUpperBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				return Result::make(Character::isSpaceUtf(args[0].value.uintVal));
 			}
@@ -2222,7 +2222,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2237,13 +2237,13 @@ namespace ve {
 			static_cast<void>(ctx);
 			
 			if (args.size() < 2 || args.size() > 3) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			int64_t width = 0;
@@ -2255,7 +2255,7 @@ namespace ve {
 				width = static_cast<int64_t>(args[1].value.uintVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			uint32_t fillCharCp = ' ';
@@ -2271,13 +2271,13 @@ namespace ve {
 					if (args[2].type != NumericConstant::Object || 
 						args[2].value.objectVal == nullptr || 
 						!(args[2].value.objectVal->type() & BuiltInType_String)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 				
 					String* fillStr = static_cast<String*>(args[2].value.objectVal);
 				
 					if (fillStr->arrayLength() != 1) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 				
 					fillCharCp = fillStr->getCodePoint(0);
@@ -2297,7 +2297,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2309,7 +2309,7 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly lowercased String.
 		 **/
 		static Result		lowerBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				char32_t outSeq[3];
 				auto lowerCount = Case::getLowerSequence(char32_t(args[0].value.uintVal), outSeq);
@@ -2379,7 +2379,7 @@ namespace ve {
 					throw ErrorCode::Out_Of_Memory;
 				}
 			}
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2391,12 +2391,12 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly stripped String.
 		 **/
 		static Result		lstripBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() < 1 || args.size() > 2) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() < 1 || args.size() > 2) { return Result{}; }
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			std::u32string stripChars;
@@ -2405,7 +2405,7 @@ namespace ve {
 				if (args[1].type != NumericConstant::Object || 
 					args[1].value.objectVal == nullptr || 
 					!(args[1].value.objectVal->type() & BuiltInType_String)) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				
 				String* charStr = static_cast<String*>(args[1].value.objectVal);
@@ -2423,7 +2423,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2435,10 +2435,10 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly formatted String.
 		 **/
 		static Result		removePrefixBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
-			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
 			String* prefixObj = static_cast<String*>(args[1].value.objectVal);
@@ -2451,7 +2451,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2463,10 +2463,10 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly formatted String.
 		 **/
 		static Result		removeSuffixBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
-			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
 			String* suffixObj = static_cast<String*>(args[1].value.objectVal);
@@ -2479,7 +2479,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2491,24 +2491,24 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly replaced String.
 		 **/
 		static Result		replaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() < 3 || args.size() > 4) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() < 3 || args.size() > 4) { return Result{}; }
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[1].type != NumericConstant::Object || 
 				args[1].value.objectVal == nullptr || 
 				!(args[1].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[2].type != NumericConstant::Object || 
 				args[2].value.objectVal == nullptr || 
 				!(args[2].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			int64_t count = -1;
@@ -2521,7 +2521,7 @@ namespace ve {
 					count = static_cast<int64_t>(args[3].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -2537,7 +2537,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2551,18 +2551,18 @@ namespace ve {
 		static Result		rfindBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() < 2 || args.size() > 4) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() < 2 || args.size() > 4) { return Result{}; }
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (args[1].type != NumericConstant::Object || 
 				args[1].value.objectVal == nullptr || 
 				!(args[1].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			int64_t start = 0;
@@ -2576,7 +2576,7 @@ namespace ve {
 					start = static_cast<int64_t>(args[2].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -2588,7 +2588,7 @@ namespace ve {
 					end = static_cast<int64_t>(args[3].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -2607,7 +2607,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2619,12 +2619,12 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly justified String.
 		 **/
 		static Result		rjustBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() < 2 || args.size() > 3) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() < 2 || args.size() > 3) { return Result{}; }
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			int64_t width = 0;
@@ -2636,7 +2636,7 @@ namespace ve {
 				width = static_cast<int64_t>(args[1].value.uintVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			uint32_t fillCharCp = ' ';
@@ -2645,13 +2645,13 @@ namespace ve {
 				if (args[2].type != NumericConstant::Object || 
 					args[2].value.objectVal == nullptr || 
 					!(args[2].value.objectVal->type() & BuiltInType_String)) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				
 				String* fillStr = static_cast<String*>(args[2].value.objectVal);
 				
 				if (fillStr->arrayLength() != 1) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				
 				fillCharCp = fillStr->getCodePoint(0);
@@ -2669,7 +2669,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2681,12 +2681,12 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly stripped String.
 		 **/
 		static Result		rstripBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() < 1 || args.size() > 2) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() < 1 || args.size() > 2) { return Result{}; }
 			
 			if (args[0].type != NumericConstant::Object || 
 				args[0].value.objectVal == nullptr || 
 				!(args[0].value.objectVal->type() & BuiltInType_String)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			std::u32string stripChars;
@@ -2695,7 +2695,7 @@ namespace ve {
 				if (args[1].type != NumericConstant::Object || 
 					args[1].value.objectVal == nullptr || 
 					!(args[1].value.objectVal->type() & BuiltInType_String)) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				
 				String* charStr = static_cast<String*>(args[1].value.objectVal);
@@ -2712,7 +2712,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2726,10 +2726,10 @@ namespace ve {
 		static Result		startsWithBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			static_cast<void>(ctx);
 			
-			if (args.size() < 2 || args.size() > 4) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() < 2 || args.size() > 4) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
-			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
 			
 			int64_t start = 0;
 			int64_t end = -1;
@@ -2742,7 +2742,7 @@ namespace ve {
 					start = static_cast<int64_t>(args[2].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -2754,7 +2754,7 @@ namespace ve {
 					end = static_cast<int64_t>(args[3].value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			
@@ -2768,7 +2768,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2780,14 +2780,14 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly stripped String.
 		 **/
 		static Result		stripBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() < 1 || args.size() > 2) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() < 1 || args.size() > 2) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
 			
 			std::u32string stripChars;
 			
 			if (args.size() == 2) {
-				if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+				if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
 				
 				String* charStr = static_cast<String*>(args[1].value.objectVal);
 				stripChars = charStr->getUtf32();
@@ -2803,7 +2803,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2815,9 +2815,9 @@ namespace ve {
 		 * \return			Returns an Object Result containing the case-swapped String.
 		 **/
 		static Result		swapcaseBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
 			
@@ -2829,7 +2829,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2841,9 +2841,9 @@ namespace ve {
 		 * \return			Returns an Object Result containing the titlecased String.
 		 **/
 		static Result		titleBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
 			
@@ -2855,7 +2855,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2867,7 +2867,7 @@ namespace ve {
 		 * \return			Returns an Object Result containing the uppercase String.
 		 **/
 		static Result		upperBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			if (args[0].type == NumericConstant::Unsigned) {
 				char32_t outSeq[3];
 				auto lowerCount = Case::getUpperSequence(char32_t(args[0].value.uintVal), outSeq);
@@ -2934,7 +2934,7 @@ namespace ve {
 					throw ErrorCode::Out_Of_Memory;
 				}
 			}
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2946,9 +2946,9 @@ namespace ve {
 		 * \return			Returns an Object Result containing the newly zero-padded String.
 		 **/
 		static Result		zfillBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
 
 			int64_t width = 0;
 
@@ -2959,7 +2959,7 @@ namespace ve {
 				width = static_cast<int64_t>(args[1].value.uintVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			String* strObj = static_cast<String*>(args[0].value.objectVal);
@@ -2973,7 +2973,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -2985,9 +2985,9 @@ namespace ve {
 		 * \return			Returns an Object Result containing the element.
 		 **/
 		static Result		atBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
 			
 			int64_t index = 0;
 			if (args[1].type == NumericConstant::Signed) {
@@ -2997,7 +2997,7 @@ namespace ve {
 				index = static_cast<int64_t>(args[1].value.uintVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			Object* obj = args[0].value.objectVal;
@@ -3014,7 +3014,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -3026,9 +3026,9 @@ namespace ve {
 		 * \return			Returns an Unsigned Result containing the length of the object.
 		 **/
 		static Result		lengthBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
 			
 			Object* obj = args[0].value.objectVal;
 			
@@ -3042,7 +3042,7 @@ namespace ve {
 				throw ErrorCode::Out_Of_Memory;
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -3054,9 +3054,9 @@ namespace ve {
 		 * \return			Returns an Invalid Result (void return).
 		 **/
 		static Result		pushBackBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2) { return Result{}; }
 			
-			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
 			
 			Object* obj = args[0].value.objectVal;
 			
@@ -3070,7 +3070,7 @@ namespace ve {
 			}
 			catch (...) { throw ErrorCode::Out_Of_Memory; }
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 
@@ -3087,7 +3087,7 @@ namespace ve {
 		 * \return			Returns a Result containing the minimum value.
 		 **/
 		static Result		minBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
 			
 			NumericConstant common = ExecutionContext::getCastType(args[0].type, args[1].type);
 			Result l = ctx->convertResult(args[0], common);
@@ -3097,7 +3097,7 @@ namespace ve {
 			if (common == NumericConstant::Signed) { return Result::make(Math::min(l.value.intVal, r.value.intVal)); }
 			if (common == NumericConstant::Unsigned) { return Result::make(Math::min(l.value.uintVal, r.value.uintVal)); }
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -3109,7 +3109,7 @@ namespace ve {
 		 * \return			Returns a Result containing the maximum value.
 		 **/
 		static Result		maxBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
 			
 			NumericConstant common = ExecutionContext::getCastType(args[0].type, args[1].type);
 			Result l = ctx->convertResult(args[0], common);
@@ -3119,7 +3119,7 @@ namespace ve {
 			if (common == NumericConstant::Signed) { return Result::make(Math::max(l.value.intVal, r.value.intVal)); }
 			if (common == NumericConstant::Unsigned) { return Result::make(Math::max(l.value.uintVal, r.value.uintVal)); }
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -3131,7 +3131,7 @@ namespace ve {
 		 * \return			Returns a Result containing the clamped value.
 		 **/
 		static Result		clampBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{}; }
 			
 			NumericConstant common = ExecutionContext::getCastType(ExecutionContext::getCastType(args[0].type, args[1].type), args[2].type);
 			Result v = ctx->convertResult(args[0], common);
@@ -3142,7 +3142,7 @@ namespace ve {
 			if (common == NumericConstant::Signed) { return Result::make(Math::clamp(v.value.intVal, minVal.value.intVal, maxVal.value.intVal)); }
 			if (common == NumericConstant::Unsigned) { return Result::make(Math::clamp(v.value.uintVal, minVal.value.uintVal, maxVal.value.uintVal)); }
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -3154,7 +3154,7 @@ namespace ve {
 		 * \return			Returns a Result containing the fractional part.
 		 **/
 		static Result		fracBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{}; }
 			Result val = ctx->convertResult(args[0], NumericConstant::Floating);
 			return Result::make(Math::frac(val.value.doubleVal));
 		}
@@ -3168,7 +3168,7 @@ namespace ve {
 		 * \return			Returns a Result containing the calculated step.
 		 **/
 		static Result		stepBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
 			Result edge = ctx->convertResult(args[0], NumericConstant::Floating);
 			Result x = ctx->convertResult(args[1], NumericConstant::Floating);
 			return Result::make(Math::step(edge.value.doubleVal, x.value.doubleVal));
@@ -3183,7 +3183,7 @@ namespace ve {
 		 * \return			Returns a Result containing the sinc evaluation.
 		 **/
 		static Result		sincBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{}; }
 			Result val = ctx->convertResult(args[0], NumericConstant::Floating);
 			return Result::make(Math::sinc(val.value.doubleVal));
 		}
@@ -3198,7 +3198,7 @@ namespace ve {
 		 **/
 		static Result		relativeEpsilonBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 			
 			double left = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
@@ -3219,7 +3219,7 @@ namespace ve {
 		 * \return			Returns a Result containing the exact sine.
 		 **/
 		static Result		sinExactBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{}; }
 			Result val = ctx->convertResult(args[0], NumericConstant::Floating);
 			return Result::make(Math::sinExact(val.value.doubleVal));
 		}
@@ -3233,7 +3233,7 @@ namespace ve {
 		 * \return			Returns a Result containing the exact cosine.
 		 **/
 		static Result		cosExactBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{}; }
 			Result val = ctx->convertResult(args[0], NumericConstant::Floating);
 			return Result::make(Math::cosExact(val.value.doubleVal));
 		}
@@ -3247,7 +3247,7 @@ namespace ve {
 		 * \return			Returns a Result containing the least common multiple.
 		 **/
 		static Result		lcmBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
 			
 			NumericConstant common = ExecutionContext::getCastType(args[0].type, args[1].type);
 			if (common == NumericConstant::Floating) { common = NumericConstant::Signed; }
@@ -3258,7 +3258,7 @@ namespace ve {
 			if (common == NumericConstant::Signed) { return Result::make(Math::lcm(l.value.intVal, r.value.intVal)); }
 			if (common == NumericConstant::Unsigned) { return Result::make(Math::lcm(l.value.uintVal, r.value.uintVal)); }
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -3270,7 +3270,7 @@ namespace ve {
 		 * \return			Returns a Result containing the checked least common multiple.
 		 **/
 		/*static Result		lcmCheckedBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
 			
 			NumericConstant common = ExecutionContext::getCastType(args[0].type, args[1].type);
 			if (common == NumericConstant::Floating) { common = NumericConstant::Signed; }
@@ -3281,7 +3281,7 @@ namespace ve {
 			if (common == NumericConstant::Signed) { return Result::make(Math::lcmChecked(l.value.intVal, r.value.intVal)); }
 			if (common == NumericConstant::Unsigned) { return Result::make(Math::lcmChecked(l.value.uintVal, r.value.uintVal)); }
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}*/
 
 
@@ -3291,14 +3291,15 @@ namespace ve {
 		/**
 		 * Macro helper to automatically generate uniform execution context bridges for single-argument Math functions.
 		 * Provides the requisite type conversion and Result generation.
-		 * * \param funcName		The name of the Math function to bridge.
+		 * 
+		 * \param funcName		The name of the Math function to bridge.
 		 **/
-#define VE_MATH_GAMMA_BRIDGE(funcName) \
-		static Result funcName##Bridge(ExecutionContext* ctx, const std::vector<Result>& args) { \
-			if (args.size() != 1 || !args[0].isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; } \
-			Result val = ctx->convertResult(args[0], NumericConstant::Floating); \
-			return Result::make(Math::funcName(val.value.doubleVal)); \
-		}
+#define VE_MATH_GAMMA_BRIDGE(funcName)																						\
+	static Result funcName##Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {								\
+		if (args.size() != 1 || !args[0].isPrimitive()) { return Result{}; }				\
+		Result val = ctx->convertResult(args[0], NumericConstant::Floating);												\
+		return Result::make(Math::funcName(val.value.doubleVal));															\
+	}
 
 		VE_MATH_GAMMA_BRIDGE(linearToSRgb)
 		VE_MATH_GAMMA_BRIDGE(sRgbToLinear)
@@ -3368,10 +3369,10 @@ namespace ve {
 		 * \return			Returns a Result containing the linear converted value.
 		 **/
 		static Result		crtProperToLinearBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.empty() || args.size() > 3) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.empty() || args.size() > 3) { return Result{}; }
 			
 			for (const auto& arg : args) {
-				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!arg.isPrimitive()) { return Result{}; }
 			}
 			
 			double val = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
@@ -3393,10 +3394,10 @@ namespace ve {
 		 * \return			Returns a Result containing the proper CRT converted value.
 		 **/
 		static Result		linearToCrtProperBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
-			if (args.empty() || args.size() > 3) { return Result{ .type = NumericConstant::Invalid }; }
+			if (args.empty() || args.size() > 3) { return Result{}; }
 			
 			for (const auto& arg : args) {
-				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!arg.isPrimitive()) { return Result{}; }
 			}
 			
 			double val = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
@@ -3424,18 +3425,18 @@ namespace ve {
 		 **/
 		static Result		simpsonBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || (args.size() != 1 && args.size() != 2 && args.size() != 4 && args.size() != 5)) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			// The first argument must always be the Y array.
 			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
 			std::vector<double> yVals;
 			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			// Overload 1: simpson(y) -> defaults to dx = 1.0
@@ -3449,7 +3450,7 @@ namespace ve {
 					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
 					std::vector<double> xVals;
 					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					return Result::make(Math::simpson1D(yVals, xVals));
 				}
@@ -3457,7 +3458,7 @@ namespace ve {
 					double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
 					return Result::make(Math::simpson1D(yVals, dx));
 				}
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			// Overload 3: simpson(y, start, count, stride) OR simpson(y, start, stride, xArray)
@@ -3469,7 +3470,7 @@ namespace ve {
 					Vector* xVec = static_cast<Vector*>(args[3].value.objectVal);
 					std::vector<double> xVals;
 					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					return Result::make(Math::simpsonStrided(yVals, start, stride, xVals));
 				}
@@ -3478,13 +3479,13 @@ namespace ve {
 					size_t stride = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Signed).value.intVal);
 					return Result::make(Math::simpsonStrided(yVals, start, count, stride));
 				}
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			// Overload 4: simpson(y, start, count, stride, dx)
 			if (args.size() == 5) {
 				if (!args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive() || !args[4].isPrimitive()) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				
 				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
@@ -3495,7 +3496,7 @@ namespace ve {
 				return Result::make(Math::simpsonStrided(yVals, start, count, stride, dx));
 			}
 
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -3510,18 +3511,18 @@ namespace ve {
 		 **/
 		static Result		cumulativeSimpsonBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || args.size() > 3) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			// The first argument must always be the Y array.
 			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
 			std::vector<double> yVals;
 			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			std::vector<double> outVals;
@@ -3536,7 +3537,7 @@ namespace ve {
 					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
 					std::vector<double> xVals;
 					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					outVals = Math::cumulativeSimpson1D(yVals, xVals);
 				}
@@ -3545,13 +3546,13 @@ namespace ve {
 					outVals = Math::cumulativeSimpson1D(yVals, dx);
 				} 
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			// Overload 4 & 5: cumulative_simpson(y, dx, initial) OR cumulative_simpson(y, xArray, initial)
 			else if (args.size() == 3) {
 				if (!args[2].isPrimitive()) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				
 				double initial = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
@@ -3560,7 +3561,7 @@ namespace ve {
 					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
 					std::vector<double> xVals;
 					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					outVals = Math::cumulativeSimpson1D(yVals, xVals, initial);
 				}
@@ -3569,7 +3570,7 @@ namespace ve {
 					outVals = Math::cumulativeSimpson1D(yVals, dx, initial);
 				} 
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 
@@ -3577,7 +3578,7 @@ namespace ve {
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec || !resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -3594,18 +3595,18 @@ namespace ve {
 		 **/
 		static Result		trapezoidBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || (args.size() != 1 && args.size() != 2 && args.size() != 4 && args.size() != 5)) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			// The first argument must always be the Y array.
 			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
 			std::vector<double> yVals;
 			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			// Overload 1: trapezoid(y) -> defaults to dx = 1.0
@@ -3619,7 +3620,7 @@ namespace ve {
 					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
 					std::vector<double> xVals;
 					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					return Result::make(Math::trapezoid1D(yVals, xVals));
 				}
@@ -3627,7 +3628,7 @@ namespace ve {
 					double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
 					return Result::make(Math::trapezoid1D(yVals, dx));
 				}
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			// Overload 3: trapezoid(y, start, count, stride) OR trapezoid(y, start, stride, xArray)
@@ -3639,7 +3640,7 @@ namespace ve {
 					Vector* xVec = static_cast<Vector*>(args[3].value.objectVal);
 					std::vector<double> xVals;
 					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					return Result::make(Math::trapezoidStrided(yVals, start, stride, xVals));
 				}
@@ -3648,13 +3649,13 @@ namespace ve {
 					size_t stride = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Signed).value.intVal);
 					return Result::make(Math::trapezoidStrided(yVals, start, count, stride));
 				}
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			// Overload 4: trapezoid(y, start, count, stride, dx)
 			if (args.size() == 5) {
 				if (!args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive() || !args[4].isPrimitive()) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				
 				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
@@ -3665,7 +3666,7 @@ namespace ve {
 				return Result::make(Math::trapezoidStrided(yVals, start, count, stride, dx));
 			}
 
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -3680,18 +3681,18 @@ namespace ve {
 		 **/
 		static Result		cumulativeTrapezoidBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || args.size() > 3) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			// The first argument must always be the Y array.
 			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
 			std::vector<double> yVals;
 			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			std::vector<double> outVals;
@@ -3706,7 +3707,7 @@ namespace ve {
 					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
 					std::vector<double> xVals;
 					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					outVals = Math::cumulativeTrapezoid1D(yVals, xVals);
 				}
@@ -3715,13 +3716,13 @@ namespace ve {
 					outVals = Math::cumulativeTrapezoid1D(yVals, dx);
 				} 
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 			// Overload 4 & 5: cumulative_trapezoid(y, dx, initial) OR cumulative_trapezoid(y, xArray, initial)
 			else if (args.size() == 3) {
 				if (!args[2].isPrimitive()) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				
 				double initial = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
@@ -3730,7 +3731,7 @@ namespace ve {
 					Vector* xVec = static_cast<Vector*>(args[1].value.objectVal);
 					std::vector<double> xVals;
 					if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) {
-						return Result{ .type = NumericConstant::Invalid };
+						return Result{};
 					}
 					outVals = Math::cumulativeTrapezoid1D(yVals, xVals, initial);
 				}
@@ -3739,19 +3740,19 @@ namespace ve {
 					outVals = Math::cumulativeTrapezoid1D(yVals, dx, initial);
 				} 
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 
 			// Allocate the resulting script Vector and convert the std::vector back into it.
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (!resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -3768,18 +3769,18 @@ namespace ve {
 		 **/
 		static Result		rombBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || (args.size() != 1 && args.size() != 2 && args.size() != 4 && args.size() != 5)) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			// The first argument must always be the Y array.
 			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			Vector* yVec = static_cast<Vector*>(args[0].value.objectVal);
 			std::vector<double> yVals;
 			if (!yVec->toPrimitiveArray<double, NumericConstant::Floating>(yVals)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			// Overload 1: romb(y) -> defaults to dx = 1.0
@@ -3790,7 +3791,7 @@ namespace ve {
 			// Overload 2: romb(y, dx)
 			if (args.size() == 2) {
 				if (!args[1].isPrimitive()) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				double dx = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
 				return Result::make(Math::romb1D(yVals, dx));
@@ -3799,7 +3800,7 @@ namespace ve {
 			// Overload 3: romb(y, start, count, stride)
 			if (args.size() == 4) {
 				if (!args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive()) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
 				size_t count = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
@@ -3811,7 +3812,7 @@ namespace ve {
 			// Overload 4: romb(y, start, count, stride, dx)
 			if (args.size() == 5) {
 				if (!args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive() || !args[4].isPrimitive()) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				size_t start = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
 				size_t count = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
@@ -3821,7 +3822,7 @@ namespace ve {
 				return Result::make(Math::rombStrided(yVals, start, count, stride, dx));
 			}
 
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 
@@ -3840,11 +3841,11 @@ namespace ve {
 		 **/
 		static Result		linspaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() < 2 || args.size() > 4) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			for (const auto& arg : args) {
-				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!arg.isPrimitive()) { return Result{}; }
 			}
 
 			double start = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
@@ -3867,7 +3868,7 @@ namespace ve {
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec || !resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -3885,11 +3886,11 @@ namespace ve {
 		 **/
 		static Result		arangeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.empty() || args.size() > 3) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			for (const auto& arg : args) {
-				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!arg.isPrimitive()) { return Result{}; }
 			}
 
 			std::vector<double> outVals;
@@ -3913,7 +3914,7 @@ namespace ve {
 				
 				// Prevent C++ std::invalid_argument throw and handle it gracefully for the script context.
 				if (step == 0.0) {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 				outVals = Math::arange<double, double, double, double>(start, stop, step);
 			}
@@ -3922,7 +3923,7 @@ namespace ve {
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec || !resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -3940,11 +3941,11 @@ namespace ve {
 		 **/
 		static Result		logspaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() < 2 || args.size() > 5) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			for (const auto& arg : args) {
-				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!arg.isPrimitive()) { return Result{}; }
 			}
 
 			double start = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
@@ -3971,7 +3972,7 @@ namespace ve {
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec || !resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -3989,11 +3990,11 @@ namespace ve {
 		 **/
 		static Result		geomspaceBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() < 2 || args.size() > 4) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			for (const auto& arg : args) {
-				if (!arg.isPrimitive()) { return Result{ .type = NumericConstant::Invalid }; }
+				if (!arg.isPrimitive()) { return Result{}; }
 			}
 
 			double start = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
@@ -4015,21 +4016,85 @@ namespace ve {
 			// Allocate the resulting script Vector and convert the std::vector back into it.
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (!resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
 		}
 
+#define VE_MATH_REDUCTION_BRIDGE(FuncName, MathFunc)																														\
+	static Result		FuncName##Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {																			\
+		if (args.size() != 1 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {			\
+			return Result{};																												\
+		}																																									\
+		Vector* v = static_cast<Vector*>(args[0].value.objectVal);																											\
+		std::vector<double> vals;																																			\
+		if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) {																								\
+			return Result{};																												\
+		}																																									\
+		return Result::make(MathFunc<double>(vals));																														\
+	}
+
+#define VE_MATH_INDEX_REDUCTION_BRIDGE(FuncName, MathFunc)																													\
+	static Result		FuncName##Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {																			\
+		if (args.size() != 1 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {			\
+			return Result{};																												\
+		}																																									\
+		Vector* v = static_cast<Vector*>(args[0].value.objectVal);																											\
+		std::vector<double> vals;																																			\
+		if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) {																								\
+			return Result{};																												\
+		}																																									\
+		return Result::make(static_cast<uint64_t>(MathFunc<double>(vals)));																									\
+	}
+
+		VE_MATH_REDUCTION_BRIDGE(sum, Math::sum)
+		VE_MATH_REDUCTION_BRIDGE(prod, Math::prod)
+		VE_MATH_REDUCTION_BRIDGE(mean, Math::mean)
+		VE_MATH_REDUCTION_BRIDGE(median, Math::median)
+		VE_MATH_REDUCTION_BRIDGE(std, Math::std)
+		VE_MATH_REDUCTION_BRIDGE(var, Math::var)
+		VE_MATH_REDUCTION_BRIDGE(ptp, Math::ptp)
+
+		VE_MATH_INDEX_REDUCTION_BRIDGE(argMin, Math::argMin)
+		VE_MATH_INDEX_REDUCTION_BRIDGE(argMax, Math::argMax)
+
+#undef VE_MATH_REDUCTION_BRIDGE
+#undef VE_MATH_INDEX_REDUCTION_BRIDGE
+
+		/**
+		 * Bridge for Math::percentile.
+		 * Dynamically extracts the input vector and the requested percentile scalar, routing them to the C++ backend.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector v, Double q).
+		 * \return			Returns a Result containing the interpolated q-th percentile value as a primitive. Returns an Invalid result if argument extraction fails.
+		 **/
+		static Result		percentileBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector) || !args[1].isPrimitive()) { 
+				return Result{}; 
+			}
+			
+			Vector* v = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> vals;
+			if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) { 
+				return Result{}; 
+			}
+			
+			double q = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			return Result::make(Math::percentile<double>(vals, q));
+		}
+
+		
 		// =======================================================================================================
 		// ARRAY CREATION BRIDGES
 		// =======================================================================================================
-
 		/**
 		 * Bridge for Math::ones.
 		 * Must be called within a try/catch block.
@@ -4040,7 +4105,7 @@ namespace ve {
 		 **/
 		static Result		onesBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() != 1 || !args[0].isPrimitive()) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
@@ -4048,12 +4113,12 @@ namespace ve {
 
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (!resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -4069,7 +4134,7 @@ namespace ve {
 		 **/
 		static Result		onesLikeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() != 1 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			Vector* refVec = static_cast<Vector*>(args[0].value.objectVal);
@@ -4078,12 +4143,12 @@ namespace ve {
 
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (!resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -4099,7 +4164,7 @@ namespace ve {
 		 **/
 		static Result		zerosBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() != 1 || !args[0].isPrimitive()) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
@@ -4107,12 +4172,12 @@ namespace ve {
 
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (!resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -4128,7 +4193,7 @@ namespace ve {
 		 **/
 		static Result		zerosLikeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() != 1 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			Vector* refVec = static_cast<Vector*>(args[0].value.objectVal);
@@ -4137,12 +4202,12 @@ namespace ve {
 
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (!resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -4158,7 +4223,7 @@ namespace ve {
 		 **/
 		static Result		fullBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { 
-				return Result{ .type = NumericConstant::Invalid }; 
+				return Result{}; 
 			}
 
 			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
@@ -4168,12 +4233,12 @@ namespace ve {
 
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (!resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
@@ -4189,7 +4254,7 @@ namespace ve {
 		 **/
 		static Result		fullLikeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
 			if (args.size() != 2 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector) || !args[1].isPrimitive()) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			Vector* refVec = static_cast<Vector*>(args[0].value.objectVal);
@@ -4199,16 +4264,462 @@ namespace ve {
 
 			Vector* resVec = ctx->allocateObject<Vector>();
 			if (!resVec) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 			
 			if (!resVec->fromPrimitiveArray(outVals)) {
 				ctx->deallocateObject(resVec);
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return resVec->createResult();
 		}
+
+
+		// =======================================================================================================
+		// CUMULATIVE & DIFFERENCES BRIDGES
+		// =======================================================================================================
+#define VE_MATH_VECTOR_RET_BRIDGE(FuncName, MathFunc)																														\
+	static Result		FuncName##Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {																			\
+		if (args.size() != 1 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {			\
+			return Result{};																												\
+		}																																									\
+		Vector* v = static_cast<Vector*>(args[0].value.objectVal);																											\
+		std::vector<double> vals;																																			\
+		if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) {																								\
+			return Result{};																												\
+		}																																									\
+		std::vector<double> outVals = MathFunc<double>(vals);																												\
+		Vector* resVec = ctx->allocateObject<Vector>();																														\
+		if (!resVec) { return Result{}; }																									\
+		if (!resVec->fromPrimitiveArray(outVals)) {																															\
+			ctx->deallocateObject(resVec);																																	\
+			return Result{};																												\
+		}																																									\
+		return resVec->createResult();																																		\
+	}
+
+		VE_MATH_VECTOR_RET_BRIDGE(cumSum, Math::cumSum)
+		VE_MATH_VECTOR_RET_BRIDGE(cumProd, Math::cumProd)
+
+#undef VE_MATH_VECTOR_RET_BRIDGE
+
+		/**
+		 * Bridge for Math::diff1D.
+		 * Dynamically identifies and routes to the correct discrete difference overload based on argument count, 
+		 * defaulting to an order of 1 if the 'n' parameter is omitted.
+		 * Returns a new Vector containing the discrete differences.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector x, [Integer n]).
+		 * \return			Returns a Result containing the new generated Vector. Returns an Invalid result if extraction or allocation fails.
+		 **/
+		static Result		diffBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args.size() > 2) { return Result{}; }
+
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector)) {
+				return Result{};
+			}
+
+			Vector* xVec = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> xVals;
+			if (!xVec->toPrimitiveArray<double, NumericConstant::Floating>(xVals)) { return Result{}; }
+
+			size_t n = 1;
+			if (args.size() == 2) {
+				if (!args[1].isPrimitive()) { return Result{}; }
+				n = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+			}
+
+			std::vector<double> outVals = Math::diff1D<double>(xVals, n);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::ediff1d.
+		 * Dynamically parses 1 to 3 arguments to extract the primary array and the optional prepend (to_begin) and append (to_end) arrays.
+		 * Returns a new Vector containing the prepended values, differences, and appended values.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector ary, [Vector to_begin], [Vector to_end]).
+		 * \return			Returns a Result containing the new generated Vector. Returns an Invalid result if extraction or allocation fails.
+		 **/
+		static Result		ediff1dBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args.size() > 3) { return Result{}; }
+
+			// Helper lambda to safely extract std::vector<double> from a Result
+			auto extractVector = [](const Result& res, std::vector<double>& out) -> bool {
+				if (res.type != NumericConstant::Object || !res.value.objectVal || !(res.value.objectVal->type() & BuiltInType_Vector)) {
+					return false;
+				}
+				Vector* vec = static_cast<Vector*>(res.value.objectVal);
+				return vec->toPrimitiveArray<double, NumericConstant::Floating>(out);
+			};
+
+			std::vector<double> ary, toBegin, toEnd;
+			
+			if (!extractVector(args[0], ary)) { return Result{}; }
+			
+			if (args.size() >= 2) {
+				if (!extractVector(args[1], toBegin)) { return Result{}; }
+			}
+
+			if (args.size() == 3) {
+				if (!extractVector(args[2], toEnd)) { return Result{}; }
+			}
+
+			std::vector<double> outVals = Math::ediff1d<double>(ary, toBegin, toEnd);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+
+		// =======================================================================================================
+		// ARRAY MANIPULATION BRIDGES
+		// =======================================================================================================
+		/**
+		 * Bridge for Math::clip.
+		 * Dynamically extracts the input vector and the bounding primitives, routing them to the C++ backend.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector v, Double minVal, Double maxVal).
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		clipBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector) || !args[1].isPrimitive() || !args[2].isPrimitive()) {
+				return Result{};
+			}
+
+			Vector* v = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> vals;
+			if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) { 
+				return Result{}; 
+			}
+
+			double minVal = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			double maxVal = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals = Math::clip<double>(vals, minVal, maxVal);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::roll.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector v, Integer shift).
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		rollBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector) || !args[1].isPrimitive()) {
+				return Result{};
+			}
+
+			Vector* v = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> vals;
+			if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) { 
+				return Result{}; 
+			}
+
+			int64_t shift = ctx->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			std::vector<double> outVals = Math::roll<double>(vals, shift);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::concatenate.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector v1, Vector v2).
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		concatenateBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+
+			auto extractVector = [](const Result& res, std::vector<double>& out) -> bool {
+				if (res.type != NumericConstant::Object || !res.value.objectVal || !(res.value.objectVal->type() & BuiltInType_Vector)) {
+					return false;
+				}
+				Vector* vec = static_cast<Vector*>(res.value.objectVal);
+				return vec->toPrimitiveArray<double, NumericConstant::Floating>(out);
+			};
+
+			std::vector<double> v1, v2;
+			if (!extractVector(args[0], v1) || !extractVector(args[1], v2)) {
+				return Result{};
+			}
+
+			std::vector<double> outVals = Math::concatenate<double>(v1, v2);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::repeat.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector v, Integer repeats).
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		repeatBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector) || !args[1].isPrimitive()) {
+				return Result{};
+			}
+
+			Vector* v = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> vals;
+			if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) { 
+				return Result{}; 
+			}
+
+			size_t repeats = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+
+			std::vector<double> outVals = Math::repeat<double>(vals, repeats);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::tile.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector v, Integer reps).
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		tileBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector) || !args[1].isPrimitive()) {
+				return Result{};
+			}
+
+			Vector* v = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> vals;
+			if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) { 
+				return Result{}; 
+			}
+
+			size_t reps = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+
+			std::vector<double> outVals = Math::tile<double>(vals, reps);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::pad.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector v, Integer padLeft, Integer padRight, Double constantValue).
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		padBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 4 || args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Vector) || !args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive()) {
+				return Result{};
+			}
+
+			Vector* v = static_cast<Vector*>(args[0].value.objectVal);
+			std::vector<double> vals;
+			if (!v->toPrimitiveArray<double, NumericConstant::Floating>(vals)) { 
+				return Result{}; 
+			}
+
+			size_t padLeft = static_cast<size_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+			size_t padRight = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Signed).value.intVal);
+			double constantValue = ctx->convertResult(args[3], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals = Math::pad<double>(vals, padLeft, padRight, constantValue);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
+
+		// =======================================================================================================
+		// SIGNAL PROCESSING & MATH BRIDGES
+		// =======================================================================================================
+		/**
+		 * Bridge for Math::convolve.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector v1, Vector v2).
+		 * \return			Returns a Result containing the new generated Vector.
+		 **/
+		static Result		convolveBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+
+			auto extractVector = [](const Result& res, std::vector<double>& out) -> bool {
+				if (res.type != NumericConstant::Object || !res.value.objectVal || !(res.value.objectVal->type() & BuiltInType_Vector)) {
+					return false;
+				}
+				Vector* vec = static_cast<Vector*>(res.value.objectVal);
+				return vec->toPrimitiveArray<double, NumericConstant::Floating>(out);
+			};
+
+			std::vector<double> v1, v2;
+			if (!extractVector(args[0], v1) || !extractVector(args[1], v2)) {
+				return Result{};
+			}
+
+			std::vector<double> outVals = Math::convolve<double>(v1, v2);
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::correlate.
+		 * Evaluates the cross-correlation of two 1D sequences. Safely catches invalid dimension exceptions.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector a, Vector v).
+		 * \return			Returns a Result containing the new generated Vector, or Invalid if a.size() < v.size().
+		 **/
+		static Result		correlateBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+
+			auto extractVector = [](const Result& res, std::vector<double>& out) -> bool {
+				if (res.type != NumericConstant::Object || !res.value.objectVal || !(res.value.objectVal->type() & BuiltInType_Vector)) {
+					return false;
+				}
+				Vector* vec = static_cast<Vector*>(res.value.objectVal);
+				return vec->toPrimitiveArray<double, NumericConstant::Floating>(out);
+			};
+
+			std::vector<double> a, v;
+			if (!extractVector(args[0], a) || !extractVector(args[1], v)) {
+				return Result{};
+			}
+
+			std::vector<double> outVals;
+			try {
+				outVals = Math::correlate<double>(a, v);
+			}
+			catch (const std::exception&) {
+				// Prevent script crash if the signal 'a' is shorter than template 'v'.
+				return Result{};
+			}
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::interp.
+		 * Evaluates the 1D linear interpolation. Safely catches invalid dimension/data exceptions.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (Vector x, Vector xp, Vector fp).
+		 * \return			Returns a Result containing the new generated Vector, or Invalid if xp and fp size mismatch.
+		 **/
+		static Result		interpBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+
+			auto extractVector = [](const Result& res, std::vector<double>& out) -> bool {
+				if (res.type != NumericConstant::Object || !res.value.objectVal || !(res.value.objectVal->type() & BuiltInType_Vector)) {
+					return false;
+				}
+				Vector* vec = static_cast<Vector*>(res.value.objectVal);
+				return vec->toPrimitiveArray<double, NumericConstant::Floating>(out);
+			};
+
+			std::vector<double> x, xp, fp;
+			if (!extractVector(args[0], x) || !extractVector(args[1], xp) || !extractVector(args[2], fp)) {
+				return Result{};
+			}
+
+			std::vector<double> outVals;
+			try {
+				outVals = Math::interp<double>(x, xp, fp);
+			}
+			catch (const std::exception&) {
+				// Prevent script crash if xp.size() != fp.size()
+				return Result{};
+			}
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+			return resVec->createResult();
+		}
+
 	};
 
 }	// namespace ve

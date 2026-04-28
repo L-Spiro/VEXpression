@@ -18,6 +18,7 @@
 #include "../Ast/BitXorAssignNode.h"
 #include "../Ast/BitXorNode.h"
 #include "../Ast/BreakNode.h"
+#include "../Ast/CastNode.h"
 #include "../Ast/ConstantNode.h"
 #include "../Ast/ContinueNode.h"
 #include "../Ast/DivAssignNode.h"
@@ -34,12 +35,14 @@
 #include "../Ast/LogNotNode.h"
 #include "../Ast/LogOrNode.h"
 #include "../Ast/LtNode.h"
+#include "../Ast/MapNode.h"
 #include "../Ast/MethodCallNode.h"
 #include "../Ast/ModAssignNode.h"
 #include "../Ast/ModNode.h"
 #include "../Ast/MulAssignNode.h"
 #include "../Ast/MulNode.h"
 #include "../Ast/NeNode.h"
+#include "../Ast/ParamAccessNode.h"
 #include "../Ast/PostDecNode.h"
 #include "../Ast/PostIncNode.h"
 #include "../Ast/PreDecNode.h"
@@ -54,13 +57,18 @@
 #include "../Ast/SubAssignNode.h"
 #include "../Ast/SubNode.h"
 #include "../Ast/TernaryNode.h"
+#include "../Ast/TotalParmsNode.h"
 #include "../Ast/UnaryMinusNode.h"
 #include "../Ast/UnaryPlusNode.h"
+#include "../Ast/UserValueNode.h"
 #include "../Ast/VarNode.h"
 #include "../Ast/VectorNode.h"
 #include "../Engine/ExecutionContext.h"
+#include "../Engine/FunctionDef.h"
+#include "../Engine/Map.h"
 #include "../Engine/Result.h"
 #include "../Engine/String.h"
+#include "../Engine/Vector.h"
 #include "../Foundation/Character.h"
 #include "../Foundation/Text.h"
 
@@ -456,6 +464,21 @@ namespace ve {
 
 			return context.addNode<ArrayAccessExNode>(targetIndex, startIndex, endIndex, mask);
 		}
+
+		/**
+		 * Visits a parameter access expression node ('$expr') in the AST, evaluates the index expression, and allocates a ParamAccessNode.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The parser context containing the parameter access expression.
+		 * \return			Returns an std::any containing the allocated node reference/index.
+		 **/
+		virtual std::any			visitParamAccessExpr(ExprParser::ParamAccessExprContext* ctx) override {
+			// Evaluate the inner expression representing the desired parameter index
+			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			// Allocate a ParamAccessNode in the execution context arena
+			return context.addNode<ParamAccessNode>(exprNode);
+		}
 		
 		/**
 		 * Visits a break expression.
@@ -533,12 +556,69 @@ namespace ve {
 		}
 
 		/**
+		 * Visits a C-style cast expression node in the AST, evaluates its inner expression, and casts it to the target type.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The parser context containing the C-style cast expression.
+		 * \return			Returns an std::any containing the allocated node reference/index.
+		 **/
+		virtual std::any			visitCCastExpr(ExprParser::CCastExprContext* ctx) override {
+			// Extract the target type string (e.g., "uint32_t" or "u32") and resolve it to your internal DataType enum.
+			std::string typeStr = ctx->type_name()->getText();
+			DataType targetType = resolveDataType(typeStr); 
+			
+			// Evaluate the inner expression to get its node index.
+			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			// Allocate a CastNode in the execution context arena.
+			return context.addNode<CastNode>(exprNode, targetType);
+		}
+
+		/**
+		 * Visits an initialization-style cast expression node in the AST, evaluates its inner expression, and casts it to the target type.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The parser context containing the initialization-style cast expression.
+		 * \return			Returns an std::any containing the allocated node reference/index.
+		 **/
+		virtual std::any			visitInitCastExpr(ExprParser::InitCastExprContext* ctx) override {
+			// Extract the target type string (e.g., "uint32_t" or "u32") and resolve it to your internal DataType enum.
+			std::string typeStr = ctx->type_name()->getText();
+			DataType targetType = resolveDataType(typeStr); 
+			
+			// Evaluate the inner expression to get its node index.
+			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			// Allocate a CastNode in the execution context arena.
+			return context.addNode<CastNode>(exprNode, targetType);
+		}
+
+		/**
+		 * Visits a static_cast expression node in the AST, evaluates its inner expression, and casts it to the target type.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The parser context containing the static_cast expression.
+		 * \return			Returns an std::any containing the allocated node reference/index.
+		 **/
+		virtual std::any			visitStaticCastExpr(ExprParser::StaticCastExprContext* ctx) override {
+			// Extract the target type string (e.g., "uint32_t" or "u32") and resolve it to your internal DataType enum.
+			std::string typeStr = ctx->type_name()->getText();
+			DataType targetType = resolveDataType(typeStr); 
+			
+			// Evaluate the inner expression to get its node index.
+			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
+			
+			// Allocate a CastNode in the execution context arena.
+			return context.addNode<CastNode>(exprNode, targetType);
+		}
+
+		/**
 		 * Visits a multiplication or division node in the parse tree and allocates the corresponding operation node.
 		 * 
 		 * \param ctx		The ANTLR parser context for the mul/div operation.
 		 * \return			Returns a std::any containing the size_t index of the allocated node.
 		 **/
-		std::any					visitMulDiv(ExprParser::MulDivContext* ctx) override {
+		virtual std::any			visitMulDiv(ExprParser::MulDivContext* ctx) override {
 			size_t leftIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
 			size_t rightIndex = std::any_cast<size_t>(visit(ctx->expr(1)));
 
@@ -561,7 +641,7 @@ namespace ve {
 		 * \param ctx		The ANTLR parser context for the add/sub operation.
 		 * \return			Returns a std::any containing the size_t index of the allocated node.
 		 **/
-		std::any					visitAddSub(ExprParser::AddSubContext* ctx) override {
+		virtual std::any			visitAddSub(ExprParser::AddSubContext* ctx) override {
 			size_t leftIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
 			size_t rightIndex = std::any_cast<size_t>(visit(ctx->expr(1)));
 
@@ -819,8 +899,31 @@ namespace ve {
 		 * \param ctx		The ANTLR parser context for the parentheses.
 		 * \return			Returns a std::any containing the size_t index of the inner evaluated node.
 		 **/
-		std::any					visitParens(ExprParser::ParensContext* ctx) override {
+		virtual std::any			visitParens(ExprParser::ParensContext* ctx) override {
 			return visit(ctx->expr());
+		}
+
+		/**
+		 * Visits a map literal expression node in the AST, evaluates its keys and values, and allocates a MapNode.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The parser context containing the map expression.
+		 * \return			Returns an std::any containing the allocated node reference/index.
+		 **/
+		virtual std::any			visitMapExpr(ExprParser::MapExprContext* ctx) override {
+			std::vector<std::pair<size_t, size_t>> elements;
+
+			if (ctx->exprMapList()) {
+				auto exprs = ctx->exprMapList()->expr();
+				
+				for (size_t i = 0; i < exprs.size(); i += 2) {
+					size_t keyId = std::any_cast<size_t>(visit(exprs[i]));
+					size_t valId = std::any_cast<size_t>(visit(exprs[i+1]));
+					elements.push_back({ keyId, valId });
+				}
+			}
+
+			return context.addNode<MapNode>(elements);
 		}
 
 		/**
@@ -874,6 +977,17 @@ namespace ve {
 			return static_cast<size_t>(0);
 		}
 
+		/**
+		 * Visits a '$$' expression node in the AST and allocates a TotalParmsNode to resolve it at runtime.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The parser context containing the '$$' token.
+		 * \return			Returns an std::any containing the allocated node reference/index.
+		 **/
+		virtual std::any			visitTotalParmsExpr(ExprParser::TotalParmsExprContext* ctx) override {
+			return context.addNode<TotalParmsNode>();
+		}
+
 
 		// =========================================================================
 		// Constant Node Visitors
@@ -896,6 +1010,17 @@ namespace ve {
 			}
 			
 			return context.addNode<ConstantNode>(res);
+		}
+
+		/**
+		 * Visits a user value node ('??') in the AST, retrieves the externally defined value, and adds it to the context.
+		 * Must be called within a try/catch block.
+		 *
+		 * \param ctx		The parser context containing the user value token.
+		 * \return			Returns an std::any containing the allocated node reference/index.
+		 **/
+		virtual std::any			visitUser_val(ExprParser::User_valContext* ctx) override {
+			return context.addNode<UserValueNode>();
 		}
 
 		/**
@@ -1127,8 +1252,31 @@ namespace ve {
 				return context.addNode<ConstantNode>(strObj->createResult());
 			}
 			else {
-				return context.addNode<ConstantNode>(Result{ .type = NumericConstant::Invalid });
+				return context.addNode<ConstantNode>(Result{});
 			}
+		}
+
+		/**
+		 * Resolves a type string representation into the corresponding DataType enum.
+		 * 
+		 * \param typeStr	The string representation of the type from the lexer (e.g., "uint32_t", "f64").
+		 * \return			Returns the corresponding DataType. Returns DataType::Invalid if not matched.
+		 **/
+		static inline DataType		resolveDataType(const std::string& typeStr) {
+			if (typeStr == "uint8_t"  || typeStr == "u8"  || typeStr == "ui8")  { return DataType::UInt8; }
+			if (typeStr == "uint16_t" || typeStr == "u16" || typeStr == "ui16") { return DataType::UInt16; }
+			if (typeStr == "uint32_t" || typeStr == "u32" || typeStr == "ui32") { return DataType::UInt32; }
+			if (typeStr == "uint64_t" || typeStr == "u64" || typeStr == "ui64") { return DataType::UInt64; }
+			
+			if (typeStr == "int8_t"   || typeStr == "i8")  { return DataType::Int8; }
+			if (typeStr == "int16_t"  || typeStr == "i16") { return DataType::Int16; }
+			if (typeStr == "int32_t"  || typeStr == "i32") { return DataType::Int32; }
+			if (typeStr == "int64_t"  || typeStr == "i64") { return DataType::Int64; }
+			
+			if (typeStr == "float"    || typeStr == "f32") { return DataType::Float; }
+			if (typeStr == "double"   || typeStr == "f64") { return DataType::Double; }
+			
+			return DataType::Any; 
 		}
 
 	protected :

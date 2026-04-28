@@ -625,6 +625,38 @@ namespace ve {
 		{ "arange", StringId::Desc_Math_Arange, { { DataType::Double, "stop", StringId::Math_Param_Stop } }, IntrinsicBridges::arangeBridge },
 		{ "arange", StringId::Desc_Math_Arange, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop } }, IntrinsicBridges::arangeBridge },
 		{ "arange", StringId::Desc_Math_Arange, { { DataType::Double, "start", StringId::Math_Param_LinspaceStart }, { DataType::Double, "stop", StringId::Math_Param_Stop }, { DataType::Double, "step", StringId::Math_Param_Step } }, IntrinsicBridges::arangeBridge },
+
+		{ "sum", StringId::Desc_Math_Sum, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::sumBridge },
+		{ "prod", StringId::Desc_Math_Prod, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::prodBridge },
+		{ "mean", StringId::Desc_Math_Mean, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::meanBridge },
+		{ "median", StringId::Desc_Math_Median, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::medianBridge },
+		{ "std", StringId::Desc_Math_Std, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::stdBridge },
+		{ "var", StringId::Desc_Math_Var, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::varBridge },
+		{ "ptp", StringId::Desc_Math_Ptp, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::ptpBridge },
+		{ "argMin", StringId::Desc_Math_ArgMin, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::argMinBridge },
+		{ "argMax", StringId::Desc_Math_ArgMax, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::argMaxBridge },
+		{ "percentile", StringId::Desc_Math_Percentile, { { DataType::Object, "v", StringId::Math_Param_V }, { DataType::Double, "q", StringId::Math_Param_PercentileQ } }, IntrinsicBridges::percentileBridge },
+
+		{ "diff", StringId::Desc_Math_Diff, { { DataType::Object, "x", StringId::Math_Param_V } }, IntrinsicBridges::diffBridge },
+		{ "diff", StringId::Desc_Math_Diff, { { DataType::Object, "x", StringId::Math_Param_V }, { DataType::UInt64, "n", StringId::Math_Param_DiffN } }, IntrinsicBridges::diffBridge },
+		
+		{ "cumSum", StringId::Desc_Math_CumSum, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::cumSumBridge },
+		{ "cumProd", StringId::Desc_Math_CumProd, { { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::cumProdBridge },
+		
+		{ "ediff1d", StringId::Desc_Math_Ediff1d, { { DataType::Object, "ary", StringId::Math_Param_V } }, IntrinsicBridges::ediff1dBridge },
+		{ "ediff1d", StringId::Desc_Math_Ediff1d, { { DataType::Object, "ary", StringId::Math_Param_V }, { DataType::Object, "to_begin", StringId::Math_Param_ToBegin } }, IntrinsicBridges::ediff1dBridge },
+		{ "ediff1d", StringId::Desc_Math_Ediff1d, { { DataType::Object, "ary", StringId::Math_Param_V }, { DataType::Object, "to_begin", StringId::Math_Param_ToBegin }, { DataType::Object, "to_end", StringId::Math_Param_ToEnd } }, IntrinsicBridges::ediff1dBridge },
+
+		{ "clip", StringId::Desc_Math_Clip, { { DataType::Object, "v", StringId::Math_Param_V }, { DataType::Double, "minVal", StringId::Math_Param_MinVal }, { DataType::Double, "maxVal", StringId::Math_Param_MaxVal } }, IntrinsicBridges::clipBridge },
+		{ "roll", StringId::Desc_Math_Roll, { { DataType::Object, "v", StringId::Math_Param_V }, { DataType::Integer, "shift", StringId::Math_Param_Shift } }, IntrinsicBridges::rollBridge },
+		{ "concatenate", StringId::Desc_Math_Concatenate, { { DataType::Object, "v1", StringId::Math_Param_V }, { DataType::Object, "v2", StringId::Math_Param_V2 } }, IntrinsicBridges::concatenateBridge },
+		{ "repeat", StringId::Desc_Math_Repeat, { { DataType::Object, "v", StringId::Math_Param_V }, { DataType::UInt64, "repeats", StringId::Math_Param_Repeats } }, IntrinsicBridges::repeatBridge },
+		{ "tile", StringId::Desc_Math_Tile, { { DataType::Object, "v", StringId::Math_Param_V }, { DataType::UInt64, "reps", StringId::Math_Param_Repeats } }, IntrinsicBridges::tileBridge },
+		{ "pad", StringId::Desc_Math_Pad, { { DataType::Object, "v", StringId::Math_Param_V }, { DataType::UInt64, "padLeft", StringId::Math_Param_PadLeft }, { DataType::UInt64, "padRight", StringId::Math_Param_PadRight }, { DataType::Double, "constantValue", StringId::Math_Param_ConstantValue } }, IntrinsicBridges::padBridge },
+
+		{ "convolve", StringId::Desc_Math_Convolve, { { DataType::Object, "v1", StringId::Math_Param_V1 }, { DataType::Object, "v2", StringId::Math_Param_V2 } }, IntrinsicBridges::convolveBridge },
+		{ "correlate", StringId::Desc_Math_Correlate, { { DataType::Object, "a", StringId::Math_Param_A }, { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::correlateBridge },
+		{ "interp", StringId::Desc_Math_Interp, { { DataType::Object, "x", StringId::Math_Param_XInterp }, { DataType::Object, "xp", StringId::Math_Param_Xp }, { DataType::Object, "fp", StringId::Math_Param_Fp } }, IntrinsicBridges::interpBridge },
 	};
 
 	// == Functions.
@@ -735,7 +767,11 @@ namespace ve {
 		variables.clear();
 		registeredConstants.clear();
 		registeredFunctions.clear();
+		userValue = Result{};
+		userParms.clear();
+		returnValue = Result{};
 		rootIndex = 0;
+		initialObjectsTotal = 0;
 
 		// Don’t change settings such as treatAllAsHex.
 	}
@@ -1082,7 +1118,7 @@ namespace ve {
 	 **/
 	Result ExecutionContext::evaluateMath(const Result& leftVal, const Result& rightVal, int opType) const {
 		if (leftVal.type == NumericConstant::Object) {
-			if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			if (!leftVal.value.objectVal) { return Result{}; }
 			switch (opType) {
 				case ExprLexer::ADD_ASSIGN : { return leftVal.value.objectVal->operator+=(rightVal); }
 				case ExprLexer::SUB_ASSIGN : { return leftVal.value.objectVal->operator-=(rightVal); }
@@ -1104,7 +1140,7 @@ namespace ve {
 				case ExprLexer::BIT_OR :  { return leftVal.value.objectVal->operator|(rightVal); }
 				case ExprLexer::SHL : { return leftVal.value.objectVal->operator<<(rightVal); }
 				case ExprLexer::SHR : { return leftVal.value.objectVal->operator>>(rightVal); }
-				default : { return Result{ .type = NumericConstant::Invalid }; }
+				default : { return Result{}; }
 			}
 		}
 		if (rightVal.type == NumericConstant::Object && rightVal.value.objectVal && (rightVal.value.objectVal->type() & BuiltInType_Vector)) {
@@ -1149,7 +1185,7 @@ namespace ve {
 					}
 					return copy->createResult();
 				}
-				default : { return Result{ .type = NumericConstant::Invalid }; }
+				default : { return Result{}; }
 			}
 			
 		}
@@ -1172,7 +1208,7 @@ namespace ve {
 				case ExprLexer::DIV : { out.value.doubleVal = l.value.doubleVal / r.value.doubleVal; break; }
 				case ExprLexer::MOD_ASSIGN : {}
 				case ExprLexer::MOD : { out.value.doubleVal = std::fmod(l.value.doubleVal, r.value.doubleVal); break; }
-				default : { return Result{ .type = NumericConstant::Invalid }; }
+				default : { return Result{}; }
 			}
 		}
 		else if (common == NumericConstant::Signed) {
@@ -1197,7 +1233,7 @@ namespace ve {
 				case ExprLexer::SHL : { out.value.intVal = l.value.intVal << r.value.intVal; break; }
 				case ExprLexer::SHR_ASSIGN : {}
 				case ExprLexer::SHR : { out.value.intVal = l.value.intVal >> r.value.intVal; break; }
-				default : { return Result{ .type = NumericConstant::Invalid }; }
+				default : { return Result{}; }
 			}
 		}
 		else if (common == NumericConstant::Unsigned) {
@@ -1222,11 +1258,11 @@ namespace ve {
 				case ExprLexer::SHL : { out.value.uintVal = l.value.uintVal << r.value.uintVal; break; }
 				case ExprLexer::SHR_ASSIGN : {}
 				case ExprLexer::SHR : { out.value.uintVal = l.value.uintVal >> r.value.uintVal; break; }
-				default : { return Result{ .type = NumericConstant::Invalid }; }
+				default : { return Result{}; }
 			}
 		}
 		else if (common == NumericConstant::Object) {
-			if (!l.value.objectVal || !r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			if (!l.value.objectVal || !r.value.objectVal) { return Result{}; }
 			switch (opType) {
 				case ExprLexer::ADD_ASSIGN : { return l.value.objectVal->operator+=(r); }
 				case ExprLexer::SUB_ASSIGN : { return l.value.objectVal->operator-=(r); }
@@ -1248,11 +1284,11 @@ namespace ve {
 				case ExprLexer::BIT_OR :  { return l.value.objectVal->operator|(r); }
 				case ExprLexer::SHL : { return l.value.objectVal->operator<<(r); }
 				case ExprLexer::SHR : { return l.value.objectVal->operator>>(r); }
-				default : { return Result{ .type = NumericConstant::Invalid }; }
+				default : { return Result{}; }
 			}
 		}
 		else {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		return out;

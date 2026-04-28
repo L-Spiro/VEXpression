@@ -48,7 +48,7 @@ namespace ve {
 			VE_DELETE_SWAP(out, lastObject);
 
 			//if (leftVal.type == NumericConstant::Object) {
-			//	if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	if (!leftVal.value.objectVal) { return Result{}; }
 			//	out = (*leftVal.value.objectVal) << Result{ .type = NumericConstant::Unsigned, .value { .uintVal = shift } };
 
 			//	// The operation probably created a new object.

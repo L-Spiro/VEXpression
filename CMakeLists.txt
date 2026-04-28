@@ -51,15 +51,20 @@ set(ANTLR_BUILD_CPP_TESTS OFF CACHE BOOL "" FORCE)
 set(WITH_STATIC_CRT ON CACHE BOOL "" FORCE) 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
-### Tell CMake where to get the code (Bypassing Git)
+### Tell CMake where to get the dependencies (Bypassing Git)
 FetchContent_Declare(
     antlr4_runtime
     URL            https://github.com/antlr/antlr4/archive/refs/tags/4.13.2.zip
     SOURCE_SUBDIR  runtime/Cpp
 )
 
-### Actually Download and Configure the Runtime.
-FetchContent_MakeAvailable(antlr4_runtime)
+FetchContent_Declare(
+    simde
+    URL            https://github.com/simd-everywhere/simde/archive/refs/tags/v0.7.6.zip
+)
+
+### Actually Download and Configure the Runtimes.
+FetchContent_MakeAvailable(antlr4_runtime simde)
 
 ### --- C++23 MSVC Missing Include Workaround ---
 # MSVC cleaned up transitive includes in C++23.
@@ -71,16 +76,6 @@ if (MSVC)
     if (TARGET antlr4_shared)
         target_compile_options(antlr4_shared PRIVATE /FI"chrono")
     endif()
-endif()
-
-### MSVC Runtime Library Selection (/MT for Release, /MTd for Debug)
-if(MSVC)
-    # This evaluates to "MultiThreadedDebug" for Debug builds 
-    # and "MultiThreaded" for all other configurations.
-    #set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-	#set_property(TARGET VEXpression PROPERTY
-	#	MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-	#)
 endif()
 
 ### Define the Expected Outputs from ANTLR.
@@ -105,99 +100,107 @@ add_custom_command(
 
 ### Hand-written Source and Header Files.
 set(APP_HEADERS
-	src/Ast/AddAssignNode.h
+    src/Ast/AddAssignNode.h
     src/Ast/AddNode.h
-	src/Ast/ArrayAccessExNode.h
-	src/Ast/ArrayAccessNode.h
-	src/Ast/ArrayAssignNode.h
-	src/Ast/ArrayExAssignNode.h
-	src/Ast/AssignNode.h
+    src/Ast/ArrayAccessExNode.h
+    src/Ast/ArrayAccessNode.h
+    src/Ast/ArrayAssignNode.h
+    src/Ast/ArrayExAssignNode.h
+    src/Ast/AssignNode.h
     src/Ast/AstArena.h
     src/Ast/AstNode.h
-	src/Ast/BitAndAssignNode.h
-	src/Ast/BitAndNode.h
-	src/Ast/BitNotNode.h
-	src/Ast/BitOrAssignNode.h
-	src/Ast/BitOrNode.h
-	src/Ast/BitXorAssignNode.h
-	src/Ast/BitXorNode.h
-	src/Ast/BreakNode.h
+    src/Ast/BitAndAssignNode.h
+    src/Ast/BitAndNode.h
+    src/Ast/BitNotNode.h
+    src/Ast/BitOrAssignNode.h
+    src/Ast/BitOrNode.h
+    src/Ast/BitXorAssignNode.h
+    src/Ast/BitXorNode.h
+    src/Ast/BreakNode.h
+    src/Ast/CastNode.h
     src/Ast/ConstantNode.h
-	src/Ast/ContinueNode.h
-	src/Ast/DivAssignNode.h
-	src/Ast/DivNode.h
-	src/Ast/EqNode.h
-	src/Ast/ForNode.h
-	src/Ast/ForRangeNode.h
-	src/Ast/FunctionCallNode.h
-	src/Ast/GeNode.h
-	src/Ast/GtNode.h
-	src/Ast/IfNode.h
-	src/Ast/LeNode.h
-	src/Ast/LogAndNode.h
-	src/Ast/LogNotNode.h
-	src/Ast/LogOrNode.h
-	src/Ast/LtNode.h
-	src/Ast/MethodCallNode.h
-	src/Ast/ModAssignNode.h
-	src/Ast/ModNode.h
-	src/Ast/MulAssignNode.h
-	src/Ast/MulNode.h
-	src/Ast/NeNode.h
-	src/Ast/PostDecNode.h
-	src/Ast/PostIncNode.h
-	src/Ast/PreDecNode.h
-	src/Ast/PreIncNode.h
-	src/Ast/ReturnNode.h
-	src/Ast/SequenceNode.h
-	src/Ast/ShlAssignNode.h
-	src/Ast/ShlNode.h
-	src/Ast/ShrAssignNode.h
-	src/Ast/ShrNode.h
-	src/Ast/SpaceshipNode.h
-	src/Ast/SubAssignNode.h
-	src/Ast/SubNode.h
-	src/Ast/TernaryNode.h
-	src/Ast/UnaryMinusNode.h
-	src/Ast/UnaryPlusNode.h
-	src/Ast/VarNode.h
-	src/Ast/VectorNode.h
+    src/Ast/ContinueNode.h
+    src/Ast/DivAssignNode.h
+    src/Ast/DivNode.h
+    src/Ast/EqNode.h
+    src/Ast/ForNode.h
+    src/Ast/ForRangeNode.h
+    src/Ast/FunctionCallNode.h
+    src/Ast/GeNode.h
+    src/Ast/GtNode.h
+    src/Ast/IfNode.h
+    src/Ast/LeNode.h
+    src/Ast/LogAndNode.h
+    src/Ast/LogNotNode.h
+    src/Ast/LogOrNode.h
+    src/Ast/LtNode.h
+    src/Ast/MapNode.h
+    src/Ast/MethodCallNode.h
+    src/Ast/ModAssignNode.h
+    src/Ast/ModNode.h
+    src/Ast/MulAssignNode.h
+    src/Ast/MulNode.h
+    src/Ast/NeNode.h
+    src/Ast/ParamAccessNode.h
+    src/Ast/PostDecNode.h
+    src/Ast/PostIncNode.h
+    src/Ast/PreDecNode.h
+    src/Ast/PreIncNode.h
+    src/Ast/ReturnNode.h
+    src/Ast/SequenceNode.h
+    src/Ast/ShlAssignNode.h
+    src/Ast/ShlNode.h
+    src/Ast/ShrAssignNode.h
+    src/Ast/ShrNode.h
+    src/Ast/SpaceshipNode.h
+    src/Ast/SubAssignNode.h
+    src/Ast/SubNode.h
+    src/Ast/TernaryNode.h
+    src/Ast/TotalParmsNode.h
+    src/Ast/UnaryMinusNode.h
+    src/Ast/UnaryPlusNode.h
+    src/Ast/UserValueNode.h
+    src/Ast/VarNode.h
+    src/Ast/VectorNode.h
     src/Compiler/AstBuilderVisitor.h
-	src/Foundation/Case.h
-	src/Foundation/Character.h
-	src/Foundation/Encode.h
-	src/Foundation/EncodeEnum.inl
-	src/Foundation/Html.h
-	src/Foundation/LargeMath.h
-	src/Foundation/Math.h
-	src/Foundation/System.h
-	src/Foundation/Text.h
-	src/Foundation/TextPolicy.h
-	src/Foundation/Unicode.h
-	src/Foundation/UnicodeData.inl
+    src/Foundation/Case.h
+    src/Foundation/Character.h
+    src/Foundation/Encode.h
+    src/Foundation/EncodeEnum.inl
+    src/Foundation/Html.h
+    src/Foundation/LargeMath.h
+    src/Foundation/Math.h
+    src/Foundation/System.h
+    src/Foundation/Text.h
+    src/Foundation/TextPolicy.h
+    src/Foundation/Unicode.h
+    src/Foundation/UnicodeData.inl
     src/Engine/Errors.h
     src/Engine/ExecutionContext.h
-	src/Engine/FunctionDef.h
-	src/Engine/IntrinsicBridges.h
-	src/Engine/Object.h
-	src/Engine/Result.h
-	src/Engine/String.h
-	src/Strings/Strings.h
-	src/Strings/StringEnum.inl
-	src/Engine/Vector.h
-	src/OS/OS.h
+    src/Engine/FunctionDef.h
+    src/Engine/IntrinsicBridges.h
+    src/Engine/Map.h
+    src/Engine/Object.h
+    src/Engine/Result.h
+    src/Engine/SimdIncludes.h
+    src/Engine/String.h
+    src/Strings/Strings.h
+    src/Strings/StringEnum.inl
+    src/Engine/Vector.h
+    src/OS/OS.h
 )
 
 set(APP_SOURCES
-	src/Engine/ExecutionContext.cpp
-	src/Engine/String.cpp
-	src/Engine/Vector.cpp
-	src/Foundation/Case.cpp
-	src/Foundation/Character.cpp
-	src/Foundation/Encode.cpp
-	src/Foundation/Html.cpp
-	src/Foundation/Text.cpp
-	src/Foundation/Unicode.cpp
+    src/Engine/ExecutionContext.cpp
+    src/Engine/Map.cpp
+    src/Engine/String.cpp
+    src/Engine/Vector.cpp
+    src/Foundation/Case.cpp
+    src/Foundation/Character.cpp
+    src/Foundation/Encode.cpp
+    src/Foundation/Html.cpp
+    src/Foundation/Text.cpp
+    src/Foundation/Unicode.cpp
     src/main.cpp
 )
 
@@ -221,6 +224,7 @@ endif()
 target_include_directories(VEXpression PRIVATE
     src
     ${GENERATED_DIR}
+    ${simde_SOURCE_DIR}
 )
 
 ### Strictly Enforce C++23 on the Executable.

@@ -31,6 +31,10 @@ block
 exprList
     : expr (',' expr)*
     ;
+	
+exprMapList
+    : expr ':' expr (',' expr ':' expr)*
+    ;
 
 expr
     : IDENTIFIER op=(INC | DEC)                                           # postfix
@@ -39,7 +43,11 @@ expr
     | expr LPAREN exprList? RPAREN                                        # functionCall
     | expr LBRACKET expr RBRACKET                                         # arrayAccess
     | expr LBRACKET start=expr? ':' end=expr? RBRACKET                    # arrayAccessEx
+    | DOLLAR expr                                                         # paramAccessExpr
     | op=(ADD | SUB | LOG_NOT | BIT_NOT) expr                             # unary
+    | LPAREN type_name RPAREN expr                                        # cCastExpr
+    | type_name LPAREN expr RPAREN                                        # initCastExpr
+    | STATIC_CAST LT type_name GT LPAREN expr RPAREN                      # staticCastExpr
     | expr op=(MUL | DIV | MOD) expr                                      # mulDiv
     | expr op=(ADD | SUB) expr                                            # addSub
     | expr op=(SHL | SHR) expr                                            # bitShift
@@ -55,15 +63,35 @@ expr
     | <assoc=right> IDENTIFIER op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # assignment
     | <assoc=right> expr LBRACKET expr RBRACKET op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # arrayAssignment
     | <assoc=right> expr LBRACKET start=expr? ':' end=expr? RBRACKET op=(ASSIGN | ADD_ASSIGN | SUB_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | AND_ASSIGN | XOR_ASSIGN | OR_ASSIGN | SHL_ASSIGN | SHR_ASSIGN) expr # arrayExAssignment
-	| BREAK                                                               # breakExpr
+    | BREAK                                                               # breakExpr
     | CONTINUE                                                            # continueExpr
     | RETURN expr?                                                        # returnExpr
     | LPAREN expr RPAREN                                                  # parens
+	| LBRACE (exprMapList ','?)? RBRACE                                   # mapExpr
     | LBRACE (exprList ','?)? RBRACE                                      # vectorExpr
     | IDENTIFIER                                                          # identifier
+    | DOLLAR_DOLLAR                                                       # totalParmsExpr
     | constant                                                            # constValue
+    | USER_VALUE                                                          # userValExpr
     ;
 
+// =========================================================================
+// Types
+// =========================================================================
+
+type_name
+    : TYPE_UINT8
+    | TYPE_UINT16
+    | TYPE_UINT32
+    | TYPE_UINT64
+    | TYPE_INT8
+    | TYPE_INT16
+    | TYPE_INT32
+    | TYPE_INT64
+    | TYPE_FLOAT
+    | TYPE_DOUBLE
+    ;
+	
 // =========================================================================
 // Constant Rules
 // =========================================================================
@@ -78,8 +106,10 @@ constant
     | string_constant
     | char_constant
     | bool_constant
+	| user_val
     ;
 
+user_val         : USER_VALUE ;
 bool_constant    : KW_TRUE | KW_FALSE ;
 puredec_constant : PUREDEC_CONSTANT ;
 bin_constant     : BIN_CONSTANT ;

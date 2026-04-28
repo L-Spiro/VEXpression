@@ -18,6 +18,10 @@ STRING_RAW          : [rR] STR_BODY
                     ;
 STRING_NORMAL       : STR_BODY ;
 
+USER_VALUE          : '??' ;
+DOLLAR_DOLLAR       : '$$' ;
+DOLLAR              : '$' ;
+
 LPAREN              : '(' ;
 RPAREN              : ')' ;
 LBRACKET            : '[' | '<:' ;
@@ -77,6 +81,20 @@ CONTINUE            : 'continue' ;
 RETURN              : 'return' ;
 KW_TRUE             : 'true' ;
 KW_FALSE            : 'false' ;
+STATIC_CAST         : 'static_cast' ;
+
+// Built-in Types
+TYPE_UINT8          : 'uint8_t' | 'u8' | 'ui8' ;
+TYPE_UINT16         : 'uint16_t' | 'u16' | 'ui16' ;
+TYPE_UINT32         : 'uint32_t' | 'u32' | 'ui32' ;
+TYPE_UINT64         : 'uint64_t' | 'u64' | 'ui64' ;
+TYPE_INT8           : 'int8_t' | 'i8' ;
+TYPE_INT16          : 'int16_t' | 'i16' ;
+TYPE_INT32          : 'int32_t' | 'i32' ;
+TYPE_INT64          : 'int64_t' | 'i64' ;
+TYPE_FLOAT16        : 'float16' | 'f16' ;
+TYPE_FLOAT          : 'float' | 'f32' ;
+TYPE_DOUBLE         : 'double' | 'f64' ;
 
 IDENTIFIER          : L (L | D)* ;
 

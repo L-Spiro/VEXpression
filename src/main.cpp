@@ -59,15 +59,15 @@ int main() {
 	ve::ExecutionContext context;
 	auto Cool = HUGE_VALF / 2;
 	
-	std::u8string testExprU8 = std::u8string( u8"Y = linspace(0.0, 1.0, 99999999, true);\r\n"
-	u8"Y = sqrt( 1 - Y * Y );\r\n"
-	u8"simpson( Y, 1.0 / (Y.size() - 1) ) * 4" );
+	std::u8string testExprU8 = std::u8string( u8"{\"Cool\": 90, 90:\"Cool\"}[90]" );
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";
 	
 	context.compile(testExpr);
 	try {
+		context.setUserValue(ve::Result::make(3));
+		context.setParm(ve::Result::make(4.5), 9);
 		ve::Result res = context.execute();
 	
 		printResult(res);

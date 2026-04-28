@@ -69,7 +69,7 @@ namespace ve {
 					return newStr->createResult();
 				}
 					
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 		}
 		else if (rhs.type == NumericConstant::Signed) {
@@ -99,7 +99,7 @@ namespace ve {
 			}
 		}
 
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	// == Functions.
@@ -217,7 +217,7 @@ namespace ve {
 			return newStr->createResult();
 		}
 			
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -229,7 +229,7 @@ namespace ve {
 	 **/
 	Result String::arrayAssign(int64_t index, const Result& rhs) {
 		size_t lin = Object::arrayIndexToLinearIndex(index, charCount);
-		if (lin == Object::InvalidIndex) { return Result{ .type = NumericConstant::Invalid }; }
+		if (lin == Object::InvalidIndex) { return Result{}; }
 
 		std::u32string u32; 
 		u32.reserve(charCount);
@@ -248,7 +248,7 @@ namespace ve {
 			uint32_t cp = 0;
 			if (rhs.type == NumericConstant::Unsigned) { cp = static_cast<uint32_t>(rhs.value.uintVal); }
 			else if (rhs.type == NumericConstant::Signed) { cp = static_cast<uint32_t>(rhs.value.intVal); }
-			else { return Result{ .type = NumericConstant::Invalid }; }
+			else { return Result{}; }
 			u32.insert(u32.begin() + lin, cp);
 		}
 
@@ -269,7 +269,7 @@ namespace ve {
 	Result String::arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) {
 		size_t idx0, idx1;
 		if (!Object::resolveSliceBounds(startIdx, endIdx, flags, charCount, idx0, idx1)) {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		std::u32string u32 = getUtf32();
@@ -287,7 +287,7 @@ namespace ve {
 			uint32_t cp = 0;
 			if (rhs.type == NumericConstant::Unsigned) { cp = static_cast<uint32_t>(rhs.value.uintVal); }
 			else if (rhs.type == NumericConstant::Signed) { cp = static_cast<uint32_t>(rhs.value.intVal); }
-			else { return Result{ .type = NumericConstant::Invalid }; }
+			else { return Result{}; }
 			u32.insert(u32.begin() + idx0, cp);
 		}
 
@@ -420,7 +420,7 @@ namespace ve {
 			}
 		}
 			
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -1236,7 +1236,7 @@ namespace ve {
 		size_t linearIndex = Object::arrayIndexToLinearIndex(index, charCount);
 		
 		if (linearIndex == Object::InvalidIndex) {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 		
 		Result res;

@@ -47,151 +47,6 @@ namespace ve {
 			return charCount;
 		}
 
-		/**
-		 * Converts the object from its internal encoding to ASCII.
-		 * Characters outside the 0-127 range are replaced with '?'.
-		 *
-		 * \return				Returns a Result containing the new ASCII string object.
-		 **/
-		virtual Result						ascii() const override {
-			std::string asciiStr;
-
-			switch (bufferWidth) {
-				case Width_8 : {
-					asciiStr = Text::toAscii<std::string>(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
-					break;
-				}
-				case Width_16 : {
-					asciiStr = Text::toAscii<std::string>(reinterpret_cast<const char16_t*>(buffer.data()), charCount);
-					break;
-				}
-				case Width_32 : {
-					asciiStr = Text::toAscii<std::string>(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
-					break;
-				}
-			}
-
-			String* newStr = context->allocateObject<String>();
-			
-			if (newStr) {
-				newStr->assignUtf8(asciiStr.data(), asciiStr.length());
-				return newStr->createResult();
-			}
-			
-			return Result{ .type = NumericConstant::Invalid };
-		}
-
-		/**
-		 * Gets the binary form of the object as a string.
-		 * Invalid for string objects; requires an integer.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						bin() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Gets the boolean representation of the object as a string ("True" or "False").
-		 * Invalid for strings in this context.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						toBool() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Returns the character represented by the object as a Unicode code point.
-		 * Invalid for string objects; requires an integer.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						chr() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Interprets the object as its best-fit numeric representation and converts it to a float.
-		 * Matches typical user expectations by parsing the string as a floating-point number.
-		 *
-		 * \return				Returns a Result containing the converted double-precision floating-point value, or invalid if parsing fails.
-		 **/
-		virtual Result						toFloat() const override {
-			Result res = bestFitNumeric();
-			
-			if (res.type == NumericConstant::Floating) {
-				if (std::isnan(res.value.doubleVal)) {
-					return Result{ .type = NumericConstant::Invalid };
-				}
-				return res;
-			}
-			else if (res.type == NumericConstant::Signed) {
-				return Result{ .type = NumericConstant::Floating, .value = { .doubleVal = static_cast<double>(res.value.intVal) } };
-			}
-			else if (res.type == NumericConstant::Unsigned) {
-				return Result{ .type = NumericConstant::Floating, .value = { .doubleVal = static_cast<double>(res.value.uintVal) } };
-			}
-			
-			return Result{ .type = NumericConstant::Invalid };
-		}
-
-		/**
-		 * Gets the hexadecimal form of the object as a string.
-		 * Invalid for string objects; requires an integer.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						hex() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Gets the octal form of the object as a string.
-		 * Invalid for string objects; requires an integer.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						oct() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Interprets the object as its best-fit numeric representation and converts it to an integer.
-		 *
-		 * \return				Returns a Result containing the converted 64-bit integer value, or invalid if parsing fails.
-		 **/
-		virtual Result						toInt() const override {
-			Result res = bestFitNumeric();
-			
-			if (res.type == NumericConstant::Signed || res.type == NumericConstant::Unsigned) {
-				return res;
-			}
-			else if (res.type == NumericConstant::Floating) {
-				if (std::isnan(res.value.doubleVal)) {
-					return Result{ .type = NumericConstant::Invalid };
-				}
-				// Truncate floating-point values to integer, matching standard casting behavior.
-				return Result{ .type = NumericConstant::Signed, .value = { .intVal = static_cast<int64_t>(res.value.doubleVal) } };
-			}
-			
-			return Result{ .type = NumericConstant::Invalid };
-		}
-
-		/**
-		 * Gets the number of elements or characters in the object.
-		 *
-		 * \return				Returns a Result containing the UTF code point count.
-		 **/
-		virtual Result						len() const override {
-			return Result{ .type = NumericConstant::Unsigned, .value = { .uintVal = static_cast<uint64_t>(charCount) } };
-		}
-
-		/**
-		 * Returns the ordinal (numeric) value of the object as a Unicode code point.
-		 * Matches Python's ord(str): requires a string of exactly length 1.
-		 *
-		 * \return				Returns a Result containing the ordinal value as an unsigned integer, or invalid if length != 1.
-		 **/
-		virtual Result						ord() const override {
-			if (charCount == 1) {
-				return Result{ .type = NumericConstant::Unsigned, .value = { .uintVal = static_cast<uint64_t>(getCodePoint(0)) } };
-			}
-			else {
-				return Result{ .type = NumericConstant::Invalid };
-			}
-		}
-
 
 		// == Operators.
 		/**
@@ -239,7 +94,7 @@ namespace ve {
 				return Result::make(eq.value.uintVal == 0);
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -257,7 +112,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -275,7 +130,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -293,7 +148,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -311,7 +166,7 @@ namespace ve {
 				}
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -330,7 +185,7 @@ namespace ve {
 		 * \return				Returns an invalid Result.
 		 **/
 		virtual Result						operator-(const Result& rhs) const override {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -350,7 +205,7 @@ namespace ve {
 				count = static_cast<uint64_t>(rhs.value.intVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			size_t newCharCount = charCount * count;
@@ -375,7 +230,7 @@ namespace ve {
 				return newStr->createResult();
 			}
 			
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -385,7 +240,7 @@ namespace ve {
 		 * \return				Returns an invalid Result.
 		 **/
 		virtual Result						operator/(const Result& rhs) const override {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -395,7 +250,7 @@ namespace ve {
 		 * \return				Returns an invalid Result.
 		 **/
 		virtual Result						operator%(const Result& rhs) const override {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -405,7 +260,7 @@ namespace ve {
 		 * \return				Returns an invalid Result.
 		 **/
 		virtual Result						operator<<(const Result& rhs) const override {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -415,7 +270,7 @@ namespace ve {
 		 * \return				Returns an invalid Result.
 		 **/
 		virtual Result						operator>>(const Result& rhs) const override {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -425,7 +280,7 @@ namespace ve {
 		 * \return				Returns an invalid Result.
 		 **/
 		virtual Result						operator&(const Result& rhs) const override {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -435,7 +290,7 @@ namespace ve {
 		 * \return				Returns an invalid Result.
 		 **/
 		virtual Result						operator|(const Result& rhs) const override {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 		/**
@@ -445,7 +300,7 @@ namespace ve {
 		 * \return				Returns an invalid Result.
 		 **/
 		virtual Result						operator^(const Result& rhs) const override {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
 
@@ -1200,25 +1055,6 @@ namespace ve {
 			return 0;
 		}
 
-	protected :
-		// == Members.
-		std::vector<uint8_t>				buffer;
-		Width								bufferWidth;
-		size_t								charCount;
-
-
-		// == Functions.
-		/**
-		 * Creates a Result using a best-fit interpretation of the string as a number.
-		 *
-		 * The input string is analyzed to determine the most appropriate numeric interpretation (for example,
-		 * integer vs. floating-point, and/or base detection). If no reasonable numeric interpretation can be
-		 * made, the returned result is NaN (floating-point).
-		 *
-		 * \return				Returns a Result containing the interpreted numeric value.
-		 **/
-		Result								bestFitNumeric() const;
-
 		/**
 		 * Lexicographically compares this string with another string based on Unicode code points.
 		 *
@@ -1246,6 +1082,27 @@ namespace ve {
 			
 			return 0;
 		}
+
+	protected :
+		// == Members.
+		std::vector<uint8_t>				buffer;
+		Width								bufferWidth;
+		size_t								charCount;
+
+
+		// == Functions.
+		/**
+		 * Creates a Result using a best-fit interpretation of the string as a number.
+		 *
+		 * The input string is analyzed to determine the most appropriate numeric interpretation (for example,
+		 * integer vs. floating-point, and/or base detection). If no reasonable numeric interpretation can be
+		 * made, the returned result is NaN (floating-point).
+		 *
+		 * \return				Returns a Result containing the interpreted numeric value.
+		 **/
+		Result								bestFitNumeric() const;
+
+		
 	};
 
 }	// namespace ve

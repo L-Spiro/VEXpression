@@ -2,6 +2,7 @@
 
 #include "../Engine/Errors.h"
 #include "../Engine/ExecutionContext.h"
+#include "../Engine/Map.h"
 #include "../Engine/Result.h"
 #include "AstNode.h"
 
@@ -27,7 +28,12 @@ namespace ve {
 			Result indexRes = context.getArena().nodes[indexIndex]->evaluate(context);
 
 			if (target.type != NumericConstant::Object || !target.value.objectVal) {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
+			}
+
+			if (target.value.objectVal->type() & BuiltInType_Map) {
+				Map* mapObj = static_cast<Map*>(target.value.objectVal);
+				return mapObj->valueFromKey(indexRes);
 			}
 
 			int64_t idx = 0;
@@ -38,7 +44,7 @@ namespace ve {
 				idx = static_cast<int64_t>(indexRes.value.uintVal);
 			}
 			else {
-				return Result{ .type = NumericConstant::Invalid };
+				return Result{};
 			}
 
 			return target.value.objectVal->arrayAccess(idx);

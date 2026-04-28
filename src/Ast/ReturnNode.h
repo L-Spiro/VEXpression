@@ -22,7 +22,7 @@ namespace ve {
 		 * \return			Returns the evaluated Result, or Invalid if no expression was provided.
 		 **/
 		Result					evaluate(ExecutionContext& context) const override {
-			Result out = Result{ .type = NumericConstant::Invalid };
+			Result out = Result{};
 			
 			if (exprIndex != Object::InvalidIndex) {
 				out = context.getArena().nodes[exprIndex]->evaluate(context);

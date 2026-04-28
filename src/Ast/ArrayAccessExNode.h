@@ -26,8 +26,10 @@ namespace ve {
 		Result					evaluate(ExecutionContext& context) const override {
 			Result target = context.getArena().nodes[targetIndex]->evaluate(context);
 
-			if (target.type != NumericConstant::Object || !target.value.objectVal) {
-				return Result{ .type = NumericConstant::Invalid };
+			if (target.type != NumericConstant::Object || !target.value.objectVal) { return Result{}; }
+
+			if (target.value.objectVal->type() & BuiltInType_Map) {
+				return Result{};
 			}
 
 			int64_t startIdx = 0;
@@ -42,7 +44,7 @@ namespace ve {
 					startIdx = static_cast<int64_t>(sRes.value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 
@@ -55,13 +57,12 @@ namespace ve {
 					endIdx = static_cast<int64_t>(eRes.value.uintVal);
 				}
 				else {
-					return Result{ .type = NumericConstant::Invalid };
+					return Result{};
 				}
 			}
 
 			Result out = target.value.objectVal->arrayAccessEx(startIdx, endIdx, flagsMask);
 			
-			// A sliced string or vector creates a completely new object, requiring garbage collection tracking.
 			VE_DELETE_SWAP(out, lastObject);
 			
 			return out;

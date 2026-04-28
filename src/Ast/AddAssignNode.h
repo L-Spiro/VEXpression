@@ -31,46 +31,6 @@ namespace ve {
 			out = context.evaluateMath(leftVal, rightVal, ExprLexer::ADD_ASSIGN);
 			VE_DELETE_SWAP(out, lastObject);
 
-			//if (leftVal.type == NumericConstant::Object) {
-			//	if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-			//	out = leftVal.value.objectVal->operator+=(rightVal);
-
-			//	// Only trigger memory grabage-collecting tracking if operator+= allocated a completely new object.
-			//	if (out.value.objectVal != leftVal.value.objectVal) {
-			//		VE_DELETE_SWAP(out, lastObject);
-			//	}
-			//	
-			//	context.setVariable(varIndex, out);
-			//	return out;
-			//}
-
-			//NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
-			//Result l = context.convertResult(leftVal, common);
-			//Result r = context.convertResult(rightVal, common);
-
-			//out.type = common;
-
-			//if (common == NumericConstant::Floating) {
-			//	out.value.doubleVal = l.value.doubleVal + r.value.doubleVal;
-			//}
-			//else if (common == NumericConstant::Signed) {
-			//	out.value.intVal = l.value.intVal + r.value.intVal;
-			//}
-			//else if (common == NumericConstant::Unsigned) {
-			//	out.value.uintVal = l.value.uintVal + r.value.uintVal;
-			//}
-			//else if (common == NumericConstant::Object) {
-			//	if (!l.value.objectVal || !r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
-			//	out = l.value.objectVal->operator+=(r);
-
-			//	if (out.value.objectVal != l.value.objectVal) {
-			//		VE_DELETE_SWAP(out, lastObject);
-			//	}
-			//}
-			//else {
-			//	return Result{ .type = NumericConstant::Invalid };
-			//}
-
 			context.setVariable(varIndex, out);
 			return out;
 		}

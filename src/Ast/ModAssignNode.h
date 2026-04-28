@@ -34,7 +34,7 @@ namespace ve {
 			VE_DELETE_SWAP(out, lastObject);
 
 			//if (leftVal.type == NumericConstant::Object) {
-			//	if (!leftVal.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	if (!leftVal.value.objectVal) { return Result{}; }
 			//	out = leftVal.value.objectVal->operator%=(rightVal);
 
 			//	// Only trigger memory garbage-collecting tracking if operator%= allocated a completely new object.
@@ -62,7 +62,7 @@ namespace ve {
 			//	out.value.uintVal = l.value.uintVal % r.value.uintVal;
 			//}
 			//else if (common == NumericConstant::Object) {
-			//	if (!l.value.objectVal || !r.value.objectVal) { return Result{ .type = NumericConstant::Invalid }; }
+			//	if (!l.value.objectVal || !r.value.objectVal) { return Result{}; }
 			//	out = l.value.objectVal->operator%=(r);
 
 			//	if (out.value.objectVal != l.value.objectVal) {
@@ -70,7 +70,7 @@ namespace ve {
 			//	}
 			//}
 			//else {
-			//	return Result{ .type = NumericConstant::Invalid };
+			//	return Result{};
 			//}
 
 			context.setVariable(varIndex, out);

@@ -4,6 +4,13 @@
 
 namespace ve {
 
+	Vector::~Vector() {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			prepareErase_Unsafe(i);
+		}
+		elements.clear();
+	}
+
 	// == Functions.
 	/**
 	 * Converts the vector into a string representation.
@@ -64,8 +71,7 @@ namespace ve {
 
 			ret += "}";
 		}
-		catch (...) {
-		}
+		catch (...) {}
 		
 		return ret;
 	}
@@ -92,7 +98,13 @@ namespace ve {
 	bool Vector::initializeFrom(const Result& val) {
 		if (val.type == NumericConstant::Object && val.value.objectVal) {
 			if (val.value.objectVal->type() & BuiltInType_Vector) {
+				for (size_t i = 0; i < elements.size(); ++i) {
+					prepareErase_Unsafe(i);
+				}
 				elements = reinterpret_cast<Vector*>(val.value.objectVal)->elements;
+				for (size_t i = 0; i < elements.size(); ++i) {
+					incObjectRef_Unsafe(i);
+				}
 				return true;
 			}
 		}
@@ -108,7 +120,7 @@ namespace ve {
 	 * \return				Returns a Result containing the boolean evaluation.
 	 **/
 	Result Vector::operator==(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -118,7 +130,7 @@ namespace ve {
 	 * \return				Returns a Result containing the boolean evaluation.
 	 **/
 	Result Vector::operator!=(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -128,7 +140,7 @@ namespace ve {
 	 * \return				Returns a Result containing the boolean evaluation.
 	 **/
 	Result Vector::operator<(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -138,7 +150,7 @@ namespace ve {
 	 * \return				Returns a Result containing the boolean evaluation.
 	 **/
 	Result Vector::operator>(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -148,7 +160,7 @@ namespace ve {
 	 * \return				Returns a Result containing the boolean evaluation.
 	 **/
 	Result Vector::operator<=(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -158,7 +170,7 @@ namespace ve {
 	 * \return				Returns a Result containing the boolean evaluation.
 	 **/
 	Result Vector::operator>=(const Result& rhs) const {
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -172,7 +184,7 @@ namespace ve {
 	 **/
 	Result Vector::operator+(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
@@ -185,6 +197,10 @@ namespace ve {
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::ADD));
 			}
+		}
+
+		for (size_t i = 0; i < newVec->elements.size(); ++i) {
+			newVec->incObjectRef_Unsafe(i);
 		}
 
 		return newVec->createResult();
@@ -200,20 +216,20 @@ namespace ve {
 	 **/
 	Result Vector::operator-(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
 			if (rVec->arrayLength() != elements.size()) { return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
-				newVec->elements.push_back(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SUB));
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SUB));
 			}
 		} 
 		else {
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
-				newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::SUB));
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::SUB));
 			}
 		}
 
@@ -230,20 +246,20 @@ namespace ve {
 	 **/
 	Result Vector::operator*(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
 			if (rVec->arrayLength() != elements.size()) { return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
-				newVec->elements.push_back(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::MUL));
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::MUL));
 			}
 		} 
 		else {
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
-				newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::MUL));
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::MUL));
 			}
 		}
 
@@ -260,11 +276,21 @@ namespace ve {
 	 **/
 	Result Vector::operator/(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::DIV));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::DIV));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::DIV));
+			}
 		}
 
 		return newVec->createResult();
@@ -280,11 +306,21 @@ namespace ve {
 	 **/
 	Result Vector::operator%(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::MOD));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::MOD));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::MOD));
+			}
 		}
 
 		return newVec->createResult();
@@ -300,11 +336,21 @@ namespace ve {
 	 **/
 	Result Vector::operator&(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_AND));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::BIT_AND));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_AND));
+			}
 		}
 
 		return newVec->createResult();
@@ -320,11 +366,21 @@ namespace ve {
 	 **/
 	Result Vector::operator|(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_OR));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::BIT_OR));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_OR));
+			}
 		}
 
 		return newVec->createResult();
@@ -340,11 +396,21 @@ namespace ve {
 	 **/
 	Result Vector::operator^(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_XOR));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::BIT_XOR));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::BIT_XOR));
+			}
 		}
 
 		return newVec->createResult();
@@ -360,11 +426,21 @@ namespace ve {
 	 **/
 	Result Vector::operator<<(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::SHL));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SHL));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::SHL));
+			}
 		}
 
 		return newVec->createResult();
@@ -380,11 +456,21 @@ namespace ve {
 	 **/
 	Result Vector::operator>>(const Result& rhs) const {
 		Vector* newVec = context->allocateObject<Vector>();
-		if (!newVec) { return Result{ .type = NumericConstant::Invalid }; }
+		if (!newVec) { return Result{}; }
 
-		newVec->elements.reserve(elements.size());
-		for (size_t i = 0; i < elements.size(); ++i) {
-			newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::SHR));
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SHR));
+			}
+		} 
+		else {
+			newVec->elements.reserve(elements.size());
+			for (size_t i = 0; i < elements.size(); ++i) {
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::SHR));
+			}
 		}
 
 		return newVec->createResult();
@@ -403,7 +489,7 @@ namespace ve {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
 			elements.reserve(elements.size() + rVec->elements.size());
 			for (size_t i = 0; i < rVec->elements.size(); ++i) {
-				elements.push_back(rVec->elements[i]);
+				pushBack(rVec->elements[i]);
 			}
 			return createResult();
 		}
@@ -420,8 +506,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator-=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::SUB_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SUB_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::SUB_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -435,8 +530,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator*=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::MUL_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::MUL_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::MUL_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -450,8 +554,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator/=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::DIV_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::DIV_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::DIV_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -465,8 +578,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator%=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::MOD_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::MOD_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::MOD_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -480,8 +602,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator&=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::AND_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::AND_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::AND_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -495,8 +626,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator|=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::OR_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::OR_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::OR_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -510,8 +650,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator^=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::XOR_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::XOR_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::XOR_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -525,8 +674,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator<<=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::SHL_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SHL_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::SHL_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -540,8 +698,17 @@ namespace ve {
 	 * \return				Returns a Result containing this vector after modification.
 	 **/
 	Result Vector::operator>>=(const Result& rhs) {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			elements[i] = context->evaluateMath(elements[i], rhs, ExprLexer::SHR_ASSIGN);
+		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
+			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SHR_ASSIGN));
+			}
+		}
+		else {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				setAt_Unsafe(i, context->evaluateMath(elements[i], rhs, ExprLexer::SHR_ASSIGN));
+			}
 		}
 		return createResult();
 	}
@@ -555,7 +722,7 @@ namespace ve {
 	Result Vector::arrayAccess(int64_t index) {
 		size_t linearIdx = arrayIndexToLinearIndex(index, elements.size());
 		if (linearIdx == InvalidIndex) {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 		return elements[linearIdx];
 	}
@@ -577,7 +744,7 @@ namespace ve {
 			if (lin != InvalidIndex) {
 				idx0 = static_cast<int64_t>(lin);
 			}
-			else {  return Result{ .type = NumericConstant::Invalid }; }
+			else {  return Result{}; }
 		}
 
 		if (flags & ArrayExFlags::ArrayExFlag_End) {
@@ -585,7 +752,7 @@ namespace ve {
 			if (lin != InvalidIndex) {
 				idx1 = static_cast<int64_t>(lin) + 1;
 			}
-			else { return Result{ .type = NumericConstant::Invalid }; }
+			else { return Result{}; }
 		}
 
 		if (idx0 > idx1) { idx0 = idx1; }
@@ -601,7 +768,7 @@ namespace ve {
 			return newVec->createResult();
 		}
 			
-		return Result{ .type = NumericConstant::Invalid };
+		return Result{};
 	}
 
 	/**
@@ -613,15 +780,19 @@ namespace ve {
 	 **/
 	Result Vector::arrayAssign(int64_t index, const Result& rhs) {
 		size_t lin = Object::arrayIndexToLinearIndex(index, elements.size());
-		if (lin == Object::InvalidIndex) { return Result{ .type = NumericConstant::Invalid }; }
+		if (lin == Object::InvalidIndex) { return Result{}; }
 		
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
+			prepareErase_Unsafe(lin);
 			elements.erase(elements.begin() + lin);
 			elements.insert(elements.begin() + lin, rVec->elements.begin(), rVec->elements.end());
+			for (size_t i = 0; i < rVec->elements.size(); ++i ) {
+				incObjectRef_Unsafe(i + lin);
+			}
 		} 
 		else {
-			elements[lin] = rhs;
+			setAt_Unsafe(lin, rhs);
 		}
 		
 		return rhs;
@@ -639,18 +810,25 @@ namespace ve {
 	Result Vector::arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) {
 		size_t idx0, idx1;
 		if (!Object::resolveSliceBounds(startIdx, endIdx, flags, elements.size(), idx0, idx1)) {
-			return Result{ .type = NumericConstant::Invalid };
+			return Result{};
 		}
 
+		for (size_t i = idx0; i < idx1; ++i) {
+			prepareErase_Unsafe(i);
+		}
 		elements.erase(elements.begin() + idx0, elements.begin() + idx1);
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
 			elements.insert(elements.begin() + idx0, rVec->elements.begin(), rVec->elements.end());
+			for (size_t i = 0; i < rVec->elements.size(); ++i ) {
+				incObjectRef_Unsafe(i + idx0);
+			}
 		} 
 		else {
-			// Matches Python's slice insertion rule
+			// Matches Python's slice insertion rule.
 			elements.insert(elements.begin() + idx0, rhs);
+			incObjectRef_Unsafe(idx0);
 		}
 		
 		return rhs;
@@ -665,9 +843,7 @@ namespace ve {
 	Result Vector::at(int64_t index) const {
 		size_t linearIndex = Object::arrayIndexToLinearIndex(index, elements.size());
 		
-		if (linearIndex == Object::InvalidIndex) {
-			return Result{ .type = NumericConstant::Invalid };
-		}
+		if (linearIndex == Object::InvalidIndex) { return Result{}; }
 		
 		return elements[linearIndex];
 	}

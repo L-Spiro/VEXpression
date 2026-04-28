@@ -2,6 +2,9 @@
 
 #include "../Engine/Result.h"
 
+#ifdef _DEBUG
+#include <cassert>
+#endif	// #ifdef _DEBUG
 #include <cstdint>
 #include <string>
 
@@ -160,78 +163,6 @@ namespace ve {
 		 * \return				Returns the element count as a size_t.
 		 **/
 		virtual size_t						arrayLength() const = 0;
-
-
-		// == Extended API (Representations & Conversions)
-		/**
-		 * Converts the object from UTF-8 to ASCII.
-		 *
-		 * \return				Returns a Result containing the converted value. Behavior is implementation-defined for non-ASCII code points.
-		 **/
-		virtual Result						ascii() const = 0;
-
-		/**
-		 * Gets the binary form of the object as a string.
-		 *
-		 * \return				Returns a Result containing a string formatted as 0b****.
-		 **/
-		virtual Result						bin() const = 0;
-
-		/**
-		 * Gets the boolean representation of the object.
-		 *
-		 * \return				Returns a Result containing a truthy (1) or falsy (0) value.
-		 **/
-		virtual Result						toBool() const = 0;
-
-		/**
-		 * Returns the character represented by the object as a Unicode code point.
-		 *
-		 * \return				Returns a Result containing the resulting character.
-		 **/
-		virtual Result						chr() const = 0;
-
-		/**
-		 * Interprets the object as its best-fit numeric representation and converts it to a float.
-		 *
-		 * \return				Returns a Result containing the converted double-precision floating-point value.
-		 **/
-		virtual Result						toFloat() const = 0;
-
-		/**
-		 * Gets the hexadecimal form of the object as a string.
-		 *
-		 * \return				Returns a Result containing a string formatted as 0x****.
-		 **/
-		virtual Result						hex() const = 0;
-
-		/**
-		 * Interprets the object as its best-fit numeric representation and converts it to an integer.
-		 *
-		 * \return				Returns a Result containing the converted 64-bit integer value.
-		 **/
-		virtual Result						toInt() const = 0;
-
-		/**
-		 * Gets the number of elements or characters in the object.
-		 *
-		 * \return				Returns a Result containing the element or UTF code point count.
-		 **/
-		virtual Result						len() const = 0;
-
-		/**
-		 * Gets the octal form of the object as a string.
-		 *
-		 * \return				Returns a Result containing a string formatted as 0o****.
-		 **/
-		virtual Result						oct() const = 0;
-
-		/**
-		 * Returns the ordinal (numeric) value of the object as a Unicode code point.
-		 *
-		 * \return				Returns a Result containing the ordinal value as an unsigned integer.
-		 **/
-		virtual Result						ord() const = 0;
 
 
 		// == Binary Operators
@@ -476,6 +407,11 @@ namespace ve {
 		 * Decreases the reference count.
 		 **/
 		inline void							decRef() const {
+#ifdef _DEBUG
+			if (refCnt == 0) {
+				assert(false);
+			}
+#endif	// #ifdef _DEBUG
 			--refCnt;
 		}
 
@@ -558,7 +494,7 @@ namespace ve {
 		 * \param rhs			The result to insert or overwrite with.
 		 * \return				Returns the assigned value on success, or Invalid on failure.
 		 **/
-		virtual Result					arrayAssign(int64_t index, const Result& rhs) { return Result{ .type = NumericConstant::Invalid }; }
+		virtual Result					arrayAssign(int64_t index, const Result& rhs) { return Result{}; }
 
 		/**
 		 * Assigns a value or merges an array into a sliced range.
@@ -569,7 +505,7 @@ namespace ve {
 		 * \param rhs			The result to insert or overwrite with.
 		 * \return				Returns the assigned value on success, or Invalid on failure.
 		 **/
-		virtual Result					arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) { return Result{ .type = NumericConstant::Invalid }; }
+		virtual Result					arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) { return Result{}; }
 
 	protected :
 		// == Members.

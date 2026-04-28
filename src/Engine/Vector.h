@@ -14,6 +14,7 @@ namespace ve {
 	class Vector : public Object {
 	public :
 		Vector(ExecutionContext* ctx) : Object(ctx) {}
+		virtual ~Vector();
 
 
 		// == Functions.
@@ -64,87 +65,6 @@ namespace ve {
 		virtual bool						initializeFrom(const Result& val) override;
 
 		/**
-		 * Converts the object from its internal encoding to ASCII.
-		 * Characters outside the 0-127 range are replaced with '?'.
-		 *
-		 * \return				Returns a Result containing the new ASCII string object.
-		 **/
-		virtual Result						ascii() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Gets the binary form of the object as a string.
-		 * Invalid for string objects; requires an integer.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						bin() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Gets the boolean representation of the object as a string ("True" or "False").
-		 * Invalid for strings in this context.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						toBool() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Returns the character represented by the object as a Unicode code point.
-		 * Invalid for string objects; requires an integer.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						chr() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Interprets the object as its best-fit numeric representation and converts it to a float.
-		 * Matches typical user expectations by parsing the string as a floating-point number.
-		 *
-		 * \return				Returns a Result containing the converted double-precision floating-point value, or invalid if parsing fails.
-		 **/
-		virtual Result						toFloat() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Gets the hexadecimal form of the object as a string.
-		 * Invalid for string objects; requires an integer.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						hex() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Gets the octal form of the object as a string.
-		 * Invalid for string objects; requires an integer.
-		 *
-		 * \return				Returns an invalid Result.
-		 **/
-		virtual Result						oct() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
-		 * Interprets the object as its best-fit numeric representation and converts it to an integer.
-		 *
-		 * \return				Returns a Result containing the converted 64-bit integer value, or invalid if parsing fails.
-		 **/
-		virtual Result						toInt() const override { return Result{ .type = NumericConstant::Invalid };
-		}
-
-		/**
-		 * Gets the number of elements or characters in the object.
-		 *
-		 * \return				Returns a Result containing the UTF code point count.
-		 **/
-		virtual Result						len() const override {
-			return Result{ .type = NumericConstant::Unsigned, .value = { .uintVal = static_cast<uint64_t>(elements.size()) } };
-		}
-
-		/**
-		 * Returns the ordinal (numeric) value of the object as a Unicode code point.
-		 * Matches Python's ord(str): requires a string of exactly length 1.
-		 *
-		 * \return				Returns a Result containing the ordinal value as an unsigned integer, or invalid if length != 1.
-		 **/
-		virtual Result						ord() const override { return Result{ .type = NumericConstant::Invalid }; }
-
-		/**
 		 * Retrieves the number of elements in the vector.
 		 *
 		 * \return				Returns the element count.
@@ -153,7 +73,6 @@ namespace ve {
 
 
 		// == Operators.
-
 		/**
 		 * Evaluates the equality comparison operation against a right-hand operand.
 		 * 
@@ -457,12 +376,69 @@ namespace ve {
 		 * \param result		The result to push.
 		 * \return				Returns true if the item was added.  False always indicates a memory failure.
 		 **/
-		inline bool							pushBack(const Result &result ) {
+		inline bool							pushBack(const Result& result) {
 			try {
 				elements.push_back(result);
+				if (result.type == NumericConstant::Object && result.value.objectVal) {
+					result.value.objectVal->incRef();
+				}
 				return true;
 			}
 			catch (...) { return false; }
+		}
+
+		/**
+		 * Sets a given element to a given value.
+		 * 
+		 * \param idx			The index of the value to set.
+		 * \param result		The value to set.
+		 **/
+		inline void							setAt(size_t idx, const Result& result) {
+			if (idx < elements.size()) {
+				setAt_Unsafe(idx, result);
+			}
+		}
+
+		/**
+		 * Sets a given element to a given value without checking for the index being valid.
+		 * 
+		 * \param idx			The index of the value to set.
+		 * \param result		The value to set.
+		 **/
+		inline void							setAt_Unsafe(size_t idx, const Result& result) {
+			Result & item = elements[idx];
+			Object* prevObj = item.type == NumericConstant::Object && item.value.objectVal ? item.value.objectVal : nullptr;
+			item = result;
+			Object* newObj = item.type == NumericConstant::Object && item.value.objectVal ? item.value.objectVal : nullptr;
+			if (newObj) { newObj->incRef(); }
+			if (prevObj) { prevObj->decRef();
+				if (!prevObj->getRef()) { context->deallocateObject(prevObj); }
+			}
+		}
+
+		/**
+		 * Dereferences an item by index and potentially deallocates it without actually removing it from the vector.
+		 * 
+		 * \param idx			The index of the item to prepare for erasing from the vector.
+		 **/
+		inline void							prepareErase_Unsafe(size_t idx) {
+			Result & item = elements[idx];
+			Object* isObj = item.type == NumericConstant::Object && item.value.objectVal ? item.value.objectVal : nullptr;
+			if (isObj) {
+				isObj->decRef();
+				if (!isObj->getRef()) { context->deallocateObject(isObj); }
+			}
+		}
+
+		/**
+		 * Checks the given item for being an Object, and increases its reference count if it is.
+		 * 
+		 * \param idx			The index of the item to check.
+		 **/
+		inline void							incObjectRef_Unsafe(size_t idx) {
+			Result & item = elements[idx];
+			Object* isObj = item.type == NumericConstant::Object && item.value.objectVal ? item.value.objectVal : nullptr;
+			if (isObj) { isObj->incRef(); }
 		}
 
 		/**

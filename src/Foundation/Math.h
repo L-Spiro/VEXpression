@@ -2982,9 +2982,7 @@ namespace ve {
 									geomspace(Type start, Type stop, size_t num = size_t(50), bool endpoint = true) {
 			std::vector<Type> out;
 
-			if (num == 0) {
-				return out;
-			}
+			if (num == 0) { return out; }
 
 			out.resize(num);
 
@@ -3050,6 +3048,103 @@ namespace ve {
 			return out;
 		}
 
+
+		// ===============================
+		// Vector Cumulative & Differences
+		// ===============================
+		/**
+		 * Computes the cumulative sum of the elements along a 1D array. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.cumsum( a ) for 1D input.
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param v			The input vector.
+		 * \return			Returns a vector containing the cumulative sum.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									cumSum(const std::vector<Type>& v) {
+			if (v.empty()) { return std::vector<Type>(); }
+
+			std::vector<Type> result;
+			result.resize(v.size());
+			
+			result[0] = v[0];
+			for (size_t i = 1; i < v.size(); ++i) {
+				result[i] = result[i-1] + v[i];
+			}
+
+			return result;
+		}
+
+		/**
+		 * Computes the cumulative product of the elements along a 1D array. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.cumprod( a ) for 1D input.
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param v			The input vector.
+		 * \return			Returns a vector containing the cumulative product.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									cumProd(const std::vector<Type>& v) {
+			if (v.empty()) {
+				return std::vector<Type>();
+			}
+
+			std::vector<Type> result;
+			result.resize(v.size());
+			
+			result[0] = v[0];
+			for (size_t i = 1; i < v.size(); ++i) {
+				result[i] = result[i-1] * v[i];
+			}
+
+			return result;
+		}
+
+		/**
+		 * Computes the differences between consecutive elements of an array. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.ediff1d( ary, to_begin=to_begin, to_end=to_end ) for 1D input.
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param ary		The input samples.
+		 * \param toBegin	Vector of values to prepend to the returned differences.
+		 * \param toEnd		Vector of values to append to the returned differences.
+		 * \return			Returns a vector containing the prepended values, differences, and appended values.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									ediff1d(const std::vector<Type>& ary, const std::vector<Type>& toBegin = std::vector<Type>(), const std::vector<Type>& toEnd = std::vector<Type>()) {
+			size_t diffSize = (ary.size() > 1) ? ary.size() - 1 : 0;
+			size_t totalSize = toBegin.size() + diffSize + toEnd.size();
+
+			std::vector<Type> result;
+			if (totalSize == 0) {
+				return result;
+			}
+
+			result.reserve(totalSize);
+
+			if (!toBegin.empty()) {
+				result.insert(result.end(), toBegin.begin(), toBegin.end());
+			}
+
+			if (ary.size() > 1) {
+				for (size_t i = 0; i + 1 < ary.size(); ++i) {
+					result.push_back(ary[i+1] - ary[i]);
+				}
+			}
+
+			if (!toEnd.empty()) {
+				result.insert(result.end(), toEnd.begin(), toEnd.end());
+			}
+
+			return result;
+		}
+
 		/**
 		 * Computes the n-th discrete difference along a 1D array. Must be called within a try/catch block.
 		 * 
@@ -3067,13 +3162,9 @@ namespace ve {
 		template <typename Type = double>
 		static inline std::vector<Type>
 									diff1D(const std::vector<Type>& x, size_t n = 1) {
-			if (n == 0) {
-				return x;
-			}
+			if (n == 0) { return x; }
 
-			if (x.size() <= n) {
-				return std::vector<Type>();
-			}
+			if (x.size() <= n) { return std::vector<Type>(); }
 
 			std::vector<Type> cur = x;
 
@@ -3151,6 +3242,526 @@ namespace ve {
 
 			return out;
 		}
+
+
+		// ===============================
+		// Vector Reductions & Statistics
+		// ===============================
+		/**
+		 * Calculates the sum of all elements in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the sum of all elements. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline Type			sum(const std::vector<Type>& v) {
+			Type result = Type(0);
+			for (size_t i = 0; i < v.size(); ++i) {
+				result += v[i];
+			}
+			return result;
+		}
+
+		/**
+		 * Calculates the product of all elements in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the product of all elements. Returns 1 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline Type			prod(const std::vector<Type>& v) {
+			Type result = Type(1);
+			for (size_t i = 0; i < v.size(); ++i) {
+				result *= v[i];
+			}
+			return result;
+		}
+
+		/**
+		 * Calculates the arithmetic mean of all elements in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the mean. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline Type			mean(const std::vector<Type>& v) {
+			if (v.empty()) {
+				return Type(0);
+			}
+			return sum(v) / static_cast<Type>(v.size());
+		}
+
+		/**
+		 * Calculates the median of all elements in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the median value. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline Type			median(const std::vector<Type>& v) {
+			if (v.empty()) {
+				return Type(0);
+			}
+			
+			std::vector<Type> temp = v;
+			size_t n = temp.size() / 2;
+			std::nth_element(temp.begin(), temp.begin() + n, temp.end());
+			
+			Type midValue = temp[n];
+			
+			if (temp.size() % 2 == 0) {
+				std::nth_element(temp.begin(), temp.begin() + n - 1, temp.begin() + n);
+				return (temp[n - 1] + midValue) / Type(2);
+			}
+			
+			return midValue;
+		}
+
+		/**
+		 * Calculates the population variance of all elements in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the variance. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline Type			var(const std::vector<Type>& v) {
+			if (v.empty()) { return Type(0); }
+			
+			Type m = mean(v);
+			Type variance = Type(0);
+			
+			for (size_t i = 0; i < v.size(); ++i) {
+				Type diff = v[i] - m;
+				variance += diff * diff;
+			}
+			
+			return variance / static_cast<Type>(v.size());
+		}
+
+		/**
+		 * Calculates the population standard deviation of all elements in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the standard deviation. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline Type			std(const std::vector<Type>& v) {
+			return std::sqrt(var(v));
+		}
+
+		/**
+		 * Calculates the peak-to-peak (maximum minus minimum) value in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the peak-to-peak range. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline Type			ptp(const std::vector<Type>& v) {
+			if (v.empty()) {
+				return Type(0);
+			}
+			
+			Type minVal = v[0];
+			Type maxVal = v[0];
+			
+			for (size_t i = 1; i < v.size(); ++i) {
+				if (v[i] < minVal) {
+					minVal = v[i];
+				}
+				if (v[i] > maxVal) {
+					maxVal = v[i];
+				}
+			}
+			
+			return maxVal - minVal;
+		}
+
+		/**
+		 * Finds the index of the minimum value in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the zero-based index of the minimum value. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline size_t		argMin(const std::vector<Type>& v) {
+			if (v.empty()) {
+				return 0;
+			}
+			
+			size_t index = 0;
+			Type minVal = v[0];
+			
+			for (size_t i = 1; i < v.size(); ++i) {
+				if (v[i] < minVal) {
+					minVal = v[i];
+					index = i;
+				}
+			}
+			
+			return index;
+		}
+
+		/**
+		 * Finds the index of the maximum value in the given vector.
+		 * 
+		 * \param v			The vector to process.
+		 * \return			Returns the zero-based index of the maximum value. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline size_t		argMax(const std::vector<Type>& v) {
+			if (v.empty()) {
+				return 0;
+			}
+			
+			size_t index = 0;
+			Type maxVal = v[0];
+			
+			for (size_t i = 1; i < v.size(); ++i) {
+				if (v[i] > maxVal) {
+					maxVal = v[i];
+					index = i;
+				}
+			}
+			
+			return index;
+		}
+
+		/**
+		 * Calculates the q-th percentile of the given vector using linear interpolation.
+		 * 
+		 * \param v			The vector to process.
+		 * \param q			The percentile to compute, in the range [0.0, 100.0].
+		 * \return			Returns the interpolated percentile value. Returns 0 if the vector is empty.
+		 **/
+		template <typename Type = double>
+		static inline Type			percentile(const std::vector<Type>& v, Type q) {
+			if (v.empty()) {
+				return Type(0);
+			}
+			
+			if (v.size() == 1) {
+				return v[0];
+			}
+			
+			q = clamp(q, Type(0), Type(100));
+			
+			std::vector<Type> temp = v;
+			std::sort(temp.begin(), temp.end());
+			
+			Type index = (q / Type(100)) * static_cast<Type>(temp.size() - 1);
+			size_t lower = static_cast<size_t>(index);
+			
+			if (lower >= temp.size() - 1) {
+				return temp.back();
+			}
+			
+			Type fraction = index - static_cast<Type>(lower);
+			return temp[lower] + fraction * (temp[lower + 1] - temp[lower]);
+		}
+
+
+		// ===============================
+		// Vector Manipulation
+		// ===============================
+		/**
+		 * Clamps all values in the vector between a minimum and maximum value. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.clip( a, a_min, a_max ) for 1D input.
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param v			The input vector.
+		 * \param minVal	The minimum allowed value.
+		 * \param maxVal	The maximum allowed value.
+		 * \return			Returns a new vector with all elements clamped to the specified range.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									clip(const std::vector<Type>& v, Type minVal, Type maxVal) {
+			std::vector<Type> result;
+			result.resize(v.size());
+			for (size_t i = 0; i < v.size(); ++i) {
+				Type val = v[i];
+				if (val < minVal) {
+					result[i] = minVal;
+				}
+				else if (val > maxVal) {
+					result[i] = maxVal;
+				}
+				else {
+					result[i] = val;
+				}
+			}
+			return result;
+		}
+
+		/**
+		 * Circularly shifts the elements in the array. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.roll( a, shift ) for 1D input.
+		 * Elements that roll beyond the last position are re-introduced at the first.
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param v			The input vector.
+		 * \param shift		The number of places by which elements are shifted. Can be negative.
+		 * \return			Returns a new vector with the elements shifted.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									roll(const std::vector<Type>& v, int64_t shift) {
+			if (v.empty()) { return std::vector<Type>(); }
+
+			std::vector<Type> result = v;
+			int64_t n = static_cast<int64_t>(v.size());
+			
+			// Normalize shift to be within [0, n - 1] to handle large or negative shifts.
+			shift = shift % n;
+			if (shift < 0) {
+				shift += n;
+			}
+
+			// std::rotate handles the offset logic optimally.
+			if (shift > 0) {
+				std::rotate(result.begin(), result.begin() + (n - shift), result.end());
+			}
+
+			return result;
+		}
+
+		/**
+		 * Joins two arrays together end-to-end. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.concatenate( (a1, a2) ) for 1D input.
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param v1		The first input vector.
+		 * \param v2		The second input vector.
+		 * \return			Returns a new vector containing the concatenated elements.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									concatenate(const std::vector<Type>& v1, const std::vector<Type>& v2) {
+			std::vector<Type> result;
+			result.reserve(v1.size() + v2.size());
+			result.insert(result.end(), v1.begin(), v1.end());
+			result.insert(result.end(), v2.begin(), v2.end());
+			return result;
+		}
+
+		/**
+		 * Repeats each element of an array a specified number of times. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.repeat( a, repeats ) for 1D input.
+		 * For example, repeat([1, 2], 2) results in [1, 1, 2, 2].
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param v			The input vector.
+		 * \param repeats	The number of times each element is repeated.
+		 * \return			Returns a new vector with the repeated elements.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									repeat(const std::vector<Type>& v, size_t repeats) {
+			if (repeats == 0 || v.empty()) { return std::vector<Type>(); }
+
+			std::vector<Type> result;
+			result.reserve(v.size() * repeats);
+			
+			for (size_t i = 0; i < v.size(); ++i) {
+				for (size_t r = 0; r < repeats; ++r) {
+					result.push_back(v[i]);
+				}
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Constructs an array by repeating the entire input vector. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.tile( A, reps ) for 1D input.
+		 * For example, tile([1, 2], 2) results in [1, 2, 1, 2].
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param v			The input vector.
+		 * \param reps		The number of times the entire array is repeated.
+		 * \return			Returns a new vector constructed by tiling the input.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									tile(const std::vector<Type>& v, size_t reps) {
+			if (reps == 0 || v.empty()) { return std::vector<Type>(); }
+
+			std::vector<Type> result;
+			result.reserve(v.size() * reps);
+			
+			for (size_t r = 0; r < reps; ++r) {
+				result.insert(result.end(), v.begin(), v.end());
+			}
+			
+			return result;
+		}
+
+		/**
+		 * Pads the ends of an array with a constant value. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.pad( array, (padLeft, padRight), mode='constant' ) for 1D input.
+		 * 
+		 * \tparam Type			The value type stored in the vector (defaults to double).
+		 * \param v				The input vector.
+		 * \param padLeft		The number of values to prepend to the array.
+		 * \param padRight		The number of values to append to the array.
+		 * \param constantValue	The value to set the padded elements to.
+		 * \return				Returns a new vector with the padding applied.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									pad(const std::vector<Type>& v, size_t padLeft, size_t padRight, Type constantValue) {
+			std::vector<Type> result;
+			result.reserve(padLeft + v.size() + padRight);
+			
+			for (size_t i = 0; i < padLeft; ++i) {
+				result.push_back(constantValue);
+			}
+			
+			result.insert(result.end(), v.begin(), v.end());
+			
+			for (size_t i = 0; i < padRight; ++i) {
+				result.push_back(constantValue);
+			}
+			
+			return result;
+		}
+
+
+		// ===============================
+		// Signal Processing & Math
+		// ===============================
+		/**
+		 * Computes the discrete, linear convolution of two 1D sequences. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.convolve( a, v, mode='full' ) for 1D input.
+		 * The output size is exactly (v1.size() + v2.size() - 1).
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param v1		The first one-dimensional input vector.
+		 * \param v2		The second one-dimensional input vector.
+		 * \return			Returns a new vector containing the discrete linear convolution.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									convolve(const std::vector<Type>& v1, const std::vector<Type>& v2) {
+			if (v1.empty() || v2.empty()) { return std::vector<Type>(); }
+
+			std::vector<Type> result;
+			result.resize(v1.size() + v2.size() - 1, Type(0));
+
+			for (size_t i = 0; i < v1.size(); ++i) {
+				for (size_t j = 0; j < v2.size(); ++j) {
+					result[i+j] += v1[i] * v2[j];
+				}
+			}
+
+			return result;
+		}
+
+		/**
+		 * Computes the cross-correlation of two 1D sequences. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.correlate( a, v, mode='valid' ) for 1D input.
+		 * The output size is (a.size() - v.size() + 1). The function requires that the 
+		 * signal 'a' is at least as long as the template 'v'.
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param a			The input signal vector.
+		 * \param v			The cross-correlation template vector.
+		 * \return			Returns a new vector containing the discrete cross-correlation.
+		 * \throw std::invalid_argument Thrown if the signal 'a' is smaller than the template 'v'.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									correlate(const std::vector<Type>& a, const std::vector<Type>& v) {
+			if (a.empty() || v.empty()) { return std::vector<Type>(); }
+
+			if (a.size() < v.size()) { throw std::invalid_argument(""); }
+
+			size_t outSize = a.size() - v.size() + 1;
+			std::vector<Type> result;
+			result.resize(outSize, Type(0));
+
+			for (size_t i = 0; i < outSize; ++i) {
+				Type sum = Type(0);
+				for (size_t j = 0; j < v.size(); ++j) {
+					sum += a[i+j] * v[j];
+				}
+				result[i] = sum;
+			}
+
+			return result;
+		}
+
+		/**
+		 * One-dimensional linear interpolation. Must be called within a try/catch block.
+		 * 
+		 * This emulates numpy.interp( x, xp, fp ) for 1D input.
+		 * The x-coordinates in 'xp' must be strictly increasing. Values in 'x' that are 
+		 * outside the bounds of 'xp' are clamped to fp.front() or fp.back().
+		 * 
+		 * \tparam Type		The value type stored in the vector (defaults to double).
+		 * \param x			The x-coordinates at which to evaluate the interpolated values.
+		 * \param xp		The x-coordinates of the data points, must be increasing.
+		 * \param fp		The y-coordinates of the data points, same length as xp.
+		 * \return			Returns a new vector containing the interpolated values.
+		 * \throw std::invalid_argument Thrown if xp and fp have different sizes.
+		 **/
+		template <typename Type = double>
+		static inline std::vector<Type>
+									interp(const std::vector<Type>& x, const std::vector<Type>& xp, const std::vector<Type>& fp) {
+			if (x.empty()) { return std::vector<Type>(); }
+
+			if (xp.empty() || fp.empty() || xp.size() != fp.size()) { throw std::invalid_argument(""); }
+
+			std::vector<Type> result;
+			result.reserve(x.size());
+
+			Type xMin = xp.front();
+			Type xMax = xp.back();
+			Type fMin = fp.front();
+			Type fMax = fp.back();
+
+			for (size_t i = 0; i < x.size(); ++i) {
+				Type target = x[i];
+
+				if (target <= xMin) {
+					result.push_back(fMin);
+				} 
+				else if (target >= xMax) {
+					result.push_back(fMax);
+				} 
+				else {
+					auto it = std::lower_bound(xp.begin(), xp.end(), target);
+					size_t idx = static_cast<size_t>(std::distance(xp.begin(), it));
+
+					if (xp[idx] == target) {
+						result.push_back(fp[idx]);
+					} 
+					else {
+						size_t idx0 = idx - 1;
+						size_t idx1 = idx;
+						
+						Type x0 = xp[idx0];
+						Type x1 = xp[idx1];
+						Type y0 = fp[idx0];
+						Type y1 = fp[idx1];
+
+						Type fraction = (target - x0) / (x1 - x0);
+						result.push_back(y0 + fraction * (y1 - y0));
+					}
+				}
+			}
+
+			return result;
+		}
+
 
 		// ===============================
 		// DSP Window Functions

@@ -265,6 +265,56 @@ namespace ve {
 		}
 
 		/**
+		 * Sets the ?? user value.
+		 * 
+		 * \param val				The user value to set.
+		 **/
+		void							setUserValue(const Result& val ) { userValue = val; }
+
+		/**
+		 * BGets the ?? user value.
+		 * 
+		 * \return					Returns the user-supplied value for the ?? value.
+		 **/
+		Result							getUserValue() const { return userValue; }
+
+		/**
+		 * Sets an externally supplied parameter by index.
+		 * 
+		 * \param val				The value to assign.
+		 * \param idx				The index at which to assign the given value.
+		 * \return					Returns true if the value was added.  False indices a memory failure.
+		 **/
+		bool							setParm(const Result& val, size_t idx) {
+			try {
+				if (idx >= userParms.size()) {
+					userParms.resize(idx + 1);
+				}
+				userParms[idx] = val;
+				return true;
+			}
+			catch (...) { return false; }
+		}
+
+		/**
+		 * Gets an externally supplied parameter by index.
+		 * 
+		 * \param idx				The index of the paramater to get.
+		 * \return					Returns the requested parameter. If the index is out of range, the return value is invalid.
+		 **/
+		Result							getParm(size_t idx) const {
+			if (idx >= userParms.size()) { return Result{}; }
+			return userParms[idx];
+		}
+
+		/**
+		 * Gets the total number of supplied parameters.
+		 * 
+		 * \return					Returns the number of parameters that have been supplied to the script.
+		 **/
+		size_t							totalParms() const { return userParms.size(); }
+
+		/**
 		 * Registers a new built-in function to the execution context.
 		 * 
 		 * \param name				The string identifier used in the script.
@@ -411,6 +461,10 @@ namespace ve {
 										objects;
 		/** The state of execution (continue, break, return, or normal). */
 		FlowState						flowState = FlowState::Normal;
+		/** The user value. */
+		Result							userValue;
+		/** Multplie parameter list. */
+		std::vector<Result>				userParms;
 		/** The return value if return is used. */
 		Result							returnValue;
 		/** The arena index of the root AST node to execute. **/
