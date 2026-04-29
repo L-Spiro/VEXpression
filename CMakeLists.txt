@@ -30,7 +30,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ### Global Compile Definitions
-add_compile_definitions(_USE_MATH_DEFINES VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_FULL_STRINGS)
+add_compile_definitions(_USE_MATH_DEFINES SIMDE_NO_NATIVE VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_FULL_STRINGS)
 
 ### Locate the Java Runtime.
 find_package(Java 11 COMPONENTS Runtime REQUIRED)

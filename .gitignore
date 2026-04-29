@@ -83,3 +83,5 @@ compile_commands.json
 /generated/
 *.tokens
 *.interp
+tools/SimdBridgeTable.inl
+tools/SimdBridges.h

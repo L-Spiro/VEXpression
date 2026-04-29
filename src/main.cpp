@@ -59,7 +59,7 @@ int main() {
 	ve::ExecutionContext context;
 	auto Cool = HUGE_VALF / 2;
 	
-	std::u8string testExprU8 = std::u8string( u8"_mm512_tan_ps(__m512(3,4,5,6,M_PI,M_E,M_2_SQRTPI,FLT_MAX))" );
+	std::u8string testExprU8 = std::u8string( u8"v = _mm256_setr_epi32(10, 20, 30, 40, 50, 60, 70, 80);\r\nidx = _mm256_setr_epi32(7, 6, 5, 4, 3, 2, 1, 0);\r\nresult = _mm256_permutevar8x32_epi32(v, idx);" );
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";
