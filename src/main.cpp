@@ -59,7 +59,7 @@ int main() {
 	ve::ExecutionContext context;
 	auto Cool = HUGE_VALF / 2;
 	
-	std::u8string testExprU8 = std::u8string( u8"_mm512_add_ps(__m512(3,4,5,6,M_PI,M_E,M_2_SQRTPI,FLT_MAX), _mm512_set1_ps(6))" );
+	std::u8string testExprU8 = std::u8string( u8"_mm512_set1_ps(6)//_mm512_add_ps(__m512(3,4,5,6,M_PI,M_E,M_2_SQRTPI,FLT_MAX), _mm512_set1_ps(6))" );
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";

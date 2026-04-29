@@ -179,13 +179,14 @@ set(APP_HEADERS
     src/Foundation/UnicodeData.inl
     src/Engine/Errors.h
     src/Engine/ExecutionContext.h
+	src/Engine/Float16.h
     src/Engine/FunctionDef.h
     src/Engine/IntrinsicBridges.h
     src/Engine/Map.h
     src/Engine/Object.h
     src/Engine/Result.h
 	src/Engine/SimdBridges.h
-	src/Engine/SimdBridgeTable.inc
+	src/Engine/SimdBridgeTable.inl
     src/Engine/SimdIncludes.h
 	src/Engine/SimdObject.h
     src/Engine/String.h

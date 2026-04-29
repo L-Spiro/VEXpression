@@ -31,6 +31,8 @@ MISSING_IN_SIMDE = [
     "_blsr",
     "_broadcast_i32",    # Missing integer broadcasts
     "_broadcast_i64",
+    "_broadcastmb",      # Missing: AVX-512 mask broadcasts
+    "_broadcastmw",
     "_bslli_epi128",     # Missing specific bit shifts
     "_bsrli_epi128",
     "_bswap",            
@@ -87,6 +89,14 @@ MISSING_IN_SIMDE = [
     "_cvtusepi",
     "_dpb",              # Missing VNNI Neural Network ops
     "_dpw",              
+    "_epi8_mask",        # Missing: AVX-512 mask-returning comparisons (signed)
+    "_epi16_mask",
+    "_epi32_mask",
+    "_epi64_mask",
+    "_epu8_mask",        # Missing: AVX-512 mask-returning comparisons (unsigned)
+    "_epu16_mask",
+    "_epu32_mask",
+    "_epu64_mask",
     "_extractf",         # Vector extraction/insertion 
     "_extracti",
     "_free",             # Missing: Memory management macros
@@ -106,91 +116,225 @@ MISSING_IN_SIMDE = [
     "_lzcnt_",           # Missing specific zero-counting/math operations
     "_madd52",
     "_malloc",           # Missing: Memory management macros
-    "_max_epi64",
-    "_max_epu64",
+
+    # --- Targeted AVX-512 Mask Exclusions ---
+    "_mm256_mask_abs_", "_mm256_maskz_abs_",
+    "_mm512_mask_abs_", "_mm512_maskz_abs_",
+    "_mask_add_epi8", "_maskz_add_epi8",
+    "_mask_add_pd", "_maskz_add_pd",
+    "_mask_add_ps", "_maskz_add_ps",
+    "_mask_add_sd", "_maskz_add_sd",
+    "_mask_adds_epu16", "_maskz_adds_epu16",
+    "_mask_adds_epu8", "_maskz_adds_epu8",
+    "_mask_and_epi32", "_maskz_and_epi32",
+    "_mask_and_epi64", "_maskz_and_epi64",
+    "_mask_and_pd", "_maskz_and_pd",
+    "_mask_and_ps", "_maskz_and_ps",
+    "_mask_andnot_epi32", "_maskz_andnot_epi32",
+    "_mask_andnot_epi64", "_maskz_andnot_epi64",
+    "_mask_andnot_pd", "_maskz_andnot_pd",
+    "_mask_andnot_ps", "_maskz_andnot_ps",
+    "_mask_broadcastb_epi8", "_maskz_broadcastb_epi8",
+    "_mask_broadcastd_epi32", "_maskz_broadcastd_epi32",
+    "_mask_broadcastq_epi64", "_maskz_broadcastq_epi64",
+    "_mask_broadcastsd_pd", "_maskz_broadcastsd_pd",
+    "_mask_broadcastss_ps", "_maskz_broadcastss_ps",
+    "_mask_broadcastw_epi16", "_maskz_broadcastw_epi16",
+    "_mask_compress_epi16", "_maskz_compress_epi16",
+    "_mask_compress_epi32", "_maskz_compress_epi32",
+    "_mask_compress_epi64", "_maskz_compress_epi64",
+    "_mask_compress_epi8", "_maskz_compress_epi8",
+    "_mask_compress_pd", "_maskz_compress_pd",
+    "_mask_compress_ps", "_maskz_compress_ps",
+    "_mask_cvtepi32_ps", "_maskz_cvtepi32_ps",
+    "_mask_cvtepu32_ps", "_maskz_cvtepu32_ps",
+    "_mask_cvtph_ps", "_maskz_cvtph_ps",
+    "_mask_cvtsd_ss", "_maskz_cvtsd_ss",
+    "_mask_cvtss_sd", "_maskz_cvtss_sd",
+    "_mask_div_pd", "_maskz_div_pd",
+    "_mask_div_ps", "_maskz_div_ps",
+    "_mask_div_sd", "_maskz_div_sd",
+    "_mask_div_ss", "_maskz_div_ss",
+    "_mask_expand_epi16", "_maskz_expand_epi16",
+    "_mask_expand_epi32", "_maskz_expand_epi32",
+    "_mask_expand_epi64", "_maskz_expand_epi64",
+    "_mask_expand_epi8", "_maskz_expand_epi8",
+    "_mask_expand_pd", "_maskz_expand_pd",
+    "_mask_expand_ps", "_maskz_expand_ps",
+    "_mask_fmadd_pd", "_mask3_fmadd_pd", "_maskz_fmadd_pd",
+    "_mask_fmadd_ps", "_mask3_fmadd_ps", "_maskz_fmadd_ps",
+    "_mask_fmadd_sd", "_mask3_fmadd_sd", "_maskz_fmadd_sd",
+    "_mask_fmadd_ss", "_mask3_fmadd_ss", "_maskz_fmadd_ss",
+    "_mask_fmsub_pd", "_mask3_fmsub_pd", "_maskz_fmsub_pd",
+    "_mask_fmsub_ps", "_mask3_fmsub_ps", "_maskz_fmsub_ps",
+    "_mask_fmsub_sd", "_mask3_fmsub_sd", "_maskz_fmsub_sd",
+    "_mask_fmsub_ss", "_mask3_fmsub_ss", "_maskz_fmsub_ss",
+    "_mask_fnmadd_pd", "_mask3_fnmadd_pd", "_maskz_fnmadd_pd",
+    "_mask_fnmadd_ps", "_mask3_fnmadd_ps", "_maskz_fnmadd_ps",
+    "_mask_fnmadd_sd", "_mask3_fnmadd_sd", "_maskz_fnmadd_sd",
+    "_mask_fnmadd_ss", "_mask3_fnmadd_ss", "_maskz_fnmadd_ss",
+    "_mask_fnmsub_pd", "_mask3_fnmsub_pd", "_maskz_fnmsub_pd",
+    "_mask_fnmsub_ps", "_mask3_fnmsub_ps", "_maskz_fnmsub_ps",
+    "_mask_fnmsub_sd", "_mask3_fnmsub_sd", "_maskz_fnmsub_sd",
+    "_mask_fnmsub_ss", "_mask3_fnmsub_ss", "_maskz_fnmsub_ss",
+    "_mask_max_epi16", "_maskz_max_epi16",
+    "_mask_max_epi32", "_maskz_max_epi32",
+    "_mask_max_epi8", "_maskz_max_epi8",
+    "_mask_max_epu16", "_maskz_max_epu16",
+    "_mask_max_epu32", "_maskz_max_epu32",
+    "_mask_max_epu8", "_maskz_max_epu8",
+    "_mask_max_pd", "_maskz_max_pd",
+    "_mask_max_ps", "_maskz_max_ps",
+    "_mask_max_sd", "_maskz_max_sd",
+    "_mask_max_ss", "_maskz_max_ss",
+    "_mask_min_epi16", "_maskz_min_epi16",
+    "_mask_min_epi32", "_maskz_min_epi32",
+    "_mask_min_epi8", "_maskz_min_epi8",
+    "_mask_min_epu16", "_maskz_min_epu16",
+    "_mask_min_epu32", "_maskz_min_epu32",
+    "_mask_min_epu8", "_maskz_min_epu8",
+    "_mask_min_pd", "_maskz_min_pd",
+    "_mask_min_ps", "_maskz_min_ps",
+    "_mask_min_sd", "_maskz_min_sd",
+    "_mask_min_ss", "_maskz_min_ss",
+    "_mask_move_sd", "_maskz_move_sd",
+    "_mask_move_ss", "_maskz_move_ss",
+    "_mask_mul_epi32", "_maskz_mul_epi32",
+    "_mask_mul_epu32", "_maskz_mul_epu32",
+    "_mask_mul_pd", "_maskz_mul_pd",
+    "_mask_mul_ps", "_maskz_mul_ps",
+    "_mask_mul_sd", "_maskz_mul_sd",
+    "_mask_mul_ss", "_maskz_mul_ss",
+    "_mask_mulhi_epi16", "_maskz_mulhi_epi16",
+    "_mask_mulhrs_epi16", "_maskz_mulhrs_epi16",
+    "_mask_mullo_epi16", "_maskz_mullo_epi16",
+    "_mask_mullo_epi32", "_maskz_mullo_epi32",
+    "_mask_or_pd", "_maskz_or_pd",
+    "_mask_or_ps", "_maskz_or_ps",
+    "_mask_packs_epi16", "_maskz_packs_epi16",
+    "_mask_packs_epi32", "_maskz_packs_epi32",
+    "_mask_packus_epi16", "_maskz_packus_epi16",
+    "_mask_packus_epi32", "_maskz_packus_epi32",
+    "_mask_set1_epi16", "_maskz_set1_epi16",
+    "_mask_set1_epi32", "_maskz_set1_epi32",
+    "_mask_set1_epi64", "_maskz_set1_epi64",
+    "_mask_set1_epi8", "_maskz_set1_epi8",
+    "_mask_shuffle_epi8", "_maskz_shuffle_epi8",
+    "_mask_sll_epi16", "_maskz_sll_epi16",
+    "_mask_sll_epi32", "_maskz_sll_epi32",
+    "_mask_sll_epi64", "_maskz_sll_epi64",
+    "_mask_sllv_epi32", "_maskz_sllv_epi32",
+    "_mask_sllv_epi64", "_maskz_sllv_epi64",
+    "_mask_sqrt_pd", "_maskz_sqrt_pd",
+    "_mask_sqrt_ps", "_maskz_sqrt_ps",
+    "_mask_sqrt_sd", "_maskz_sqrt_sd",
+    "_mask_sqrt_ss", "_maskz_sqrt_ss",
+    "_mask_sra_epi16", "_maskz_sra_epi16",
+    "_mask_sra_epi32", "_maskz_sra_epi32",
+    "_mask_srl_epi16", "_maskz_srl_epi16",
+    "_mask_srl_epi32", "_maskz_srl_epi32",
+    "_mask_srl_epi64", "_maskz_srl_epi64",
+    "_mask_srlv_epi16", "_maskz_srlv_epi16",
+    "_mask_srlv_epi32", "_maskz_srlv_epi32",
+    "_mask_srlv_epi64", "_maskz_srlv_epi64",
+    "_mask_sub_epi16", "_maskz_sub_epi16",
+    "_mask_sub_epi32", "_maskz_sub_epi32",
+    "_mask_sub_epi64", "_maskz_sub_epi64",
+    "_mask_sub_epi8", "_maskz_sub_epi8",
+    "_mm_mask_sub_ps", "_mm_maskz_sub_ps",
+    "_mm256_mask_sub_ps", "_mm256_maskz_sub_ps",
+    "_mm_mask_sub_sd", "_mm_maskz_sub_sd",
+    "_mm_mask_sub_ss", "_mm_maskz_sub_ss",
+    "_mask_sub_pd", "_maskz_sub_pd",
+    "_mask_subs_epi16", "_maskz_subs_epi16",
+    "_mask_subs_epi8", "_maskz_subs_epi8",
+    "_mask_subs_epu16", "_maskz_subs_epu16",
+    "_mask_subs_epu8", "_maskz_subs_epu8",
+    "_mask_xor_pd", "_maskz_xor_pd",
+    "_mask_xor_ps", "_maskz_xor_ps",
+
+    # --- K-Mask Logical / Conversions ---
+    "_int2mask", "_mask2int", "_kadd", "_kand", "_kandn", "_kmov",
+    "_knot", "_kor", "_ktest", "_kunpack", "_kxnor", "_kxor",
+    
+    # --- System / Hardware / Non-SIMD Specific ---
+    "_castf64_u64", "_castu64_f64",
+    "_rdpmc", "_rdsspq_i64", "_rdtsc",
+    "_senduipi", "_tpause", "_umwait",
+    "_urdmsr", "_uwrmsr", "_xgetbv", "_xsetbv",
+
+    # --- Specific type casts missing in SIMDe ---
+    "_cvtmask", "_cvtu64_", "_cvti64_", "_cvtsd_i64", "_cvtsd_u64", "_cvtss_i64", "_cvtss_u64",
+
+    "_max_epi64", "_max_epu64",
     "_may_i_use_",       # Missing: CPU feature detection macros
-    "_min_epi64",
-    "_min_epu64",
+    "_min_epi64", "_min_epu64",
     "_MM_GET_",          # Missing: MXCSR State macros
     "_MM_SET_",          
     "_MM_TRANSPOSE",     # Missing: Matrix Transpose macros
     "_movedup_pd",       # Missing AVX-512 specific moves and duplications
-    "_movehdup_ps",
-    "_moveldup_ps",
+    "_movehdup_ps", "_moveldup_ps",
     "_mulhi_epu16",      # Missing specific integer multiplications
-    "_mullo_epi64",
-    "_mullox_epi64",
+    "_mullo_epi64", "_mullox_epi64",
     "_mwait",            # Missing OS/System instructions
     "_or_epi32",         # Intel doesn't natively have _mm_or_epi32/64, aliases missing
     "_or_epi64",
+    "_pd_mask",          # Missing: AVX-512 float/double mask comparisons
+    "_ps_mask",
     "_pdep_",
     "_permute_pd",       # Missing AVX-512 permutations
-    "_permute_ps",
-    "_permutevar_",
-    "_permutex_",
-    "_pext_",
-    "_popcnt",
-    "_ptwrite",
+    "_permute_ps", "_permutevar_", "_permutex_",
+    "_pext_", "_popcnt", "_ptwrite",
     "_rcp14_",           # Missing AVX-512 approximations (RCP14)
-    "_rdpid",
-    "_rdsspd",
-    "_readfsbase",
-    "_readgsbase",
+    "_rdpid", "_rdsspd", "_readfsbase", "_readgsbase",
     "_reduce_",          # Missing AVX-512 horizontal reduction operations
-    "_rotl",
-    "_rotr",
-    "_rotwl",
-    "_rotwr",
-    "_rsqrt14_",
-    "_saveprevssp",
-    "_serialize",
-    "_setssbsy",
+    "_rotl", "_rotr", "_rotwl", "_rotwr",
+    "_rsqrt14_", "_saveprevssp", "_serialize", "_setssbsy",
     "_sha1",             # Missing specific Cryptography ops
-    "_sha256",
-    "_sha512",           
-    "_shldi_",
-    "_shldv_",
-    "_shrdi_",
-    "_shrdv_",
-    "_mm512_shuffle_epi32",
-    "_mm512_shufflehi_epi16",
-    "_mm512_shufflelo_epi16",
-    "_sllv_epi16",
-    "_sm3",              
-    "_sm4",              
-    "_sra_epi64",
-    "_srai_epi64",
-    "_srav_",
-    "_mm512_sra_",
-    "_mm512_srai_",
-    "_stui",
-    "_testui",
+    "_sha256", "_sha512",           
+    "_shldi_", "_shldv_", "_shrdi_", "_shrdv_",
+    "_mm512_shuffle_epi32", "_mm512_shufflehi_epi16", "_mm512_shufflelo_epi16",
+    "_sllv_epi16", "_sm3", "_sm4",              
+    "_sra_epi64", "_srai_epi64", "_srav_",
+    "_mm512_sra_", "_mm512_srai_",
+    "_stui", "_testui",
     "_tile_",            # Missing: AMX Tile ops
-    "_tzcnt",
-    "_undefined",
-    "_wbinvd",
-    "_wbnoinvd",
-    "_writefsbase",
-    "_writegsbase",
+    "_tzcnt", "_undefined", "_wbinvd", "_wbnoinvd",
+    "_writefsbase", "_writegsbase",
     "_xbegin",           # Missing TSX transactional memory instructions
-    "_xend",
-    "_xor_epi32",
-    "_xor_epi64",
-    "_xresldtrk",
-    "_xsusldtrk",
-    "_xtest",
+    "_xend", "_xor_epi32", "_xor_epi64",
+    "_xresldtrk", "_xsusldtrk", "_xtest",
     "_zeroall",          # Missing: AVX State clearing
-    "_zeroupper",        
-    "_zext"
+    "_zeroupper", "_zext"
 ]
 
 def getBaseType(rawType):
     """Strips const, volatile, and pointer asterisks to get the base type."""
     base = rawType.replace("const", "").replace("volatile", "").strip()
-    return base.rstrip("*").strip()
+    base = base.rstrip("*").strip()
+    
+    # Translate specific MSVC datatypes into stdint implementations
+    base = base.replace("unsigned __int64", "uint64_t")
+    base = base.replace("__int64", "int64_t")
+    base = base.replace("__int32", "int32_t")
+    base = base.replace("__int16", "int16_t")
+    base = base.replace("__int8", "int8_t")
+    
+    return base
 
 def isPointer(rawType):
     return "*" in rawType
+
+def isSimdVector(baseType):
+    """Determines if a type is a true SIMD vector vs a scalar/mask."""
+    b = baseType.lower()
+    if "mmask" in b: return False
+    if b in ["int64_t", "uint64_t", "int32_t", "uint32_t", "int16_t", "uint16_t", "int8_t", "uint8_t", "float", "double", "int", "unsigned int", "long long"]: return False
+    if b.startswith("__m"): return True
+    if "128" in b or "256" in b or "512" in b: return True
+    if b == "m64": return True
+    if "x" in b: return True
+    return False
 
 def getEngineDataType(rawType):
     """Maps intrinsic C types to the engine's DataType enum."""
@@ -199,7 +343,7 @@ def getEngineDataType(rawType):
     
     base = getBaseType(rawType)
     
-    if base.startswith("__m") or "128" in base or "256" in base or "512" in base or "64" in base or "x" in base:
+    if isSimdVector(base):
         return "DataType::Any"
     
     if "double" in base:
@@ -270,7 +414,7 @@ def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts):
 
     # 2. Check return type for unsupported engine features early
     baseRet = getBaseType(rettype)
-    is_simd_return = baseRet.startswith("__m") or "128" in baseRet or "256" in baseRet or "512" in baseRet or "64" in baseRet or "x" in baseRet
+    is_simd_return = isSimdVector(baseRet)
     retUnionMember = ""
     if is_simd_return:
         retUnionMember = baseRet.replace("__", "").replace("_t", "")
@@ -284,7 +428,7 @@ def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts):
         pName = param.get("name", "arg").lower()
         baseType = getBaseType(pType)
         isPtr = isPointer(pType)
-        is_vector = baseType.startswith("__m") or "128" in baseType or "256" in baseType or "512" in baseType or "64" in baseType or "x" in baseType
+        is_vector = isSimdVector(baseType)
         unionMember = baseType.replace("__", "").replace("_t", "") if is_vector else ""
 
         if isPtr:
@@ -329,7 +473,7 @@ def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts):
         engineDataType = getEngineDataType(pType)
         tableParams.append(f"{{ {engineDataType}, \"{pName}\", StringId::None }}")
 
-        is_vector = baseType.startswith("__m") or "128" in baseType or "256" in baseType or "512" in baseType or "64" in baseType or "x" in baseType
+        is_vector = isSimdVector(baseType)
         unionMember = baseType.replace("__", "").replace("_t", "") if is_vector else ""
 
         if isPtr:
@@ -353,11 +497,13 @@ def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts):
             elif "unsigned" in baseType or "uint" in baseType or "mask" in baseType:
                 extractCast = "uintVal"
 
+            castType = baseType.replace("__", "simde__") if baseType.startswith("__") else baseType
+
             cppCode += f"\t\t\tResult castedArg{i} = context->castArgument(args[{i}], {engineDataType});\n"
             cppCode += f"\t\t\tif (castedArg{i}.type == NumericConstant::Invalid) {{\n"
             cppCode += f"\t\t\t\treturn Result{{}};\n"
             cppCode += f"\t\t\t}}\n"
-            cppCode += f"\t\t\t{baseType} {pName} = static_cast<{baseType}>(castedArg{i}.value.{extractCast});\n"
+            cppCode += f"\t\t\t{castType} {pName} = static_cast<{castType}>(castedArg{i}.value.{extractCast});\n"
         
         callArgs.append(pName)
         cppCode += "\n"
@@ -437,7 +583,7 @@ def main():
         f.write("} // namespace ve\n")
 
     # Write Registration Table
-    with open("SimdBridgeTable.inc", "w", encoding="utf-8") as f:
+    with open("SimdBridgeTable.inl", "w", encoding="utf-8") as f:
         f.write("\n".join(allTableEntries))
         f.write("\n")
         
