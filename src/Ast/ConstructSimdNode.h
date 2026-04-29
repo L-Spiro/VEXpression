@@ -22,7 +22,8 @@ namespace ve {
 		// == Functions.
 		/**
 		 * Evaluates the node, allocating a new SimdObject and initializing its lanes.
-		 * * \param context	The execution context containing variables and runtime states.
+		 * 
+		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns a Result containing the new SimdObject.
 		 **/
 		Result							evaluate(ExecutionContext& context) const override {
