@@ -306,7 +306,7 @@ def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts):
     cppCode += f"\t\t *\n"
     cppCode += f"\t\t * \\param context\t\tThe execution context containing variables and runtime states.\n"
     cppCode += f"\t\t * \\param args\t\t\tThe list of arguments passed to the intrinsic.\n"
-    cppCode += f"\t\t * \\return\t\t\tReturns the result of the intrinsic, or an invalid Result on failure.\n"
+    cppCode += f"\t\t * \\return\t\t\t\tReturns the result of the intrinsic, or an invalid Result on failure.\n"
     cppCode += f"\t\t **/\n"
     cppCode += f"\t\tstatic Result {bridgeFuncName}(ExecutionContext* context, const std::vector<Result>& args) {{\n"
     
@@ -353,7 +353,7 @@ def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts):
             elif "unsigned" in baseType or "uint" in baseType or "mask" in baseType:
                 extractCast = "uintVal"
 
-            cppCode += f"\t\t\tResult castedArg{i} = context->castArgument(args[{i}], DataType::Int32);\n"
+            cppCode += f"\t\t\tResult castedArg{i} = context->castArgument(args[{i}], {engineDataType});\n"
             cppCode += f"\t\t\tif (castedArg{i}.type == NumericConstant::Invalid) {{\n"
             cppCode += f"\t\t\t\treturn Result{{}};\n"
             cppCode += f"\t\t\t}}\n"

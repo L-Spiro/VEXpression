@@ -658,6 +658,8 @@ namespace ve {
 		{ "convolve", StringId::Desc_Math_Convolve, { { DataType::Object, "v1", StringId::Math_Param_V1 }, { DataType::Object, "v2", StringId::Math_Param_V2 } }, IntrinsicBridges::convolveBridge },
 		{ "correlate", StringId::Desc_Math_Correlate, { { DataType::Object, "a", StringId::Math_Param_A }, { DataType::Object, "v", StringId::Math_Param_V } }, IntrinsicBridges::correlateBridge },
 		{ "interp", StringId::Desc_Math_Interp, { { DataType::Object, "x", StringId::Math_Param_XInterp }, { DataType::Object, "xp", StringId::Math_Param_Xp }, { DataType::Object, "fp", StringId::Math_Param_Fp } }, IntrinsicBridges::interpBridge },
+
+#include "SimdBridgeTable.inc"
 	};
 
 	// == Functions.

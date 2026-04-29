@@ -1,5 +1,7 @@
 #include "SimdObject.h"
 
+#include <format>
+
 namespace ve {
 
 	// == Members.
@@ -49,18 +51,22 @@ namespace ve {
 	bool SimdObject::toString(std::string& returnString, uint32_t depth, uint32_t flags) const {
 		auto formatArray = [&returnString]<typename T>(const char* prefix, const T* vals, size_t count) {
 			returnString += prefix;
-			returnString += "[";
+			returnString += "{";
 			for (size_t i = 0; i < count; ++i) {
 				if constexpr (sizeof(T) == 1) {
 					returnString += std::to_string(static_cast<int>(vals[i]));
-				} else {
+				}
+				else if constexpr (std::is_floating_point_v<T>) {
+					returnString += std::format("{:.17f}", vals[i]);
+				}
+				else {
 					returnString += std::to_string(vals[i]);
 				}
 				if (i < count - 1) {
 					returnString += ", ";
 				}
 			}
-			returnString += "]";
+			returnString += "}";
 		};
 
 		switch (regType) {
