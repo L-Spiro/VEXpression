@@ -36,7 +36,7 @@ else()
 endif()
 
 ### Global Compile Definitions
-add_compile_definitions(_USE_MATH_DEFINES SIMDE_NO_NATIVE VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_FULL_STRINGS)
+add_compile_definitions(_USE_MATH_DEFINES SIMDE_NO_NATIVE SIMDE_NO_CHECK_IMMEDIATE_CONSTANT VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_FULL_STRINGS)
 
 ### Locate the Java Runtime.
 find_package(Java 11 COMPONENTS Runtime REQUIRED)

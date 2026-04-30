@@ -34,6 +34,24 @@ namespace ve {
 
 			std::memset(&obj->reg, 0, sizeof(obj->reg));
 
+			if (args.size() == 1) {
+				Result argRes = context.getArena().nodes[args[0]]->evaluate(context);
+
+				if (argRes.type == NumericConstant::Object && argRes.value.objectVal) {
+					Vector* arrObj = static_cast<Vector*>(argRes.value.objectVal);
+					size_t count = arrObj->arrayLength(); 
+						
+					for (size_t i = 0; i < count; ++i) {
+						obj->arrayAssign(static_cast<int64_t>(i), arrObj->at(i));
+					}
+						
+					return obj->createResult();
+				}
+
+				obj->arrayAssign(0, argRes);
+				return obj->createResult();
+			}
+
 			for (size_t i = 0; i < args.size(); ++i) {
 				Result argRes = context.getArena().nodes[args[i]]->evaluate(context);
 				obj->arrayAssign(static_cast<int64_t>(i), argRes);
