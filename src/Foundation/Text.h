@@ -2044,13 +2044,13 @@ namespace ve {
 		}
 
 		/**
-		 * Left-justifies a UTF-8 string in a field of a given width.
+		 * Left-justifies a UTF-8 string by appending a specified fill character until the target width is reached.
 		 *
 		 * \tparam StringT		The type of the string (e.g., std::string or std::u8string).
-		 * \param input			The input UTF-8 string view.
-		 * \param width			The total width of the resulting string in characters.
-		 * \param fillChar		The UTF-32 code point of the fill character (default is space).
-		 * \return				Returns the left-justified string.
+		 * \param input		The input string view to justify.
+		 * \param width		The minimum number of UTF-8 characters the resulting string should contain.
+		 * \param fillChar	The Unicode code point to use for padding (defaults to a space).
+		 * \return			A new string left-justified to the specified width.
 		 **/
 		template <typename StringT>
 		static inline StringT			ljustUtf8(std::basic_string_view<typename StringT::value_type> input, size_t width, uint32_t fillChar = ' ') {
@@ -2079,7 +2079,10 @@ namespace ve {
 
 			StringT result(input);
 			char fillBytes[4];
-			size_t fillLen = writeUtf8(fillChar, fillBytes);
+			char* fillPtr = fillBytes;
+			
+			writeUtf8(fillPtr, fillChar);
+			size_t fillLen = fillPtr - fillBytes;
 
 			size_t pads = width - charCount;
 
@@ -2627,7 +2630,11 @@ namespace ve {
 
 			StringT result;
 			char fillBytes[4];
-			size_t fillLen = writeUtf8(fillChar, fillBytes);
+			char* fillPtr = fillBytes;
+			
+			writeUtf8(fillPtr, fillChar);
+			size_t fillLen = fillPtr - fillBytes;
+			
 			size_t pads = width - charCount;
 
 			for (size_t i = 0; i < pads; ++i) {

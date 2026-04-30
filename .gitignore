@@ -83,5 +83,21 @@ compile_commands.json
 /generated/
 *.tokens
 *.interp
+
+# ==========================================
+# Xcode
+# ==========================================
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+/build_xcode
+
+# ==========================================
+# Project-Specific
+# ==========================================
+
 tools/SimdBridgeTable.inl
 tools/SimdBridges.h
