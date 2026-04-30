@@ -41,6 +41,11 @@ add_compile_definitions(_USE_MATH_DEFINES SIMDE_NO_NATIVE SIMDE_NO_CHECK_IMMEDIA
 ### Locate the Java Runtime.
 find_package(Java 11 COMPONENTS Runtime REQUIRED)
 
+### Locate Iconv (Required for macOS, often built-in on Linux).
+if(NOT WIN32)
+    find_package(Iconv REQUIRED)
+endif()
+
 ### Define Paths.
 set(ANTLR_JAR "${CMAKE_SOURCE_DIR}/tools/antlr-4.13.2-complete.jar")
 set(GRAMMAR_LEXER "${CMAKE_SOURCE_DIR}/grammar/ExprLexer.g4")
@@ -214,11 +219,14 @@ set(APP_SOURCES
     src/Foundation/Character.cpp
     src/Foundation/Encode.cpp
     src/Foundation/Html.cpp
-	src/Foundation/SinCos.asm
     src/Foundation/Text.cpp
     src/Foundation/Unicode.cpp
     src/main.cpp
 )
+
+if(WIN32)
+    list(APPEND APP_SOURCES src/Foundation/SinCos.asm)
+endif()
 
 ### Force Visual Studio to Mirror the Physical Folder Structure (SIGH!!!)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Header Files" FILES ${APP_HEADERS})
@@ -248,6 +256,16 @@ target_compile_features(VEXpression PRIVATE cxx_std_20)
 
 ### Link the ANTLR Runtime.
 target_link_libraries(VEXpression PRIVATE antlr4_static)
+
+### Link Iconv for POSIX systems.
+if(NOT WIN32)
+    target_link_libraries(VEXpression PRIVATE Iconv::Iconv)
+endif()
+
+### Link macOS frameworks for Power & Display Management.
+if(APPLE)
+    target_link_libraries(VEXpression PRIVATE "-framework CoreFoundation -framework IOKit")
+endif()
 
 ### Link macOS frameworks for Power & Display Management
 if(APPLE)
