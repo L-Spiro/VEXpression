@@ -49,7 +49,7 @@ namespace ve {
 		 * \param codePage		The numeric code page identifier.
 		 * \return				Returns a string descriptor (e.g., "SHIFT_JIS").
 		 **/
-		static inline const char*		getCodePageString(CodePage codePage);
+		static const char*				getCodePageString(CodePage codePage);
 
 		/**
 		 * Retrieves the CodePage identifier associated with a string descriptor.

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SinCos.h"
+
 #include <cmath>
 #include <numbers>
 #include <numeric>
@@ -4002,7 +4004,7 @@ namespace ve {
 				for (size_t i = n; i--; ) {
 					double r = std::fabs(static_cast<double>(i) / m - 1.0);
 					double cr, sr;
-					::__sincos(std::numbers::pi * r, &sr, &cr);
+					::sinCos(std::numbers::pi * r, &sr, &cr);
 					double v = (1.0 - r) * cr + invPi * sr;
 					ret[i] = Type(v);
 				}

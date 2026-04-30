@@ -5,6 +5,7 @@
 #include "../Engine/SimdIncludes.h"
 #include "Object.h"
 
+#include <cstring>
 #include <string>
 
 namespace ve {

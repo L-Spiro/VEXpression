@@ -4,6 +4,7 @@
 #include "OS/OS.h"
 
 #include <bit>
+#include <cmath>
 #include <iostream>
 #include <string>
 

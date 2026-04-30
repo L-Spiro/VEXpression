@@ -1,6 +1,7 @@
 ﻿#include "Case.h"
 
 #include <algorithm>
+#include <array>
 
 namespace ve {
 

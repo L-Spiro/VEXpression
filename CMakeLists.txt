@@ -29,6 +29,12 @@ endforeach()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(MSVC)
+    enable_language(ASM_MASM)
+else()
+    enable_language(ASM)
+endif()
+
 ### Global Compile Definitions
 add_compile_definitions(_USE_MATH_DEFINES SIMDE_NO_NATIVE VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_FULL_STRINGS)
 
@@ -172,6 +178,7 @@ set(APP_HEADERS
     src/Foundation/Html.h
     src/Foundation/LargeMath.h
     src/Foundation/Math.h
+	src/Foundation/SinCos.h
     src/Foundation/System.h
     src/Foundation/Text.h
     src/Foundation/TextPolicy.h
@@ -191,10 +198,10 @@ set(APP_HEADERS
 	src/Engine/SimdObject.h
     src/Engine/String.h
     src/Engine/Vector.h
+	src/OS/OS.h
 	src/Strings/Strings.h
     src/Strings/StringEnum.inl
 	src/Strings/SimdDescriptions.inl
-    src/OS/OS.h
 )
 
 set(APP_SOURCES
@@ -207,6 +214,7 @@ set(APP_SOURCES
     src/Foundation/Character.cpp
     src/Foundation/Encode.cpp
     src/Foundation/Html.cpp
+	src/Foundation/SinCos.asm
     src/Foundation/Text.cpp
     src/Foundation/Unicode.cpp
     src/main.cpp
