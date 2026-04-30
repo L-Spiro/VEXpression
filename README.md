@@ -28,4 +28,5 @@ All String, Array, and Dictionary methods.<br>
 ## Gallery
 A 4-point Hermite interpolation function in AVX-512.<br>
 <img width="1334" height="754" alt="image" src="https://github.com/user-attachments/assets/1dbfc8d6-8c87-4d78-abcb-da511c47ebd7" />
-<img width="2672" height="1629" alt="image" src="https://github.com/user-attachments/assets/a1bda20e-ea32-4085-a456-16390802d710" />
+<img width="2672" height="1629" alt="image" src="https://github.com/user-attachments/assets/d1d1a2c1-8a30-42ac-bf08-84cdd5287ea3" />
+
