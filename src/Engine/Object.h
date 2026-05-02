@@ -389,6 +389,26 @@ namespace ve {
 		}
 
 		/**
+		 * Clears the string.
+		 **/
+		virtual void						clear() {}
+
+		/**
+		 * Creates a copy of the object.
+		 * 
+		 * \return				Returns a copy of this object.
+		 **/
+		virtual Result						copy() const { return Result{}; }
+
+		/**
+		 * Removes the first element with the given value.
+		 * 
+		 * \param value			The value to find and erase.
+		 * \return				Returns this object.
+		 **/
+		virtual Result						remove(const Result& value) { return createResult(); }
+
+		/**
 		 * Increases the reference count.
 		 **/
 		inline void							incRef() const {

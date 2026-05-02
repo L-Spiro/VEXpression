@@ -1,3 +1,5 @@
+#include "BFloat16.h"
+#include "Float16.h"
 #include "SimdObject.h"
 
 #include <format>
@@ -349,8 +351,12 @@ namespace ve {
 			case DataType::UInt64 : {
 				return Result::make(reinterpret_cast<const uint64_t*>(base)[linIdx]);
 			}
-			case DataType::Float16 : {}
-			case DataType::BFloat16 : {}
+			case DataType::BFloat16 : {
+				return Result::make(BFloat16(reinterpret_cast<const uint16_t*>(base)[linIdx]).value());
+			}
+			case DataType::Float16 : {
+				return Result::make(Float16(reinterpret_cast<const uint16_t*>(base)[linIdx]).value());
+			}
 			case DataType::Float : {
 				return Result::make(static_cast<double>(reinterpret_cast<const float*>(base)[linIdx]));
 			}
@@ -425,8 +431,12 @@ namespace ve {
 				reinterpret_cast<uint64_t*>(base)[linIdx] = casted.value.uintVal;
 				break;
 			}
-			case DataType::Float16 : {}
-			case DataType::BFloat16 : {}
+			case DataType::BFloat16 : {
+				reinterpret_cast<uint16_t*>(base)[linIdx] = BFloat16::doubleToUint16(casted.value.doubleVal);
+			}
+			case DataType::Float16 : {
+				reinterpret_cast<uint16_t*>(base)[linIdx] = Float16::doubleToUint16(casted.value.doubleVal);
+			}
 			case DataType::Float : {
 				reinterpret_cast<float*>(base)[linIdx] = static_cast<float>(casted.value.doubleVal);
 				break;

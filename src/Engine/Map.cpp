@@ -40,21 +40,7 @@ namespace ve {
 	}
 
 	Map::~Map() {
-		for (auto& pair : internalMap) {
-			if (pair.first.type == NumericConstant::Object && pair.first.value.objectVal) {
-				pair.first.value.objectVal->decRef();
-				if (!pair.first.value.objectVal->getRef()) {
-					context->deallocateObject(pair.first.value.objectVal);
-				}
-			}
-			if (pair.second.type == NumericConstant::Object && pair.second.value.objectVal) {
-				pair.second.value.objectVal->decRef();
-				if (!pair.second.value.objectVal->getRef()) {
-					context->deallocateObject(pair.second.value.objectVal);
-				}
-			}
-		}
-		internalMap.clear();
+		clear();
 	}
 
 	// == Functions.
@@ -482,6 +468,48 @@ namespace ve {
 		}
 
 		internalMap.insert({ key, value });
+	}
+
+	/**
+	 * Creates a copy of the object.
+	 * 
+	 * \return				Returns a copy of this object.
+	 **/
+	Result Map::copy() const {
+		Map* obj = context->allocateObject<Map>();
+		if (!obj) { return Result{}; }
+		obj->internalMap = internalMap;
+		for (const auto& pair : obj->internalMap) {
+			if (pair.first.type == NumericConstant::Object && pair.first.value.objectVal) {
+				pair.first.value.objectVal->incRef();
+			}
+			if (pair.second.type == NumericConstant::Object && pair.second.value.objectVal) {
+				pair.second.value.objectVal->incRef();
+			}
+		}
+		return obj->createResult();
+	}
+
+	/**
+	 * Removes the first element with the given value.
+	 * 
+	 * \param value			The value to find and erase.
+	 * \return				Returns this object.
+	 **/
+	Result Map::remove(const Result& value) {
+		auto it = internalMap.find(value);
+		if (it != internalMap.end()) {
+			if (it->first.type == NumericConstant::Object && it->first.value.objectVal) {
+				it->first.value.objectVal->decRef();
+				if (!it->first.value.objectVal->getRef()) { context->deallocateObject(it->first.value.objectVal); }
+			}
+			if (it->second.type == NumericConstant::Object && it->second.value.objectVal) {
+				it->second.value.objectVal->decRef();
+				if (!it->second.value.objectVal->getRef()) { context->deallocateObject(it->second.value.objectVal); }
+			}
+			internalMap.erase(it);
+		}
+		return createResult();
 	}
 
 }	// namespace ve

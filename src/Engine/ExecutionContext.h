@@ -6,6 +6,7 @@
 #include "Result.h"
 
 #include <algorithm>
+#include <cmath>
 #include <map>
 #include <memory>
 #include <string>
@@ -105,6 +106,84 @@ namespace ve {
 		 * \return				Returns a newly formatted Result containing the truncated/casted value.
 		 **/
 		Result							castArgument(const Result& rawVal, DataType targetType) const;
+
+		/**
+		 * Compares 2 results for equality without regards to the type of each result. IE (Signed)3 == (Unsigened)3 == (Floating)3.
+		 * 
+		 * \param lhs			The left operand.
+		 * \param rhs			The right operand.
+		 * \return				Returns true if the 2 values are equal disregarding the type of each Result.
+		 **/
+		inline bool						equal(const Result& lhs, const Result& rhs) {
+			switch (lhs.type) {
+				case NumericConstant::Signed : {
+					switch (rhs.type) {
+						case NumericConstant::Signed : { return lhs.value.intVal == rhs.value.intVal; }
+						case NumericConstant::Unsigned : {
+							if (lhs.value.intVal < 0 ) { return false; }
+							return uint64_t(lhs.value.intVal) == rhs.value.uintVal;
+						}
+						case NumericConstant::Floating : {
+							if (rhs.value.doubleVal < double(INT64_MIN) || rhs.value.doubleVal > double(INT64_MAX)) { return false; }
+							if (std::fmod(rhs.value.doubleVal, 1.0) != 0.0) { return false; }
+							return double(lhs.value.intVal) == rhs.value.doubleVal || lhs.value.intVal == int64_t(rhs.value.doubleVal);
+						}
+						default : { return false; }
+					}
+					break;
+				}
+				case NumericConstant::Unsigned : {
+					switch (rhs.type) {
+						case NumericConstant::Signed : {
+							if (rhs.value.intVal < 0) { return false; }
+							return lhs.value.uintVal == uint64_t(rhs.value.intVal);
+						}
+						case NumericConstant::Unsigned : { return lhs.value.uintVal == rhs.value.uintVal; }
+						case NumericConstant::Floating : {
+							if (rhs.value.doubleVal < 0.0 || rhs.value.doubleVal > double(UINT64_MAX)) { return false; }
+							if (std::fmod(rhs.value.doubleVal, 1.0) != 0.0) { return false; }
+							return double(lhs.value.uintVal) == rhs.value.doubleVal || lhs.value.uintVal == uint64_t(rhs.value.doubleVal);
+						}
+						default : { return false; }
+					}
+					break;
+				}
+				case NumericConstant::Floating : {
+					switch (rhs.type) {
+						case NumericConstant::Signed : {
+							if (lhs.value.doubleVal < double(INT64_MIN) || lhs.value.doubleVal > double(INT64_MAX)) { return false; }
+							if (std::fmod(lhs.value.doubleVal, 1.0) != 0.0) { return false; }
+							return double(rhs.value.intVal) == lhs.value.doubleVal || rhs.value.intVal == int64_t(lhs.value.doubleVal);
+						}
+						case NumericConstant::Unsigned : {
+							if (lhs.value.doubleVal < 0.0 || lhs.value.doubleVal > double(UINT64_MAX)) { return false; }
+							if (std::fmod(lhs.value.doubleVal, 1.0) != 0.0) { return false; }
+							return double(rhs.value.uintVal) == lhs.value.doubleVal || rhs.value.uintVal == uint64_t(lhs.value.doubleVal);
+						}
+						case NumericConstant::Floating : { return lhs.value.doubleVal == rhs.value.doubleVal; }
+						default : { return false; }
+					}
+				}
+				case NumericConstant::Object : {
+					if (!lhs.value.objectVal) { return false; }
+					switch (rhs.type) {
+						case NumericConstant::Signed : { return false; }
+						case NumericConstant::Unsigned : { return false; }
+						case NumericConstant::Floating : { return false; }
+						case NumericConstant::Object : {
+							if (!rhs.value.objectVal) { return false; }
+							Result tmp = (*lhs.value.objectVal) == rhs;
+							if (tmp.type == NumericConstant::Invalid) { return false; }
+							tmp = convertResult(tmp, NumericConstant::Unsigned);
+							if (tmp.type == NumericConstant::Invalid) { return false; }
+							return tmp.value.uintVal != 0;
+						}
+						default : { return false; }
+					}
+				}
+				default : { return false; }
+			}
+		}
 
 		/**
 		 * Retrieves the current control flow state.

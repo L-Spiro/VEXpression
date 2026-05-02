@@ -5,10 +5,7 @@
 namespace ve {
 
 	Vector::~Vector() {
-		for (size_t i = 0; i < elements.size(); ++i) {
-			prepareErase_Unsafe(i);
-		}
-		elements.clear();
+		clear();
 	}
 
 	// == Functions.
@@ -817,6 +814,38 @@ namespace ve {
 		if (linearIndex == Object::InvalidIndex) { return Result{}; }
 		
 		return elements[linearIndex];
+	}
+
+	/**
+	 * Creates a copy of the object.
+	 * 
+	 * \return				Returns a copy of this object.
+	 **/
+	Result Vector::copy() const {
+		Vector* obj = context->allocateObject<Vector>();
+		if (!obj) { return Result{}; }
+		obj->elements = elements;
+		for (size_t i = 0; i < obj->elements.size(); ++i) {
+			obj->incObjectRef_Unsafe(i);
+		}
+		return obj->createResult();
+	}
+
+	/**
+	 * Removes the first element with the given value.
+	 * 
+	 * \param value			The value to find and erase.
+	 * \return				Returns this object.
+	 **/
+	Result Vector::remove(const Result& value) {
+		for (size_t i = 0; i < elements.size(); ++i) {
+			if (context->equal(elements[i], value)) {
+				prepareErase_Unsafe(i);
+				elements.erase(elements.begin() + i);
+				break;
+			}
+		}
+		return createResult();
 	}
 
 }	// namespace ve

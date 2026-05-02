@@ -2226,6 +2226,96 @@ namespace ve {
 		}
 
 		/**
+		 * Bridge for String.join().
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments.
+		 * \return			Returns a String Result containing the joined string.
+		 **/
+		static Result		joinBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || 
+				args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{};
+			}
+			
+			if (args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr) {
+				return Result{};
+			}
+			
+			Object* iterable = args[1].value.objectVal;
+			uint32_t objType = iterable->type();
+			
+			String* resultStr = ctx->allocateObject<String>();
+			if (!resultStr) {
+				return Result{};
+			}
+			
+			Result outRes = resultStr->createResult();
+			
+			if (objType & BuiltInType_Vector) {
+				Vector* vec = static_cast<Vector*>(iterable);
+				size_t length = vec->arrayLength();
+				
+				for (size_t i = 0; i < length; ++i) {
+					if (i > 0) {
+						resultStr->operator+=(args[0]);
+					}
+					
+					Result elemRes = vec->arrayAccess(static_cast<int64_t>(i));
+					if (elemRes.type == NumericConstant::Object && 
+						elemRes.value.objectVal != nullptr && 
+						(elemRes.value.objectVal->type() & BuiltInType_String)) {
+						
+						resultStr->operator+=(elemRes);
+					}
+					else {
+						return Result{};
+					}
+				}
+			}
+			else if (objType & BuiltInType_Map) {
+				Map* mapObj = static_cast<Map*>(iterable);
+				std::vector<Result> keys = mapObj->getKeys();
+				
+				for (size_t i = 0; i < keys.size(); ++i) {
+					if (i > 0) {
+						resultStr->operator+=(args[0]);
+					}
+					
+					if (keys[i].type == NumericConstant::Object && 
+						keys[i].value.objectVal != nullptr && 
+						(keys[i].value.objectVal->type() & BuiltInType_String)) {
+						
+						resultStr->operator+=(keys[i]);
+					}
+					else {
+						return Result{};
+					}
+				}
+			}
+			else if (objType & BuiltInType_String) {
+				String* strObj = static_cast<String*>(iterable);
+				size_t length = strObj->arrayLength();
+				
+				for (size_t i = 0; i < length; ++i) {
+					if (i > 0) {
+						resultStr->operator+=(args[0]);
+					}
+					
+					Result elemRes = strObj->arrayAccess(static_cast<int64_t>(i));
+					resultStr->operator+=(elemRes);
+				}
+			}
+			else {
+				return Result{};
+			}
+			
+			return outRes;
+		}
+
+		/**
 		 * Bridge for String.ljust().
 		 * Must be called within a try/catch block.
 		 *
@@ -2424,6 +2514,85 @@ namespace ve {
 			}
 			
 			return Result{};
+		}
+
+		/**
+		 * Bridge for String.partition().
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this string, separator).
+		 * \return			Returns a Vector Result containing 3 String elements.
+		 **/
+		static Result		partitionBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || 
+				args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{};
+			}
+			
+			Result sepRes = ctx->castArgument(args[1], DataType::String);
+			if (sepRes.type != NumericConstant::Object || 
+				sepRes.value.objectVal == nullptr || 
+				!(sepRes.value.objectVal->type() & BuiltInType_String)) {
+				return Result{};
+			}
+
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			String* sepObj = static_cast<String*>(sepRes.value.objectVal);
+
+			size_t sourceLen = strObj->arrayLength();
+			size_t sepLen = sepObj->arrayLength();
+
+			if (sepLen == 0) { return Result{}; }
+
+			size_t foundPos = static_cast<size_t>(-1);
+			
+			if (sourceLen >= sepLen) {
+				for (size_t i = 0; i <= sourceLen - sepLen; ++i) {
+					bool match = true;
+					for (size_t j = 0; j < sepLen; ++j) {
+						if (strObj->getCodePoint(i + j) != sepObj->getCodePoint(j)) {
+							match = false;
+							break;
+						}
+					}
+					if (match) {
+						foundPos = i;
+						break;
+					}
+				}
+			}
+
+			String* s1 = ctx->allocateObject<String>();
+			String* s2 = ctx->allocateObject<String>();
+			String* s3 = ctx->allocateObject<String>();
+			Vector* outVec = ctx->allocateObject<Vector>();
+
+			if (!s1 || !s2 || !s3 || !outVec) { return Result{}; }
+
+			if (foundPos != static_cast<size_t>(-1)) {
+				for (size_t i = 0; i < foundPos; ++i) {
+					s1->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+				}
+				for (size_t i = 0; i < sepLen; ++i) {
+					s2->operator+=(sepObj->arrayAccess(static_cast<int64_t>(i)));
+				}
+				for (size_t i = foundPos + sepLen; i < sourceLen; ++i) {
+					s3->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+				}
+			} else {
+				for (size_t i = 0; i < sourceLen; ++i) {
+					s1->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+				}
+			}
+
+			outVec->resize(3);
+			outVec->directAccess(0) = s1->createResult(); s1->incRef();
+			outVec->directAccess(1) = s2->createResult(); s2->incRef();
+			outVec->directAccess(2) = s3->createResult(); s3->incRef();
+
+			return outVec->createResult();
 		}
 
 		/**
@@ -2673,6 +2842,85 @@ namespace ve {
 		}
 
 		/**
+		 * Bridge for String.rpartition().
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this string, separator).
+		 * \return			Returns a Vector Result containing 3 String elements.
+		 **/
+		static Result		rpartitionBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || 
+				args[0].type != NumericConstant::Object || 
+				args[0].value.objectVal == nullptr || 
+				!(args[0].value.objectVal->type() & BuiltInType_String)) {
+				return Result{};
+			}
+			
+			Result sepRes = ctx->castArgument(args[1], DataType::String);
+			if (sepRes.type != NumericConstant::Object || 
+				sepRes.value.objectVal == nullptr || 
+				!(sepRes.value.objectVal->type() & BuiltInType_String)) {
+				return Result{};
+			}
+
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			String* sepObj = static_cast<String*>(sepRes.value.objectVal);
+
+			size_t sourceLen = strObj->arrayLength();
+			size_t sepLen = sepObj->arrayLength();
+
+			if (sepLen == 0) { return Result{}; }
+
+			size_t foundPos = static_cast<size_t>(-1);
+			
+			if (sourceLen >= sepLen) {
+				for (size_t i = sourceLen - sepLen; i != static_cast<size_t>(-1); --i) {
+					bool match = true;
+					for (size_t j = 0; j < sepLen; ++j) {
+						if (strObj->getCodePoint(i + j) != sepObj->getCodePoint(j)) {
+							match = false;
+							break;
+						}
+					}
+					if (match) {
+						foundPos = i;
+						break;
+					}
+				}
+			}
+
+			String* s1 = ctx->allocateObject<String>();
+			String* s2 = ctx->allocateObject<String>();
+			String* s3 = ctx->allocateObject<String>();
+			Vector* outVec = ctx->allocateObject<Vector>();
+
+			if (!s1 || !s2 || !s3 || !outVec) { return Result{}; }
+
+			if (foundPos != static_cast<size_t>(-1)) {
+				for (size_t i = 0; i < foundPos; ++i) {
+					s1->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+				}
+				for (size_t i = 0; i < sepLen; ++i) {
+					s2->operator+=(sepObj->arrayAccess(static_cast<int64_t>(i)));
+				}
+				for (size_t i = foundPos + sepLen; i < sourceLen; ++i) {
+					s3->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+				}
+			} else {
+				for (size_t i = 0; i < sourceLen; ++i) {
+					s3->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+				}
+			}
+
+			outVec->resize(3);
+			outVec->directAccess(0) = s1->createResult(); s1->incRef();
+			outVec->directAccess(1) = s2->createResult(); s2->incRef();
+			outVec->directAccess(2) = s3->createResult(); s3->incRef();
+
+			return outVec->createResult();
+		}
+
+		/**
 		 * Bridge for String.rstrip().
 		 * Must be called within a try/catch block.
 		 *
@@ -2713,6 +2961,229 @@ namespace ve {
 			}
 			
 			return Result{};
+		}
+
+		/**
+		 * Bridge for String.split().
+		 * Splits the string into a vector of words using the specified separator.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this string, optional separator, optional maxsplit).
+		 * \return			Returns a Vector Result containing the split String elements.
+		 **/
+		static Result		splitBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
+
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			size_t sourceLen = strObj->arrayLength();
+
+			String* sepObj = nullptr;
+			int64_t maxsplit = -1;
+
+			if (args.size() > 1 && args[1].type == NumericConstant::Object && args[1].value.objectVal != nullptr && (args[1].value.objectVal->type() & BuiltInType_String)) {
+				sepObj = static_cast<String*>(args[1].value.objectVal);
+			}
+
+			if (args.size() > 2 && args[2].type == NumericConstant::Signed) {
+				maxsplit = args[2].value.intVal;
+			}
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			std::vector<String*> parts;
+
+			if (sepObj) {
+				size_t sepLen = sepObj->arrayLength();
+				if (sepLen == 0) { return Result{}; }
+
+				size_t startPos = 0;
+				int64_t splits = 0;
+
+				while (startPos <= sourceLen) {
+					if (maxsplit != -1 && splits >= maxsplit) {
+						String* rem = ctx->allocateObject<String>();
+						for (size_t i = startPos; i < sourceLen; ++i) {
+							rem->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+						}
+						parts.push_back(rem);
+						break;
+					}
+
+					size_t foundPos = static_cast<size_t>(-1);
+					if (sourceLen >= sepLen && startPos <= sourceLen - sepLen) {
+						for (size_t i = startPos; i <= sourceLen - sepLen; ++i) {
+							bool match = true;
+							for (size_t j = 0; j < sepLen; ++j) {
+								if (strObj->getCodePoint(i + j) != sepObj->getCodePoint(j)) {
+									match = false;
+									break;
+								}
+							}
+							if (match) {
+								foundPos = i;
+								break;
+							}
+						}
+					}
+
+					String* part = ctx->allocateObject<String>();
+					if (foundPos != static_cast<size_t>(-1)) {
+						for (size_t i = startPos; i < foundPos; ++i) {
+							part->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+						}
+						parts.push_back(part);
+						startPos = foundPos + sepLen;
+						splits++;
+					} else {
+						for (size_t i = startPos; i < sourceLen; ++i) {
+							part->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
+						}
+						parts.push_back(part);
+						break;
+					}
+				}
+			} else {
+				size_t i = 0;
+				int64_t splits = 0;
+
+				while (i < sourceLen) {
+					while (i < sourceLen) {
+						uint32_t cp = strObj->getCodePoint(i);
+						if (!Character::isWhiteSpace(cp)) { break; }
+						i++;
+					}
+
+					if (i == sourceLen) { break; }
+
+					if (maxsplit != -1 && splits >= maxsplit) {
+						String* rem = ctx->allocateObject<String>();
+						for (size_t j = i; j < sourceLen; ++j) {
+							rem->operator+=(strObj->arrayAccess(static_cast<int64_t>(j)));
+						}
+						parts.push_back(rem);
+						break;
+					}
+
+					size_t startPos = i;
+					while (i < sourceLen) {
+						uint32_t cp = strObj->getCodePoint(i);
+						if (Character::isWhiteSpace(cp)) { break; }
+						i++;
+					}
+
+					String* part = ctx->allocateObject<String>();
+					for (size_t j = startPos; j < i; ++j) {
+						part->operator+=(strObj->arrayAccess(static_cast<int64_t>(j)));
+					}
+					parts.push_back(part);
+					splits++;
+				}
+			}
+
+			outVec->resize(parts.size());
+			for (size_t i = 0; i < parts.size(); ++i) {
+				outVec->directAccess(i) = parts[i]->createResult();
+				parts[i]->incRef();
+			}
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for String.splitlines().
+		 * Splits the string at line boundaries and returns a vector of the lines.
+		 * Supports an optional keepends parameter to retain the line break characters.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this string, optional keepends).
+		 * \return			Returns a Vector Result containing the extracted lines.
+		 **/
+		static Result		splitlinesBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr || !(args[0].value.objectVal->type() & BuiltInType_String)) { return Result{}; }
+
+			String* strObj = static_cast<String*>(args[0].value.objectVal);
+			size_t sourceLen = strObj->arrayLength();
+
+			bool keepends = false;
+
+			if (args.size() > 1) {
+				const Result& keepRes = args[1];
+				
+				if (keepRes.type == NumericConstant::Signed) {
+					keepends = (keepRes.value.intVal != 0);
+				}
+				else if (keepRes.type == NumericConstant::Unsigned) {
+					keepends = (keepRes.value.uintVal != 0);
+				}
+				else if (keepRes.type == NumericConstant::Floating) {
+					keepends = (keepRes.value.doubleVal != 0.0);
+				}
+				else if (keepRes.type == NumericConstant::Object && keepRes.value.objectVal != nullptr && !(keepRes.value.objectVal->type() & BuiltInType_Map)) {
+					keepends = (keepRes.value.objectVal->arrayLength() > 0);
+				}
+			}
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			std::vector<String*> parts;
+			size_t i = 0;
+			size_t startPos = 0;
+
+			while (i < sourceLen) {
+				uint32_t cp = strObj->getCodePoint(i);
+				
+				// Standard Python line boundary checks.
+				bool isBreak = false;
+				size_t breakLen = 1;
+				
+				if (cp == '\n' || cp == '\r' || cp == '\v' || cp == '\f' || 
+					cp == 0x1C || cp == 0x1D || cp == 0x1E || 
+					cp == 0x85 || cp == 0x2028 || cp == 0x2029) {
+					
+					isBreak = true;
+					if (cp == '\r' && i + 1 < sourceLen && strObj->getCodePoint(i + 1) == '\n') {
+						breakLen = 2;
+					}
+				}
+
+				if (isBreak) {
+					String* part = ctx->allocateObject<String>();
+					
+					for (size_t j = startPos; j < i; ++j) {
+						part->operator+=(strObj->arrayAccess(static_cast<int64_t>(j)));
+					}
+					
+					if (keepends) {
+						for (size_t j = i; j < i + breakLen; ++j) {
+							part->operator+=(strObj->arrayAccess(static_cast<int64_t>(j)));
+						}
+					}
+					
+					parts.push_back(part);
+					i += breakLen;
+					startPos = i;
+				} else {
+					i++;
+				}
+			}
+
+			if (startPos < sourceLen) {
+				String* part = ctx->allocateObject<String>();
+				for (size_t j = startPos; j < sourceLen; ++j) {
+					part->operator+=(strObj->arrayAccess(static_cast<int64_t>(j)));
+				}
+				parts.push_back(part);
+			}
+
+			outVec->resize(parts.size());
+			for (size_t j = 0; j < parts.size(); ++j) {
+				outVec->directAccess(j) = parts[j]->createResult();
+				parts[j]->incRef();
+			}
+
+			return outVec->createResult();
 		}
 
 		/**
@@ -2977,6 +3448,33 @@ namespace ve {
 		}
 
 		/**
+		 * Bridge for append().
+		 * Appends an item to the end of a Vector or String object.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this object, item to append).
+		 * \return			Returns an empty Result.
+		 **/
+		static Result		appendBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
+
+			uint32_t objType = args[0].value.objectVal->type();
+
+			if (objType & BuiltInType_String) {
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+				if (strObj->pushBack(args[1])) { return strObj->createResult(); }
+				ctx->deallocateObject(strObj);
+			}
+			else if (objType & BuiltInType_Vector) {
+				Vector* vecObj = static_cast<Vector*>(args[0].value.objectVal);
+				if (vecObj->pushBack(args[1])) { return vecObj->createResult(); }
+				ctx->deallocateObject(vecObj);
+			}
+
+			return Result{};
+		}
+
+		/**
 		 * Bridge for Object.at().
 		 * Must be called within a try/catch block.
 		 *
@@ -3018,6 +3516,36 @@ namespace ve {
 		}
 
 		/**
+		 * Bridge for clear().
+		 * Removes all items from the object.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this object).
+		 * \return			Returns a Result containing the cleared object.
+		 **/
+		static Result		clearBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
+
+			args[0].value.objectVal->clear();
+
+			return args[0].value.objectVal->createResult();
+		}
+
+		/**
+		 * Bridge for copy().
+		 * Returns a shallow copy of the target object.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this object).
+		 * \return			Returns a Result containing the copied object.
+		 **/
+		static Result		copyBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
+
+			return args[0].value.objectVal->copy();
+		}
+
+		/**
 		 * Bridge for Object.size() and len(Object).
 		 * Must be called within a try/catch block.
 		 *
@@ -3046,6 +3574,46 @@ namespace ve {
 		}
 
 		/**
+		 * Bridge for pop().
+		 * Removes the item at the given index (default is -1, the last item) and returns the object itself.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this object, optional index).
+		 * \return			Returns a Result containing the modified object.
+		 **/
+		static Result		popBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
+
+			uint32_t objType = args[0].value.objectVal->type();
+			int64_t idx = -1;
+
+			if (args.size() > 1) {
+				const Result& idxRes = args[1];
+				if (idxRes.type == NumericConstant::Signed) {
+					idx = static_cast<int64_t>(idxRes.value.intVal);
+				}
+				else if (idxRes.type == NumericConstant::Unsigned) {
+					idx = static_cast<int64_t>(idxRes.value.uintVal);
+				}
+				else if (idxRes.type == NumericConstant::Floating) {
+					idx = static_cast<int64_t>(idxRes.value.doubleVal);
+				}
+				else { return Result{}; }
+			}
+
+			if (objType & BuiltInType_String) {
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+				return strObj->pop(idx);
+			}
+			else if (objType & BuiltInType_Vector) {
+				Vector* vecObj = static_cast<Vector*>(args[0].value.objectVal);
+				return vecObj->pop(idx);
+			}
+
+			return Result{};
+		}
+
+		/**
 		 * Bridge for Object.push_back().
 		 * Must be called within a try/catch block.
 		 *
@@ -3070,6 +3638,45 @@ namespace ve {
 			}
 			catch (...) { throw ErrorCode::Out_Of_Memory; }
 			
+			return Result{};
+		}
+
+		/**
+		 * Bridge for remove().
+		 * Removes the first occurrence of the specified value from the object.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this object, value to remove).
+		 * \return			Returns the result of the object's remove method.
+		 **/
+		static Result		removeBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 2 || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
+
+			return args[0].value.objectVal->remove(args[1]);
+		}
+
+		/**
+		 * Bridge for reverse().
+		 * Reverses the elements of the String or Vector in place.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (this object).
+		 * \return			Returns a Result containing the modified object.
+		 **/
+		static Result		reverseBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.empty() || args[0].type != NumericConstant::Object || args[0].value.objectVal == nullptr) { return Result{}; }
+
+			uint32_t objType = args[0].value.objectVal->type();
+
+			if (objType & BuiltInType_String) {
+				String* strObj = static_cast<String*>(args[0].value.objectVal);
+				return strObj->reverse();
+			}
+			else if (objType & BuiltInType_Vector) {
+				Vector* vecObj = static_cast<Vector*>(args[0].value.objectVal);
+				return vecObj->reverse();
+			}
+
 			return Result{};
 		}
 
@@ -4108,7 +4715,7 @@ namespace ve {
 				return Result{}; 
 			}
 
-			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
+			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
 			std::vector<double> outVals = Math::ones<double>(count);
 
 			Vector* resVec = ctx->allocateObject<Vector>();
@@ -4167,7 +4774,7 @@ namespace ve {
 				return Result{}; 
 			}
 
-			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
+			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
 			std::vector<double> outVals = Math::zeros<double>(count);
 
 			Vector* resVec = ctx->allocateObject<Vector>();
@@ -4226,7 +4833,7 @@ namespace ve {
 				return Result{}; 
 			}
 
-			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Signed).value.intVal);
+			size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
 			double fillValue = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
 			
 			std::vector<double> outVals = Math::full<double>(count, fillValue);
@@ -4717,6 +5324,493 @@ namespace ve {
 				ctx->deallocateObject(resVec);
 				return Result{};
 			}
+			return resVec->createResult();
+		}
+
+
+		// =======================================================================================================
+		// WINDOW CREATION
+		// =======================================================================================================
+		/**
+		 * Macro to generate a bridge function for a standard Math windowing function.
+		 * Automatically extracts the sample count, calls the corresponding Math::[name]Window function,
+		 * and packages the std::vector<double> output into a Vector object Result.
+		 *
+		 * \param name		The base name of the window function (e.g., bartlett).
+		 **/
+#define VE_MAKE_WINDOW_BRIDGE(name)																							\
+	static Result		name##Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {								\
+		if (args.size() != 1 || !args[0].isPrimitive()) { return Result{}; }												\
+		size_t count = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);			\
+		std::vector<double> outVals;																						\
+		if (!Math::name##Window<double>(count, outVals)) { return Result{}; }												\
+		Vector* resVec = ctx->allocateObject<Vector>();																		\
+		if (!resVec) { return Result{}; }																					\
+		if (!resVec->fromPrimitiveArray(outVals)) {																			\
+			ctx->deallocateObject(resVec);																					\
+			return Result{};																								\
+		}																													\
+		return resVec->createResult();																						\
+	}
+		VE_MAKE_WINDOW_BRIDGE(barthann)
+		VE_MAKE_WINDOW_BRIDGE(bartlett)
+		VE_MAKE_WINDOW_BRIDGE(blackman)
+		VE_MAKE_WINDOW_BRIDGE(blackmanHarris)
+		VE_MAKE_WINDOW_BRIDGE(blackmanNuttal)
+		VE_MAKE_WINDOW_BRIDGE(bohman)
+		VE_MAKE_WINDOW_BRIDGE(boxcar)
+		VE_MAKE_WINDOW_BRIDGE(cosine)
+		VE_MAKE_WINDOW_BRIDGE(flatTop)
+		VE_MAKE_WINDOW_BRIDGE(hann)
+		VE_MAKE_WINDOW_BRIDGE(hamming)
+		VE_MAKE_WINDOW_BRIDGE(lanczos)
+		VE_MAKE_WINDOW_BRIDGE(nuttall)
+		VE_MAKE_WINDOW_BRIDGE(parzen)
+		VE_MAKE_WINDOW_BRIDGE(triang)
+
+#undef VE_MAKE_WINDOW_BRIDGE
+
+		/**
+		 * Bridge for chebwin().
+		 * Returns a Dolph-Chebyshev window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, at).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		chebwinBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
+
+			size_t m = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double at = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals;
+			if (!Math::chebwinWindow<double>(m, at, outVals)) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for dpss().
+		 * Returns a Discrete Prolate Spheroidal Sequences (DPSS) window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, nw, kMax).
+		 * \return			Returns a Vector Result of Vector Results containing the window values.
+		 **/
+		static Result		dpssBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{}; }
+
+			size_t m = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double nw = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			size_t kMax = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Unsigned).value.uintVal);
+
+			std::vector<std::vector<double>> vvRet;
+			if (!Math::dpssWindows<double>(m, nw, kMax, vvRet)) { return Result{}; }
+
+			Vector* outerVec = ctx->allocateObject<Vector>();
+			if (!outerVec) { return Result{}; }
+
+			outerVec->resize(vvRet.size());
+			for (size_t i = 0; i < vvRet.size(); ++i) {
+				Vector* innerVec = ctx->allocateObject<Vector>();
+				if (innerVec && innerVec->fromPrimitiveArray(vvRet[i])) {
+					outerVec->directAccess(i) = innerVec->createResult();
+					innerVec->incRef();
+				} else {
+					if (innerVec) {
+						ctx->deallocateObject(innerVec);
+					}
+				}
+			}
+
+			return outerVec->createResult();
+		}
+
+		/**
+		 * Bridge for exponential().
+		 * Returns an Exponential window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, tau, center).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		exponentialBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{}; }
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double tau = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			double center = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals;
+			if (!Math::exponentialWindow<double>(n, tau, center, outVals)) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for gaussian().
+		 * Returns a Gaussian window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, sigma).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		gaussianBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) {
+				return Result{};
+			}
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double sigma = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals;
+			if (!Math::gaussianWindow<double>(n, sigma, outVals)) {
+				return Result{};
+			}
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{};
+			}
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for general_cosine().
+		 * Returns a Generalized Cosine window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, aVals).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		generalCosineBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || args[1].type != NumericConstant::Object || args[1].value.objectVal == nullptr || !(args[1].value.objectVal->type() & BuiltInType_Vector)) { return Result{}; }
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			Vector* vecObj = static_cast<Vector*>(args[1].value.objectVal);
+			size_t len = vecObj->arrayLength();
+			std::vector<double> aVals;
+			aVals.reserve(len);
+
+			for (size_t i = 0; i < len; ++i) {
+				aVals.push_back(ctx->convertResult(vecObj->arrayAccess(static_cast<int64_t>(i)), NumericConstant::Floating).value.doubleVal);
+			}
+
+			std::vector<double> outVals;
+			if (!Math::generalCosineWindow<double>(n, aVals, outVals)) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for general_gaussian().
+		 * Returns a Generalized Gaussian window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, p, sigma).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		generalGaussianBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{}; }
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double p = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			double sigma = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals;
+			if (!Math::generalGaussianWindow<double>(n, p, sigma, outVals)) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for general_hamming().
+		 * Returns a Generalized Hamming window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, alpha).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		generalHammingBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double alpha = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals;
+			if (!Math::generalHammingWindow<double>(n, alpha, outVals)) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for kaiser().
+		 * Returns a Kaiser window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, beta).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		kaiserBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double beta = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals;
+			if (!Math::kaiserWindow<double>(n, beta, outVals)) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for kaiser_bessel_derived().
+		 * Returns a Kaiser-Bessel Derived (KBD) window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, beta).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		kaiserBesselDerivedBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double beta = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals;
+			if (!Math::kaiserBesselDerivedWindow<double>(n, beta, outVals)) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for taylor().
+		 * Returns a Taylor window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, nBar, sll, norm).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		taylorBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 4 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{}; }
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			int32_t nBar = static_cast<int32_t>(ctx->convertResult(args[1], NumericConstant::Signed).value.intVal);
+			double sll = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+
+			bool norm = false;
+			if (args[3].type == NumericConstant::Signed) {
+				norm = (args[3].value.intVal != 0);
+			} else if (args[3].type == NumericConstant::Unsigned) {
+				norm = (args[3].value.uintVal != 0);
+			} else if (args[3].type == NumericConstant::Floating) {
+				norm = (args[3].value.doubleVal != 0.0);
+			} else if (args[3].type == NumericConstant::Object && args[3].value.objectVal != nullptr) {
+				return Result{};
+			}
+
+			std::vector<double> outVals;
+			if (!Math::taylorWindow<double>(n, nBar, sll, norm, outVals)) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for tukey().
+		 * Returns a Tukey window.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (n, alpha).
+		 * \return			Returns a Vector Result containing the window values.
+		 **/
+		static Result		tukeyBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 2 || !args[0].isPrimitive() || !args[1].isPrimitive()) { return Result{}; }
+
+			size_t n = static_cast<size_t>(ctx->convertResult(args[0], NumericConstant::Unsigned).value.uintVal);
+			double alpha = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+
+			std::vector<double> outVals;
+			if (!Math::tukeyWindow<double>(n, alpha, outVals)) {
+				return Result{};
+			}
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) {
+				return Result{};
+			}
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for sinc_filter_lpf().
+		 * Returns the coefficients for a windowed sinc low-pass filter.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (hz, fc, m).
+		 * \return			Returns a Vector Result containing the filter coefficients.
+		 **/
+		static Result		sincFilterLpfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{}; }
+
+			double hz = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double fc = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			size_t m = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Unsigned).value.uintVal);
+
+			std::vector<double> outVals;
+			try {
+				outVals = Math::sincFilterLpf<std::vector<double>>(hz, fc, m, nullptr);
+			} catch (...) {
+				return Result{};
+			}
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for sinc_filter_hpf().
+		 * Returns the coefficients for a windowed sinc high-pass filter.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (hz, fc, m).
+		 * \return			Returns a Vector Result containing the filter coefficients.
+		 **/
+		static Result		sincFilterHpfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 3 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive()) { return Result{}; }
+
+			double hz = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double fc = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			size_t m = static_cast<size_t>(ctx->convertResult(args[2], NumericConstant::Unsigned).value.uintVal);
+
+			std::vector<double> outVals;
+			try {
+				outVals = Math::sincFilterHpf<std::vector<double>>(hz, fc, m, nullptr);
+			} catch (...) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
+			return resVec->createResult();
+		}
+
+		/**
+		 * Bridge for sinc_filter_bpf().
+		 * Returns the coefficients for a windowed sinc band-pass filter.
+		 *
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (hz, f1, f2, m).
+		 * \return			Returns a Vector Result containing the filter coefficients.
+		 **/
+		static Result		sincFilterBpfBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() != 4 || !args[0].isPrimitive() || !args[1].isPrimitive() || !args[2].isPrimitive() || !args[3].isPrimitive()) { return Result{}; }
+
+			double hz = ctx->convertResult(args[0], NumericConstant::Floating).value.doubleVal;
+			double f1 = ctx->convertResult(args[1], NumericConstant::Floating).value.doubleVal;
+			double f2 = ctx->convertResult(args[2], NumericConstant::Floating).value.doubleVal;
+			size_t m = static_cast<size_t>(ctx->convertResult(args[3], NumericConstant::Unsigned).value.uintVal);
+
+			std::vector<double> outVals;
+			try {
+				outVals = Math::sincFilterBpf<std::vector<double>>(hz, f1, f2, m, nullptr);
+			} catch (...) { return Result{}; }
+
+			Vector* resVec = ctx->allocateObject<Vector>();
+			if (!resVec) { return Result{}; }
+
+			if (!resVec->fromPrimitiveArray(outVals)) {
+				ctx->deallocateObject(resVec);
+				return Result{};
+			}
+
 			return resVec->createResult();
 		}
 

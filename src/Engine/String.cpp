@@ -119,9 +119,7 @@ namespace ve {
 		while (i < len) {
 			size_t eaten = 0;
 			uint32_t cp = Text::nextUtf8Char(reinterpret_cast<const uint8_t*>(&str[i]), len - i, &eaten);
-			if (cp == Text::UTF_INVALID) {
-				break;
-			}
+			if (cp == Text::UTF_INVALID) { break; }
 			codePoints.push_back(cp);
 			if (cp > maxCp) {
 				maxCp = cp;
@@ -228,6 +226,8 @@ namespace ve {
 	 * \return				Returns the assigned value on success, or Invalid on failure.
 	 **/
 	Result String::arrayAssign(int64_t index, const Result& rhs) {
+		if (isConst) { return Result{}; }
+
 		size_t lin = Object::arrayIndexToLinearIndex(index, charCount);
 		if (lin == Object::InvalidIndex) { return Result{}; }
 
@@ -267,6 +267,8 @@ namespace ve {
 	 * \return				Returns the assigned value on success, or Invalid on failure.
 	 **/
 	Result String::arrayAssignEx(int64_t startIdx, int64_t endIdx, uint32_t flags, const Result& rhs) {
+		if (isConst) { return Result{}; }
+
 		size_t idx0, idx1;
 		if (!Object::resolveSliceBounds(startIdx, endIdx, flags, charCount, idx0, idx1)) {
 			return Result{};
@@ -1250,21 +1252,91 @@ namespace ve {
 	}
 
 	/**
+	 * Creates a copy of the object.
+	 * 
+	 * \return				Returns a copy of this object.
+	 **/
+	Result String::copy() const {
+		String* str = context->allocateObject<String>();
+		if (!str) { return Result{}; }
+		str->buffer = buffer;
+		str->bufferWidth = bufferWidth;
+		str->charCount = charCount;
+		return str->createResult();
+	}
+
+	/**
 	 * Pushes a string expression to the back of the string.
 	 * 
 	 * \param result		The result to push.
 	 * \return				Returns true if the item was added. False indicates a memory failure or incompatible type.
 	 **/
 	bool String::pushBack(const Result& result) {
+		if (isConst) { return false; }
 		try {
 			auto res = (*this) += result;
 			if (res.type == NumericConstant::Invalid) { return false; }
 			
 			return true;
 		}
-		catch (...) {
-			return false;
+		catch (...) { return false; }
+	}
+
+	/**
+	 * Removes an element at the specified position.
+	 * 
+	 * \param idx			The index at which to remove an item.
+	 * \return				Returns this object.
+	 **/
+	Result String::pop(int64_t idx) {
+		if (isConst) { return Result{}; }
+		size_t i = arrayIndexToLinearIndex(idx, arrayLength());
+		if (i == InvalidIndex) { return createResult(); }
+
+		std::u32string tmp = getUtf32();
+		if (i >= tmp.size()) { return createResult(); }
+		tmp.erase(tmp.begin() + i);
+		std::string str = Text::utf32ToUtf8(tmp);
+		if (!assignUtf8(str.c_str(), str.size())) { return createResult(); }
+		return createResult();
+	}
+
+	/**
+	 * Removes the first element with the given value.
+	 * 
+	 * \param value			The value to find and erase.
+	 * \return				Returns this object.
+	 **/
+	Result String::remove(const Result& value) {
+		if (isConst) { return Result{}; }
+		if (value.type != NumericConstant::Signed && value.type != NumericConstant::Unsigned) { return createResult(); }
+		Result tmpRes = context->convertResult(value, NumericConstant::Unsigned);
+		std::u32string tmp = getUtf32();
+		for (size_t i = 0; i < tmp.size(); ++i) {
+			if (tmp[i] == char32_t(tmpRes.value.uintVal)) {
+				tmp.erase(tmp.begin() + i);
+				std::string str = Text::utf32ToUtf8(tmp);
+				if (!assignUtf8(str.c_str(), str.size())) { throw ErrorCode::Out_Of_Memory; }
+				return createResult();
+			}
 		}
+		return createResult();
+	}
+
+	/**
+	 * Reverses the string.
+	 * 
+	 * \return				Returns this object.
+	 **/
+	Result String::reverse() {
+		if (isConst) { return Result{}; }
+		std::u32string tmp = getUtf32();
+
+		std::reverse(tmp.begin(), tmp.end());
+
+		std::string str = Text::utf32ToUtf8(tmp);
+		if (!assignUtf8(str.c_str(), str.size())) { throw ErrorCode::Out_Of_Memory; }
+		return createResult();
 	}
 
 	/**

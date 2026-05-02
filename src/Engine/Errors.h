@@ -25,6 +25,8 @@ namespace ve {
 		Unknown_Numeric_Type,
 		Object_Initialization_Failed,
 		Object_Deletion_Failed,
+		String_Remove_Failed,
+		String_Reverse_Failed,
 	};
 
 }	// namespace ve

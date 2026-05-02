@@ -5144,8 +5144,13 @@ namespace ve {
 			fc /= hz;
 			
 			filter.resize(m);				// Can throw.
-			if (!windowFunc(m, filter)) {
+			if (windowFunc && !windowFunc(m, filter)) {
 				throw std::runtime_error("sincFilterLpf(): Failed to apply windowing function.");
+			}
+			else {
+				for (auto i = filter.size(); i--; ) {
+					filter[i] = ValType(1.0);
+				}
 			}
 
 			size_t l = m / 2;
@@ -5156,13 +5161,15 @@ namespace ve {
 				filter[i] = ValType(static_cast<double>(filter[i]) * fc2 * sinc(fc2 * static_cast<double>(n)));
 			}
 
-			// Normalize.
-			double sum = 0.0;
-			for (auto& val : filter) {
-				sum += static_cast<double>(val);
-			}
-			for (auto& val : filter) {
-				val = ValType(static_cast<double>(val) / sum);
+			if (windowFunc) {
+				// Normalize.
+				double sum = 0.0;
+				for (auto& val : filter) {
+					sum += static_cast<double>(val);
+				}
+				for (auto& val : filter) {
+					val = ValType(static_cast<double>(val) / sum);
+				}
 			}
 			m = l;
 			return filter;
@@ -5194,8 +5201,13 @@ namespace ve {
 			fc /= hz;
 
 			filter.resize(m);
-			if (!windowFunc(m, filter)) {
+			if (windowFunc && !windowFunc(m, filter)) {
 				throw std::runtime_error("sincFilterHpf(): Failed to apply windowing function.");
+			}
+			else {
+				for (auto i = filter.size(); i--; ) {
+					filter[i] = ValType(1.0);
+				}
 			}
 
 			size_t l = m / 2;
@@ -5213,12 +5225,14 @@ namespace ve {
 			}
 
 			// Normalize.
-			double sum = 0.0;
-			for (auto& val : filter) {
-				sum += static_cast<double>(val);
-			}
-			for (auto& val : filter) {
-				val = ValType(static_cast<double>(val) / sum);
+			if (windowFunc) {
+				double sum = 0.0;
+				for (auto& val : filter) {
+					sum += static_cast<double>(val);
+				}
+				for (auto& val : filter) {
+					val = ValType(static_cast<double>(val) / sum);
+				}
 			}
 			m = l;
 			return filter;
@@ -5254,8 +5268,13 @@ namespace ve {
 			double f2n = f2 / hz;
 
 			filter.resize(m);
-			if (!windowFunc(m, filter)) {
+			if (windowFunc && !windowFunc(m, filter)) {
 				throw std::runtime_error("sincFilterBpf(): Failed to apply windowing function.");
+			}
+			else {
+				for (auto i = filter.size(); i--; ) {
+					filter[i] = ValType(1.0);
+				}
 			}
 
 			size_t l = m / 2;
@@ -5280,12 +5299,14 @@ namespace ve {
 			}
 
 			// Normalize.
-			double sum = 0.0;
-			for (auto& val : filter) {
-				sum += static_cast<double>(val);
-			}
-			for (auto& val : filter) {
-				val = ValType(static_cast<double>(val) / sum);
+			if (windowFunc) {
+				double sum = 0.0;
+				for (auto& val : filter) {
+					sum += static_cast<double>(val);
+				}
+				for (auto& val : filter) {
+					val = ValType(static_cast<double>(val) / sum);
+				}
 			}
 
 			m = l;

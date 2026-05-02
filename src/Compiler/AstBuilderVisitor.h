@@ -1272,6 +1272,7 @@ namespace ve {
 			if (strObj) {
 				strObj->assignUtf8(combinedUtf8.data(), combinedUtf8.length());
 				strObj->incRef();
+				strObj->setAsConst();
 				return context.addNode<ConstantNode>(strObj->createResult());
 			}
 			else {

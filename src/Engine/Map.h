@@ -342,6 +342,57 @@ namespace ve {
 		 **/
 		void								setValue(const Result& key, const Result& value);
 
+		/**
+		 * Retrieves all keys currently stored in the map.
+		 * Must be called within a try/catch block.
+		 *
+		 * \return			Returns a standard vector containing all key Results.
+		 **/
+		inline std::vector<Result>			getKeys() const {
+			std::vector<Result> keys;
+			keys.reserve(internalMap.size());
+			for (const auto& pair : internalMap) {
+				keys.push_back(pair.first);
+			}
+			return keys;
+		}
+
+		/**
+		 * Creates a copy of the object.
+		 * 
+		 * \return				Returns a copy of this object.
+		 **/
+		virtual Result						copy() const override;
+
+		/**
+		 * Clears the vector.
+		 **/
+		virtual void						clear() override {
+			for (auto& pair : internalMap) {
+				if (pair.first.type == NumericConstant::Object && pair.first.value.objectVal) {
+					pair.first.value.objectVal->decRef();
+					if (!pair.first.value.objectVal->getRef()) {
+						context->deallocateObject(pair.first.value.objectVal);
+					}
+				}
+				if (pair.second.type == NumericConstant::Object && pair.second.value.objectVal) {
+					pair.second.value.objectVal->decRef();
+					if (!pair.second.value.objectVal->getRef()) {
+						context->deallocateObject(pair.second.value.objectVal);
+					}
+				}
+			}
+			internalMap.clear();
+		}
+
+		/**
+		 * Removes the first element with the given value.
+		 * 
+		 * \param value			The value to find and erase.
+		 * \return				Returns this object.
+		 **/
+		virtual Result						remove(const Result& value) override;
+
 	protected :
 		std::map<Result, Result, ResultCompare>
 											internalMap;

@@ -189,6 +189,7 @@ set(APP_HEADERS
     src/Foundation/TextPolicy.h
     src/Foundation/Unicode.h
     src/Foundation/UnicodeData.inl
+	src/Engine/BFloat16.h
     src/Engine/Errors.h
     src/Engine/ExecutionContext.h
 	src/Engine/Float16.h

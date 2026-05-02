@@ -196,8 +196,6 @@ namespace ve {
 		 * \note This returns a constant (65504.0), which is the IEEE-754 binary16 maximum finite value.
 		 */
 		static double				max() {
-			/*static double dMax = ve::FloatX::GetMaxForBits( 5, 11, true );
-			return dMax;*/
 			return 65504.0;
 		}
 

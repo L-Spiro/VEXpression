@@ -361,6 +361,23 @@ namespace ve {
 		Result								at(int64_t index) const;
 
 		/**
+		 * Clears the vector.
+		 **/
+		virtual void						clear() override {
+			for (size_t i = 0; i < elements.size(); ++i) {
+				prepareErase_Unsafe(i);
+			}
+			elements.clear();
+		}
+
+		/**
+		 * Creates a copy of the object.
+		 * 
+		 * \return				Returns a copy of this object.
+		 **/
+		virtual Result						copy() const override;
+
+		/**
 		 * Pushes an expression to the back of the vector.
 		 * 
 		 * \param result		The result to push.
@@ -375,6 +392,45 @@ namespace ve {
 				return true;
 			}
 			catch (...) { return false; }
+		}
+
+		/**
+		 * Removes an element at the specified position.
+		 * 
+		 * \param idx			The index at which to remove an item.
+		 * \return				Returns this object.
+		 **/
+		Result								pop(int64_t idx = -1) {
+			size_t i = arrayIndexToLinearIndex(idx, arrayLength());
+			if (i == InvalidIndex) { return createResult(); }
+
+			Result & result = elements[i];
+			if (result.type == NumericConstant::Object && result.value.objectVal) {
+				result.value.objectVal->decRef();
+				if (!result.value.objectVal->getRef()) {
+					context->deallocateObject(result.value.objectVal);
+				}
+			}
+			elements.erase(elements.begin() + i);
+			return createResult();
+		}
+
+		/**
+		 * Removes the first element with the given value.
+		 * 
+		 * \param value			The value to find and erase.
+		 * \return				Returns this object.
+		 **/
+		virtual Result						remove(const Result& value) override;
+
+		/**
+		 * Reverses the string.
+		 * 
+		 * \return				Returns this object.
+		 **/
+		Result								reverse() {
+			std::reverse(elements.begin(), elements.end());
+			return createResult();
 		}
 
 		/**
@@ -411,13 +467,17 @@ namespace ve {
 		 * 
 		 * \param idx			The index of the item to prepare for erasing from the vector.
 		 **/
+		template <bool deleteObj = true>
 		inline void							prepareErase_Unsafe(size_t idx) {
 			Result & item = elements[idx];
 			Object* isObj = item.type == NumericConstant::Object && item.value.objectVal ? item.value.objectVal : nullptr;
 			if (isObj) {
 				isObj->decRef();
-				if (!isObj->getRef()) { context->deallocateObject(isObj); }
+				if constexpr (deleteObj) {
+					if (!isObj->getRef()) { context->deallocateObject(isObj); }
+				}
 			}
+			item.type = NumericConstant::Invalid;
 		}
 
 		/**

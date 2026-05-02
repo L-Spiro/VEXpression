@@ -58,42 +58,10 @@ int main() {
 	std::cout << "--- VEXpression Engine Test ---\n\n";
 
 	ve::ExecutionContext context;
-	auto Cool = HUGE_VALF / 2;
 	
 	std::u8string testExprU8 = std::u8string(
-u8"samples1 = linspace( 0.0, 1, 16, false );\r\n"
-u8"samples2 = linspace( 0.1, 1, 16, false );\r\n"
-u8"samples3 = linspace( 0.2, 1, 16, false );\r\n"
-u8"samples4 = linspace( 0.3, 1, 16, false );\r\n"
-u8"fracArray = linspace( 0.5 - 0.3, 0.5 + 0.3, 16, false );\r\n"
-u8"s1p2 = __m512( samples3 );\r\n"
-u8"half = _mm512_set1_ps( 1.0f / 2.0f );\r\n"
-u8"sNeg1p2 = __m512( samples1 );\r\n"
-u8"quarter = _mm512_set1_ps( 1.0f / 4.0f );\r\n"
-u8"\r\n"
-u8"// float y1MinusM1 = samples[1+2] - samples[-1+2];\r\n"
-u8"y1MinusM1 = _mm512_sub_ps( s1p2, sNeg1p2 );\r\n"
-u8"\r\n"
-u8"// Load the inputs.\r\n"
-u8"s0p2 = __m512( samples2 );\r\n"
-u8"\r\n"
-u8"// float c0 = (1.0f / 2.0f) * samples[0+2] + (1.0f / 4.0f) * (samples[-1+2] + samples[1+2]);\r\n"
-u8"c0 = _mm512_add_ps( _mm512_mul_ps( half, s0p2 ), _mm512_mul_ps( quarter, _mm512_add_ps( sNeg1p2, s1p2 ) ) );\r\n"
-u8"\r\n"
-u8"// Load the inputs.\r\n"
-u8"s2p2 = __m512( samples4 );\r\n"
-u8"\r\n"
-u8"// float c1 = (1.0f / 2.0f) * y1MinusM1;\r\n"
-u8"c1 = _mm512_mul_ps( half, y1MinusM1 );\r\n"
-u8"\r\n"
-u8"// Load the inputs.\r\n"
-u8"thisFrac = __m512( fracArray );\r\n"
-u8"\r\n"
-u8"// float c2 = (1.0f / 4.0f) * (samples[2+2] - samples[0+2] - y1MinusM1);\r\n"
-u8"c2 = _mm512_mul_ps( quarter, _mm512_sub_ps( _mm512_sub_ps( s2p2, s0p2 ), y1MinusM1 ) );\r\n"
-u8"\r\n"
-u8"// return (c2 * thisFrac + c1) * thisFrac + c0;\r\n"
-u8"result = _mm512_add_ps( _mm512_mul_ps( _mm512_add_ps( _mm512_mul_ps( c2, thisFrac ), c1 ), thisFrac ), c0 );" );
+u8"y = blackmanharris(13);\r\ny *= sinc_filter_lpf(1789772.72727272727272727272727272, 17000, y.size());\r\ny /= sum(y);\r\n\"\\r\\nVector: {}.\\r\\nSum: {}.\".format(y, sum(y))"
+);
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());
 	std::cout << "Evaluating: " << testExpr << "\r\n\r\n";

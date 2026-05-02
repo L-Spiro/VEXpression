@@ -79,8 +79,8 @@ WHILE               : 'while' ;
 BREAK               : 'break' ;
 CONTINUE            : 'continue' ;
 RETURN              : 'return' ;
-KW_TRUE             : 'true' ;
-KW_FALSE            : 'false' ;
+KW_TRUE             : 'true' | 'True' ;
+KW_FALSE            : 'false' | 'False' ;
 STATIC_CAST         : 'static_cast' ;
 
 // Built-in Types

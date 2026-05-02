@@ -312,6 +312,7 @@ namespace ve {
 		 * \return				Returns true if successful, false otherwise.
 		 **/
 		virtual Result						operator+=(const Result& rhs) override {
+			if (isConst) { return Result{}; }
 			if (rhs.type == NumericConstant::Object && rhs.value.objectVal != nullptr) {
 				if (rhs.value.objectVal->type() & BuiltInType_String) {
 					const String* rhsString = static_cast<const String*>(rhs.value.objectVal);
@@ -1000,12 +1001,51 @@ namespace ve {
 		Result								at(int64_t index) const;
 
 		/**
+		 * Clears the string.
+		 **/
+		virtual void						clear() override {
+			buffer.clear();
+			bufferWidth = Width_8;
+			charCount = 0;
+		}
+
+		/**
+		 * Creates a copy of the object.
+		 * 
+		 * \return				Returns a copy of this object.
+		 **/
+		virtual Result						copy() const override;
+
+		/**
 		 * Pushes a string expression to the back of the string.
 		 * 
 		 * \param result		The result to push.
 		 * \return				Returns true if the item was added. False indicates a memory failure or incompatible type.
 		 **/
 		bool								pushBack(const Result& result);
+
+		/**
+		 * Removes an element at the specified position.
+		 * 
+		 * \param idx			The index at which to remove an item.
+		 * \return				Returns this object.
+		 **/
+		Result								pop(int64_t idx = -1);
+
+		/**
+		 * Removes the first element with the given value.
+		 * 
+		 * \param value			The value to find and erase.
+		 * \return				Returns this object.
+		 **/
+		virtual Result						remove(const Result& value) override;
+
+		/**
+		 * Reverses the string.
+		 * 
+		 * \return				Returns this object.
+		 **/
+		Result								reverse();
 		
 		/**
 		 * Internal helper to fetch a UTF-32 code point at a linear index.
@@ -1050,11 +1090,17 @@ namespace ve {
 			return 0;
 		}
 
+		/**
+		 * Sets the string as a constant that can’t be modified.
+		 **/
+		void								setAsConst() { isConst = true; }
+
 	protected :
 		// == Members.
 		std::vector<uint8_t>				buffer;
-		Width								bufferWidth;
-		size_t								charCount;
+		Width								bufferWidth = Width_8;
+		size_t								charCount = 0;
+		bool								isConst = false;
 
 
 		// == Functions.
