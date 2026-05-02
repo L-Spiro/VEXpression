@@ -20,28 +20,24 @@ namespace ve {
 	 **/
 	bool Vector::toString(std::string& outStr, uint32_t depth, uint32_t flags) const {
 		if (depth >= 32) {
-			outStr = "<...>";
+			outStr = "{...}";
 			return true;
 		}
 		
 		try {
 			outStr = "{";
-			uint32_t elementFlags = flags | ToStringFlags::ToStringFlag_CString;
+			uint32_t elementFlags = flags | (ToStringFlags::ToStringFlag_CString | ToStringFlags::ToStringFlag_LowQualityFloat);
 
 			for (size_t i = 0; i < elements.size(); ++i) {
 				outStr += context->toString(elements[i], depth + 1, elementFlags);
 				
-				if (i != elements.size() - 1) {
-					outStr += ", ";
-				}
+				if (i != elements.size() - 1) { outStr += ", "; }
 			}
 
 			outStr += "}";
 			return true;
 		}
-		catch (...) {
-			return false;
-		}
+		catch (...) { return false; }
 	}
 
 	/**

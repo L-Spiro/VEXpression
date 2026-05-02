@@ -1250,6 +1250,9 @@ namespace ve {
 				return Text::toSigned(res.value.intVal);
 			}
 			case NumericConstant::Floating : {
+				if (flags & ToStringFlags::ToStringFlag_LowQualityFloat) {
+					return std::format("{:.17g}", res.value.doubleVal);
+				}
 				return Text::toDouble(res.value.doubleVal);
 			}
 			case NumericConstant::Object : {

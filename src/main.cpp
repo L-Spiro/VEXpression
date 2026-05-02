@@ -60,7 +60,7 @@ int main() {
 	ve::ExecutionContext context;
 	
 	std::u8string testExprU8 = std::u8string(
-u8"y = blackmanharris(13);\r\ny *= sinc_filter_lpf(1789772.72727272727272727272727272, 17000, y.size());\r\ny /= sum(y);\r\n\"\\r\\nVector: {}.\\r\\nSum: {}.\".format(y, sum(y))"
+u8"y = blackmanharris(103);\r\ny *= sinc_filter_lpf(1789772.72727272727272727272727272, 17000, y.size());\r\ny /= sum(y);\r\n\"\\r\\nVector: {}.\\r\\nSum: {}.\".format(y, sum(y))"
 );
 
 	std::string testExpr(reinterpret_cast<const char*>(testExprU8.data()), testExprU8.size());

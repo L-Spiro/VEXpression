@@ -130,8 +130,8 @@ set(APP_HEADERS
     src/Ast/BreakNode.h
     src/Ast/CastNode.h
     src/Ast/ConstantNode.h
-	src/Ast/ConstructPrimitiveNode.h
-	src/Ast/ConstructSimdNode.h
+    src/Ast/ConstructPrimitiveNode.h
+    src/Ast/ConstructSimdNode.h
     src/Ast/ContinueNode.h
     src/Ast/DivAssignNode.h
     src/Ast/DivNode.h
@@ -183,37 +183,37 @@ set(APP_HEADERS
     src/Foundation/Html.h
     src/Foundation/LargeMath.h
     src/Foundation/Math.h
-	src/Foundation/SinCos.h
+    src/Foundation/SinCos.h
     src/Foundation/System.h
     src/Foundation/Text.h
     src/Foundation/TextPolicy.h
     src/Foundation/Unicode.h
     src/Foundation/UnicodeData.inl
-	src/Engine/BFloat16.h
+    src/Engine/BFloat16.h
     src/Engine/Errors.h
     src/Engine/ExecutionContext.h
-	src/Engine/Float16.h
+    src/Engine/Float16.h
     src/Engine/FunctionDef.h
     src/Engine/IntrinsicBridges.h
     src/Engine/Map.h
     src/Engine/Object.h
     src/Engine/Result.h
-	src/Engine/SimdBridges.h
-	src/Engine/SimdBridgeTable.inl
+    src/Engine/SimdBridges.h
+    src/Engine/SimdBridgeTable.inl
     src/Engine/SimdIncludes.h
-	src/Engine/SimdObject.h
+    src/Engine/SimdObject.h
     src/Engine/String.h
     src/Engine/Vector.h
-	src/OS/OS.h
-	src/Strings/Strings.h
+    src/OS/OS.h
+    src/Strings/Strings.h
     src/Strings/StringEnum.inl
-	src/Strings/SimdDescriptions.inl
+    src/Strings/SimdDescriptions.inl
 )
 
-set(APP_SOURCES
+set(CORE_SOURCES
     src/Engine/ExecutionContext.cpp
     src/Engine/Map.cpp
-	src/Engine/SimdObject.cpp
+    src/Engine/SimdObject.cpp
     src/Engine/String.cpp
     src/Engine/Vector.cpp
     src/Foundation/Case.cpp
@@ -222,53 +222,57 @@ set(APP_SOURCES
     src/Foundation/Html.cpp
     src/Foundation/Text.cpp
     src/Foundation/Unicode.cpp
+)
+
+set(UI_SOURCES
     src/main.cpp
 )
 
 if(WIN32)
-    list(APPEND APP_SOURCES src/Foundation/SinCos.asm)
+    list(APPEND CORE_SOURCES src/Foundation/SinCos.asm)
 endif()
 
 ### Force Visual Studio to Mirror the Physical Folder Structure (SIGH!!!)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Header Files" FILES ${APP_HEADERS})
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${APP_SOURCES})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${CORE_SOURCES} ${UI_SOURCES})
 source_group("Header Files\\Generated" FILES ${GENERATED_HEADERS})
 source_group("Source Files\\Generated" FILES ${GENERATED_SOURCES})
 
-### Create the Executable.
-add_executable(VEXpression ${APP_SOURCES} ${APP_HEADERS} ${GENERATED_SOURCES} ${GENERATED_HEADERS})
+### Create the Static Library.
+add_library(VEXpressionCore STATIC ${CORE_SOURCES} ${APP_HEADERS} ${GENERATED_SOURCES} ${GENERATED_HEADERS})
 
-### Apply MSVC Runtime Settings (Must be after add_executable)
+### Create the Executable.
+add_executable(VEXpression ${UI_SOURCES})
+
+### Apply MSVC Runtime Settings (Must be after targets are created)
 if(MSVC)
-    set_property(TARGET VEXpression PROPERTY
-        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-    )
+    set_property(TARGET VEXpressionCore PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_property(TARGET VEXpression PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-### Include Directories.
-target_include_directories(VEXpression PRIVATE
+### Include Directories (PUBLIC so the executable inherits them automatically).
+target_include_directories(VEXpressionCore PUBLIC
     src
     ${GENERATED_DIR}
     ${simde_SOURCE_DIR}
 )
 
-### Strictly Enforce C++23 on the Executable.
+### Strictly Enforce C++20.
+target_compile_features(VEXpressionCore PUBLIC cxx_std_20)
 target_compile_features(VEXpression PRIVATE cxx_std_20)
 
 ### Link the ANTLR Runtime.
-target_link_libraries(VEXpression PRIVATE antlr4_static)
+target_link_libraries(VEXpressionCore PUBLIC antlr4_static)
 
 ### Link Iconv for POSIX systems.
 if(NOT WIN32)
-    target_link_libraries(VEXpression PRIVATE Iconv::Iconv)
+    target_link_libraries(VEXpressionCore PUBLIC Iconv::Iconv)
 endif()
 
 ### Link macOS frameworks for Power & Display Management.
 if(APPLE)
-    target_link_libraries(VEXpression PRIVATE "-framework CoreFoundation -framework IOKit")
+    target_link_libraries(VEXpressionCore PUBLIC "-framework CoreFoundation -framework IOKit")
 endif()
 
-### Link macOS frameworks for Power & Display Management
-if(APPLE)
-    target_link_libraries(VEXpression PRIVATE "-framework CoreFoundation -framework IOKit")
-endif()
+### Link the Core Library to the UI Executable.
+target_link_libraries(VEXpression PRIVATE VEXpressionCore)
