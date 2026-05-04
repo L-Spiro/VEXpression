@@ -1730,4 +1730,25 @@ namespace ve {
 		return out;
 	}
 
+	/**
+	 * Gets the total number of built-in constants.
+	 * 
+	 * \return				Returns the number of built-in constants in the internal table.
+	 **/
+	size_t ExecutionContext::totalBuiltInConstants() { return std::size(builtInConsts); }
+
+	/**
+	 * Gets by index a built-in constant name and its value.
+	 * 
+	 * \param idx			The index of the item to get.
+	 * \param value			Holds the value of the constant.
+	 * \return				Returns a constant pointer to the name of the built-in constant.
+	 **/
+	const char* ExecutionContext::getBuiltinConstant(size_t idx, Result& value) {
+		if (idx >= std::size(builtInConsts)) { return nullptr; }
+
+		value = builtInConsts[idx].result;
+		return builtInConsts[idx].name;
+	}
+
 }	// namespace ve

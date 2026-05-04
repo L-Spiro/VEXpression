@@ -14,7 +14,7 @@ namespace ve {
 	 **/
 	class VectorNode : public AstNode {
 	public :
-		VectorNode(const std::vector<AstNode*>& elements) : elements(elements) {}
+		VectorNode(const std::vector<size_t>& elements) : elements(elements) {}
 
 		/**
 		 * Evaluates the vector initialization by evaluating all elements and storing them.
@@ -26,8 +26,8 @@ namespace ve {
 			Vector* newVec = context.allocateObject<Vector>();
 			if (!newVec) { throw ErrorCode::Out_Of_Memory; }
 			
-			for (AstNode* node : elements) {
-				newVec->pushBack(node->evaluate(context));
+			for (size_t node : elements) {
+				newVec->pushBack(context.getArena().nodes[node]->evaluate(context));
 			}
 			
 			return newVec->createResult();
@@ -36,7 +36,7 @@ namespace ve {
 	protected :
 		// == Members.
 		/** The list of AST nodes representing the elements of the vector. **/
-		std::vector<AstNode*>			elements;
+		std::vector<size_t>			elements;
 	};
 
 }	// namespace ve

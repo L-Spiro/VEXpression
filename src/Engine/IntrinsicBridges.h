@@ -3630,15 +3630,15 @@ namespace ve {
 			
 			try {
 				if (obj->type() & BuiltInType_Vector) {
-					static_cast<Vector*>(obj)->pushBack(args[1]);
+					if (!static_cast<Vector*>(obj)->pushBack(args[1])) { return Result{}; }
 				}
 				else if (obj->type() & BuiltInType_String) {
-					static_cast<String*>(obj)->pushBack(args[1]);
+					if (!static_cast<String*>(obj)->pushBack(args[1])) { return Result{}; }
 				}
 			}
 			catch (...) { throw ErrorCode::Out_Of_Memory; }
 			
-			return Result{};
+			return obj->createResult();
 		}
 
 		/**

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 project(VEXpression CXX)
 
+### Build Options.
+option(VEXPRESSION_BUILD_UI "Build the standalone interactive UI executable" ON)
+
 ### Detect if we are building for 32-bit or 64-bit.
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(ARCH_DIR "x64")
@@ -35,7 +38,7 @@ else()
     enable_language(ASM)
 endif()
 
-### Global Compile Definitions
+### Global Compile Definitions.
 add_compile_definitions(_USE_MATH_DEFINES SIMDE_NO_NATIVE SIMDE_NO_CHECK_IMMEDIATE_CONSTANT VE_HTML_ESCAPES VE_NAMED_ESCAPES VE_FULL_STRINGS)
 
 ### Locate the Java Runtime.
@@ -62,7 +65,7 @@ set(ANTLR_BUILD_CPP_TESTS OFF CACHE BOOL "" FORCE)
 set(WITH_STATIC_CRT ON CACHE BOOL "" FORCE) 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
-### Tell CMake where to get the dependencies (Bypassing Git)
+### Tell CMake where to get the Core dependencies (Bypassing Git)
 FetchContent_Declare(
     antlr4_runtime
     URL            https://github.com/antlr/antlr4/archive/refs/tags/4.13.2.zip
@@ -74,7 +77,7 @@ FetchContent_Declare(
     URL            https://github.com/simd-everywhere/simde/archive/refs/tags/v0.7.6.zip
 )
 
-### Actually Download and Configure the Runtimes.
+### Actually Download and Configure the Core Runtimes.
 FetchContent_MakeAvailable(antlr4_runtime simde)
 
 ### --- C++23 MSVC Missing Include Workaround ---
@@ -224,55 +227,113 @@ set(CORE_SOURCES
     src/Foundation/Unicode.cpp
 )
 
-set(UI_SOURCES
-    src/main.cpp
-)
-
 if(WIN32)
     list(APPEND CORE_SOURCES src/Foundation/SinCos.asm)
 endif()
 
-### Force Visual Studio to Mirror the Physical Folder Structure (SIGH!!!)
+### Force Visual Studio to Mirror the Physical Folder Structure
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Header Files" FILES ${APP_HEADERS})
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${CORE_SOURCES} ${UI_SOURCES})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${CORE_SOURCES})
 source_group("Header Files\\Generated" FILES ${GENERATED_HEADERS})
 source_group("Source Files\\Generated" FILES ${GENERATED_SOURCES})
 
 ### Create the Static Library.
 add_library(VEXpressionCore STATIC ${CORE_SOURCES} ${APP_HEADERS} ${GENERATED_SOURCES} ${GENERATED_HEADERS})
 
-### Create the Executable.
-add_executable(VEXpression ${UI_SOURCES})
-
-### Apply MSVC Runtime Settings (Must be after targets are created)
+### Apply MSVC Runtime Settings to Core (Static Runtime /MT)
 if(MSVC)
     set_property(TARGET VEXpressionCore PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    set_property(TARGET VEXpression PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
-### Include Directories (PUBLIC so the executable inherits them automatically).
+### Include Directories (PUBLIC so dependents inherit them automatically).
 target_include_directories(VEXpressionCore PUBLIC
     src
     ${GENERATED_DIR}
     ${simde_SOURCE_DIR}
 )
 
-### Strictly Enforce C++20.
+### Strictly Enforce C++20 on Core.
 target_compile_features(VEXpressionCore PUBLIC cxx_std_20)
-target_compile_features(VEXpression PRIVATE cxx_std_20)
 
-### Link the ANTLR Runtime.
+### Link the Core Dependencies.
 target_link_libraries(VEXpressionCore PUBLIC antlr4_static)
-
-### Link Iconv for POSIX systems.
 if(NOT WIN32)
     target_link_libraries(VEXpressionCore PUBLIC Iconv::Iconv)
 endif()
-
-### Link macOS frameworks for Power & Display Management.
 if(APPLE)
     target_link_libraries(VEXpressionCore PUBLIC "-framework CoreFoundation -framework IOKit")
 endif()
 
-### Link the Core Library to the UI Executable.
-target_link_libraries(VEXpression PRIVATE VEXpressionCore)
+
+### =========================================================================
+### OPTIONAL UI BUILD (wxWidgets)
+### =========================================================================
+if(VEXPRESSION_BUILD_UI)
+    message(STATUS "VEXPRESSION_BUILD_UI is ON. Building cross-platform wxWidgets UI...")
+
+    # 1. Find wxWidgets on the host OS.
+    #    Requires wxWidgets to be installed via vcpkg (Win), Homebrew (Mac), or APT (Linux).
+    if(WIN32)
+        set(wxWidgets_USE_STATIC ON)
+        # Fix for vcpkg: CMake looks for 'vc_x64_lib'. vcpkg uses 'lib'. 
+        if(DEFINED VCPKG_INSTALLED_DIR)
+            set(wxWidgets_ROOT_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+            set(wxWidgets_LIB_DIR "${wxWidgets_ROOT_DIR}/lib")
+        endif()
+    endif()
+    
+    find_package(wxWidgets REQUIRED COMPONENTS core base stc aui)
+    include(${wxWidgets_USE_FILE})
+
+    # 2. UI Sources.
+    set(UI_HEADERS
+        src/UI/MainApp.h
+        src/UI/MainFrame.h
+    )
+    set(UI_SOURCES
+        src/main.cpp
+        src/UI/MainApp.cpp
+        src/UI/MainFrame.cpp
+    )
+
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Header Files" FILES ${UI_HEADERS})
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "Source Files" FILES ${UI_SOURCES})
+
+    # 3. Create the Executable based on the target OS.
+    if(WIN32)
+        add_executable(VEXpression WIN32 ${UI_SOURCES} ${UI_HEADERS})
+        # Tell wxWidgets we are on Windows (__WXMSW__) so it generates WinMain/wWinMain
+        target_compile_definitions(VEXpression PRIVATE __WXMSW__ UNICODE _UNICODE)
+    elseif(APPLE)
+        add_executable(VEXpression MACOSX_BUNDLE ${UI_SOURCES} ${UI_HEADERS})
+    else()
+        add_executable(VEXpression ${UI_SOURCES} ${UI_HEADERS})
+    endif()
+
+    target_compile_features(VEXpression PRIVATE cxx_std_20)
+
+    # Apply MSVC Runtime Settings to the UI Executable (Static Runtime /MT).
+    if(MSVC)
+        set_property(TARGET VEXpression PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
+
+    # 4. Link the Core Library and the OS-specific wxWidgets libraries.
+    target_link_libraries(VEXpression PRIVATE VEXpressionCore ${wxWidgets_LIBRARIES})
+    
+    # Manually resolve vcpkg STC static dependencies on Windows for BOTH configurations.
+    if(WIN32)
+        find_library(LEXILLA_LIB_RELEASE NAMES lexilla wxlexilla)
+        find_library(LEXILLA_LIB_DEBUG NAMES lexillad wxlexillad)
+        
+        find_library(SCINTILLA_LIB_RELEASE NAMES scintilla wxscintilla)
+        find_library(SCINTILLA_LIB_DEBUG NAMES scintillad wxscintillad)
+        
+        # Link the correct library based on the current Visual Studio build configuration.
+        target_link_libraries(VEXpression PRIVATE 
+            optimized ${LEXILLA_LIB_RELEASE} debug ${LEXILLA_LIB_DEBUG}
+            optimized ${SCINTILLA_LIB_RELEASE} debug ${SCINTILLA_LIB_DEBUG}
+            rpcrt4
+        )
+    endif()
+    
+endif()

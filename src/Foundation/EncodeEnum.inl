@@ -1,4 +1,7 @@
 #if defined(VE_FULL_STRINGS)
+//#ifdef UNICODE
+//#undef UNICODE
+//#endif	// #ifdef UNICODE
 VE_ENC(   37, "CP037"          , CP037)
 VE_ENC(   37, "IBM037"         , IBM037)
 VE_ENC(   38, "CP038"          , CP038)
@@ -128,7 +131,7 @@ VE_ENC( 1148, "IBM1148"        , IBM1148)
 VE_ENC( 1149, "CP1149"         , CP1149)
 VE_ENC( 1149, "IBM1149"        , IBM1149)
 VE_ENC( 1200, "CSUNICODE"      , CSUNICODE)
-VE_ENC( 1200, "UNICODE"        , UNICODE)
+//VE_ENC( 1200, "UNICODE"        , UNICODE)
 VE_ENC( 1200, "UTF-16"         , UTF_16)
 VE_ENC( 1200, "UTF-16LE"       , UTF_16LE)
 VE_ENC( 1200, "UTF16"          , UTF16)

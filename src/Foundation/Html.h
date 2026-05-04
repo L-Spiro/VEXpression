@@ -101,4 +101,4 @@ namespace ve {
 		static const EntityEntry			entities[];
 	};
 
-}
+}	// namespace ve

@@ -1,4 +1,5 @@
-﻿#include "Engine/ExecutionContext.h"
+﻿#if 0
+#include "Engine/ExecutionContext.h"
 #include "Engine/Result.h"
 #include "Foundation/Text.h"
 #include "OS/OS.h"
@@ -82,3 +83,20 @@ u8"y = blackmanharris(103);\r\ny *= sinc_filter_lpf(1789772.72727272727272727272
 	
 	return 0;
 }
+#else	// #if 0
+//#include "UI/MainApp.h"
+//
+//#include <wx/wx.h>
+//
+///**
+// * Main entry point for the application.
+// *
+// * \param argc			The number of command line arguments.
+// * \param argv			The array of command line arguments.
+// * \return				The application exit code.
+// **/
+//int main(int argc, char** argv) {
+//	// Forward the standard C++ main to wxWidgets' internal main loop.
+//	return wxEntry(argc, argv);
+//}
+#endif	// #if 0

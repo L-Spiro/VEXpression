@@ -378,27 +378,38 @@ namespace ve {
 		}
 
 		/**
-		 * Compiles a method call AST node.
-		 * Evaluates the target expression, extracts the method identifier, evaluates the arguments, 
-		 * and allocates a MethodCallNode in the runtime arena.
-		 * Must be called within a try/catch block.
+		 * Visits a method call expression, iteratively unrolling left-recursive 
+		 * chains to prevent C++ call stack exhaustion on deeply chained methods.
 		 *
-		 * \param ctx	The ANTLR parser context for the method call.
-		 * \return		Returns an std::any containing the allocated node index (size_t).
+		 * \param ctx		The parse tree context containing the method call.
+		 * \return			An std::any containing the size_t ID of the newly created node.
 		 **/
 		virtual std::any			visitMethodCall(ExprParser::MethodCallContext* ctx) override {
-			size_t targetNode = std::any_cast<size_t>(visit(ctx->expr()));
-			std::string methodName = ctx->IDENTIFIER()->getText();
-			
-			std::vector<size_t> args;
-			
-			if (ctx->exprList()) {
-				for (auto* argCtx : ctx->exprList()->expr()) {
-					args.push_back(std::any_cast<size_t>(visit(argCtx)));
-				}
+			std::vector<ExprParser::MethodCallContext*> chain;
+			ExprParser::ExprContext* currentExpr = ctx;
+
+			while (auto methodCtx = dynamic_cast<ExprParser::MethodCallContext*>(currentExpr)) {
+				chain.push_back(methodCtx);
+				currentExpr = methodCtx->expr();
 			}
 
-			return context.addNode<MethodCallNode>(targetNode, methodName, args);
+			size_t currentTargetId = std::any_cast<size_t>(visit(currentExpr));
+
+			for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+				auto methodCtx = *it;
+				std::string methodName = methodCtx->IDENTIFIER()->getText();
+
+				std::vector<size_t> argIds;
+				if (methodCtx->exprList()) {
+					for (auto* argCtx : methodCtx->exprList()->expr()) {
+						argIds.push_back(std::any_cast<size_t>(visit(argCtx)));
+					}
+				}
+
+				currentTargetId = context.addNode<MethodCallNode>(currentTargetId, methodName, argIds);
+			}
+
+			return currentTargetId;
 		}
 
 		/**
@@ -933,38 +944,70 @@ namespace ve {
 		 * \param ctx		The parser context containing the map expression.
 		 * \return			Returns an std::any containing the allocated node reference/index.
 		 **/
-		virtual std::any			visitMapExpr(ExprParser::MapExprContext* ctx) override {
-			std::vector<std::pair<size_t, size_t>> elements;
+		//virtual std::any			visitMapExpr(ExprParser::MapExprContext* ctx) override {
+		//	std::vector<std::pair<size_t, size_t>> elements;
 
-			if (ctx->exprMapList()) {
-				auto exprs = ctx->exprMapList()->expr();
-				
+		//	auto exprs = ctx->expr();
+		//	
+		//	for (size_t i = 0; i < exprs.size(); i += 2) {
+		//		size_t keyId = std::any_cast<size_t>(visit(exprs[i]));
+		//		size_t valId = std::any_cast<size_t>(visit(exprs[i+1]));
+		//		elements.push_back({ keyId, valId });
+		//	}
+
+		//	return context.addNode<MapNode>(elements);
+		//}
+
+		///**
+		// * Visits a vector initializer list expression.
+		// *
+		// * \param ctx		The parser context for the vector expression.
+		// * \return			Returns an AST node representing the vector.
+		// **/
+		//virtual std::any			visitVectorExpr(ExprParser::VectorExprContext* ctx) override {
+		//	std::vector<AstNode*> elements;
+		//	
+		//	for (auto* exprCtx : ctx->expr()) {
+		//		elements.push_back(std::any_cast<AstNode*>(visit(exprCtx)));
+		//	}
+		//	
+		//	return context.addNode<VectorNode>(elements);
+		//}
+
+		/**
+		 * Visits a brace expression and determines whether to construct a map or a vector.
+		 *
+		 * \param ctx		The parse tree context containing the expression elements.
+		 * \return			An std::any containing the size_t ID of the newly created node.
+		 **/
+		virtual std::any			visitBraceExpr(ExprParser::BraceExprContext* ctx) override {
+			auto exprs = ctx->expr();
+
+			if (!ctx->COLON().empty()) {
+				std::vector<std::pair<size_t, size_t>> elements;
 				for (size_t i = 0; i < exprs.size(); i += 2) {
 					size_t keyId = std::any_cast<size_t>(visit(exprs[i]));
 					size_t valId = std::any_cast<size_t>(visit(exprs[i+1]));
 					elements.push_back({ keyId, valId });
 				}
+				return context.addNode<MapNode>(elements);
 			}
 
-			return context.addNode<MapNode>(elements);
+			std::vector<size_t> elements;
+			for (auto* exprCtx : exprs) {
+				elements.push_back(std::any_cast<size_t>(visit(exprCtx)));
+			}
+			return context.addNode<VectorNode>(elements);
 		}
 
 		/**
-		 * Visits a vector initializer list expression.
+		 * Visits an empty brace expression and constructs an empty vector.
 		 *
-		 * \param ctx		The parser context for the vector expression.
-		 * \return			Returns an AST node representing the vector.
+		 * \param ctx		The parse tree context for the empty braces.
+		 * \return			An std::any containing the size_t ID of the newly created node.
 		 **/
-		virtual std::any			visitVectorExpr(ExprParser::VectorExprContext* ctx) override {
-			std::vector<AstNode*> elements;
-			
-			if (ctx->exprList()) {
-				for (auto* exprCtx : ctx->exprList()->expr()) {
-					elements.push_back(std::any_cast<AstNode*>(visit(exprCtx)));
-				}
-			}
-			
-			return context.addNode<VectorNode>(elements);
+		virtual std::any			visitEmptyBraceExpr(ExprParser::EmptyBraceExprContext* ctx) override {
+			return context.addNode<VectorNode>(std::vector<size_t>{});
 		}
 
 		/**

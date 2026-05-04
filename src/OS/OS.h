@@ -16,14 +16,6 @@
 #undef ERROR
 #endif
 
-#ifdef IN
-#undef IN
-#endif
-
-#ifdef OUT
-#undef OUT
-#endif
-
 #ifdef min
 #undef min
 #endif

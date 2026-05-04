@@ -72,7 +72,7 @@ AND_ASSIGN          : '&=' ;
 IF                  : 'if' ;
 ELSE                : 'else' ;
 FOR                 : 'for' ;
-IN                  : 'in' ;
+KW_IN               : 'in' ;
 DO                  : 'do' ;
 WHILE               : 'while' ;
 

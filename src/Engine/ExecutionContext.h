@@ -495,6 +495,22 @@ namespace ve {
 			return false;
 		}
 
+		/**
+		 * Gets the total number of built-in constants.
+		 * 
+		 * \return				Returns the number of built-in constants in the internal table.
+		 **/
+		static size_t					totalBuiltInConstants();
+
+		/**
+		 * Gets by index a built-in constant name and its value.
+		 * 
+		 * \param idx			The index of the item to get.
+		 * \param value			Holds the value of the constant.
+		 * \return				Returns a constant pointer to the name of the built-in constant.
+		 **/
+		static const char*				getBuiltinConstant(size_t idx, Result& value);
+
 
 	protected :
 		// == Types.

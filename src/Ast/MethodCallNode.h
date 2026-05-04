@@ -21,61 +21,89 @@ namespace ve {
 
 		// == Functions.
 		/**
-		 * Evaluates the target expression, prepends it to the evaluated arguments, and calls the intrinsic function.
+		 * Evaluates the method call node, iteratively unrolling left-recursive targets 
+		 * to prevent stack exhaustion during deep execution chains.
 		 *
-		 * \param context	The execution context containing variables and runtime states.
-		 * \return			Returns the result of the method call.
+		 * \param context	The execution context containing the AST arena and state.
+		 * \return			The calculated Result of the method call chain.
 		 **/
 		Result							evaluate(ExecutionContext& context) const override {
-			Result targetRes = context.getArena().nodes[targetNode]->evaluate(context);
+			std::vector<const MethodCallNode*> chain;
+			chain.push_back(this);
 
-			if (targetRes.type == NumericConstant::Invalid) { return targetRes; }
+			ve::AstNode* currentBase = context.getArena().nodes[targetNode].get();
 
-			std::vector<Result> evaluatedArgs;
-			evaluatedArgs.reserve(argNodes.size() + 1);
-			
-			evaluatedArgs.push_back(targetRes);
-
-			for (size_t i = 0; i < argNodes.size(); ++i) {
-				evaluatedArgs.push_back(context.getArena().nodes[argNodes[i]]->evaluate(context));
+			while (auto* methodNode = dynamic_cast<const MethodCallNode*>(currentBase)) {
+				chain.push_back(methodNode);
+				currentBase = context.getArena().nodes[methodNode->targetNode].get();
 			}
 
-			FunctionDef funcDef;
-			
-			if (!context.getFunction(methodName, evaluatedArgs.size(), funcDef)) { return Result{}; }
+			Result currentTargetRes = currentBase->evaluate(context);
 
-			// If it can operate on every element in a vector and we are being passed exactly 1 vector.
-			if (funcDef.operateOnVectorElements && evaluatedArgs.size() == 1) {
-				if (evaluatedArgs[0].type == NumericConstant::Object && evaluatedArgs[0].value.objectVal && (evaluatedArgs[0].value.objectVal->type() & BuiltInType_Vector)) {
-					Vector* vec = static_cast<Vector*>(evaluatedArgs[0].value.objectVal);
-					DataType expectedType = funcDef.parameters.empty() ? DataType::Double : funcDef.parameters[0].type;
-					
-					std::vector<Result> singleArg(1);
-					for (size_t i = 0; i < vec->arrayLength(); ++i ) {
-						singleArg[0] = context.castArgument(vec->directAccess(i), expectedType);
-						if (singleArg[0].type == NumericConstant::Invalid) { return Result{}; }
-						vec->directAccess(i) = funcDef.callback(&context, singleArg);
+			if (currentTargetRes.type == NumericConstant::Invalid) { return currentTargetRes; }
+
+			for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+				const MethodCallNode* callNode = *it;
+
+				std::vector<Result> evaluatedArgs;
+				evaluatedArgs.reserve(callNode->argNodes.size() + 1);
+				
+				evaluatedArgs.push_back(currentTargetRes);
+
+				for (size_t i = 0; i < callNode->argNodes.size(); ++i) {
+					evaluatedArgs.push_back(context.getArena().nodes[callNode->argNodes[i]]->evaluate(context));
+				}
+
+				FunctionDef funcDef;
+				
+				if (!context.getFunction(callNode->methodName, evaluatedArgs.size(), funcDef)) { return Result{}; }
+
+				if (funcDef.operateOnVectorElements && evaluatedArgs.size() == 1) {
+					if (evaluatedArgs[0].type == NumericConstant::Object && evaluatedArgs[0].value.objectVal && (evaluatedArgs[0].value.objectVal->type() & BuiltInType_Vector)) {
+						Vector* vec = static_cast<Vector*>(evaluatedArgs[0].value.objectVal);
+						DataType expectedType = funcDef.parameters.empty() ? DataType::Double : funcDef.parameters[0].type;
+						
+						std::vector<Result> singleArg(1);
+						bool vectorFailed = false;
+						
+						for (size_t i = 0; i < vec->arrayLength(); ++i ) {
+							singleArg[0] = context.castArgument(vec->directAccess(i), expectedType);
+							if (singleArg[0].type == NumericConstant::Invalid) { 
+								vectorFailed = true;
+								break; 
+							}
+							vec->directAccess(i) = funcDef.callback(&context, singleArg);
+						}
+						
+						if (vectorFailed) { return Result{}; }
+
+						currentTargetRes = vec->createResult();
+						continue;
 					}
-					return vec->createResult();
+				}
+
+				bool castFailed = false;
+				for (size_t i = 0; i < evaluatedArgs.size(); ++i) {
+					if (i < funcDef.parameters.size()) {
+						evaluatedArgs[i] = context.castArgument(evaluatedArgs[i], funcDef.parameters[i].type);
+						if (evaluatedArgs[i].type == NumericConstant::Invalid) { 
+							castFailed = true;
+							break;
+						}
+					}
+				}
+				
+				if (castFailed) { return Result{}; }
+
+				try {
+					currentTargetRes = funcDef.callback(&context, evaluatedArgs);
+				}
+				catch (...) {
+					return Result{};
 				}
 			}
 
-			// Cast all arguments to their expected types defined by the function signature.
-			for (size_t i = 0; i < evaluatedArgs.size(); ++i) {
-				if (i < funcDef.parameters.size()) {
-					evaluatedArgs[i] = context.castArgument(evaluatedArgs[i], funcDef.parameters[i].type);
-					if (evaluatedArgs[i].type == NumericConstant::Invalid) { 
-						return Result{}; 
-					}
-				}
-			}
-
-			try {
-				return funcDef.callback(&context, evaluatedArgs);
-			}
-			catch (...) {}
-
-			return Result{};
+			return currentTargetRes;
 		}
 
 	protected :
