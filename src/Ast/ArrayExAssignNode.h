@@ -23,7 +23,7 @@ namespace ve {
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns the assigned value.
 		 **/
-		Result					evaluate(ExecutionContext& context) const override {
+		Result						evaluate(ExecutionContext& context) const override {
 			Result target = context.getArena().nodes[targetIndex]->evaluate(context);
 
 			if (target.type != NumericConstant::Object || !target.value.objectVal) {
@@ -87,14 +87,21 @@ namespace ve {
 			}
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::ArrayExAssign; }
+
 	protected :
 		// == Members.
-		size_t					targetIndex;
-		size_t					startIndex;
-		size_t					endIndex;
-		uint32_t				flagsMask;
-		size_t					rightIndex;
-		int						opType;
+		size_t						targetIndex;
+		size_t						startIndex;
+		size_t						endIndex;
+		uint32_t					flagsMask;
+		size_t						rightIndex;
+		int							opType;
 	};
 
 }	// namespace ve

@@ -138,7 +138,9 @@ set(APP_HEADERS
     src/Ast/ContinueNode.h
     src/Ast/DivAssignNode.h
     src/Ast/DivNode.h
+	src/Ast/DoWhileNode.h
     src/Ast/EqNode.h
+	src/Ast/FlatVectorNode.h
     src/Ast/ForNode.h
     src/Ast/ForRangeNode.h
     src/Ast/FunctionCallNode.h

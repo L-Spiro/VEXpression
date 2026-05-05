@@ -34,43 +34,15 @@ namespace ve {
 			out = context.evaluateMath(leftVal, rightVal, ExprLexer::MOD);
 			VE_DELETE_SWAP(out, lastObject);
 
-			//if (leftVal.type == NumericConstant::Object) {
-			//	if (!leftVal.value.objectVal) { return Result{}; }
-			//	out = (*leftVal.value.objectVal) % rightVal;
-
-			//	// The operation probably created a new object.
-			//	VE_DELETE_SWAP(out, lastObject);
-			//}
-
-			//NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
-			//Result l = context.convertResult(leftVal, common);
-			//Result r = context.convertResult(rightVal, common);
-
-			//out.type = common;
-
-			//if (common == NumericConstant::Floating) {
-			//	out.value.doubleVal = std::fmod(l.value.doubleVal, r.value.doubleVal);
-			//}
-			//else if (common == NumericConstant::Signed) {
-			//	out.value.intVal = (r.value.intVal == 0) ? 0 : (l.value.intVal % r.value.intVal);
-			//}
-			//else if (common == NumericConstant::Unsigned) {
-			//	out.value.uintVal = (r.value.uintVal == 0) ? 0 : (l.value.uintVal % r.value.uintVal);
-			//}
-			//else if (common == NumericConstant::Object) {
-			//	if (!l.value.objectVal) { return Result{}; }
-			//	if (!r.value.objectVal) { return Result{}; }
-			//	out = (*l.value.objectVal) % r;
-
-			//	// The operation probably created a new object.
-			//	VE_DELETE_SWAP(out, lastObject);
-			//}
-			//else {
-			//	throw ErrorCode::Unknown_Numeric_Type;
-			//}
-
 			return out;
 		}
+
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::Mod; }
 
 	protected :
 

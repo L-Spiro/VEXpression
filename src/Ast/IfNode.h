@@ -23,7 +23,7 @@ namespace ve {
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns the result of the executed branch, or the condition itself if empty.
 		 **/
-		Result							evaluate(ExecutionContext& context) const override {
+		Result						evaluate(ExecutionContext& context) const override {
 			Result condRes = context.getArena().nodes[conditionNode]->evaluate(context);
 			
 			bool isTrue = false;
@@ -60,14 +60,21 @@ namespace ve {
 			}
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::If; }
+
 	protected :
 		// == Members.
 		/** The AST arena index for the condition expression. **/
-		size_t							conditionNode;
+		size_t						conditionNode;
 		/** The AST arena index for the true block. -1 if the block is empty. **/
-		size_t							trueBlockNode;
+		size_t						trueBlockNode;
 		/** The AST arena index for the false block. -1 if the block is empty. **/
-		size_t							falseBlockNode;
+		size_t						falseBlockNode;
 	};
 
 }	// namespace ve

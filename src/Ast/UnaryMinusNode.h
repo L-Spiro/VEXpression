@@ -46,6 +46,13 @@ namespace ve {
 			return out;
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::UnaryMinus; }
+
 	protected :
 
 	private :

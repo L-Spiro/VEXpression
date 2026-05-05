@@ -3672,9 +3672,27 @@ namespace ve {
 			
 			if constexpr (std::is_pointer_v<IntT>) {
 				val = reinterpret_cast<uintptr_t>(value);
+				if (padding == size_t(-1)) {
+					padding = sizeof(uintptr_t) * 2;
+				}
 			}
 			else {
 				val = static_cast<uint64_t>(value);
+			}
+
+			if (padding == size_t(-1)) {
+				if (val > UINT32_MAX) {
+					padding = sizeof(uint64_t) * 2;
+				}
+				else if (val > UINT16_MAX) {
+					padding = sizeof(uint32_t) * 2;
+				}
+				else if (val > UINT8_MAX) {
+					padding = sizeof(uint16_t) * 2;
+				}
+				else {
+					padding = sizeof(uint8_t) * 2;
+				}
 			}
 
 			CharT buffer[16];
@@ -3744,6 +3762,20 @@ namespace ve {
 				while (val > 0) {
 					buffer[index--] = static_cast<CharT>('0' + (val & 1));
 					val >>= 1;
+				}
+			}
+			if (padding == size_t(-1)) {
+				if (uint64_t(value) > UINT32_MAX) {
+					padding = sizeof(uint64_t) * 8;
+				}
+				else if (uint64_t(value) > UINT16_MAX) {
+					padding = sizeof(uint32_t) * 8;
+				}
+				else if (uint64_t(value) > UINT8_MAX) {
+					padding = sizeof(uint16_t) * 8;
+				}
+				else {
+					padding = sizeof(uint8_t) * 8;
 				}
 			}
 

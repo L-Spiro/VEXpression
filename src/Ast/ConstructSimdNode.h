@@ -26,7 +26,7 @@ namespace ve {
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns a Result containing the new SimdObject.
 		 **/
-		Result							evaluate(ExecutionContext& context) const override {
+		Result						evaluate(ExecutionContext& context) const override {
 			SimdObject* obj = context.allocateObject<SimdObject>();
 			if (!obj) { return Result{}; }
 
@@ -60,9 +60,16 @@ namespace ve {
 			return obj->createResult();
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::ConstructSimd; }
+
 	private :
-		SimdRegisterType				regType;
-		std::vector<size_t>				args;
+		SimdRegisterType			regType;
+		std::vector<size_t>			args;
 	};
 
 }	// namespace ve

@@ -55,6 +55,16 @@ namespace ve {
 		virtual bool						initializeFrom(const Result& val) override;
 
 		/**
+		 * Sets the vector to a specialized flat array already prepared.
+		 * 
+		 * \param array			The array to copy internally.
+		 **/
+		void								setFlat(const std::vector<Result>& array) {
+			clear();
+			elements = array;
+		}
+
+		/**
 		 * Retrieves the number of elements in the vector.
 		 *
 		 * \return				Returns the element count.

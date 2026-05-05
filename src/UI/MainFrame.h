@@ -5,8 +5,8 @@
 #include <wx/wx.h>
 #include <wx/aui/aui.h>
 #include <wx/stc/stc.h>
+#include <wx/timer.h>
 #include <wx/treelist.h>
-#include <wx/listctrl.h>
 
 namespace ve {
 
@@ -19,24 +19,36 @@ namespace ve {
 		virtual ~MainFrame();
 
 
+		// == Functions.
+
 	private :
+		// == Members.
 		wxAuiManager			auiManager;				/**< The layout manager for dockable panes. */
-		bool					realTimeRepl;			/**< Flag indicating if the REPL loop is active. */
 		wxStyledTextCtrl*		editor;					/**< The syntax-highlighting text editor control. */
-		wxTextCtrl*				outputArea;				/**< The read-only output text area. */
-		wxListCtrl*				constantsList;			/**< The list of registered constants. */
+		wxStyledTextCtrl*		outputArea;				/**< The read-only output text area. */
+		wxTreeListCtrl*			constantsTree;			/**< The tree-list view of registered constants. */
 		wxTreeListCtrl*			functionsTree;			/**< The tree-list view of registered functions. */
+		wxTimer					replTimer;				/**< The debounce timer. */
 
 		ExecutionContext		ctx;					/**< The execution context for evaluating expressions. */
+
+		bool					realTimeRepl;			/**< Flag indicating if the REPL loop is active. */
 
 
 		// == Functions.
 		/**
 		 * A simple helper function to print the strongly-typed Result union.
-		 * * \param res			The execution result to print.
-		 * \return			A string representation of the result.
+		 *
+		 * \param res			The execution result to print.
+		 * \param extended		If true, extended information is printed.
+		 * \return				A string representation of the result.
 		 **/
-		std::string				printResult(const ve::Result& res);
+		std::string				printResult(const ve::Result& res, bool extended = false);
+
+		/**
+		 * Creates and configures the top menu bar.
+		 **/
+		void					createMenu();
 
 		/**
 		 * Creates and configures the top toolbar.
@@ -49,7 +61,7 @@ namespace ve {
 		void					createControls();
 
 		/**
-		 * Populates the constants list with default data.
+		 * Populates the constants tree with default data.
 		 **/
 		void					populateConstants();
 
@@ -71,6 +83,13 @@ namespace ve {
 		void					onEditorTextChanged(wxStyledTextEvent& event);
 
 		/**
+		 * Event handler for the REPL debounce timer.
+		 *
+		 * \param event			The timer event.
+		 **/
+		void					onReplTimer(wxTimerEvent& event);
+
+		/**
 		 * Event handler for the Run button.
 		 *
 		 * \param event			The command event.
@@ -83,6 +102,62 @@ namespace ve {
 		 * \param event			The command event.
 		 **/
 		void					onReplToggled(wxCommandEvent& event);
+
+		/**
+		 * Event handler for the File -> Open menu item.
+		 *
+		 * \param event			The command event.
+		 **/
+		void					onMenuFileOpen(wxCommandEvent& event);
+
+		/**
+		 * Event handler for the File -> Save menu item.
+		 *
+		 * \param event			The command event.
+		 **/
+		void					onMenuFileSave(wxCommandEvent& event);
+
+		/**
+		 * Event handler for the File -> Save As menu item.
+		 *
+		 * \param event			The command event.
+		 **/
+		void					onMenuFileSaveAs(wxCommandEvent& event);
+
+		/**
+		 * Event handler for the File -> Exit menu item.
+		 *
+		 * \param event			The command event.
+		 **/
+		void					onMenuFileExit(wxCommandEvent& event);
+
+		/**
+		 * Event handler for the Window -> Constants menu item.
+		 *
+		 * \param event			The command event.
+		 **/
+		void					onMenuWindowConstants(wxCommandEvent& event);
+
+		/**
+		 * Event handler for the Window -> Functions menu item.
+		 *
+		 * \param event			The command event.
+		 **/
+		void					onMenuWindowFunctions(wxCommandEvent& event);
+
+		/**
+		 * Event handler to update the Window -> Constants menu item state.
+		 *
+		 * \param event			The UI update event.
+		 **/
+		void					onUpdateWindowConstants(wxUpdateUIEvent& event);
+
+		/**
+		 * Event handler to update the Window -> Functions menu item state.
+		 *
+		 * \param event			The UI update event.
+		 **/
+		void					onUpdateWindowFunctions(wxUpdateUIEvent& event);
 	};
 
 }	// namespace ve

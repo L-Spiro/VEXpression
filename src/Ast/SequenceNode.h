@@ -29,6 +29,7 @@ namespace ve {
 			lastResult.value.uintVal = 0;
 			
 			for (size_t stmtIndex : statements) {
+				if (size_t(-1) == stmtIndex) { throw ErrorCode::Undefined_Identifier; }
 				lastResult = context.getArena().nodes[stmtIndex]->evaluate(context);
 
 				// Handle continue, break, or return.
@@ -42,6 +43,13 @@ namespace ve {
 			
 			return lastResult;
 		}
+
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::Sequence; }
 
 	protected :
 

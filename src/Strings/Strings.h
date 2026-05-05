@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 namespace ve {
 
@@ -45,13 +46,14 @@ namespace ve {
 	 * \param language		The language for the string to select.
 	 * \return				Returns the requested string as an L"" string.
 	 **/
-	inline const wchar_t*	StrL(StringId id, size_t language) {
+	inline const std::wstring	StrL(StringId id, size_t language) {
 		switch ( id ) {
-#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { const wchar_t* strings[] = { L##en, L##ja, L##zh, L##es, L##fr, L##it, L##pt, L##ar, L##ru, L##de, L##nl, L##ko, L##th, L##hi, L##tr }; return strings[language]; }
+//#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { const wchar_t* strings[] = { L##en, L##ja, L##zh, L##es, L##fr, L##it, L##pt, L##ar, L##ru, L##de, L##nl, L##ko, L##th, L##hi, L##tr }; return strings[language]; }
+#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { std::wstring strings[] = { std::wstring(L##en), std::wstring(L##ja), std::wstring(L##zh), std::wstring(L##es), std::wstring(L##fr), std::wstring(L##it), std::wstring(L##pt), std::wstring(L##ar), std::wstring(L##ru), std::wstring(L##de), std::wstring(L##nl), std::wstring(L##ko), std::wstring(L##th), std::wstring(L##hi), std::wstring(L##tr) }; return strings[language]; }
 
 #include "StringEnum.inl"
 #undef VE_STR
-			default : { return L""; }
+			default : { return std::wstring(); }
 		}
 	}
 

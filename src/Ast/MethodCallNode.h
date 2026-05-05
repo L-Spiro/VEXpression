@@ -27,13 +27,14 @@ namespace ve {
 		 * \param context	The execution context containing the AST arena and state.
 		 * \return			The calculated Result of the method call chain.
 		 **/
-		Result							evaluate(ExecutionContext& context) const override {
+		Result					evaluate(ExecutionContext& context) const override {
 			std::vector<const MethodCallNode*> chain;
 			chain.push_back(this);
 
 			ve::AstNode* currentBase = context.getArena().nodes[targetNode].get();
 
-			while (auto* methodNode = dynamic_cast<const MethodCallNode*>(currentBase)) {
+			while (currentBase->type() == NodeType::MethodCall) {
+				const MethodCallNode* methodNode = static_cast<const MethodCallNode*>(currentBase);
 				chain.push_back(methodNode);
 				currentBase = context.getArena().nodes[methodNode->targetNode].get();
 			}
@@ -51,7 +52,9 @@ namespace ve {
 				evaluatedArgs.push_back(currentTargetRes);
 
 				for (size_t i = 0; i < callNode->argNodes.size(); ++i) {
-					evaluatedArgs.push_back(context.getArena().nodes[callNode->argNodes[i]]->evaluate(context));
+					auto idx = callNode->argNodes[i];
+					if (size_t(-1) == idx) { throw ErrorCode::Undefined_Identifier; }
+					evaluatedArgs.push_back(context.getArena().nodes[idx]->evaluate(context));
 				}
 
 				FunctionDef funcDef;
@@ -106,14 +109,21 @@ namespace ve {
 			return currentTargetRes;
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::MethodCall; }
+
 	protected :
 		// == Members.
 		/** The AST arena index for the target expression being called on. **/
-		size_t							targetNode;
+		size_t						targetNode;
 		/** The string name of the method being called. **/
-		std::string						methodName;
+		std::string					methodName;
 		/** The AST arena indices for the arguments. **/
-		std::vector<size_t>				argNodes;
+		std::vector<size_t>			argNodes;
 	};
 
 }	// namespace ve

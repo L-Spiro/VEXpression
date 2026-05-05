@@ -31,40 +31,15 @@ namespace ve {
 			out = context.evaluateMath(leftVal, rightVal, ExprLexer::BIT_XOR);
 			VE_DELETE_SWAP(out, lastObject);
 
-			//if (leftVal.type == NumericConstant::Object) {
-			//	if (!leftVal.value.objectVal) { return Result{}; }
-			//	return (*leftVal.value.objectVal) ^ rightVal;
-			//}
-
-			//NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
-			//Result l = context.convertResult(leftVal, common);
-			//Result r = context.convertResult(rightVal, common);
-
-			//Result out;
-			//if (common == NumericConstant::Floating) {
-			//	/*out.type = NumericConstant::Signed;
-			//	out.value.intVal = static_cast<int64_t>(l.value.doubleVal) ^ static_cast<int64_t>(r.value.doubleVal);*/
-			//	out.type = NumericConstant::Invalid;
-			//}
-			//else if (common == NumericConstant::Signed) {
-			//	out.type = NumericConstant::Signed;
-			//	out.value.intVal = l.value.intVal ^ r.value.intVal;
-			//}
-			//else if (common == NumericConstant::Unsigned) {
-			//	out.type = NumericConstant::Unsigned;
-			//	out.value.uintVal = l.value.uintVal ^ r.value.uintVal;
-			//}
-			//else if (common == NumericConstant::Object) {
-			//	if (!l.value.objectVal) { return Result{}; }
-			//	if (!r.value.objectVal) { return Result{}; }
-			//	out = (*l.value.objectVal) ^ r;
-			//}
-			//else {
-			//	throw ErrorCode::Unknown_Numeric_Type;
-			//}
-
 			return out;
 		}
+
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::BitXor; }
 
 	protected :
 

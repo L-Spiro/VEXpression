@@ -24,7 +24,7 @@ namespace ve {
 		 * \param context		The execution context containing variables and runtime states.
 		 * \return				Returns the constructed and casted primitive Result.
 		 **/
-		Result							evaluate(ExecutionContext& context) const override {
+		Result						evaluate(ExecutionContext& context) const override {
 			if (args.empty()) {
 				return context.castArgument(Result::make(0ull), targetType);
 			}
@@ -33,9 +33,16 @@ namespace ve {
 			return context.castArgument(val, targetType);
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::ConstructPrimitive; }
+
 	private :
-		DataType						targetType;
-		std::vector<size_t>				args;
+		DataType					targetType;
+		std::vector<size_t>			args;
 	};
 
 }	// namespace ve

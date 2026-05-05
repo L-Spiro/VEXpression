@@ -49,8 +49,16 @@ namespace ve {
 			return resMap->createResult();
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::Map; }
+
 	private :
-		std::vector<std::pair<size_t, size_t>> elements;
+		std::vector<std::pair<size_t, size_t>>
+									elements;
 	};
 
 }	// namespace ve

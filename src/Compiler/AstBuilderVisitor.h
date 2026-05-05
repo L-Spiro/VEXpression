@@ -25,7 +25,9 @@
 #include "../Ast/ContinueNode.h"
 #include "../Ast/DivAssignNode.h"
 #include "../Ast/DivNode.h"
+#include "../Ast/DoWhileNode.h"
 #include "../Ast/EqNode.h"
+#include "../Ast/FlatVectorNode.h"
 #include "../Ast/ForNode.h"
 #include "../Ast/ForRangeNode.h"
 #include "../Ast/FunctionCallNode.h"
@@ -200,8 +202,7 @@ namespace ve {
 			
 			size_t trueBlockNode = static_cast<size_t>(-1);
 			if (ctx->block(0)) {
-				// Structurally verify the block actually contains statements
-				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block(0)->statement_list())) {
+				if (!ctx->block(0)->statement_list()->children.empty()) {
 					trueBlockNode = std::any_cast<size_t>(visit(ctx->block(0)));
 				}
 			}
@@ -209,8 +210,7 @@ namespace ve {
 			size_t falseBlockNode = static_cast<size_t>(-1);
 			if (ctx->ELSE()) {
 				if (ctx->block(1)) {
-					// Structurally verify the block actually contains statements
-					if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block(1)->statement_list())) {
+					if (!ctx->block(1)->statement_list()->children.empty()) {
 						falseBlockNode = std::any_cast<size_t>(visit(ctx->block(1)));
 					}
 				}
@@ -243,7 +243,7 @@ namespace ve {
 			
 			size_t blockNode = static_cast<size_t>(-1);
 			if (ctx->block()) {
-				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+				if (!ctx->block()->statement_list()->children.empty()) {
 					blockNode = std::any_cast<size_t>(visit(ctx->block()));
 				}
 			}
@@ -267,7 +267,7 @@ namespace ve {
 			
 			size_t blockNode = static_cast<size_t>(-1);
 			if (ctx->block()) {
-				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+				if (!ctx->block()->statement_list()->children.empty()) {
 					blockNode = std::any_cast<size_t>(visit(ctx->block()));
 				}
 			}
@@ -291,12 +291,31 @@ namespace ve {
 			
 			size_t blockNode = static_cast<size_t>(-1);
 			if (ctx->block()) {
-				if (!dynamic_cast<ExprParser::ListEmptyContext*>(ctx->block()->statement_list())) {
+				if (!ctx->block()->statement_list()->children.empty()) {
 					blockNode = std::any_cast<size_t>(visit(ctx->block()));
 				}
 			}
 			
 			return context.addNode<ForRangeNode>(varIdx, objNode, blockNode);
+		}
+
+		/**
+		 * Visits a do-while loop statement, resolving empty blocks without RTTI.
+		 *
+		 * \param ctx		The parse tree context containing the do-while statement.
+		 * \return			An std::any containing the size_t ID of the newly created node.
+		 **/
+		virtual std::any			visitDoWhileStmt(ExprParser::DoWhileStmtContext* ctx) override {
+			size_t blockNode = static_cast<size_t>(-1);
+			if (ctx->block()) {
+				if (!ctx->block()->statement_list()->children.empty()) {
+					blockNode = std::any_cast<size_t>(visit(ctx->block()));
+				}
+			}
+
+			size_t condNode = std::any_cast<size_t>(visit(ctx->expr()));
+
+			return context.addNode<DoWhileNode>(blockNode, condNode);
 		}
 
 		/**
@@ -465,38 +484,65 @@ namespace ve {
 		/**
 		 * Visits a standard array access expression.
 		 *
-		 * \param ctx		The parser context for the expression.
-		 * \return			Returns an AST node representing the access operation.
+		 * \param ctx		The parse tree context containing the array access.
+		 * \return			An std::any containing the size_t ID of the newly created node.
 		 **/
 		virtual std::any			visitArrayAccess(ExprParser::ArrayAccessContext* ctx) override {
-			size_t targetIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
-			size_t argIndex = std::any_cast<size_t>(visit(ctx->expr(1)));
-			
-			return context.addNode<ArrayAccessNode>(targetIndex, argIndex);
+			std::vector<ExprParser::ArrayAccessContext*> chain;
+			ExprParser::ExprContext* currentExpr = ctx;
+
+			while (auto arrayCtx = dynamic_cast<ExprParser::ArrayAccessContext*>(currentExpr)) {
+				chain.push_back(arrayCtx);
+				currentExpr = arrayCtx->expr(0);
+			}
+
+			size_t currentTargetId = std::any_cast<size_t>(visit(currentExpr));
+
+			for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+				auto arrayCtx = *it;
+				size_t indexId = std::any_cast<size_t>(visit(arrayCtx->expr(1)));
+				currentTargetId = context.addNode<ArrayAccessNode>(currentTargetId, indexId);
+			}
+
+			return currentTargetId;
 		}
 
 		/**
 		 * Visits an extended (sliced) array access expression.
 		 *
-		 * \param ctx		The parser context for the expression.
-		 * \return			Returns an AST node representing the slice operation.
+		 * \param ctx		The parse tree context for the slice.
+		 * \return			An std::any containing the size_t ID of the newly created node.
 		 **/
 		virtual std::any			visitArrayAccessEx(ExprParser::ArrayAccessExContext* ctx) override {
-			size_t targetIndex = std::any_cast<size_t>(visit(ctx->expr(0)));
-			size_t startIndex = static_cast<size_t>(-1);
-			size_t endIndex = static_cast<size_t>(-1);
-			uint32_t mask = 0;
+			std::vector<ExprParser::ArrayAccessExContext*> chain;
+			ExprParser::ExprContext* currentExpr = ctx;
 
-			if (ctx->start) {
-				startIndex = std::any_cast<size_t>(visit(ctx->start));
-				mask |= ArrayExFlags::ArrayExFlag_Start;
-			}
-			if (ctx->end) {
-				endIndex = std::any_cast<size_t>(visit(ctx->end));
-				mask |= ArrayExFlags::ArrayExFlag_End;
+			while (auto sliceCtx = dynamic_cast<ExprParser::ArrayAccessExContext*>(currentExpr)) {
+				chain.push_back(sliceCtx);
+				currentExpr = sliceCtx->expr(0);
 			}
 
-			return context.addNode<ArrayAccessExNode>(targetIndex, startIndex, endIndex, mask);
+			size_t currentTargetId = std::any_cast<size_t>(visit(currentExpr));
+
+			for (auto it = chain.rbegin(); it != chain.rend(); ++it) {
+				auto sliceCtx = *it;
+				size_t startIndex = static_cast<size_t>(-1);
+				size_t endIndex = static_cast<size_t>(-1);
+				uint32_t mask = 0;
+
+				if (sliceCtx->start) {
+					startIndex = std::any_cast<size_t>(visit(sliceCtx->start));
+					mask |= ArrayExFlags::ArrayExFlag_Start;
+				}
+				if (sliceCtx->end) {
+					endIndex = std::any_cast<size_t>(visit(sliceCtx->end));
+					mask |= ArrayExFlags::ArrayExFlag_End;
+				}
+
+				currentTargetId = context.addNode<ArrayAccessExNode>(currentTargetId, startIndex, endIndex, mask);
+			}
+
+			return currentTargetId;
 		}
 
 		/**
@@ -597,35 +643,13 @@ namespace ve {
 		 * \return			Returns an std::any containing the allocated node reference/index.
 		 **/
 		virtual std::any			visitCCastExpr(ExprParser::CCastExprContext* ctx) override {
-			// Extract the target type string (e.g., "uint32_t" or "u32") and resolve it to your internal DataType enum.
 			std::string typeStr = ctx->type_name()->getText();
 			DataType targetType = resolveDataType(typeStr); 
 			
-			// Evaluate the inner expression to get its node index.
 			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
 			
-			// Allocate a CastNode in the execution context arena.
 			return context.addNode<CastNode>(exprNode, targetType);
 		}
-
-		/**
-		 * Visits an initialization-style cast expression node in the AST, evaluates its inner expression, and casts it to the target type.
-		 * Must be called within a try/catch block.
-		 *
-		 * \param ctx		The parser context containing the initialization-style cast expression.
-		 * \return			Returns an std::any containing the allocated node reference/index.
-		 **/
-		//virtual std::any			visitInitCastExpr(ExprParser::InitCastExprContext* ctx) override {
-		//	// Extract the target type string (e.g., "uint32_t" or "u32") and resolve it to your internal DataType enum.
-		//	std::string typeStr = ctx->type_name()->getText();
-		//	DataType targetType = resolveDataType(typeStr); 
-		//	
-		//	// Evaluate the inner expression to get its node index.
-		//	size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
-		//	
-		//	// Allocate a CastNode in the execution context arena.
-		//	return context.addNode<CastNode>(exprNode, targetType);
-		//}
 
 		/**
 		 * Visits a static_cast expression node in the AST, evaluates its inner expression, and casts it to the target type.
@@ -635,14 +659,11 @@ namespace ve {
 		 * \return			Returns an std::any containing the allocated node reference/index.
 		 **/
 		virtual std::any			visitStaticCastExpr(ExprParser::StaticCastExprContext* ctx) override {
-			// Extract the target type string (e.g., "uint32_t" or "u32") and resolve it to your internal DataType enum.
 			std::string typeStr = ctx->type_name()->getText();
 			DataType targetType = resolveDataType(typeStr); 
 			
-			// Evaluate the inner expression to get its node index.
 			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
 			
-			// Allocate a CastNode in the execution context arena.
 			return context.addNode<CastNode>(exprNode, targetType);
 		}
 
@@ -938,43 +959,6 @@ namespace ve {
 		}
 
 		/**
-		 * Visits a map literal expression node in the AST, evaluates its keys and values, and allocates a MapNode.
-		 * Must be called within a try/catch block.
-		 *
-		 * \param ctx		The parser context containing the map expression.
-		 * \return			Returns an std::any containing the allocated node reference/index.
-		 **/
-		//virtual std::any			visitMapExpr(ExprParser::MapExprContext* ctx) override {
-		//	std::vector<std::pair<size_t, size_t>> elements;
-
-		//	auto exprs = ctx->expr();
-		//	
-		//	for (size_t i = 0; i < exprs.size(); i += 2) {
-		//		size_t keyId = std::any_cast<size_t>(visit(exprs[i]));
-		//		size_t valId = std::any_cast<size_t>(visit(exprs[i+1]));
-		//		elements.push_back({ keyId, valId });
-		//	}
-
-		//	return context.addNode<MapNode>(elements);
-		//}
-
-		///**
-		// * Visits a vector initializer list expression.
-		// *
-		// * \param ctx		The parser context for the vector expression.
-		// * \return			Returns an AST node representing the vector.
-		// **/
-		//virtual std::any			visitVectorExpr(ExprParser::VectorExprContext* ctx) override {
-		//	std::vector<AstNode*> elements;
-		//	
-		//	for (auto* exprCtx : ctx->expr()) {
-		//		elements.push_back(std::any_cast<AstNode*>(visit(exprCtx)));
-		//	}
-		//	
-		//	return context.addNode<VectorNode>(elements);
-		//}
-
-		/**
 		 * Visits a brace expression and determines whether to construct a map or a vector.
 		 *
 		 * \param ctx		The parse tree context containing the expression elements.
@@ -993,10 +977,134 @@ namespace ve {
 				return context.addNode<MapNode>(elements);
 			}
 
+			bool isFlatPrimitiveArray = true;
+			std::vector<Result> preEvaluatedData;
+			preEvaluatedData.reserve(exprs.size());
+
+			for (auto* elementCtx : exprs) {
+				if (elementCtx->start == elementCtx->stop) {
+					size_t tokenType = elementCtx->start->getType();
+					std::string text = elementCtx->start->getText();
+					Result res;
+					bool validConstant = true;
+
+					switch (tokenType) {
+						case ExprLexer::KW_TRUE : {
+							res = Result::make(true);
+							break;
+						}
+						case ExprLexer::KW_FALSE : {
+							res = Result::make(false);
+							break;
+						}
+						case ExprLexer::PUREDEC_CONSTANT : {
+							bool overflow = false;
+							res.value.uintVal = Text::stoull(text.c_str() + 1, 10, nullptr, ~0ULL, &overflow);
+							if (overflow) {
+								res.type = NumericConstant::Floating;
+								res.value.doubleVal = Text::atof(text.c_str() + 1);
+							}
+							else {
+								res.type = Text::classifyString(text);
+							}
+							break;
+						}
+						case ExprLexer::BIN_CONSTANT : {
+							res.value.uintVal = Text::stoull(text.c_str(), 2);
+							res.type = Text::classifyString(text);
+							break;
+						}
+						case ExprLexer::OCT_CONSTANT : {
+							res.value.uintVal = Text::stoull(text.c_str(), 8);
+							res.type = Text::classifyString(text);
+							break;
+						}
+						case ExprLexer::HEX_CONSTANT : {
+							res.value.uintVal = Text::stoull(text.c_str(), 16);
+							res.type = Text::classifyString(text);
+							break;
+						}
+						case ExprLexer::DEC_CONSTANT : {
+							if (context.getTreatAllAsHex()) {
+								res.value.uintVal = Text::stoull(text.c_str(), 16);
+								res.type = Text::classifyString(text);
+							}
+							else {
+								bool overflow = false;
+								res.value.uintVal = Text::stoull(text.c_str(), 10, nullptr, ~0ULL, &overflow);
+								if (overflow) {
+									res.type = NumericConstant::Floating;
+									res.value.doubleVal = Text::atof(text.c_str());
+								}
+								else {
+									res.type = Text::classifyString(text);
+								}
+							}
+							break;
+						}
+						case ExprLexer::FLOAT_CONSTANT : {
+							auto isEntirelyHex = [](const std::string& str) {
+								for (char c : str) {
+									if (!Character::validHex(c)) { return false; }
+								}
+								return true;
+							};
+							if (context.getTreatAllAsHex() && isEntirelyHex(text)) {
+								res.value.uintVal = Text::stoull(text.c_str(), 16);
+								res.type = NumericConstant::Unsigned;
+							}
+							else {
+								res.value.doubleVal = Text::atof(text.c_str());
+								res.type = NumericConstant::Floating;
+							}
+							break;
+						}
+						case ExprLexer::CHAR_CONSTANT : {
+							std::string_view payload(text.data() + 1, text.length() - 2);
+							uint64_t codePoint = 0;
+							if (!payload.empty()) {
+								size_t charsConsumed = 0;
+								bool escapeFound = false;
+								codePoint = Text::resolveEscape(payload.data(), payload.size(), charsConsumed, true, &escapeFound);
+								if (!escapeFound) {
+									size_t eaten = 0;
+									codePoint = static_cast<uint64_t>(Text::nextUtf8Char(payload.data(), payload.size(), &eaten));
+								}
+							}
+							res.type = NumericConstant::Unsigned;
+							res.value.uintVal = codePoint;
+							break;
+						}
+						default : {
+							validConstant = false;
+							break;
+						}
+					}
+
+					if (validConstant) {
+						preEvaluatedData.push_back(res);
+					}
+					else {
+						isFlatPrimitiveArray = false;
+						break;
+					}
+				}
+				else {
+					isFlatPrimitiveArray = false;
+					break;
+				}
+			}
+
+			if (isFlatPrimitiveArray) {
+				return context.addNode<FlatVectorNode>(std::move(preEvaluatedData));
+			}
+
 			std::vector<size_t> elements;
+			elements.reserve(exprs.size());
 			for (auto* exprCtx : exprs) {
 				elements.push_back(std::any_cast<size_t>(visit(exprCtx)));
 			}
+			
 			return context.addNode<VectorNode>(elements);
 		}
 
@@ -1040,7 +1148,7 @@ namespace ve {
 				return context.addNode<VarNode>(varId);
 			}
 
-			return static_cast<size_t>(0);
+			throw ErrorCode::Undefined_Identifier;
 		}
 
 		/**
@@ -1315,7 +1423,7 @@ namespace ve {
 			if (strObj) {
 				strObj->assignUtf8(combinedUtf8.data(), combinedUtf8.length());
 				strObj->incRef();
-				strObj->setAsConst();
+				//strObj->setAsConst();
 				return context.addNode<ConstantNode>(strObj->createResult());
 			}
 			else {

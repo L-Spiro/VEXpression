@@ -85,6 +85,7 @@ expr
     // =========================================================================
     // Control Flow, Grouping, and Literals
     // =========================================================================
+	| DO block WHILE LPAREN expr RPAREN                                   # doWhileStmt
     | BREAK                                                               # breakExpr
     | CONTINUE                                                            # continueExpr
     | RETURN expr?                                                        # returnExpr

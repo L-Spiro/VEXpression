@@ -155,16 +155,16 @@ namespace ve {
 			newVec->elements.reserve(elements.size() + rVec->elements.size());
 			newVec->elements.insert(newVec->elements.end(), elements.begin(), elements.end());
 			newVec->elements.insert(newVec->elements.end(), rVec->elements.begin(), rVec->elements.end());
+
+			for (size_t i = 0; i < newVec->elements.size(); ++i) {
+				newVec->incObjectRef_Unsafe(i);
+			}
 		} 
 		else {
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
-				newVec->elements.push_back(context->evaluateMath(elements[i], rhs, ExprLexer::ADD));
+				newVec->pushBack(context->evaluateMath(elements[i], rhs, ExprLexer::ADD));
 			}
-		}
-
-		for (size_t i = 0; i < newVec->elements.size(); ++i) {
-			newVec->incObjectRef_Unsafe(i);
 		}
 
 		return newVec->createResult();

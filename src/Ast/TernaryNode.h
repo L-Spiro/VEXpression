@@ -48,6 +48,13 @@ namespace ve {
 			return context.getArena().nodes[falseIndex]->evaluate(context);
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::Ternary; }
+
 	protected :
 
 	private :

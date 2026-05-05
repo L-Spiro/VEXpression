@@ -21,7 +21,7 @@ namespace ve {
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns the evaluated Result, or Invalid if no expression was provided.
 		 **/
-		Result					evaluate(ExecutionContext& context) const override {
+		Result						evaluate(ExecutionContext& context) const override {
 			Result out = Result{};
 			
 			if (exprIndex != Object::InvalidIndex) {
@@ -32,9 +32,16 @@ namespace ve {
 			return out;
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::Return; }
+
 	protected :
 		// == Members.
-		size_t					exprIndex;
+		size_t						exprIndex;
 	};
 
 }	// namespace ve

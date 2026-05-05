@@ -27,6 +27,13 @@ namespace ve {
 		Result						evaluate(ExecutionContext& context) const override {
 			return context.getUserValue();
 		}
+
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::UserValue; }
 	};
 
 }	// namespace ve

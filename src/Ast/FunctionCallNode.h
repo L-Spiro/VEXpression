@@ -62,6 +62,13 @@ namespace ve {
 			return functionDefinition.callback(&context, evaluatedArgs);
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::FunctionCall; }
+
 	private :
 		// == Members.
 		FunctionDef					functionDefinition;

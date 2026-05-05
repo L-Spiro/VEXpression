@@ -33,49 +33,16 @@ namespace ve {
 			out = context.evaluateMath(leftVal, rightVal, ExprLexer::MOD_ASSIGN);
 			VE_DELETE_SWAP(out, lastObject);
 
-			//if (leftVal.type == NumericConstant::Object) {
-			//	if (!leftVal.value.objectVal) { return Result{}; }
-			//	out = leftVal.value.objectVal->operator%=(rightVal);
-
-			//	// Only trigger memory garbage-collecting tracking if operator%= allocated a completely new object.
-			//	if (out.value.objectVal != leftVal.value.objectVal) {
-			//		VE_DELETE_SWAP(out, lastObject);
-			//	}
-			//	
-			//	context.setVariable(varIndex, out);
-			//	return out;
-			//}
-
-			//NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
-			//Result l = context.convertResult(leftVal, common);
-			//Result r = context.convertResult(rightVal, common);
-
-			//out.type = common;
-
-			//if (common == NumericConstant::Floating) {
-			//	out.value.doubleVal = std::fmod(l.value.doubleVal, r.value.doubleVal);
-			//}
-			//else if (common == NumericConstant::Signed) {
-			//	out.value.intVal = l.value.intVal % r.value.intVal;
-			//}
-			//else if (common == NumericConstant::Unsigned) {
-			//	out.value.uintVal = l.value.uintVal % r.value.uintVal;
-			//}
-			//else if (common == NumericConstant::Object) {
-			//	if (!l.value.objectVal || !r.value.objectVal) { return Result{}; }
-			//	out = l.value.objectVal->operator%=(r);
-
-			//	if (out.value.objectVal != l.value.objectVal) {
-			//		VE_DELETE_SWAP(out, lastObject);
-			//	}
-			//}
-			//else {
-			//	return Result{};
-			//}
-
 			context.setVariable(varIndex, out);
 			return out;
 		}
+
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::ModAssign; }
 
 	protected :
 		// == Members.

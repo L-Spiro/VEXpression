@@ -27,6 +27,13 @@ namespace ve {
 		Result						evaluate(ExecutionContext& context) const override {
 			return Result::make(context.totalParms());
 		}
+
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::TotalParms; }
 	};
 
 }	// namespace ve

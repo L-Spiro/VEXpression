@@ -1,6 +1,7 @@
 #include "../Foundation/Text.h"
 #include "UI/MainFrame.h"
 
+#include <map>
 #include <wx/artprov.h>
 
 namespace ve {
@@ -8,7 +9,10 @@ namespace ve {
 	enum {
 		ID_EDITOR = wxID_HIGHEST + 1,
 		ID_TOGGLE_REPL,
-		ID_RUN_SCRIPT
+		ID_RUN_SCRIPT,
+		ID_REPL_TIMER,
+		ID_WINDOW_CONSTANTS,
+		ID_WINDOW_FUNCTIONS
 	};
 
 	MainFrame::MainFrame(const wxString& title) :
@@ -16,18 +20,19 @@ namespace ve {
 		realTimeRepl(true),
 		editor(nullptr),
 		outputArea(nullptr),
-		constantsList(nullptr),
+		constantsTree(nullptr),
 		functionsTree(nullptr) {
 		
 		auiManager.SetManagedWindow(this);
 
+		createMenu();
 		createToolbar();
 		createControls();
 
 		auiManager.AddPane(editor, wxAuiPaneInfo().Name("Editor").CenterPane().PaneBorder(false));
 
-		auiManager.AddPane(constantsList, wxAuiPaneInfo().Name("Constants").Caption("Constants").Left().Position(0).MinSize(200, 200));
-		auiManager.AddPane(functionsTree, wxAuiPaneInfo().Name("Functions").Caption("Functions").Left().Position(1).MinSize(200, 200));
+		auiManager.AddPane(constantsTree, wxAuiPaneInfo().Name("Constants").Caption("Constants").Right().Position(0).MinSize(200, 200));
+		auiManager.AddPane(functionsTree, wxAuiPaneInfo().Name("Functions").Caption("Functions").Right().Position(1).MinSize(200, 200));
 
 		auiManager.AddPane(outputArea, wxAuiPaneInfo().Name("Output").Caption("Output").Bottom().MinSize(100, 100));
 
@@ -36,6 +41,20 @@ namespace ve {
 		Bind(wxEVT_STC_CHANGE, &MainFrame::onEditorTextChanged, this, ID_EDITOR);
 		Bind(wxEVT_MENU, &MainFrame::onReplToggled, this, ID_TOGGLE_REPL);
 		Bind(wxEVT_MENU, &MainFrame::onRunClicked, this, ID_RUN_SCRIPT);
+		Bind(wxEVT_TIMER, &MainFrame::onReplTimer, this, ID_REPL_TIMER);
+		
+		Bind(wxEVT_MENU, &MainFrame::onMenuFileOpen, this, wxID_OPEN);
+		Bind(wxEVT_MENU, &MainFrame::onMenuFileSave, this, wxID_SAVE);
+		Bind(wxEVT_MENU, &MainFrame::onMenuFileSaveAs, this, wxID_SAVEAS);
+		Bind(wxEVT_MENU, &MainFrame::onMenuFileExit, this, wxID_EXIT);
+		
+		Bind(wxEVT_MENU, &MainFrame::onMenuWindowConstants, this, ID_WINDOW_CONSTANTS);
+		Bind(wxEVT_MENU, &MainFrame::onMenuWindowFunctions, this, ID_WINDOW_FUNCTIONS);
+		
+		Bind(wxEVT_UPDATE_UI, &MainFrame::onUpdateWindowConstants, this, ID_WINDOW_CONSTANTS);
+		Bind(wxEVT_UPDATE_UI, &MainFrame::onUpdateWindowFunctions, this, ID_WINDOW_FUNCTIONS);
+
+		replTimer.SetOwner(this, ID_REPL_TIMER);
 	}
 
 	MainFrame::~MainFrame() {
@@ -47,19 +66,43 @@ namespace ve {
 	 * A simple helper function to print the strongly-typed Result union.
 	 *
 	 * \param res			The execution result to print.
-	 * \return			A string representation of the result.
+	 * \param extended		If true, extended information is printed.
+	 * \return				A string representation of the result.
 	 **/
-	std::string MainFrame::printResult(const ve::Result& res) {
+	std::string MainFrame::printResult(const ve::Result& res, bool extended) {
 		switch (res.type) {
 			case ve::NumericConstant::Unsigned : {
-				return ve::Text::toUnsigned(res.value.uintVal) + " (" + ve::Text::toHex(res.value.uintVal) + ")";
+				std::string tmp = ve::Text::toUnsigned(res.value.uintVal) + " (" + ve::Text::toHex(res.value.uintVal, size_t(-1));
+				if (extended) {
+					tmp += ", " + ve::Text::toBinary(res.value.uintVal, size_t(-1)) + ")";
+				}
+				else {
+					tmp += ")";
+				}
+				return tmp;
 			}
 			case ve::NumericConstant::Signed : {
 				if (res.value.intVal < 0) {
-					return ve::Text::toSigned(res.value.intVal) + " (" + ve::Text::toHex(res.value.intVal) + ", -" + ve::Text::toHex(-res.value.intVal) + ")";
+					std::string tmp = ve::Text::toSigned(res.value.intVal) + " (" + ve::Text::toHex(res.value.intVal, size_t(-1)) + ", -";
+					tmp += ve::Text::toHex(-res.value.intVal, size_t(-1));
+					if (extended) {
+						tmp += ", -" + ve::Text::toBinary(-res.value.intVal, size_t(-1)) + ")";
+					}
+					else {
+						tmp += ")";
+					}
+					
+					return tmp;
 				}
 				else {
-					return ve::Text::toSigned(res.value.intVal) + " (" + ve::Text::toHex(res.value.intVal) + ")";
+					std::string tmp = ve::Text::toUnsigned(res.value.intVal) + " (" + ve::Text::toHex(res.value.intVal, size_t(-1));
+					if (extended) {
+						tmp += ", " + ve::Text::toBinary(res.value.intVal, size_t(-1)) + ")";
+					}
+					else {
+						tmp += ")";
+					}
+					return tmp;
 				}
 			}
 			case ve::NumericConstant::Floating : {
@@ -68,7 +111,14 @@ namespace ve {
 					uint32_t	uintVal;
 				} flt;
 				flt.floatVal = float(res.value.doubleVal);
-				return ve::Text::toDouble(res.value.doubleVal) + " (" + ve::Text::toHex(flt.uintVal) + ", " + ve::Text::toHex(res.value.uintVal) + ")";
+				std::string tmp = ve::Text::toDouble(res.value.doubleVal) + " (" + ve::Text::toHex(flt.uintVal, sizeof(float) * 2) + ", " + ve::Text::toHex(res.value.uintVal, sizeof(double) * 2);
+				if (extended) {
+					tmp += ", " + ve::Text::toBinary(flt.uintVal, sizeof(float) * 8) + ", " + ve::Text::toBinary(res.value.uintVal, sizeof(double) * 8) + ")";
+				}
+				else {
+					tmp += ")";
+				}
+				return tmp;
 			}
 			case ve::NumericConstant::Object : {
 				if (res.value.objectVal) {
@@ -94,12 +144,37 @@ namespace ve {
 	}
 
 	/**
+	 * Creates and configures the top menu bar.
+	 **/
+	void MainFrame::createMenu() {
+		wxMenuBar* menuBar = new wxMenuBar();
+
+		wxMenu* fileMenu = new wxMenu();
+		fileMenu->Append(wxID_OPEN, "Open\tCtrl+O");
+		fileMenu->Append(wxID_SAVE, "Save\tCtrl+S");
+		fileMenu->Append(wxID_SAVEAS, "Save As...");
+		fileMenu->AppendSeparator();
+		fileMenu->Append(wxID_EXIT, "Exit\tAlt+F4");
+
+		wxMenu* windowMenu = new wxMenu();
+		windowMenu->Append(ID_WINDOW_CONSTANTS, "Constants");
+		windowMenu->Append(ID_WINDOW_FUNCTIONS, "Functions");
+
+		menuBar->Append(fileMenu, "&File");
+		menuBar->Append(windowMenu, "&Window");
+
+		SetMenuBar(menuBar);
+	}
+
+	/**
 	 * Creates and configures the top toolbar.
 	 **/
 	void MainFrame::createToolbar() {
 		wxToolBar* toolbar = CreateToolBar(wxTB_HORIZONTAL | wxNO_BORDER | wxTB_FLAT | wxTB_TEXT);
 		
-		toolbar->AddTool(ID_TOGGLE_REPL, "REPL: ON", wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_TOOLBAR));
+		toolbar->AddCheckTool(ID_TOGGLE_REPL, "REPL: ON", wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_TOOLBAR));
+		toolbar->ToggleTool(ID_TOGGLE_REPL, !realTimeRepl);
+
 		toolbar->AddSeparator();
 		toolbar->AddTool(ID_RUN_SCRIPT, "Run (Ctrl+Enter)", wxArtProvider::GetBitmap(wxART_EXECUTABLE_FILE, wxART_TOOLBAR));
 		
@@ -124,12 +199,16 @@ namespace ve {
 		editor->SetMarginType(1, wxSTC_MARGIN_NUMBER);
 		editor->SetMarginWidth(1, 30);
 
-		outputArea = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY | wxBORDER_NONE);
-		outputArea->SetFont(monoFont);
+		outputArea = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+		outputArea->StyleSetFont(wxSTC_STYLE_DEFAULT, monoFont);
+		outputArea->StyleClearAll();
+		outputArea->SetReadOnly(true);
+		outputArea->SetMarginWidth(0, 0);
+		outputArea->SetMarginWidth(1, 0);
 
-		constantsList = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxBORDER_NONE);
-		constantsList->InsertColumn(0, "Name", wxLIST_FORMAT_LEFT, 100);
-		constantsList->InsertColumn(1, "Value", wxLIST_FORMAT_LEFT, 150);
+		constantsTree = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_DEFAULT_STYLE | wxBORDER_NONE);
+		constantsTree->AppendColumn("Name", 120, wxALIGN_LEFT, wxCOL_RESIZABLE);
+		constantsTree->AppendColumn("Value", 150, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		populateConstants();
 
 		functionsTree = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_DEFAULT_STYLE | wxBORDER_NONE);
@@ -140,16 +219,34 @@ namespace ve {
 	}
 
 	/**
-	 * Populates the constants list with default data.
+	 * Populates the constants tree with default data.
 	 **/
 	void MainFrame::populateConstants() {
+		wxTreeListItem root = constantsTree->GetRootItem();
+
+		std::map<ve::StringId, wxTreeListItem> groups;
+
 		for (size_t i = 0; i < ExecutionContext::totalBuiltInConstants(); ++i) {
 			Result res;
+			ve::StringId strId;
+			std::string name = ExecutionContext::getBuiltinConstant(i, res, strId);
 
-			long index = constantsList->InsertItem(constantsList->GetItemCount(), ExecutionContext::getBuiltinConstant(i, res));
+			std::wstring groupName = ve::StrL(strId, 0);
+			wxTreeListItem thisGroup;
+			auto groupItem = groups.find(strId);
+			if (groupItem == groups.end()) {
+				thisGroup = constantsTree->AppendItem(root, groupName);
+				groups[strId] = thisGroup;
+			}
+			else {
+				thisGroup = groupItem->second;
+			}
 
-			constantsList->SetItem(index, 1, wxString::FromUTF8(printResult(res)));
+			wxTreeListItem item = constantsTree->AppendItem(thisGroup, wxString::FromUTF8(name));
+			constantsTree->SetItemText(item, 1, wxString::FromUTF8(printResult(res)));
 		}
+
+		//constantsTree->Expand(builtInGroup);
 	}
 
 	/**
@@ -174,23 +271,27 @@ namespace ve {
 		std::string testExpr = code.ToStdString(wxConvUTF8);
 		ve::ExecutionContext context;
 		
+		outputArea->SetReadOnly(false);
+
 		if (!context.compile(testExpr)) {
-			outputArea->SetValue("Syntax Error.\n");
+			outputArea->SetText("Syntax Error.\n");
 		}
 		else {
 			try {
 				ve::Result res = context.execute();
 				wxString resultText = wxString::FromUTF8(printResult(res));
-				outputArea->SetValue(resultText);
+				outputArea->SetText(resultText);
 			}
 			catch (const std::exception& e) {
 				wxString errorMsg = wxString::FromUTF8(e.what());
-				outputArea->SetValue("Runtime Exception: " + errorMsg + "\n");
+				outputArea->SetText("Runtime Exception: " + errorMsg + "\n");
 			}
 			catch (...) {
-				outputArea->SetValue("Unknown Runtime Error occurred.\n");
+				outputArea->SetText("Unknown Runtime Error occurred.\n");
 			}
 		}
+
+		outputArea->SetReadOnly(true);
 	}
 
 	/**
@@ -200,8 +301,17 @@ namespace ve {
 	 **/
 	void MainFrame::onEditorTextChanged(wxStyledTextEvent& event) {
 		if (realTimeRepl) {
-			evaluateScript();
+			replTimer.Start(100, wxTIMER_ONE_SHOT);
 		}
+	}
+
+	/**
+	 * Event handler for the REPL debounce timer.
+	 *
+	 * \param event			The timer event.
+	 **/
+	void MainFrame::onReplTimer(wxTimerEvent& event) {
+		evaluateScript();
 	}
 
 	/**
@@ -219,8 +329,79 @@ namespace ve {
 	 * \param event			The command event.
 	 **/
 	void MainFrame::onReplToggled(wxCommandEvent& event) {
-		realTimeRepl = !realTimeRepl;
+		realTimeRepl = !event.IsChecked();
 		GetToolBar()->SetToolShortHelp(ID_TOGGLE_REPL, realTimeRepl ? "REPL: ON" : "REPL: OFF");
+	}
+
+	/**
+	 * Event handler for the File -> Open menu item.
+	 *
+	 * \param event			The command event.
+	 **/
+	void MainFrame::onMenuFileOpen(wxCommandEvent& event) {
+	}
+
+	/**
+	 * Event handler for the File -> Save menu item.
+	 *
+	 * \param event			The command event.
+	 **/
+	void MainFrame::onMenuFileSave(wxCommandEvent& event) {
+	}
+
+	/**
+	 * Event handler for the File -> Save As menu item.
+	 *
+	 * \param event			The command event.
+	 **/
+	void MainFrame::onMenuFileSaveAs(wxCommandEvent& event) {
+	}
+
+	/**
+	 * Event handler for the File -> Exit menu item.
+	 *
+	 * \param event			The command event.
+	 **/
+	void MainFrame::onMenuFileExit(wxCommandEvent& event) {
+		Close(true);
+	}
+
+	/**
+	 * Event handler for the Window -> Constants menu item.
+	 *
+	 * \param event			The command event.
+	 **/
+	void MainFrame::onMenuWindowConstants(wxCommandEvent& event) {
+		auiManager.GetPane("Constants").Show();
+		auiManager.Update();
+	}
+
+	/**
+	 * Event handler for the Window -> Functions menu item.
+	 *
+	 * \param event			The command event.
+	 **/
+	void MainFrame::onMenuWindowFunctions(wxCommandEvent& event) {
+		auiManager.GetPane("Functions").Show();
+		auiManager.Update();
+	}
+
+	/**
+	 * Event handler to update the Window -> Constants menu item state.
+	 *
+	 * \param event			The UI update event.
+	 **/
+	void MainFrame::onUpdateWindowConstants(wxUpdateUIEvent& event) {
+		event.Enable(!auiManager.GetPane("Constants").IsShown());
+	}
+
+	/**
+	 * Event handler to update the Window -> Functions menu item state.
+	 *
+	 * \param event			The UI update event.
+	 **/
+	void MainFrame::onUpdateWindowFunctions(wxUpdateUIEvent& event) {
+		event.Enable(!auiManager.GetPane("Functions").IsShown());
 	}
 
 }	// namespace ve

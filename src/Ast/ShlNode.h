@@ -28,63 +28,20 @@ namespace ve {
 		Result						evaluate(ExecutionContext& context) const override {
 			Result leftVal = context.getArena().nodes[leftIndex]->evaluate(context);
 			Result rightVal = context.getArena().nodes[rightIndex]->evaluate(context);
-
-			/*uint64_t shift = 0;
-			if (rightVal.type == NumericConstant::Floating) {
-				shift = static_cast<uint64_t>(rightVal.value.doubleVal);
-			}
-			else if (rightVal.type == NumericConstant::Signed) {
-				shift = static_cast<uint64_t>(rightVal.value.intVal);
-			}
-			else if (rightVal.type == NumericConstant::Unsigned) {
-				shift = rightVal.value.uintVal;
-			}
-			else {
-				throw ErrorCode::Unknown_Numeric_Type;
-			}*/
 			
 			Result out;
 			out = context.evaluateMath(leftVal, rightVal, ExprLexer::SHL);
 			VE_DELETE_SWAP(out, lastObject);
 
-			//if (leftVal.type == NumericConstant::Object) {
-			//	if (!leftVal.value.objectVal) { return Result{}; }
-			//	out = (*leftVal.value.objectVal) << Result{ .type = NumericConstant::Unsigned, .value { .uintVal = shift } };
-
-			//	// The operation probably created a new object.
-			//	VE_DELETE_SWAP(out, lastObject);
-			//}
-
-			//if (leftVal.type == NumericConstant::Floating || rightVal.type == NumericConstant::Floating) {
-			//	NumericConstant common = ExecutionContext::getCastType(leftVal.type, rightVal.type);
-			//	Result l = context.convertResult(leftVal, common);
-			//	Result r = context.convertResult(rightVal, common);
-
-			//	out.type = NumericConstant::Floating;
-			//	out.value.doubleVal = l.value.doubleVal * std::pow(2.0, r.value.doubleVal);
-			//	/*if (leftVal.value.doubleVal > double(INT64_MAX)) {
-			//		out.type = NumericConstant::Unsigned;
-			//		out.value.uintVal = static_cast<uint64_t>(leftVal.value.doubleVal) << shift;
-			//	}
-			//	else {
-			//		out.type = NumericConstant::Signed;
-			//		out.value.intVal = static_cast<int64_t>(leftVal.value.doubleVal) << shift;
-			//	}*/
-			//}
-			//else if (leftVal.type == NumericConstant::Signed) {
-			//	out.type = NumericConstant::Signed;
-			//	out.value.intVal = leftVal.value.intVal << shift;
-			//}
-			//else if (leftVal.type == NumericConstant::Unsigned) {
-			//	out.type = NumericConstant::Unsigned;
-			//	out.value.uintVal = leftVal.value.uintVal << shift;
-			//}
-			//else {
-			//	throw ErrorCode::Unknown_Numeric_Type;
-			//}
-
 			return out;
 		}
+
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::Shl; }
 
 	protected :
 

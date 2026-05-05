@@ -25,7 +25,7 @@ namespace ve {
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns the assigned value.
 		 **/
-		Result					evaluate(ExecutionContext& context) const override {
+		Result						evaluate(ExecutionContext& context) const override {
 			Result target = context.getArena().nodes[targetIndex]->evaluate(context);
 			Result indexRes = context.getArena().nodes[indexIndex]->evaluate(context);
 			Result rhs = context.getArena().nodes[rightIndex]->evaluate(context);
@@ -71,13 +71,20 @@ namespace ve {
 			return target.value.objectVal->arrayAssign(idx, valToAssign);
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::ArrayAssign; }
+
 	protected :
 		// == Members.
-		size_t					targetIndex;
-		size_t					indexIndex;
-		size_t					rightIndex;
-		int						opType;
-		mutable Object*			lastObject = nullptr;
+		size_t						targetIndex;
+		size_t						indexIndex;
+		size_t						rightIndex;
+		int							opType;
+		mutable Object*				lastObject = nullptr;
 	};
 
 }	// namespace ve

@@ -1360,10 +1360,11 @@ namespace ve {
 			constexpr double vc = 0.35;
 			double k = lw / std::pow(1.0 + b, alpha1);
 
-			if (val < vc) {
-				return k * std::pow(vc + b, (alpha1 - alpha2)) * std::pow(val + b, alpha2);
+			val /= k;
+			if (val < std::pow(vc + b, alpha1)) {
+				return std::pow(val / std::pow(vc + b, (alpha1 - alpha2)), 1.0 / alpha2) - b;
 			}
-			return k * std::pow(val + b, alpha1);
+			return std::pow(val, 1.0 / alpha1) - b;
 		}
 
 		/**

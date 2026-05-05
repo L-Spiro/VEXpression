@@ -15,12 +15,12 @@
 namespace ve {
 
 	// A helper macro for memory management.
-#define VE_DELETE_SWAP( oldPtr, newPtr )																\
-	if (oldPtr.type == NumericConstant::Object) {														\
-		if (oldPtr.value.objectVal != newPtr && newPtr) {												\
-			if (!newPtr->getRef()) { context.deallocateObject(newPtr); }								\
+#define VE_DELETE_SWAP( newPtr, oldPtr )																\
+	if (newPtr.type == NumericConstant::Object) {														\
+		if (newPtr.value.objectVal != oldPtr && oldPtr) {												\
+			if (!oldPtr->getRef()) { context.deallocateObject(oldPtr); }								\
 		}																								\
-		newPtr = oldPtr.value.objectVal;																\
+		oldPtr = newPtr.value.objectVal;																\
 	}
 
 	// == Enumerations.
@@ -486,12 +486,12 @@ namespace ve {
 			// Reverse search because it is most likely the immediate deletion of a temporary object.
 			for (size_t i = objects.size(); i--; ) {
 				if (objects[i].get() == obj) {
+					std::unique_ptr<Object> target = std::move(objects[i]);
+
 					objects.erase(objects.begin() + i);
 					return true;
 				}
-				return true;
 			}
-			
 			return false;
 		}
 
@@ -507,9 +507,10 @@ namespace ve {
 		 * 
 		 * \param idx			The index of the item to get.
 		 * \param value			Holds the value of the constant.
+		 * \param category		On returns, this holds the string ID for the category of the constant.
 		 * \return				Returns a constant pointer to the name of the built-in constant.
 		 **/
-		static const char*				getBuiltinConstant(size_t idx, Result& value);
+		static const char*				getBuiltinConstant(size_t idx, Result& value, StringId& category);
 
 
 	protected :
@@ -565,6 +566,7 @@ namespace ve {
 		// == Types.
 		/** A list of built-in constants. */
 		struct BuiltInConstant {
+			StringId					category;					/**< The category in which the constant belongs. */
 			const char*					name;						/**< The name of the constant. */
 			Result						result;						/**< The constant value. */
 		};

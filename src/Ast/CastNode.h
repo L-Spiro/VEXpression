@@ -59,6 +59,13 @@ namespace ve {
 			return context.castArgument(val, targetType);
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::Cast; }
+
 	private :
 		size_t						exprIndex;
 		DataType					targetType;

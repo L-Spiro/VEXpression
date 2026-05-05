@@ -27,6 +27,7 @@ namespace ve {
 		Object_Deletion_Failed,
 		String_Remove_Failed,
 		String_Reverse_Failed,
+		Undefined_Identifier,
 	};
 
 }	// namespace ve

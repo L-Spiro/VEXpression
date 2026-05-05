@@ -22,7 +22,7 @@ namespace ve {
 		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns the result of the last statement, or the condition if empty.
 		 **/
-		Result							evaluate(ExecutionContext& context) const override {
+		Result						evaluate(ExecutionContext& context) const override {
 			if (initNode != static_cast<size_t>(-1)) {
 				context.getArena().nodes[initNode]->evaluate(context);
 			}
@@ -86,16 +86,23 @@ namespace ve {
 			return lastResult;
 		}
 
+		/**
+		 * Gets the node type.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
+		 **/
+		virtual NodeType			type() const { return NodeType::For; }
+
 	protected :
 		// == Members.
 		/** The AST arena index for the initialization expression. -1 if omitted. **/
-		size_t							initNode;
+		size_t						initNode;
 		/** The AST arena index for the condition expression. -1 if omitted. **/
-		size_t							condNode;
+		size_t						condNode;
 		/** The AST arena index for the step expression. -1 if omitted. **/
-		size_t							stepNode;
+		size_t						stepNode;
 		/** The AST arena index for the block to execute. -1 if empty. **/
-		size_t							blockNode;
+		size_t						blockNode;
 	};
 
 }	// namespace ve
