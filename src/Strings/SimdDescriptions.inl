@@ -1,6 +1,23 @@
 // =========================================================================
 // AVX_512
 // =========================================================================
+VE_STR( Desc_Category_Avx_512, 
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512",
+    "AVX_512"
+)
 VE_STR1(Desc_mm_2intersect_epi32, "Compute intersection of packed 32-bit integer vectors a and b, and store indication of match in the corresponding bit of two mask registers specified by k1 and k2. A match in corresponding elements of a and b is indicated by a set bit in the corresponding bit of the mask registers.\n\nMEM[k1+7:k1] := 0\nMEM[k2+7:k2] := 0\nFOR i := 0 TO 3\n\tFOR j := 0 TO 3\n\t\tmatch := (a.dword[i] == b.dword[j] ? 1 : 0)\n\t\tMEM[k1+7:k1].bit[i] |= match\n\t\tMEM[k2+7:k2].bit[j] |= match\n\tENDFOR\nENDFOR")
 VE_STR1(Desc_mm256_2intersect_epi32, "Compute intersection of packed 32-bit integer vectors a and b, and store indication of match in the corresponding bit of two mask registers specified by k1 and k2. A match in corresponding elements of a and b is indicated by a set bit in the corresponding bit of the mask registers.\n\nMEM[k1+7:k1] := 0\nMEM[k2+7:k2] := 0\nFOR i := 0 TO 7\n\tFOR j := 0 TO 7\n\t\tmatch := (a.dword[i] == b.dword[j] ? 1 : 0)\n\t\tMEM[k1+7:k1].bit[i] |= match\n\t\tMEM[k2+7:k2].bit[j] |= match\n\tENDFOR\nENDFOR")
 VE_STR1(Desc_mm512_2intersect_epi32, "Compute intersection of packed 32-bit integer vectors a and b, and store indication of match in the corresponding bit of two mask registers specified by k1 and k2. A match in corresponding elements of a and b is indicated by a set bit in the corresponding bit of the mask registers.\n\nMEM[k1+15:k1] := 0\nMEM[k2+15:k2] := 0\nFOR i := 0 TO 15\n\tFOR j := 0 TO 15\n\t\tmatch := (a.dword[i] == b.dword[j] ? 1 : 0)\n\t\tMEM[k1+15:k1].bit[i] |= match\n\t\tMEM[k2+15:k2].bit[j] |= match\n\tENDFOR\nENDFOR")
@@ -5164,6 +5181,23 @@ VE_STR1(Desc_mm512_zextsi256_si512, "Cast\n vector of type __m256i to type __m51
 // =========================================================================
 // Other
 // =========================================================================
+VE_STR( Desc_Category_Other, 
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other",
+    "Other"
+)
 VE_STR1(Desc_aadd_i32, "Atomically add a 32-bit value at memory operand __A and a 32-bit __B, and store the result to the same memory location.\n\nMEM[__A+31:__A] := MEM[__A+31:__A] + __B[31:0]")
 VE_STR1(Desc_aadd_i64, "Atomically add a 64-bit value at memory operand __A and a 64-bit __B, and store the result to the same memory location.\n\nMEM[__A+63:__A] := MEM[__A+63:__A] + __B[63:0]")
 VE_STR1(Desc_aand_i32, "Atomically and a 32-bit value at memory operand __A and a 32-bit __B, and store the result to the same memory location.\n\nMEM[__A+31:__A] := MEM[__A+31:__A] AND __B[31:0]")
@@ -5420,6 +5454,23 @@ VE_STR1(Desc_xtest, "Query\n the transactional execution status, return 1 if ins
 // =========================================================================
 // SSE_ALL
 // =========================================================================
+VE_STR( Desc_Category_Sse_all, 
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL",
+    "SSE_ALL"
+)
 VE_STR1(Desc_mm_abs_epi16, "Compute the absolute value of packed signed 16-bit integers in a, and store the unsigned results in dst.\n\nFOR j := 0 to 7\n\ti := j*16\n\tdst[i+15:i] := ABS(a[i+15:i])\nENDFOR")
 VE_STR1(Desc_mm_abs_epi32, "Compute the absolute value of packed signed 32-bit integers in a, and store the unsigned results in dst.\n\nFOR j := 0 to 3\n\ti := j*32\n\tdst[i+31:i] := ABS(a[i+31:i])\nENDFOR")
 VE_STR1(Desc_mm_abs_epi8, "Compute the absolute value of packed signed 8-bit integers in a, and store the unsigned results in dst.\n\nFOR j := 0 to 15\n\ti := j*8\n\tdst[i+7:i] := ABS(a[i+7:i])\nENDFOR")
@@ -5938,6 +5989,23 @@ VE_STR1(Desc_mm_xor_si128, "Compute the bitwise XOR of 128 bits (representing in
 // =========================================================================
 // AVX_ALL
 // =========================================================================
+VE_STR( Desc_Category_Avx_all, 
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL",
+    "AVX_ALL"
+)
 VE_STR1(Desc_mm256_abs_epi16, "Compute the absolute value of packed signed 16-bit integers in a, and store the unsigned results in dst.\n\nFOR j := 0 to 15\n\ti := j*16\n\tdst[i+15:i] := ABS(a[i+15:i])\nENDFOR\ndst[MAX:256] := 0")
 VE_STR1(Desc_mm256_abs_epi32, "Compute the absolute value of packed signed 32-bit integers in a, and store the unsigned results in dst.\n\nFOR j := 0 to 7\n\ti := j*32\n\tdst[i+31:i] := ABS(a[i+31:i])\nENDFOR\ndst[MAX:256] := 0")
 VE_STR1(Desc_mm256_abs_epi8, "Compute the absolute value of packed signed 8-bit integers in a, and store the unsigned results in dst.\n\nFOR j := 0 to 31\n\ti := j*8\n\tdst[i+7:i] := ABS(a[i+7:i])\nENDFOR\ndst[MAX:256] := 0")
@@ -6433,6 +6501,23 @@ VE_STR1(Desc_mm256_zextsi128_si256, "Cast\n vector of type __m128i to type __m25
 // =========================================================================
 // SVML
 // =========================================================================
+VE_STR( Desc_Category_Svml, 
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML",
+    "SVML"
+)
 VE_STR1(Desc_mm_acos_pd, "Compute the inverse cosine of packed double-precision (64-bit) floating-point elements in a expressed in radians, and store the results in dst.\n\nFOR j := 0 to 1\n\ti := j*64\n\tdst[i+63:i] := ACOS(a[i+63:i])\nENDFOR\ndst[MAX:128] := 0")
 VE_STR1(Desc_mm256_acos_pd, "Compute the inverse cosine of packed double-precision (64-bit) floating-point elements in a, and store the results in dst.\n\nFOR j := 0 to 3\n\ti := j*64\n\tdst[i+63:i] := ACOS(a[i+63:i])\nENDFOR\ndst[MAX:256] := 0")
 VE_STR1(Desc_mm512_acos_pd, "Compute the inverse cosine of packed double-precision (64-bit) floating-point elements in a expressed in radians, and store the results in dst.\n\nFOR j := 0 to 7\n\ti := j*64\n\tdst[i+63:i] := ACOS(a[i+63:i])\nENDFOR\ndst[MAX:512] := 0")
@@ -7011,6 +7096,23 @@ VE_STR1(Desc_mm256_urem_epi32, "Divide packed unsigned 32-bit integers in a by p
 // =========================================================================
 // MMX
 // =========================================================================
+VE_STR( Desc_Category_Mmx, 
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX",
+    "MMX"
+)
 VE_STR1(Desc_mm_add_pi16, "Add packed 16-bit integers in a and b, and store the results in dst.\n\nFOR j := 0 to 3\n\ti := j*16\n\tdst[i+15:i] := a[i+15:i] + b[i+15:i]\nENDFOR")
 VE_STR1(Desc_mm_add_pi32, "Add packed 32-bit integers in a and b, and store the results in dst.\n\nFOR j := 0 to 1\n\ti := j*32\n\tdst[i+31:i] := a[i+31:i] + b[i+31:i]\nENDFOR")
 VE_STR1(Desc_mm_add_pi8, "Add packed 8-bit integers in a and b, and store the results in dst.\n\nFOR j := 0 to 7\n\ti := j*8\n\tdst[i+7:i] := a[i+7:i] + b[i+7:i]\nENDFOR")
@@ -7138,6 +7240,23 @@ VE_STR1(Desc_mm_xor_si64, "Compute the bitwise XOR of 64 bits (representing inte
 // =========================================================================
 // AMX
 // =========================================================================
+VE_STR( Desc_Category_Amx, 
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX",
+    "AMX"
+)
 VE_STR1(Desc_tile_cmmimfp16ps, "Perform\n matrix multiplication of two tiles containing complex elements and \naccumulate the results into a packed single precision tile. Each dword \nelement in input tiles src0 and src1\n is interpreted as a complex number with FP16 real part and FP16 \nimaginary part. This function calculates the imaginary part of the \nresult.\n\nFOR m := 0 TO dst.rows - 1\n\ttmp := dst.row[m]\n\tFOR k := 0 TO (src0.colsb / 4) - 1\n\t\tFOR n := 0 TO (dst.colsb / 4) - 1\n\t\t\ttmp.fp32[n] += FP32(src0.row[m].fp16[2*k+0]) * FP32(src1.row[k].fp16[2*n+1])\n\t\t\ttmp.fp32[n] += FP32(src0.row[m].fp16[2*k+1]) * FP32(src1.row[k].fp16[2*n+0])\n\t\tENDFOR\n\tENDFOR\n\twrite_row_and_zero(dst, m, tmp, dst.colsb)\nENDFOR\nzero_upper_rows(dst, dst.rows)\nzero_tileconfig_start()")
 VE_STR1(Desc_tile_cmmimfp16ps_2, "Perform\n matrix multiplication of two tiles containing complex elements and \naccumulate the results into a packed single precision tile. Each dword \nelement in input tiles a and b\n is interpreted as a complex number with FP16 real part and FP16 \nimaginary part. Calculates the imaginary part of the result. For each \npossible combination of (row of a, column of b), it performs a set of multiplication and accumulations on all corresponding complex numbers (one from a and one from b). The imaginary part of the a element is multiplied with the real part of the corresponding b element, and the real part of the a element is multiplied with the imaginary part of the corresponding b elements. The two accumulated results are added, and then accumulated into the corresponding row and column of dst.\n\nFOR m := 0 TO dst.rows - 1\n\ttmp := dst.row[m]\n\tFOR k := 0 TO (a.colsb / 4) - 1\n\t\tFOR n := 0 TO (dst.colsb / 4) - 1\n\t\t\ttmp.fp32[n] += FP32(a.row[m].fp16[2*k+0]) * FP32(b.row[k].fp16[2*n+1])\n\t\t\ttmp.fp32[n] += FP32(a.row[m].fp16[2*k+1]) * FP32(b.row[k].fp16[2*n+0])\n\t\tENDFOR\n\tENDFOR\n\twrite_row_and_zero(dst, m, tmp, dst.colsb)\nENDFOR\nzero_upper_rows(dst, dst.rows)\nzero_tileconfig_start()")
 VE_STR1(Desc_tile_cmmrlfp16ps, "Perform\n matrix multiplication of two tiles containing complex elements and \naccumulate the results into a packed single precision tile. Each dword \nelement in input tiles src0 and src1 is interpreted as a complex number \nwith FP16 real part and FP16 imaginary part. This function calculates \nthe real part of the result.\n\nFOR m := 0 TO dst.rows - 1\n\ttmp := dst.row[m]\n\tFOR k := 0 TO (src0.colsb / 4) - 1\n\t\tFOR n := 0 TO (dst.colsb / 4) - 1\n\t\t\ttmp.fp32[n] += FP32(src0.row[m].fp16[2*k+0]) * FP32(src1.row[k].fp16[2*n+0])\n\t\t\ttmp.fp32[n] += FP32(-src0.row[m].fp16[2*k+1]) * FP32(src1.row[k].fp16[2*n+1])\n\t\tENDFOR\n\tENDFOR\n\twrite_row_and_zero(dst, m, tmp, dst.colsb)\nENDFOR\nzero_upper_rows(dst, dst.rows)\nzero_tileconfig_start()")

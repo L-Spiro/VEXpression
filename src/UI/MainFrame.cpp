@@ -192,20 +192,34 @@ namespace vex {
 		editor->StyleClearAll();
 		
 		editor->SetLexer(wxSTC_LEX_CPP);
+		editor->SetTabWidth(4);
 		editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
 		editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
+		
 		editor->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
 		editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(43, 145, 175));
+		editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(128, 0, 128));
+
 		editor->StyleSetForeground(wxSTC_C_STRING, wxColour(163, 21, 21));
 		editor->SetMarginType(1, wxSTC_MARGIN_NUMBER);
 		editor->SetMarginWidth(1, 30);
+
+		wxString baseKeywords = 
+			"if else for in do while break continue return true True false False static_cast "
+			"uint8_t u8 ui8 uint16_t u16 ui16 uint32_t u32 ui32 uint64_t u64 ui64 "
+			"int8_t i8 int16_t i16 int32_t i32 int64_t i64 float16 f16 float f32 double f64 "
+			"__m64 __m128 __m128d __m128i __m256 __m256d __m256i __m512 __m512d __m512i v128_t "
+			"int8x8_t int16x4_t int32x2_t int64x1_t uint8x8_t uint16x4_t uint32x2_t uint64x1_t "
+			"float32x2_t float64x1_t int8x16_t int16x8_t int32x4_t int64x2_t "
+			"uint8x16_t uint16x8_t uint32x4_t uint64x2_t float32x4_t float64x2_t";
+		editor->SetKeyWords(0, baseKeywords);
 
 		wxString funcKeywords;
 		for (size_t i = 0; ve::ExecutionContext::getBuiltinFunction(i); ++i) {
 			const auto* funcDef = ve::ExecutionContext::getBuiltinFunction(i);
 			funcKeywords << funcDef->name << " ";
 		}
-		editor->SetKeyWords(0, funcKeywords);
+		editor->SetKeyWords(1, funcKeywords);
 
 		wxString constKeywords;
 		for (size_t i = 0; i < ve::ExecutionContext::totalBuiltInConstants(); ++i) {
@@ -214,7 +228,7 @@ namespace vex {
 			const char* name = ve::ExecutionContext::getBuiltinConstant(i, res, strId);
 			constKeywords << name << " ";
 		}
-		editor->SetKeyWords(1, constKeywords);
+		editor->SetKeyWords(3, constKeywords);
 
 		outputArea = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
 		outputArea->StyleSetFont(wxSTC_STYLE_DEFAULT, monoFont);
@@ -231,7 +245,7 @@ namespace vex {
 
 		functionsTree = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_DEFAULT_STYLE | wxBORDER_NONE);
 		functionsTree->AppendColumn("Name", 120, wxALIGN_LEFT, wxCOL_RESIZABLE);
-		functionsTree->AppendColumn("Params", 80, wxALIGN_LEFT, wxCOL_RESIZABLE);
+		//functionsTree->AppendColumn("Params", 80, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		functionsTree->AppendColumn("Description", 300, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		populateFunctions();
 	}
@@ -252,7 +266,7 @@ namespace vex {
 			wxTreeListItem thisGroup;
 			auto groupItem = groups.find(strId);
 			if (groupItem == groups.end()) {
-				std::wstring groupName = ve::StrL(strId, ve::Languages::Japanese);
+				std::wstring groupName = ve::StrL(strId, ve::Languages::English);
 				thisGroup = constantsTree->AppendItem(root, groupName);
 				groups[strId] = thisGroup;
 			}
@@ -272,13 +286,39 @@ namespace vex {
 	 **/
 	void MainFrame::populateFunctions() {
 		wxTreeListItem root = functionsTree->GetRootItem();
-		wxTreeListItem mathGroup = functionsTree->AppendItem(root, "Math");
+
+		std::map<ve::StringId, wxTreeListItem> groups;
+		for (size_t i = 0; ve::ExecutionContext::getBuiltinFunction(i); ++i) {
+			const auto* funcDef = ve::ExecutionContext::getBuiltinFunction(i);
+			
+			wxTreeListItem thisGroup;
+			auto groupItem = groups.find(funcDef->category);
+			if (groupItem == groups.end()) {
+				std::wstring groupName = ve::StrL(funcDef->category, ve::Languages::English);
+				thisGroup = functionsTree->AppendItem(root, groupName);
+				groups[funcDef->category] = thisGroup;
+			}
+			else {
+				thisGroup = groupItem->second;
+			}
+
+			wxTreeListItem item = functionsTree->AppendItem(thisGroup, wxString::FromUTF8(funcDef->name));
+
+			std::u8string utf8Str = ve::StrU8(funcDef->description, ve::Languages::English);
+			utf8Str = ve::Text::replaceUtf8<std::u8string>(utf8Str, std::u8string(u8"\r"), std::u8string(u8""));
+			utf8Str = ve::Text::replaceUtf8<std::u8string>(utf8Str, std::u8string(u8"\n"), std::u8string(u8"    "));
+			functionsTree->SetItemText(item, 1, wxString::FromUTF8(reinterpret_cast<const char*>(utf8Str.c_str())));
+			for (size_t j = 0; j < funcDef->parameters.size(); ++j) {
+				wxTreeListItem parm = functionsTree->AppendItem(item, wxString::FromUTF8(funcDef->parameters[j].name));
+				functionsTree->SetItemText(parm, 1, ve::StrL(funcDef->parameters[j].description, ve::Languages::English));
+			}
+		}
 		
-		wxTreeListItem funcItem = functionsTree->AppendItem(mathGroup, "barthann");
+		/*wxTreeListItem funcItem = functionsTree->AppendItem(mathGroup, "barthann");
 		functionsTree->SetItemText(funcItem, 1, "n");
 		functionsTree->SetItemText(funcItem, 2, "Returns a modified Bartlett-Hann window.");
 
-		functionsTree->Expand(mathGroup);
+		functionsTree->Expand(mathGroup);*/
 	}
 
 	/**

@@ -442,6 +442,15 @@ MISSING_IN_SIMDE = [
     "_zeroupper", "_zext"
 ]
 
+def makeCategoryId(instructionSet):
+    """Converts the raw instruction set name to a clean Desc_Category enum."""
+    clean = instructionSet.replace("-", "").replace(" ", "").replace(".", "_")
+    if clean.isupper():
+        clean = clean.capitalize()
+    else:
+        clean = clean[0].upper() + clean[1:]
+    return "Desc_Category_" + clean
+
 def getBaseType(rawType):
     """Strips const, volatile, and pointer asterisks to get the base type."""
     base = rawType.replace("const", "").replace("volatile", "").strip()
@@ -502,7 +511,7 @@ def escapeCppString(s):
     s = s.replace('\r', '')
     return s
 
-def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts):
+def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts, categoryId):
     sig = intrinsicJson.get("signature", {})
     name = sig.get("name", "")
     rettype = sig.get("rettype", "void")
@@ -667,7 +676,7 @@ def generateBridgeCode(intrinsicJson, bridge_counts, desc_counts):
     cppCode += "\n"
 
     paramString = f"{{ {', '.join(tableParams)} }}" if tableParams else "{}"
-    tableEntry = f'\t\t{{ "{name}", StringId::{descId}, {paramString}, SimdBridges::{bridgeFuncName} }},'
+    tableEntry = f'\t\t{{ StringId::{categoryId}, "{name}", StringId::{descId}, {paramString}, SimdBridges::{bridgeFuncName} }},'
     
     # Comment out the table entry if we flagged it as unimplemented
     if unimplemented:
@@ -692,12 +701,19 @@ def main():
     desc_counts = {}
 
     for instructionSet, intrinsics in data.items():
+        categoryId = makeCategoryId(instructionSet)
+        
         allBridges.append(f"\t\t// =========================================================================\n\t\t// {instructionSet}\n\t\t// =========================================================================")
         allTableEntries.append(f"\t\t// {instructionSet}")
+        
+        # Generate the 15-language VE_STR block for the category name
+        catStr = f'VE_STR( {categoryId}, \n' + ',\n'.join([f'    "{instructionSet}"'] * 15) + '\n)'
+        
         allDescriptions.append(f"// =========================================================================\n// {instructionSet}\n// =========================================================================")
+        allDescriptions.append(catStr)
         
         for intrinsic in intrinsics:
-            bridgeCode, tableEntry, descEntry = generateBridgeCode(intrinsic, bridge_counts, desc_counts)
+            bridgeCode, tableEntry, descEntry = generateBridgeCode(intrinsic, bridge_counts, desc_counts, categoryId)
             if bridgeCode:
                 allBridges.append(bridgeCode)
                 allTableEntries.append(tableEntry)
@@ -730,3 +746,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

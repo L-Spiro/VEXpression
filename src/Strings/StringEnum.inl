@@ -3,7 +3,7 @@
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 // General.
-VE_STR1(None, "")
+VE_STR1( None, "" )
 
 // =======================================================================================================
 // SHARED MATH PARAMETERS
@@ -6261,21 +6261,21 @@ VE_STR( Desc_Category_WideCharAtomicLimits,
 )
 
 VE_STR( Desc_Category_CommonCLibrary, 
-    "Common C-Library Constants (<cstdlib> / <cstdio>)", 
-    "一般的な C ライブラリの定数 (<cstdlib> / <cstdio>)", 
-    "常用 C 库常量 (<cstdlib> / <cstdio>)", 
-    "Constantes comunes de la biblioteca C (<cstdlib> / <cstdio>)", 
-    "Constantes courantes de la bibliothèque C (<cstdlib> / <cstdio>)", 
-    "Costanti comuni della libreria C (<cstdlib> / <cstdio>)", 
-    "Constantes comuns da biblioteca C (<cstdlib> / <cstdio>)", 
-    "ثوابت مكتبة C الشائعة (<cstdlib> / <cstdio>)", 
-    "Общие константы стандартной библиотеки C (<cstdlib> / <cstdio>)", 
-    "Allgemeine C-Bibliothekskonstanten (<cstdlib> / <cstdio>)", 
-    "Veelvoorkomende C-bibliotheekconstanten (<cstdlib> / <cstdio>)", 
-    "공통 C 라이브러리 상수 (<cstdlib> / <cstdio>)", 
-    "ค่าคงที่ไลบรารี C ทั่วไป (<cstdlib> / <cstdio>)", 
-    "सामान्य C-लाइब्रेरी स्थिरांक (<cstdlib> / <cstdio>)", 
-    "Yaygın C Kütüphanesi Sabitleri (<cstdlib> / <cstdio>)" 
+    "Common C-Library Constants (<cstdlib>/<cstdio>)", 
+    "一般的な C ライブラリの定数 (<cstdlib>/<cstdio>)", 
+    "常用 C 库常量 (<cstdlib>/<cstdio>)", 
+    "Constantes comunes de la biblioteca C (<cstdlib>/<cstdio>)", 
+    "Constantes courantes de la bibliothèque C (<cstdlib>/<cstdio>)", 
+    "Costanti comuni della libreria C (<cstdlib>/<cstdio>)", 
+    "Constantes comuns da biblioteca C (<cstdlib>/<cstdio>)", 
+    "ثوابت مكتبة C الشائعة (<cstdlib>/<cstdio>)", 
+    "Общие константы стандартной библиотеки C (<cstdlib>/<cstdio>)", 
+    "Allgemeine C-Bibliothekskonstanten (<cstdlib>/<cstdio>)", 
+    "Veelvoorkomende C-bibliotheekconstanten (<cstdlib>/<cstdio>)", 
+    "공통 C 라이브러리 상수 (<cstdlib>/<cstdio>)", 
+    "ค่าคงที่ไลบรารี C ทั่วไป (<cstdlib>/<cstdio>)", 
+    "सामान्य C-लाइब्रेरी स्थिरांक (<cstdlib>/<cstdio>)", 
+    "Yaygın C Kütüphanesi Sabitleri (<cstdlib>/<cstdio>)" 
 )
 
 VE_STR( Desc_Category_SciMathConstants, 
@@ -6330,6 +6330,142 @@ VE_STR( Desc_Category_SIMDPermutations,
     "การสับเปลี่ยน SIMD", 
     "SIMD क्रमपरिवर्तन", 
     "SIMD Permütasyonları" 
+)
+
+VE_STR1( Desc_Category_Cmath, "<cmath>" )
+VE_STR1( Desc_Category_Bit, "<bit>" )
+VE_STR1( Desc_Category_Html, "HTML" )
+VE_STR1( Desc_Category_Strings, "String" )
+VE_STR1( Desc_Category_Vectors, "String/Vector" )
+
+VE_STR1( Desc_Category_SciPyIntegrate, "scipy.integrate" )
+VE_STR1( Desc_Category_SciPySignalWindows, "scipy.signal.windows" )
+VE_STR1( Desc_Category_NumPy, "numpy" )
+
+VE_STR( Desc_Category_Gamma, 
+    "Gamma", 
+    "ガンマ", 
+    "伽马", 
+    "Gamma", 
+    "Gamma", 
+    "Gamma", 
+    "Gama", 
+    "جاما", 
+    "Гамма", 
+    "Gamma", 
+    "Gamma", 
+    "감마", 
+    "แกมมา", 
+    "गामा", 
+    "Gama" 
+)
+
+VE_STR( Desc_Category_Randomization, 
+    "Randomization", 
+    "乱数生成", 
+    "随机化", 
+    "Aleatorización", 
+    "Randomisation", 
+    "Randomizzazione", 
+    "Aleatorização", 
+    "العشوائية", 
+    "Рандомизация", 
+    "Randomisierung", 
+    "Randomisatie", 
+    "무작위화", 
+    "การสุ่ม", 
+    "यादृच्छिकीकरण", 
+    "Rastgeleleştirme" 
+)
+
+VE_STR( Desc_Category_TrigonometryAngles, 
+    "Trigonometry & Angles", 
+    "三角関数と角度", 
+    "三角函数与角度", 
+    "Trigonometría y ángulos", 
+    "Trigonométrie et angles", 
+    "Trigonometria e angoli", 
+    "Trigonometria e Ângulos", 
+    "حساب المثلثات والزوايا", 
+    "Тригонометрия и углы", 
+    "Trigonometrie & Winkel", 
+    "Trigonometrie en hoeken", 
+    "삼각법 및 각도", 
+    "ตรีโกณมิติและมุม", 
+    "त्रिकोणमिति और कोण", 
+    "Trigonometri ve Açılar" 
+)
+
+VE_STR( Desc_Category_ClampingBounds, 
+    "Clamping & Bounds", 
+    "クランプと境界", 
+    "钳位与边界", 
+    "Restricción y límites", 
+    "Limitation et bornes", 
+    "Blocco e limiti", 
+    "Limitação e Fronteiras", 
+    "التقييد والحدود", 
+    "Ограничение и границы", 
+    "Begrenzung & Schranken", 
+    "Klemmen en grenzen", 
+    "클램핑 및 경계", 
+    "การจำกัดค่าและขอบเขต", 
+    "क्लैंपिंग और सीमाएँ", 
+    "Kenetleme ve Sınırlar" 
+)
+
+VE_STR( Desc_Category_ArithmeticNumberTheory, 
+    "Arithmetic & Number Theory", 
+    "算術と整数論", 
+    "算术与数论", 
+    "Aritmética y teoría de números", 
+    "Arithmétique et théorie des nombres", 
+    "Aritmetica e teoria dei numeri", 
+    "Aritmética e Teoria dos Números", 
+    "الحساب ونظرية الأعداد", 
+    "Арифметика и теория чисел", 
+    "Arithmetik & Zahlentheorie", 
+    "Rekenkunde en getaltheorie", 
+    "산술 및 정수론", 
+    "เลขคณิตและทฤษฎีจำนวน", 
+    "अंकगणित और संख्या सिद्धांत", 
+    "Aritmetik ve Sayı Teorisi" 
+)
+
+VE_STR( Desc_Category_FloatingPointAnalysis, 
+    "Floating-Point Analysis", 
+    "浮動小数点解析", 
+    "浮点分析", 
+    "Análisis de punto flotante", 
+    "Analyse à virgule flottante", 
+    "Analisi a virgola mobile", 
+    "Análise de Ponto Flutuante", 
+    "تحليل الفاصلة العائمة", 
+    "Анализ чисел с плавающей запятой", 
+    "Gleitkomma-Analyse", 
+    "Drijvende-komma-analyse", 
+    "부동 소수점 분석", 
+    "การวิเคราะห์จุดลอยตัว", 
+    "फ़्लोटिंग-पॉइंट विश्लेषण", 
+    "Kayan Nokta Analizi" 
+)
+
+VE_STR( Desc_Category_DSP, 
+    "Signal Processing (DSP)", 
+    "信号処理 (DSP)", 
+    "信号处理 (DSP)", 
+    "Procesamiento de señales (DSP)", 
+    "Traitement du signal (DSP)", 
+    "Elaborazione dei segnali (DSP)", 
+    "Processamento de Sinais (DSP)", 
+    "معالجة الإشارات (DSP)", 
+    "Обработка сигналов (DSP)", 
+    "Signalverarbeitung (DSP)", 
+    "Signaalverwerking (DSP)", 
+    "신호 처리 (DSP)", 
+    "การประมวลผลสัญญาณ (DSP)", 
+    "सिग्नल प्रोसेसिंग (DSP)", 
+    "Sinyal İşleme (DSP)" 
 )
 
 #include "SimdDescriptions.inl"

@@ -51,6 +51,7 @@ namespace ve {
 	 * Complete definition of a registered function, including documentation metadata.
 	 **/
 	struct FunctionDef {
+		StringId					category = StringId::None;
 		const char*					name = nullptr;
 		StringId					description = StringId::None;
 		std::vector<ParameterDef>	parameters;
