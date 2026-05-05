@@ -2,7 +2,7 @@
 #include "UI/MainFrame.h"
 
 // Generate the wxWidgets application internals, but DO NOT let it guess the main function.
-wxIMPLEMENT_APP_NO_MAIN(ve::MainApp);
+wxIMPLEMENT_APP_NO_MAIN(vex::MainApp);
 
 // ============================================================================
 // BULLETPROOF NATIVE ENTRY POINTS
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 }
 #endif
 
-namespace ve {
+namespace vex {
 
 	MainApp::MainApp() {
 	}
@@ -54,4 +54,4 @@ namespace ve {
 		return true;
 	}
 
-}	// namespace ve
+}	// namespace vex

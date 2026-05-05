@@ -8,7 +8,7 @@
 #include <wx/timer.h>
 #include <wx/treelist.h>
 
-namespace ve {
+namespace vex {
 
 	/**
 	 * The primary application window for VEXpression.
@@ -30,7 +30,7 @@ namespace ve {
 		wxTreeListCtrl*			functionsTree;			/**< The tree-list view of registered functions. */
 		wxTimer					replTimer;				/**< The debounce timer. */
 
-		ExecutionContext		ctx;					/**< The execution context for evaluating expressions. */
+		ve::ExecutionContext	ctx;					/**< The execution context for evaluating expressions. */
 
 		bool					realTimeRepl;			/**< Flag indicating if the REPL loop is active. */
 
@@ -160,4 +160,4 @@ namespace ve {
 		void					onUpdateWindowFunctions(wxUpdateUIEvent& event);
 	};
 
-}	// namespace ve
+}	// namespace vex

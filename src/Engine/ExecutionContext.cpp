@@ -1772,4 +1772,15 @@ namespace ve {
 		return builtInConsts[idx].name;
 	}
 
+	/**
+	 * Gets a built-in function by index.
+	 * 
+	 * \param idx			The index of the function definition to get.
+	 * \return				Returns a pointer to the given function definition or nullptr.
+	 **/
+	const FunctionDef * ExecutionContext::getBuiltinFunction(size_t idx) {
+		if (idx >= std::size(builtInFunctions)) { return nullptr; }
+		return &builtInFunctions[idx];
+	}
+
 }	// namespace ve

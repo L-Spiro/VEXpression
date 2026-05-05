@@ -512,6 +512,14 @@ namespace ve {
 		 **/
 		static const char*				getBuiltinConstant(size_t idx, Result& value, StringId& category);
 
+		/**
+		 * Gets a built-in function by index.
+		 * 
+		 * \param idx			The index of the function definition to get.
+		 * \return				Returns a pointer to the given function definition or nullptr.
+		 **/
+		static const FunctionDef *		getBuiltinFunction(size_t idx);
+
 
 	protected :
 		// == Types.

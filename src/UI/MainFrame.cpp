@@ -4,7 +4,7 @@
 #include <map>
 #include <wx/artprov.h>
 
-namespace ve {
+namespace vex {
 
 	enum {
 		ID_EDITOR = wxID_HIGHEST + 1,
@@ -195,9 +195,26 @@ namespace ve {
 		editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
 		editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
 		editor->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
+		editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(43, 145, 175));
 		editor->StyleSetForeground(wxSTC_C_STRING, wxColour(163, 21, 21));
 		editor->SetMarginType(1, wxSTC_MARGIN_NUMBER);
 		editor->SetMarginWidth(1, 30);
+
+		wxString funcKeywords;
+		for (size_t i = 0; ve::ExecutionContext::getBuiltinFunction(i); ++i) {
+			const auto* funcDef = ve::ExecutionContext::getBuiltinFunction(i);
+			funcKeywords << funcDef->name << " ";
+		}
+		editor->SetKeyWords(0, funcKeywords);
+
+		wxString constKeywords;
+		for (size_t i = 0; i < ve::ExecutionContext::totalBuiltInConstants(); ++i) {
+			ve::Result res;
+			ve::StringId strId;
+			const char* name = ve::ExecutionContext::getBuiltinConstant(i, res, strId);
+			constKeywords << name << " ";
+		}
+		editor->SetKeyWords(1, constKeywords);
 
 		outputArea = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
 		outputArea->StyleSetFont(wxSTC_STYLE_DEFAULT, monoFont);
@@ -205,6 +222,7 @@ namespace ve {
 		outputArea->SetReadOnly(true);
 		outputArea->SetMarginWidth(0, 0);
 		outputArea->SetMarginWidth(1, 0);
+		outputArea->SetWrapMode(wxSTC_WRAP_WORD);
 
 		constantsTree = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_DEFAULT_STYLE | wxBORDER_NONE);
 		constantsTree->AppendColumn("Name", 120, wxALIGN_LEFT, wxCOL_RESIZABLE);
@@ -226,15 +244,15 @@ namespace ve {
 
 		std::map<ve::StringId, wxTreeListItem> groups;
 
-		for (size_t i = 0; i < ExecutionContext::totalBuiltInConstants(); ++i) {
-			Result res;
+		for (size_t i = 0; i < ve::ExecutionContext::totalBuiltInConstants(); ++i) {
+			ve::Result res;
 			ve::StringId strId;
-			std::string name = ExecutionContext::getBuiltinConstant(i, res, strId);
-
-			std::wstring groupName = ve::StrL(strId, 0);
+			std::string name = ve::ExecutionContext::getBuiltinConstant(i, res, strId);
+			
 			wxTreeListItem thisGroup;
 			auto groupItem = groups.find(strId);
 			if (groupItem == groups.end()) {
+				std::wstring groupName = ve::StrL(strId, ve::Languages::Japanese);
 				thisGroup = constantsTree->AppendItem(root, groupName);
 				groups[strId] = thisGroup;
 			}
@@ -243,7 +261,7 @@ namespace ve {
 			}
 
 			wxTreeListItem item = constantsTree->AppendItem(thisGroup, wxString::FromUTF8(name));
-			constantsTree->SetItemText(item, 1, wxString::FromUTF8(printResult(res)));
+			constantsTree->SetItemText(item, 1, wxString::FromUTF8(printResult(res, false)));
 		}
 
 		//constantsTree->Expand(builtInGroup);
@@ -404,4 +422,4 @@ namespace ve {
 		event.Enable(!auiManager.GetPane("Functions").IsShown());
 	}
 
-}	// namespace ve
+}	// namespace vex

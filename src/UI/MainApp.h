@@ -2,7 +2,7 @@
 
 #include <wx/wx.h>
 
-namespace ve {
+namespace vex {
 
 	/**
 	 * Main application logic for VEXpression.
@@ -25,4 +25,4 @@ namespace ve {
 	// Tell wxWidgets about our application class so it can link wxEntry properly.
 	wxDECLARE_APP(MainApp);
 
-}	// namespace ve
+}	// namespace vex
