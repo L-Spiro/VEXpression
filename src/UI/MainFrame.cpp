@@ -3,6 +3,38 @@
 
 #include <map>
 #include <wx/artprov.h>
+#include <wx/toplevel.h>
+
+#ifdef __WXMSW__
+#include <dwmapi.h>
+#include <uxtheme.h>
+#pragma comment(lib, "dwmapi.lib")
+#pragma comment(lib, "uxtheme.lib")
+
+#ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
+#define DWMWA_USE_IMMERSIVE_DARK_MODE 20
+#endif
+
+// Undocumented Windows API to force dark menus and global scrollbars
+enum PreferredAppMode { Default, AllowDark, ForceDark, ForceLight, Max };
+using fnSetPreferredAppMode = PreferredAppMode(WINAPI*)(PreferredAppMode);
+using fnFlushMenuThemes = void(WINAPI*)();
+
+// Callback to theme hidden child controls (Headers, Scrollbars) inside composite wxWidgets
+BOOL CALLBACK ThemeEnumChildProc(HWND hwnd, LPARAM lParam) {
+	wchar_t className[256];
+	if (::GetClassNameW(hwnd, className, 256) > 0) {
+		// Native TreeList headers require a specific theme class in Win 10/11 to go dark
+		if (std::wcscmp(className, L"SysHeader32") == 0) {
+			const wchar_t* theme = (std::wcscmp((const wchar_t*)lParam, L"Explorer") == 0) ? L"ItemsView" : L"DarkMode_ItemsView";
+			::SetWindowTheme(hwnd, theme, NULL);
+			return TRUE;
+		}
+	}
+	::SetWindowTheme(hwnd, (const wchar_t*)lParam, NULL);
+	return TRUE;
+}
+#endif
 
 namespace vex {
 
@@ -11,6 +43,7 @@ namespace vex {
 		ID_TOGGLE_REPL,
 		ID_RUN_SCRIPT,
 		ID_REPL_TIMER,
+		ID_VIEW_DARK_THEME,
 		ID_WINDOW_CONSTANTS,
 		ID_WINDOW_FUNCTIONS
 	};
@@ -18,11 +51,23 @@ namespace vex {
 	MainFrame::MainFrame(const wxString& title) :
 		wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(1280, 720)),
 		realTimeRepl(true),
+		isDarkMode(false),
 		editor(nullptr),
 		outputArea(nullptr),
 		constantsTree(nullptr),
 		functionsTree(nullptr) {
 		
+#ifdef __WXMSW__
+		// Set app mode before any controls are created to catch initial scrollbar/menu states
+		HMODULE hUxtheme = ::GetModuleHandleW(L"uxtheme.dll");
+		if (hUxtheme) {
+			fnSetPreferredAppMode SetAppMode = reinterpret_cast<fnSetPreferredAppMode>(::GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135)));
+			if (SetAppMode) {
+				SetAppMode(ForceDark);
+			}
+		}
+#endif
+
 		auiManager.SetManagedWindow(this);
 
 		createMenu();
@@ -42,6 +87,8 @@ namespace vex {
 		Bind(wxEVT_MENU, &MainFrame::onReplToggled, this, ID_TOGGLE_REPL);
 		Bind(wxEVT_MENU, &MainFrame::onRunClicked, this, ID_RUN_SCRIPT);
 		Bind(wxEVT_TIMER, &MainFrame::onReplTimer, this, ID_REPL_TIMER);
+		
+		Bind(wxEVT_MENU, &MainFrame::onMenuThemeToggle, this, ID_VIEW_DARK_THEME);
 		
 		Bind(wxEVT_MENU, &MainFrame::onMenuFileOpen, this, wxID_OPEN);
 		Bind(wxEVT_MENU, &MainFrame::onMenuFileSave, this, wxID_SAVE);
@@ -144,6 +191,129 @@ namespace vex {
 	}
 
 	/**
+	 * Applies the current theme colors to all UI controls.
+	 **/
+	void MainFrame::applyTheme() {
+		wxColour bg = isDarkMode ? wxColour(30, 30, 30) : wxColour(255, 255, 255);
+		wxColour fg = isDarkMode ? wxColour(212, 212, 212) : wxColour(0, 0, 0);
+		wxColour marginBg = isDarkMode ? wxColour(37, 37, 38) : wxColour(240, 240, 240);
+		wxColour marginFg = isDarkMode ? wxColour(133, 133, 133) : wxColour(128, 128, 128);
+		wxColour caret = isDarkMode ? wxColour(255, 255, 255) : wxColour(0, 0, 0);
+
+		// Frame and Toolbar
+		this->SetBackgroundColour(bg);
+		this->SetForegroundColour(fg);
+		if (GetToolBar()) {
+			GetToolBar()->SetBackgroundColour(bg);
+			GetToolBar()->SetForegroundColour(fg);
+		}
+
+		// AUI Splitters and Panes
+		wxAuiDockArt* art = auiManager.GetArtProvider();
+		art->SetColour(wxAUI_DOCKART_BACKGROUND_COLOUR, bg);
+		art->SetColour(wxAUI_DOCKART_SASH_COLOUR, isDarkMode ? wxColour(50, 50, 50) : wxColour(200, 200, 200));
+		art->SetColour(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR, bg);
+		art->SetColour(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, bg);
+		art->SetColour(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR, fg);
+		art->SetColour(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR, marginBg);
+		art->SetColour(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR, marginBg);
+		art->SetColour(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR, isDarkMode ? wxColour(255, 255, 255) : wxColour(0, 0, 0));
+		art->SetColour(wxAUI_DOCKART_BORDER_COLOUR, isDarkMode ? wxColour(50, 50, 50) : wxColour(200, 200, 200));
+		art->SetColour(wxAUI_DOCKART_GRIPPER_COLOUR, bg);
+
+		editor->StyleSetBackground(wxSTC_STYLE_DEFAULT, bg);
+		editor->StyleSetForeground(wxSTC_STYLE_DEFAULT, fg);
+		editor->StyleClearAll();
+
+		editor->SetCaretForeground(caret);
+
+		editor->StyleSetBackground(wxSTC_STYLE_LINENUMBER, marginBg);
+		editor->StyleSetForeground(wxSTC_STYLE_LINENUMBER, marginFg);
+
+		if (isDarkMode) {
+			editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(106, 153, 85));
+			editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(106, 153, 85));
+			editor->StyleSetForeground(wxSTC_C_WORD, wxColour(86, 156, 214));
+			editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(220, 220, 170));
+			editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(79, 193, 255));
+			editor->StyleSetForeground(wxSTC_C_STRING, wxColour(206, 145, 120));
+			editor->StyleSetForeground(wxSTC_C_OPERATOR, wxColour(180, 180, 180));
+		}
+		else {
+			editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
+			editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
+			editor->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
+			editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(43, 145, 175));
+			editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(128, 0, 128));
+			editor->StyleSetForeground(wxSTC_C_STRING, wxColour(163, 21, 21));
+			editor->StyleSetForeground(wxSTC_C_OPERATOR, wxColour(100, 100, 100));
+		}
+
+		outputArea->StyleSetBackground(wxSTC_STYLE_DEFAULT, bg);
+		outputArea->StyleSetForeground(wxSTC_STYLE_DEFAULT, fg);
+		outputArea->StyleClearAll();
+
+		constantsTree->SetBackgroundColour(bg);
+		constantsTree->SetForegroundColour(fg);
+		
+		functionsTree->SetBackgroundColour(bg);
+		functionsTree->SetForegroundColour(fg);
+
+		editor->Refresh();
+		outputArea->Refresh();
+		constantsTree->Refresh();
+		functionsTree->Refresh();
+		auiManager.Update();
+
+#ifdef __WXMSW__
+		BOOL useDark = isDarkMode ? TRUE : FALSE;
+		
+		// 1. Force Dark Title Bars for the Main Frame AND all Floating AUI Frames
+		for (wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext()) {
+			wxTopLevelWindow* tlw = (wxTopLevelWindow*)node->GetData();
+			HWND hwnd = (HWND)tlw->GetHWND();
+			::DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDark, sizeof(useDark));
+		}
+
+		// 2. Dark Menus & Global Scrollbars (Undocumented Win32 hack)
+		HMODULE hUxtheme = GetModuleHandleW(L"uxtheme.dll");
+		if (hUxtheme) {
+			fnSetPreferredAppMode SetAppMode = (fnSetPreferredAppMode)GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
+			if (SetAppMode) {
+				SetAppMode(isDarkMode ? ForceDark : Default);
+			}
+
+			fnFlushMenuThemes FlushMenu = (fnFlushMenuThemes)GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136));
+			if (FlushMenu) {
+				FlushMenu();
+			}
+		}
+
+		// Attempt to theme the wxMenuBar directly
+		wxMenuBar* mb = GetMenuBar();
+		if (mb) {
+			mb->SetBackgroundColour(bg);
+			mb->SetForegroundColour(fg);
+		}
+		
+		// Force Menu Redraw
+		::DrawMenuBar((HWND)this->GetHWND());
+
+		// 3. Dark Scrollbars & Recursive Tree Headers
+		const wchar_t* themeStr = isDarkMode ? L"DarkMode_Explorer" : L"Explorer";
+		
+		::SetWindowTheme((HWND)constantsTree->GetHWND(), themeStr, NULL);
+		::EnumChildWindows((HWND)constantsTree->GetHWND(), ThemeEnumChildProc, (LPARAM)themeStr);
+		
+		::SetWindowTheme((HWND)functionsTree->GetHWND(), themeStr, NULL);
+		::EnumChildWindows((HWND)functionsTree->GetHWND(), ThemeEnumChildProc, (LPARAM)themeStr);
+		
+		::SetWindowTheme((HWND)editor->GetHWND(), themeStr, NULL);
+		::SetWindowTheme((HWND)outputArea->GetHWND(), themeStr, NULL);
+#endif
+	}
+
+	/**
 	 * Creates and configures the top menu bar.
 	 **/
 	void MainFrame::createMenu() {
@@ -156,11 +326,16 @@ namespace vex {
 		fileMenu->AppendSeparator();
 		fileMenu->Append(wxID_EXIT, "Exit\tAlt+F4");
 
+		/*wxMenu* viewMenu = new wxMenu();
+		viewMenu->AppendCheckItem(ID_VIEW_DARK_THEME, "Dark Theme");
+		viewMenu->Check(ID_VIEW_DARK_THEME, isDarkMode);*/
+
 		wxMenu* windowMenu = new wxMenu();
 		windowMenu->Append(ID_WINDOW_CONSTANTS, "Constants");
 		windowMenu->Append(ID_WINDOW_FUNCTIONS, "Functions");
 
 		menuBar->Append(fileMenu, "&File");
+		//menuBar->Append(viewMenu, "&View");
 		menuBar->Append(windowMenu, "&Window");
 
 		SetMenuBar(menuBar);
@@ -185,7 +360,7 @@ namespace vex {
 	 * Initializes all the UI controls before handing them to the AUI Manager.
 	 **/
 	void MainFrame::createControls() {
-		editor = new wxStyledTextCtrl(this, ID_EDITOR);
+		editor = new wxStyledTextCtrl(this, ID_EDITOR, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
 		
 		wxFont monoFont(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 		editor->StyleSetFont(wxSTC_STYLE_DEFAULT, monoFont);
@@ -193,14 +368,7 @@ namespace vex {
 		
 		editor->SetLexer(wxSTC_LEX_CPP);
 		editor->SetTabWidth(4);
-		editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-		editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-		
-		editor->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
-		editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(43, 145, 175));
-		editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(128, 0, 128));
 
-		editor->StyleSetForeground(wxSTC_C_STRING, wxColour(163, 21, 21));
 		editor->SetMarginType(1, wxSTC_MARGIN_NUMBER);
 		editor->SetMarginWidth(1, 30);
 
@@ -248,6 +416,8 @@ namespace vex {
 		//functionsTree->AppendColumn("Params", 80, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		functionsTree->AppendColumn("Description", 300, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		populateFunctions();
+
+		applyTheme();
 	}
 
 	/**
@@ -389,6 +559,16 @@ namespace vex {
 	void MainFrame::onReplToggled(wxCommandEvent& event) {
 		realTimeRepl = !event.IsChecked();
 		GetToolBar()->SetToolShortHelp(ID_TOGGLE_REPL, realTimeRepl ? "REPL: ON" : "REPL: OFF");
+	}
+
+	/**
+	 * Event handler for the View -> Dark Theme menu item.
+	 *
+	 * \param event			The command event.
+	 **/
+	void MainFrame::onMenuThemeToggle(wxCommandEvent& event) {
+		isDarkMode = event.IsChecked();
+		applyTheme();
 	}
 
 	/**

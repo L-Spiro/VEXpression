@@ -33,6 +33,7 @@ namespace vex {
 		ve::ExecutionContext	ctx;					/**< The execution context for evaluating expressions. */
 
 		bool					realTimeRepl;			/**< Flag indicating if the REPL loop is active. */
+		bool					isDarkMode;				/**< Flag indicating if the dark theme is active. */
 
 
 		// == Functions.
@@ -44,6 +45,11 @@ namespace vex {
 		 * \return				A string representation of the result.
 		 **/
 		std::string				printResult(const ve::Result& res, bool extended = false);
+
+		/**
+		 * Applies the current theme colors to all UI controls.
+		 **/
+		void					applyTheme();
 
 		/**
 		 * Creates and configures the top menu bar.
@@ -102,6 +108,13 @@ namespace vex {
 		 * \param event			The command event.
 		 **/
 		void					onReplToggled(wxCommandEvent& event);
+
+		/**
+		 * Event handler for the View -> Dark Theme menu item.
+		 *
+		 * \param event			The command event.
+		 **/
+		void					onMenuThemeToggle(wxCommandEvent& event);
 
 		/**
 		 * Event handler for the File -> Open menu item.
