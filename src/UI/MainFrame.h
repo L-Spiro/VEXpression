@@ -171,6 +171,20 @@ namespace vex {
 		 * \param event			The UI update event.
 		 **/
 		void					onUpdateWindowFunctions(wxUpdateUIEvent& event);
+
+		/**
+		 * Event handler for right-clicking an item in a tree list.
+		 *
+		 * \param event			The tree list event.
+		 **/
+		void					onTreeItemContextMenu(wxTreeListEvent& event);
+
+		/**
+		 * Event handler for double-clicking an item in a tree list.
+		 *
+		 * \param event			The tree list event.
+		 **/
+		void					onTreeItemDoubleClicked(wxTreeListEvent& event);
 	};
 
 }	// namespace vex

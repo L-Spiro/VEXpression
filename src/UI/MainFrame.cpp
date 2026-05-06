@@ -3,6 +3,7 @@
 
 #include <map>
 #include <wx/artprov.h>
+#include <wx/clipbrd.h>
 #include <wx/toplevel.h>
 
 #ifdef __WXMSW__
@@ -45,7 +46,9 @@ namespace vex {
 		ID_REPL_TIMER,
 		ID_VIEW_DARK_THEME,
 		ID_WINDOW_CONSTANTS,
-		ID_WINDOW_FUNCTIONS
+		ID_WINDOW_FUNCTIONS,
+		ID_CONSTANTS_TREE,
+		ID_FUNCTIONS_TREE
 	};
 
 	MainFrame::MainFrame(const wxString& title) :
@@ -76,10 +79,10 @@ namespace vex {
 
 		auiManager.AddPane(editor, wxAuiPaneInfo().Name("Editor").CenterPane().PaneBorder(false));
 
-		auiManager.AddPane(constantsTree, wxAuiPaneInfo().Name("Constants").Caption("Constants").Right().Position(0).MinSize(200, 200));
-		auiManager.AddPane(functionsTree, wxAuiPaneInfo().Name("Functions").Caption("Functions").Right().Position(1).MinSize(200, 200));
+		auiManager.AddPane(constantsTree, wxAuiPaneInfo().Name("Constants").Caption("Constants").Right().Position(0).MinSize(200, 200).PaneBorder(false));
+		auiManager.AddPane(functionsTree, wxAuiPaneInfo().Name("Functions").Caption("Functions").Right().Position(1).MinSize(200, 200).PaneBorder(false));
 
-		auiManager.AddPane(outputArea, wxAuiPaneInfo().Name("Output").Caption("Output").Bottom().MinSize(100, 100));
+		auiManager.AddPane(outputArea, wxAuiPaneInfo().Name("Output").Caption("Output").Bottom().MinSize(100, 100).PaneBorder(false));
 
 		auiManager.Update();
 
@@ -100,6 +103,21 @@ namespace vex {
 		
 		Bind(wxEVT_UPDATE_UI, &MainFrame::onUpdateWindowConstants, this, ID_WINDOW_CONSTANTS);
 		Bind(wxEVT_UPDATE_UI, &MainFrame::onUpdateWindowFunctions, this, ID_WINDOW_FUNCTIONS);
+
+		Bind(wxEVT_TREELIST_ITEM_CONTEXT_MENU, &MainFrame::onTreeItemContextMenu, this, ID_CONSTANTS_TREE);
+		Bind(wxEVT_TREELIST_ITEM_CONTEXT_MENU, &MainFrame::onTreeItemContextMenu, this, ID_FUNCTIONS_TREE);
+		Bind(wxEVT_TREELIST_ITEM_ACTIVATED, &MainFrame::onTreeItemDoubleClicked, this, ID_CONSTANTS_TREE);
+		Bind(wxEVT_TREELIST_ITEM_ACTIVATED, &MainFrame::onTreeItemDoubleClicked, this, ID_FUNCTIONS_TREE);
+
+		// Dynamic trap for AUI Floating Panes: If the top level window count changes, a pane was undocked.
+		Bind(wxEVT_IDLE, [this](wxIdleEvent& e) {
+			e.Skip();
+			static size_t lastTlwCount = 0;
+			if (wxTopLevelWindows.GetCount() != lastTlwCount) {
+				lastTlwCount = wxTopLevelWindows.GetCount();
+				applyTheme(); 
+			}
+		});
 
 		replTimer.SetOwner(this, ID_REPL_TIMER);
 	}
@@ -200,7 +218,6 @@ namespace vex {
 		wxColour marginFg = isDarkMode ? wxColour(133, 133, 133) : wxColour(128, 128, 128);
 		wxColour caret = isDarkMode ? wxColour(255, 255, 255) : wxColour(0, 0, 0);
 
-		// Frame and Toolbar
 		this->SetBackgroundColour(bg);
 		this->SetForegroundColour(fg);
 		if (GetToolBar()) {
@@ -208,7 +225,6 @@ namespace vex {
 			GetToolBar()->SetForegroundColour(fg);
 		}
 
-		// AUI Splitters and Panes
 		wxAuiDockArt* art = auiManager.GetArtProvider();
 		art->SetColour(wxAUI_DOCKART_BACKGROUND_COLOUR, bg);
 		art->SetColour(wxAUI_DOCKART_SASH_COLOUR, isDarkMode ? wxColour(50, 50, 50) : wxColour(200, 200, 200));
@@ -268,19 +284,19 @@ namespace vex {
 #ifdef __WXMSW__
 		BOOL useDark = isDarkMode ? TRUE : FALSE;
 		
-		// 1. Force Dark Title Bars for the Main Frame AND all Floating AUI Frames
 		for (wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext()) {
-			wxTopLevelWindow* tlw = reinterpret_cast<wxTopLevelWindow*>(node->GetData());
-			HWND hwnd = static_cast<HWND>(tlw->GetHWND());
+			wxTopLevelWindow* tlw = static_cast<wxTopLevelWindow*>(node->GetData());
+			HWND hwnd = reinterpret_cast<HWND>(tlw->GetHWND());
 			::DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDark, sizeof(useDark));
+			::DwmSetWindowAttribute(hwnd, 19, &useDark, sizeof(useDark));
 		}
 
-		// 2. Dark Menus & Global Scrollbars (Undocumented Win32 hack)
 		HMODULE hUxtheme = ::GetModuleHandleW(L"uxtheme.dll");
 		if (hUxtheme) {
 			fnSetPreferredAppMode SetAppMode = reinterpret_cast<fnSetPreferredAppMode>(::GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135)));
 			if (SetAppMode) {
 				SetAppMode(isDarkMode ? ForceDark : Default);
+				SetAppMode(isDarkMode ? AllowDark : Default); 
 			}
 
 			fnFlushMenuThemes FlushMenu = reinterpret_cast<fnFlushMenuThemes>(::GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136)));
@@ -289,7 +305,6 @@ namespace vex {
 			}
 		}
 
-		// Attempt to theme the wxMenuBar directly
 		wxMenuBar* mb = GetMenuBar();
 		if (mb) {
 			mb->SetBackgroundColour(bg);
@@ -404,14 +419,13 @@ namespace vex {
 		outputArea->SetMarginWidth(1, 0);
 		outputArea->SetWrapMode(wxSTC_WRAP_WORD);
 
-		constantsTree = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_DEFAULT_STYLE | wxBORDER_NONE);
+		constantsTree = new wxTreeListCtrl(this, ID_CONSTANTS_TREE, wxDefaultPosition, wxDefaultSize, wxTL_DEFAULT_STYLE | wxBORDER_NONE);
 		constantsTree->AppendColumn("Name", 120, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		constantsTree->AppendColumn("Value", 150, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		populateConstants();
 
-		functionsTree = new wxTreeListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTL_DEFAULT_STYLE | wxBORDER_NONE);
+		functionsTree = new wxTreeListCtrl(this, ID_FUNCTIONS_TREE, wxDefaultPosition, wxDefaultSize, wxTL_DEFAULT_STYLE | wxBORDER_NONE);
 		functionsTree->AppendColumn("Name", 120, wxALIGN_LEFT, wxCOL_RESIZABLE);
-		//functionsTree->AppendColumn("Params", 80, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		functionsTree->AppendColumn("Description", 300, wxALIGN_LEFT, wxCOL_RESIZABLE);
 		populateFunctions();
 
@@ -445,8 +459,6 @@ namespace vex {
 			wxTreeListItem item = constantsTree->AppendItem(thisGroup, wxString::FromUTF8(name));
 			constantsTree->SetItemText(item, 1, wxString::FromUTF8(printResult(res, false)));
 		}
-
-		//constantsTree->Expand(builtInGroup);
 	}
 
 	/**
@@ -481,12 +493,6 @@ namespace vex {
 				functionsTree->SetItemText(parm, 1, ve::StrL(funcDef->parameters[j].description, ve::Languages::English));
 			}
 		}
-		
-		/*wxTreeListItem funcItem = functionsTree->AppendItem(mathGroup, "barthann");
-		functionsTree->SetItemText(funcItem, 1, "n");
-		functionsTree->SetItemText(funcItem, 2, "Returns a modified Bartlett-Hann window.");
-
-		functionsTree->Expand(mathGroup);*/
 	}
 
 	/**
@@ -638,6 +644,120 @@ namespace vex {
 	 **/
 	void MainFrame::onUpdateWindowFunctions(wxUpdateUIEvent& event) {
 		event.Enable(!auiManager.GetPane("Functions").IsShown());
+	}
+
+	/**
+	 * Event handler for right-clicking an item in a tree list.
+	 *
+	 * \param event			The tree list event.
+	 **/
+	void MainFrame::onTreeItemContextMenu(wxTreeListEvent& event) {
+		wxTreeListCtrl* tree = static_cast<wxTreeListCtrl*>(event.GetEventObject());
+		wxTreeListItem item = event.GetItem();
+		
+		if (!item.IsOk()) {
+			return;
+		}
+
+		wxString itemName = tree->GetItemText(item, 0);
+		wxString itemDesc = tree->GetItemText(item, 1);
+
+		wxMenu menu;
+
+		enum {
+			ID_PASTE = 10000,
+			ID_TOGGLE_EXPAND,
+			ID_COPY_NAME,
+			ID_COPY_DESC,
+			ID_COPY_ALL
+		};
+
+		menu.Append(ID_PASTE, "Insert '" + itemName + "' at Cursor");
+
+		wxTreeListItem firstChild = tree->GetFirstChild(item);
+		if (firstChild.IsOk()) {
+			if (tree->IsExpanded(item)) {
+				menu.Append(ID_TOGGLE_EXPAND, "Collapse");
+			}
+			else {
+				menu.Append(ID_TOGGLE_EXPAND, "Expand");
+			}
+		}
+
+		menu.AppendSeparator();
+		menu.Append(ID_COPY_NAME, "Copy Name");
+		
+		if (!itemDesc.IsEmpty()) {
+			menu.Append(ID_COPY_DESC, "Copy Value/Description");
+			menu.Append(ID_COPY_ALL, "Copy Name + Value/Description");
+		}
+
+		int selection = tree->GetPopupMenuSelectionFromUser(menu);
+		if (selection == wxID_NONE) {
+			return;
+		}
+
+		if (selection == ID_PASTE) {
+			editor->InsertText(editor->GetCurrentPos(), itemName);
+			editor->GotoPos(editor->GetCurrentPos() + itemName.Length());
+			editor->SetFocus();
+		}
+		else if (selection == ID_TOGGLE_EXPAND) {
+			if (tree->IsExpanded(item)) {
+				tree->Collapse(item);
+			}
+			else {
+				tree->Expand(item);
+			}
+		}
+		else if (selection == ID_COPY_NAME) {
+			if (wxTheClipboard->Open()) {
+				wxTheClipboard->SetData(new wxTextDataObject(itemName));
+				wxTheClipboard->Close();
+			}
+		}
+		else if (selection == ID_COPY_DESC) {
+			if (wxTheClipboard->Open()) {
+				wxTheClipboard->SetData(new wxTextDataObject(itemDesc));
+				wxTheClipboard->Close();
+			}
+		}
+		else if (selection == ID_COPY_ALL) {
+			if (wxTheClipboard->Open()) {
+				wxTheClipboard->SetData(new wxTextDataObject(itemName + " - " + itemDesc));
+				wxTheClipboard->Close();
+			}
+		}
+	}
+
+	/**
+	 * Event handler for double-clicking an item in a tree list.
+	 *
+	 * \param event			The tree list event.
+	 **/
+	void MainFrame::onTreeItemDoubleClicked(wxTreeListEvent& event) {
+		wxTreeListCtrl* tree = static_cast<wxTreeListCtrl*>(event.GetEventObject());
+		wxTreeListItem item = event.GetItem();
+		
+		if (!item.IsOk()) {
+			return;
+		}
+
+		wxTreeListItem firstChild = tree->GetFirstChild(item);
+		if (firstChild.IsOk()) {
+			if (tree->IsExpanded(item)) {
+				tree->Collapse(item);
+			}
+			else {
+				tree->Expand(item);
+			}
+			return;
+		}
+
+		wxString itemName = tree->GetItemText(item, 0);
+		editor->InsertText(editor->GetCurrentPos(), itemName);
+		editor->GotoPos(editor->GetCurrentPos() + itemName.Length());
+		editor->SetFocus();
 	}
 
 }	// namespace vex
