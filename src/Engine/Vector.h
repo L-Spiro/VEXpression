@@ -579,6 +579,18 @@ namespace ve {
 			catch (...) { return false; }
 		}
 
+		/**
+		 * Reserves the given number of elements.
+		 * 
+		 * \param size			The number of elements to reserve.
+		 **/
+		void								reserve(size_t size) {
+			try {
+				elements.reserve(size);
+			}
+			catch (...) {}
+		}
+
 	protected :
 		// == Members.
 		std::vector<Result>					elements;

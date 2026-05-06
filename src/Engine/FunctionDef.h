@@ -45,7 +45,7 @@ namespace ve {
 	/**
 	 * Callback signature for built-in intrinsic functions.
 	 **/
-	using IntrinsicCallback = Result (*)(ExecutionContext* ctx, const std::vector<Result>& args);
+	using IntrinsicCallback =		Result (*)(ExecutionContext* ctx, const std::vector<Result>& args);
 
 	/**
 	 * Complete definition of a registered function, including documentation metadata.

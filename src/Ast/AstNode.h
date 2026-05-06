@@ -63,6 +63,7 @@ namespace ve {
 		PreDec,
 		PreInc,
 		Return,
+		Scope,
 		Sequence,
 		Shl,
 		ShlAssign,

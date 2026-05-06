@@ -1046,23 +1046,25 @@ namespace ve {
 		 **/
 		static inline double		erimmRgbToLinear(double val) {
 			constexpr double logEclip = 2.5;
+			constexpr double eclip = 316.22776601683796116049052216112613677978515625;				// pow( 10, 2.5 ).
 			constexpr double logEmin = -3.0;
 			constexpr double logEt = -2.56570551809674807230976512073539197444915771484375;
-			constexpr double et = 0.0027182818284590451983484538089896886958740651607513427734375;
+			constexpr double et = 0.0027182818284590451983484538089896886958740651607513427734375;	// e * dEmin.
 
 			constexpr double logEclipMinusLogEmin = logEclip - logEmin;
 			constexpr double logEtMinusLogEmin = logEt - logEmin;
 
-			if (val <= 0.0) {
-				return 0.0;
-			}
+			if (val <= 0.0) { return 0.0; }
+    
 			if (val <= (logEtMinusLogEmin / logEclipMinusLogEmin)) {
 				return (logEclipMinusLogEmin / logEtMinusLogEmin) * (val * et);
 			}
+    
 			if (val < 1.0) {
 				return std::pow(10.0, val * logEclipMinusLogEmin + logEmin);
 			}
-			return 1.0;
+    
+			return eclip;
 		}
 
 		/**
@@ -1073,22 +1075,23 @@ namespace ve {
 		 **/
 		static inline double		linearToErimmRgb(double val) {
 			constexpr double logEclip = 2.5;
-			constexpr double eclip = 316.22776601683796116049052216112613677978515625;
+			constexpr double eclip = 316.22776601683796116049052216112613677978515625;				// pow( 10, 2.5 ).
 			constexpr double logEmin = -3.0;
-			constexpr double et = 0.0027182818284590451983484538089896886958740651607513427734375;
-			constexpr double logEt = -2.56570551809674807230976512073539197444915771484375;
+			//constexpr double emin = 0.001;
+			constexpr double et = 0.0027182818284590451983484538089896886958740651607513427734375;	// e * emin.
 
 			constexpr double logEclipMinusLogEmin = logEclip - logEmin;
 
-			if (val <= 0.0) {
-				return 0.0;
-			}
+			if (val <= 0.0) { return 0.0; }
+    
 			if (val <= et) {
-				return ((logEt - logEmin) / logEclipMinusLogEmin) * (val / et);
+				return ((std::log10(et) - logEmin) / logEclipMinusLogEmin) * (val / et);
 			}
-			if (val <= eclip && val < 1.0) {
+    
+			if (val < eclip) {
 				return (std::log10(val) - logEmin) / logEclipMinusLogEmin;
 			}
+    
 			return 1.0;
 		}
 

@@ -165,6 +165,7 @@ set(APP_HEADERS
     src/Ast/PreDecNode.h
     src/Ast/PreIncNode.h
     src/Ast/ReturnNode.h
+	src/Ast/ScopeNode.h
     src/Ast/SequenceNode.h
     src/Ast/ShlAssignNode.h
     src/Ast/ShlNode.h

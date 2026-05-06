@@ -45,6 +45,11 @@ namespace ve {
 			reset();
 		}
 
+
+		// == Types.
+		/** The callback type for scope resolution (??::X). */
+		using ScopeCallback =			bool (*)(ExecutionContext* ctx, uint64_t userVal, const Result& left, const std::string& scopeName, Result& returnVal );
+
 		
 		// == Functions.
 		/**
@@ -384,6 +389,30 @@ namespace ve {
 		size_t							totalParms() const { return userParms.size(); }
 
 		/**
+		 * Sets the scope handler.
+		 * 
+		 * \param func				The callback function.
+		 * \param parm				The parameter to pass back to the callback function.
+		 **/
+		void							setScopeHandler(ScopeCallback func, uint64_t parm) {
+			scopeFunction = func;
+			scopeParm = parm;
+		}
+
+		/**
+		 * Executes the scope handler.
+		 * 
+		 * \param left				The left operand (left::scope).
+		 * \param scope				The name of the scope.
+		 * \return					Returns the result of the scope function.
+		 **/
+		Result							evaluateScope(const Result& left, const std::string& scope) {
+			Result res;
+			if (scopeFunction(this, scopeParm, left, scope, res)) { return res; }
+			return Result{};
+		}
+
+		/**
 		 * Registers a new built-in function to the execution context.
 		 * 
 		 * \param name				The string identifier used in the script.
@@ -559,6 +588,10 @@ namespace ve {
 		Result							userValue;
 		/** Multplie parameter list. */
 		std::vector<Result>				userParms;
+		/** The scope handler. */
+		ScopeCallback					scopeFunction = ExecutionContext::scopeDefault;
+		/** The parameter to pass back to the scope function. */
+		uint64_t						scopeParm = 0;
 		/** The return value if return is used. */
 		Result							returnValue;
 		/** The arena index of the root AST node to execute. **/
@@ -585,6 +618,19 @@ namespace ve {
 		static BuiltInConstant			builtInConsts[];
 		/** The static list of built-in functions. */
 		static const FunctionDef		builtInFunctions[];
+
+		// == Functions.
+		/**
+		 * The default scope function.
+		 * 
+		 * \param ctx			A pointer to the current execution context.
+		 * \param userVal		The value supplied to the setScopeHandler() method.
+		 * \param left			The left operand (left::scopeName).
+		 * \param scopeName		The name of the scope.
+		 * \param returnVal		If true is returned, this contains the return value.
+		 * \return				Returns false.
+		 **/
+		static bool						scopeDefault(ExecutionContext* /*ctx*/, uint64_t /*userVal*/, const Result& /*left*/, const std::string& /*scopeName*/, Result& /*returnVal*/ ) { return false; }
 	};
 
 }	// namespace ve

@@ -40,13 +40,18 @@ namespace ve {
 				if (functionDefinition.operateOnVectorElements && arguments.size() == 1) {
 					if (rawResult.type == NumericConstant::Object && rawResult.value.objectVal && (rawResult.value.objectVal->type() & BuiltInType_Vector)) {
 						Vector* vec = static_cast<Vector*>(rawResult.value.objectVal);
+						Vector* newVec = context.allocateObject<Vector>();
+						if (!newVec) { return Result{}; }
 						evaluatedArgs.resize(1);
+						newVec->reserve(vec->arrayLength());
 						for (size_t i = 0; i < vec->arrayLength(); ++i ) {
 							evaluatedArgs[0] = context.castArgument(vec->directAccess(i), expectedType);
 							if (evaluatedArgs[0].type == NumericConstant::Invalid) { return Result{}; }
-							vec->directAccess(i) = functionDefinition.callback(&context, evaluatedArgs);
+							newVec->pushBack(functionDefinition.callback(&context, evaluatedArgs));
 						}
-						return vec->createResult();
+						Result out = newVec->createResult();
+						VE_DELETE_SWAP(out, lastObject);
+						return out;
 					}
 				}
 				
@@ -59,7 +64,9 @@ namespace ve {
 				}
 			}
 
-			return functionDefinition.callback(&context, evaluatedArgs);
+			Result out = functionDefinition.callback(&context, evaluatedArgs);
+			VE_DELETE_SWAP(out, lastObject);
+			return out;
 		}
 
 		/**
@@ -73,6 +80,7 @@ namespace ve {
 		// == Members.
 		FunctionDef					functionDefinition;
 		std::vector<size_t>			arguments;
+		mutable Object*				lastObject = nullptr;
 	};
 
 }	// namespace ve

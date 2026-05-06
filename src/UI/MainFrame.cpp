@@ -61,6 +61,9 @@ namespace vex {
 		wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(1280, 720)),
 		realTimeRepl(true),
 		isDarkMode(false),
+		isAutoCompleting(false),
+		autoCompStartPos(0),
+		autoCompIndex(0),
 		editor(nullptr),
 		outputArea(nullptr),
 		constantsTree(nullptr),
@@ -124,6 +127,8 @@ namespace vex {
 				applyTheme(); 
 			}
 		});
+		
+		editor->Bind(wxEVT_KEY_DOWN, &MainFrame::onEditorKeyDown, this);
 
 		replTimer.SetOwner(this, ID_REPL_TIMER);
 	}
@@ -544,6 +549,86 @@ namespace vex {
 		if (realTimeRepl) {
 			replTimer.Start(100, wxTIMER_ONE_SHOT);
 		}
+	}
+
+	/**
+	 * Event handler for key presses in the editor.
+	 *
+	 * \param event			The key event.
+	 **/
+	void MainFrame::onEditorKeyDown(wxKeyEvent& event) {
+		if (event.GetKeyCode() == WXK_TAB) {
+			long currPos = editor->GetCurrentPos();
+			
+			if (isAutoCompleting) {
+				if (currPos != autoCompStartPos + (long)autoCompList[autoCompIndex].Length()) {
+					isAutoCompleting = false;
+				}
+			}
+
+			if (!isAutoCompleting) {
+				long startPos = currPos;
+				while (startPos > 0) {
+					char c = editor->GetCharAt(startPos - 1);
+					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') {
+						startPos--;
+					} else {
+						break;
+					}
+				}
+
+				autoCompPrefix = editor->GetTextRange(startPos, currPos);
+
+				if (autoCompPrefix.IsEmpty()) {
+					event.Skip();
+					return;
+				}
+
+				autoCompList.clear();
+
+				for (size_t i = 0; ve::ExecutionContext::getBuiltinFunction(i); ++i) {
+					wxString name = wxString::FromUTF8(ve::ExecutionContext::getBuiltinFunction(i)->name);
+					if (name.StartsWith(autoCompPrefix)) {
+						autoCompList.push_back(name);
+					}
+				}
+
+				for (size_t i = 0; i < ve::ExecutionContext::totalBuiltInConstants(); ++i) {
+					ve::Result res;
+					ve::StringId strId;
+					wxString name = wxString::FromUTF8(ve::ExecutionContext::getBuiltinConstant(i, res, strId));
+					if (name.StartsWith(autoCompPrefix)) {
+						autoCompList.push_back(name);
+					}
+				}
+
+				if (autoCompList.empty()) {
+					event.Skip();
+					return;
+				}
+
+				isAutoCompleting = true;
+				autoCompStartPos = startPos;
+				autoCompIndex = 0;
+			} else {
+				if (event.ShiftDown()) {
+					autoCompIndex = (autoCompIndex == 0) ? (autoCompList.size() - 1) : (autoCompIndex - 1);
+				} else {
+					autoCompIndex = (autoCompIndex + 1) % autoCompList.size();
+				}
+			}
+
+			editor->SetSelection(autoCompStartPos, currPos);
+			editor->ReplaceSelection(autoCompList[autoCompIndex]);
+			
+			return;
+		}
+
+		if (event.GetKeyCode() != WXK_SHIFT && event.GetKeyCode() != WXK_CONTROL && event.GetKeyCode() != WXK_ALT) {
+			isAutoCompleting = false;
+		}
+
+		event.Skip();
 	}
 
 	/**

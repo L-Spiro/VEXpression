@@ -2,6 +2,7 @@
 
 #include "Engine/ExecutionContext.h"
 
+#include <vector>
 #include <wx/wx.h>
 #include <wx/aui/aui.h>
 #include <wx/stc/stc.h>
@@ -34,6 +35,12 @@ namespace vex {
 
 		bool					realTimeRepl;			/**< Flag indicating if the REPL loop is active. */
 		bool					isDarkMode;				/**< Flag indicating if the dark theme is active. */
+
+		bool					isAutoCompleting;		/**< Flag indicating if inline auto-completion is active. */
+		long					autoCompStartPos;		/**< The start position of the word being auto-completed. */
+		wxString				autoCompPrefix;			/**< The original prefix typed for auto-completion. */
+		size_t					autoCompIndex;			/**< The current index in the auto-completion list. */
+		std::vector<wxString>	autoCompList;			/**< The list of available auto-completions. */
 
 
 		// == Functions.
@@ -87,6 +94,13 @@ namespace vex {
 		 * \param event			The styled text event.
 		 **/
 		void					onEditorTextChanged(wxStyledTextEvent& event);
+
+		/**
+		 * Event handler for key presses in the editor.
+		 *
+		 * \param event			The key event.
+		 **/
+		void					onEditorKeyDown(wxKeyEvent& event);
 
 		/**
 		 * Event handler for the REPL debounce timer.

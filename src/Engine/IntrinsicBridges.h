@@ -3903,7 +3903,7 @@ namespace ve {
 		 **/
 #define VE_MATH_GAMMA_BRIDGE(funcName)																						\
 	static Result funcName##Bridge(ExecutionContext* ctx, const std::vector<Result>& args) {								\
-		if (args.size() != 1 || !args[0].isPrimitive()) { return Result{}; }				\
+		if (args.size() != 1 || !args[0].isPrimitive()) { return Result{}; }												\
 		Result val = ctx->convertResult(args[0], NumericConstant::Floating);												\
 		return Result::make(Math::funcName(val.value.doubleVal));															\
 	}

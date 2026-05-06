@@ -36,9 +36,14 @@ exprMapList
 
 expr
     // =========================================================================
+    // Precedence 1: Scope, Postfix & Primary Constructors
+    // =========================================================================
+    : expr SCOPE IDENTIFIER                                               # scopeExpr
+    
+	// =========================================================================
     // Precedence 2: Postfix & Primary Constructors
     // =========================================================================
-    : IDENTIFIER op=(INC | DEC)                                           # postfix
+    | IDENTIFIER op=(INC | DEC)                                           # postfix
     | type_name LPAREN exprList? RPAREN                                   # constructParenExpr
     | type_name LBRACE exprList? RBRACE                                   # constructBraceExpr
     | expr DOT IDENTIFIER LPAREN exprList? RPAREN                         # methodCall

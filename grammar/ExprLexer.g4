@@ -57,6 +57,7 @@ BIT_NOT             : '~' ;
 QUESTION            : '?' ;
 COLON               : ':' ;
 SEMI                : ';' ;
+SCOPE               : '::' ;
 ASSIGN              : '=' ;
 ADD_ASSIGN          : '+=' ;
 SUB_ASSIGN          : '-=' ;

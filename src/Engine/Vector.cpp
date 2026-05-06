@@ -76,7 +76,6 @@ namespace ve {
 	}
 
 	// == Operators.
-
 	/**
 	 * Evaluates the equality comparison operation against a right-hand operand.
 	 * 
@@ -184,7 +183,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SUB));
@@ -214,7 +213,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::MUL));
@@ -244,7 +243,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::DIV));
@@ -274,7 +273,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::MOD));
@@ -304,7 +303,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::BIT_AND));
@@ -334,7 +333,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::BIT_OR));
@@ -364,7 +363,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::BIT_XOR));
@@ -394,7 +393,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SHL));
@@ -424,7 +423,7 @@ namespace ve {
 
 		if (rhs.type == NumericConstant::Object && rhs.value.objectVal && (rhs.value.objectVal->type() & BuiltInType_Vector)) {
 			Vector* rVec = static_cast<Vector*>(rhs.value.objectVal);
-			if (rVec->arrayLength() != elements.size()) { return Result{}; }
+			if (rVec->arrayLength() != elements.size()) { context->deallocateObject(newVec); return Result{}; }
 			newVec->elements.reserve(elements.size());
 			for (size_t i = 0; i < elements.size(); ++i) {
 				newVec->pushBack(context->evaluateMath(elements[i], rVec->directAccess(i), ExprLexer::SHR));

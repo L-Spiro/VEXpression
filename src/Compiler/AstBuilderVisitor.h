@@ -52,6 +52,7 @@
 #include "../Ast/PreDecNode.h"
 #include "../Ast/PreIncNode.h"
 #include "../Ast/ReturnNode.h"
+#include "../Ast/ScopeNode.h"
 #include "../Ast/SequenceNode.h"
 #include "../Ast/ShlAssignNode.h"
 #include "../Ast/ShlNode.h"
@@ -326,6 +327,18 @@ namespace ve {
 		 **/
 		virtual std::any			visitEmptyStmt(ExprParser::EmptyStmtContext* ctx) override {
 			return std::any(); 
+		}
+
+		/**
+		 * Visits a scope expression node.
+		 * * \param ctx		The parse tree context.
+		 * \return			Returns the arena index of the allocated ScopeNode.
+		 **/
+		virtual std::any			visitScopeExpr(ExprParser::ScopeExprContext *ctx) override {
+			size_t leftId = std::any_cast<size_t>(visit(ctx->expr()));
+			std::string memberName = ctx->IDENTIFIER()->getText();
+			
+			return context.addNode<ScopeNode>(leftId, memberName);
 		}
 
 		/**
