@@ -270,20 +270,20 @@ namespace vex {
 		
 		// 1. Force Dark Title Bars for the Main Frame AND all Floating AUI Frames
 		for (wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext()) {
-			wxTopLevelWindow* tlw = (wxTopLevelWindow*)node->GetData();
-			HWND hwnd = (HWND)tlw->GetHWND();
+			wxTopLevelWindow* tlw = reinterpret_cast<wxTopLevelWindow*>(node->GetData());
+			HWND hwnd = static_cast<HWND>(tlw->GetHWND());
 			::DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDark, sizeof(useDark));
 		}
 
 		// 2. Dark Menus & Global Scrollbars (Undocumented Win32 hack)
-		HMODULE hUxtheme = GetModuleHandleW(L"uxtheme.dll");
+		HMODULE hUxtheme = ::GetModuleHandleW(L"uxtheme.dll");
 		if (hUxtheme) {
-			fnSetPreferredAppMode SetAppMode = (fnSetPreferredAppMode)GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135));
+			fnSetPreferredAppMode SetAppMode = reinterpret_cast<fnSetPreferredAppMode>(::GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135)));
 			if (SetAppMode) {
 				SetAppMode(isDarkMode ? ForceDark : Default);
 			}
 
-			fnFlushMenuThemes FlushMenu = (fnFlushMenuThemes)GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136));
+			fnFlushMenuThemes FlushMenu = reinterpret_cast<fnFlushMenuThemes>(::GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136)));
 			if (FlushMenu) {
 				FlushMenu();
 			}
@@ -296,20 +296,18 @@ namespace vex {
 			mb->SetForegroundColour(fg);
 		}
 		
-		// Force Menu Redraw
-		::DrawMenuBar((HWND)this->GetHWND());
+		::DrawMenuBar(static_cast<HWND>(this->GetHWND()));
 
-		// 3. Dark Scrollbars & Recursive Tree Headers
 		const wchar_t* themeStr = isDarkMode ? L"DarkMode_Explorer" : L"Explorer";
 		
-		::SetWindowTheme((HWND)constantsTree->GetHWND(), themeStr, NULL);
-		::EnumChildWindows((HWND)constantsTree->GetHWND(), ThemeEnumChildProc, (LPARAM)themeStr);
+		::SetWindowTheme(static_cast<HWND>(constantsTree->GetHWND()), themeStr, NULL);
+		::EnumChildWindows(static_cast<HWND>(constantsTree->GetHWND()), ThemeEnumChildProc, reinterpret_cast<LPARAM>(themeStr));
 		
-		::SetWindowTheme((HWND)functionsTree->GetHWND(), themeStr, NULL);
-		::EnumChildWindows((HWND)functionsTree->GetHWND(), ThemeEnumChildProc, (LPARAM)themeStr);
+		::SetWindowTheme(static_cast<HWND>(functionsTree->GetHWND()), themeStr, NULL);
+		::EnumChildWindows(static_cast<HWND>(functionsTree->GetHWND()), ThemeEnumChildProc, reinterpret_cast<LPARAM>(themeStr));
 		
-		::SetWindowTheme((HWND)editor->GetHWND(), themeStr, NULL);
-		::SetWindowTheme((HWND)outputArea->GetHWND(), themeStr, NULL);
+		::SetWindowTheme(static_cast<HWND>(editor->GetHWND()), themeStr, NULL);
+		::SetWindowTheme(static_cast<HWND>(outputArea->GetHWND()), themeStr, NULL);
 #endif
 	}
 
