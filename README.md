@@ -34,5 +34,8 @@ Deriving PI.<br>
 <img width="1920" height="1040" alt="image" src="https://github.com/user-attachments/assets/18d90144-2252-466e-941f-2dc49ec48f5f" />
 Enumerate all HTML escapes.<br>
 <img width="1920" height="1040" alt="image" src="https://github.com/user-attachments/assets/92480476-2497-45c2-8d1f-20f63e3e8d0d" />
+Researching/prototyping the SPC-700 `DIV` instruction’s true algorithm.<br>
+<img width="1266" height="631" alt="image" src="https://github.com/user-attachments/assets/cdd7cd4a-d3a9-4e45-8f24-49ce9168508d" />
+
 
 
