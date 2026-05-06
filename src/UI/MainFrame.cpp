@@ -505,6 +505,10 @@ namespace vex {
 	 **/
 	void MainFrame::evaluateScript() {
 		wxString code = editor->GetText();
+		if (code.empty()) {
+			outputArea->SetText("");
+			return;
+		}
 		std::string testExpr = code.ToStdString(wxConvUTF8);
 		ve::ExecutionContext context;
 		
