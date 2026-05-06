@@ -4725,9 +4725,7 @@ namespace ve {
 		static std::string				parseStringLiteral(std::string_view rawToken, StringFormat format) {
 			size_t quoteIdx = rawToken.find_first_of("\"'");
 			
-			if (quoteIdx == std::string_view::npos) {
-				return "";
-			}
+			if (quoteIdx == std::string_view::npos) { return ""; }
 
 			char quoteChar = rawToken[quoteIdx];
 			size_t quoteLen = 1;
@@ -4739,9 +4737,7 @@ namespace ve {
 			std::string_view payload = rawToken.substr(quoteIdx + quoteLen, rawToken.size() - quoteIdx - (quoteLen * 2));
 
 			// If a raw string, no need to do escape sequences.
-			if (format == StringFormat::Raw) {
-				return std::string(payload);
-			}
+			if (format == StringFormat::Raw) { return std::string(payload); }
 
 			// Resolve Escapes.
 			std::string result;
@@ -4823,17 +4819,13 @@ namespace ve {
 			}
 
 			while (length > 0) {
-				if (*formatStr == static_cast<CharT>('{')) {
-					break;
-				}
+				if ((*formatStr) == static_cast<CharT>('{')) { break; }
 
-				ret.push_back(*formatStr);
+				ret.push_back((*formatStr));
 				++formatStr;
 				--length;
 
-				if (ret.back() == static_cast<CharT>('}')) {
-					break;
-				}
+				if (ret.back() == static_cast<CharT>('}')) { break; }
 			}
 
 			return ret;
@@ -4903,7 +4895,7 @@ namespace ve {
 				}
 				
 				while (charLen > 0) {
-					tmp.push_back(*formatStr++);
+					tmp.push_back((*formatStr++));
 					--len;
 					--charLen;
 				}

@@ -39,6 +39,12 @@ BOOL CALLBACK ThemeEnumChildProc(HWND hwnd, LPARAM lParam) {
 
 namespace vex {
 
+	class FuncItemData : public wxClientData {
+	public:
+		size_t funcIndex;
+		FuncItemData(size_t index) : funcIndex(index) {}
+	};
+
 	enum {
 		ID_EDITOR = wxID_HIGHEST + 1,
 		ID_TOGGLE_REPL,
@@ -288,7 +294,6 @@ namespace vex {
 			wxTopLevelWindow* tlw = static_cast<wxTopLevelWindow*>(node->GetData());
 			HWND hwnd = reinterpret_cast<HWND>(tlw->GetHWND());
 			::DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, &useDark, sizeof(useDark));
-			::DwmSetWindowAttribute(hwnd, 19, &useDark, sizeof(useDark));
 		}
 
 		HMODULE hUxtheme = ::GetModuleHandleW(L"uxtheme.dll");
@@ -296,7 +301,6 @@ namespace vex {
 			fnSetPreferredAppMode SetAppMode = reinterpret_cast<fnSetPreferredAppMode>(::GetProcAddress(hUxtheme, MAKEINTRESOURCEA(135)));
 			if (SetAppMode) {
 				SetAppMode(isDarkMode ? ForceDark : Default);
-				SetAppMode(isDarkMode ? AllowDark : Default); 
 			}
 
 			fnFlushMenuThemes FlushMenu = reinterpret_cast<fnFlushMenuThemes>(::GetProcAddress(hUxtheme, MAKEINTRESOURCEA(136)));
@@ -311,18 +315,18 @@ namespace vex {
 			mb->SetForegroundColour(fg);
 		}
 		
-		::DrawMenuBar(static_cast<HWND>(this->GetHWND()));
+		::DrawMenuBar(reinterpret_cast<HWND>(this->GetHWND()));
 
 		const wchar_t* themeStr = isDarkMode ? L"DarkMode_Explorer" : L"Explorer";
 		
-		::SetWindowTheme(static_cast<HWND>(constantsTree->GetHWND()), themeStr, NULL);
-		::EnumChildWindows(static_cast<HWND>(constantsTree->GetHWND()), ThemeEnumChildProc, reinterpret_cast<LPARAM>(themeStr));
+		::SetWindowTheme(reinterpret_cast<HWND>(constantsTree->GetHWND()), themeStr, NULL);
+		::EnumChildWindows(reinterpret_cast<HWND>(constantsTree->GetHWND()), ThemeEnumChildProc, reinterpret_cast<LPARAM>(themeStr));
 		
-		::SetWindowTheme(static_cast<HWND>(functionsTree->GetHWND()), themeStr, NULL);
-		::EnumChildWindows(static_cast<HWND>(functionsTree->GetHWND()), ThemeEnumChildProc, reinterpret_cast<LPARAM>(themeStr));
+		::SetWindowTheme(reinterpret_cast<HWND>(functionsTree->GetHWND()), themeStr, NULL);
+		::EnumChildWindows(reinterpret_cast<HWND>(functionsTree->GetHWND()), ThemeEnumChildProc, reinterpret_cast<LPARAM>(themeStr));
 		
-		::SetWindowTheme(static_cast<HWND>(editor->GetHWND()), themeStr, NULL);
-		::SetWindowTheme(static_cast<HWND>(outputArea->GetHWND()), themeStr, NULL);
+		::SetWindowTheme(reinterpret_cast<HWND>(editor->GetHWND()), themeStr, NULL);
+		::SetWindowTheme(reinterpret_cast<HWND>(outputArea->GetHWND()), themeStr, NULL);
 #endif
 	}
 
@@ -483,6 +487,7 @@ namespace vex {
 			}
 
 			wxTreeListItem item = functionsTree->AppendItem(thisGroup, wxString::FromUTF8(funcDef->name));
+			functionsTree->SetItemData(item, new FuncItemData(i));
 
 			std::u8string utf8Str = ve::StrU8(funcDef->description, ve::Languages::English);
 			utf8Str = ve::Text::replaceUtf8<std::u8string>(utf8Str, std::u8string(u8"\r"), std::u8string(u8""));
@@ -662,6 +667,15 @@ namespace vex {
 		wxString itemName = tree->GetItemText(item, 0);
 		wxString itemDesc = tree->GetItemText(item, 1);
 
+		FuncItemData* data = dynamic_cast<FuncItemData*>(tree->GetItemData(item));
+		if (data) {
+			const auto* funcDef = ve::ExecutionContext::getBuiltinFunction(data->funcIndex);
+			if (funcDef) {
+				std::u8string utf8Str = ve::StrU8(funcDef->description, ve::Languages::English);
+				itemDesc = wxString::FromUTF8(reinterpret_cast<const char*>(utf8Str.c_str()));
+			}
+		}
+
 		wxMenu menu;
 
 		enum {
@@ -743,8 +757,8 @@ namespace vex {
 			return;
 		}
 
-		wxTreeListItem firstChild = tree->GetFirstChild(item);
-		if (firstChild.IsOk()) {
+		wxTreeListItem parent = tree->GetItemParent(item);
+		if (parent == tree->GetRootItem()) {
 			if (tree->IsExpanded(item)) {
 				tree->Collapse(item);
 			}
@@ -758,6 +772,16 @@ namespace vex {
 		editor->InsertText(editor->GetCurrentPos(), itemName);
 		editor->GotoPos(editor->GetCurrentPos() + itemName.Length());
 		editor->SetFocus();
+
+		wxTreeListItem firstChild = tree->GetFirstChild(item);
+		if (firstChild.IsOk()) {
+			if (tree->IsExpanded(item)) {
+				tree->Collapse(item);
+			}
+			else {
+				tree->Expand(item);
+			}
+		}
 	}
 
 }	// namespace vex
