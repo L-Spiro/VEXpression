@@ -51,23 +51,7 @@ namespace ve {
 				}
 
 
-				bool isTrue = false;
-
-				if (condRes.type == NumericConstant::Floating) {
-					if (condRes.value.doubleVal != 0.0) {
-						isTrue = true;
-					}
-				}
-				else if (condRes.type == NumericConstant::Object) {
-					// False.
-				}
-				else if (condRes.type != NumericConstant::Invalid) {
-					if (condRes.value.uintVal != 0) {
-						isTrue = true;
-					}
-				}
-
-				if (!isTrue) {
+				if (!condRes.isTruthy()) {
 					if (blockNode == static_cast<size_t>(-1) || lastResult.type == NumericConstant::Invalid) {
 						return condRes;
 					}

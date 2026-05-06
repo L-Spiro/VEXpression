@@ -78,7 +78,8 @@ namespace ve {
 		UnaryPlus,
 		UserValue,
 		Var,
-		Vector
+		Vector,
+		While
 	};
 
 	/**

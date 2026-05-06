@@ -34,16 +34,29 @@ namespace ve {
 				}
 				
 				Result condRes = context.getArena().nodes[condIndex]->evaluate(context);
-				Result boolRes = context.castArgument(condRes, DataType::UInt64);
+
+				FlowState state = context.getFlowState();
+				if (state == FlowState::Break) {
+					context.clearFlowState();
+					break;
+				}
+				else if (state == FlowState::Continue) {
+					context.clearFlowState();
+					continue;
+				}
+				else if (state == FlowState::Return) {
+					return context.getReturnValue();
+				}
+
 				
-				if (boolRes.type == NumericConstant::Invalid || boolRes.value.uintVal == 0) {
+				if (!condRes.isTruthy()) {
 					if (blockIndex != static_cast<size_t>(-1)) { return out; }
-					return boolRes;
+					return condRes;
 				}
 				
 			} while (true);
 			
-			return Result{};
+			return out;
 		}
 
 		/**

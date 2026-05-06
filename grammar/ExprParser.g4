@@ -19,6 +19,7 @@ statement
     | FOR LPAREN init=expr? ';' cond=expr? ';' step=expr? RPAREN block    # forStandardStmt
     | FOR LPAREN IDENTIFIER KW_IN expr RPAREN block                       # forRangeStmt
     | FOR LPAREN IDENTIFIER ':' expr RPAREN block                         # forCppRangeStmt
+    | WHILE LPAREN expr RPAREN block                                      # whileStmt
     | SEMI                                                                # emptyStmt
     ;
 

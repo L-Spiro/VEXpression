@@ -20,7 +20,8 @@ namespace ve {
 		// == Functions.
 		/**
 		 * Evaluates the scope access by resolving the left child and calling the user callback.
-		 * * \param context	The execution context containing variables and runtime states.
+		 * 
+		 * \param context	The execution context containing variables and runtime states.
 		 * \return			Returns the result of the evaluated scope operation.
 		 * \throws			Throws if the callback fails or is not assigned.
 		 **/
@@ -36,7 +37,8 @@ namespace ve {
 
 		/**
 		 * Gets the node type.
-		 * * \return			Returns a NodeType enumeration indicating the type of the node.
+		 * 
+		 * \return			Returns a NodeType enumeration indicating the type of the node.
 		 **/
 		virtual NodeType			type() const override { return NodeType::Scope; }
 

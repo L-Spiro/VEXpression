@@ -68,6 +68,7 @@
 #include "../Ast/UserValueNode.h"
 #include "../Ast/VarNode.h"
 #include "../Ast/VectorNode.h"
+#include "../Ast/WhileNode.h"
 #include "../Engine/ExecutionContext.h"
 #include "../Engine/FunctionDef.h"
 #include "../Engine/Map.h"
@@ -298,6 +299,19 @@ namespace ve {
 			}
 			
 			return context.addNode<ForRangeNode>(varIdx, objNode, blockNode);
+		}
+
+		/**
+		 * Visits a while statement node.
+		 * 
+		 * \param ctx		The parse tree context.
+		 * \return			Returns the arena index of the allocated WhileNode.
+		 **/
+		virtual std::any			visitWhileStmt(ExprParser::WhileStmtContext *ctx) override {
+			size_t condId = std::any_cast<size_t>(visit(ctx->expr()));
+			size_t blockId = std::any_cast<size_t>(visit(ctx->block()));
+
+			return context.addNode<WhileNode>(condId, blockId);
 		}
 
 		/**

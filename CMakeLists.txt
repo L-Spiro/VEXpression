@@ -181,6 +181,7 @@ set(APP_HEADERS
     src/Ast/UserValueNode.h
     src/Ast/VarNode.h
     src/Ast/VectorNode.h
+	src/Ast/WhileNode.h
     src/Compiler/AstBuilderVisitor.h
     src/Foundation/Case.h
     src/Foundation/Character.h

@@ -48,6 +48,20 @@ namespace ve {
 		}
 
 		/**
+		 * Interprets the result as a boolean.
+		 * 
+		 * \return		Returns true if the result is a primitive type that evaluates to non-zero.
+		 **/
+		inline bool		isTruthy() const {
+			switch (type) {
+				case NumericConstant::Signed : { return value.intVal != 0; }
+				case NumericConstant::Unsigned : { return value.uintVal != 0; }
+				case NumericConstant::Floating : { return value.doubleVal != 0.0; }
+				default : { return false; }
+			}
+		}
+
+		/**
 		 * Creates a Result object directly from a C++ arithmetic or enum type.
 		 * Resolves the underlying NumericConstant type and union assignment at compile time.
 		 * 
