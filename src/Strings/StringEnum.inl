@@ -6076,6 +6076,58 @@ VE_STR( Desc_Param_FilterWidthM,
 	"Filtre genişliği (katsayı sayısı)."
 )
 
+VE_STR( Desc_Func_XyzToChromaticity, 
+	"Converts XYZ color values to CIE xy chromaticity coordinates.\nReturns a vector: [chromaX, chromaY].", 
+	"XYZ色値をCIE xy色度座標に変換します。\nベクトルを返します: [chromaX, chromaY]。", 
+	"将XYZ颜色值转换为CIE xy色度坐标。\n返回一个向量：[chromaX, chromaY]。", 
+	"Convierte valores de color XYZ a coordenadas de cromaticidad CIE xy.\nDevuelve un vector: [chromaX, chromaY].", 
+	"Convertit les valeurs de couleur XYZ en coordonnées de chromaticité CIE xy.\nRetourne un vecteur : [chromaX, chromaY].", 
+	"Converte i valori di colore XYZ in coordinate di cromaticità CIE xy.\nRestituisce un vettore: [chromaX, chromaY].", 
+	"Converte valores de cor XYZ em coordenadas de cromaticidade CIE xy.\nRetorna um vetor: [chromaX, chromaY].", 
+	"يحول قيم ألوان XYZ إلى إحداثيات لونية CIE xy.\nيعيد متجهًا: [chromaX, chromaY].", 
+	"Преобразует цветовые значения XYZ в координаты цветности CIE xy.\nВозвращает вектор: [chromaX, chromaY].", 
+	"Konvertiert XYZ-Farbwerte in CIE-xy-Farbwertanteile.\nGibt einen Vektor zurück: [chromaX, chromaY].", 
+	"Converteert XYZ-kleurwaarden naar CIE xy-chromaticiteitscoördinaten.\nRetourneert een vector: [chromaX, chromaY].", 
+	"XYZ 색상 값을 CIE xy 색도 좌표로 변환합니다.\n벡터를 반환합니다: [chromaX, chromaY].", 
+	"แปลงค่าสี XYZ เป็นพิกัดสี CIE xy\nส่งคืนเวกเตอร์: [chromaX, chromaY]", 
+	"XYZ रंग मानों को CIE xy क्रोमैटिकिटी निर्देशांकों में परिवर्तित करता है。\nएक सदिश लौटाता है: [chromaX, chromaY]。", 
+	"XYZ renk değerlerini CIE xy kromatiklik koordinatlarına dönüştürür.\nBir vektör döndürür: [chromaX, chromaY]."
+)
+
+VE_STR( Desc_Func_ChromaticityToXyz, 
+	"Converts CIE xy chromaticity coordinates and a Y luminance value to XYZ color values.\nReturns a vector: [X, Z].", 
+	"CIE xy色度座標とY輝度値をXYZ色値に変換します。\nベクトルを返します: [X, Z]。", 
+	"将CIE xy色度坐标和Y亮度值转换为XYZ颜色值。\n返回一个向量：[X, Z]。", 
+	"Convierte coordenadas de cromaticidad CIE xy y un valor de luminancia Y a valores de color XYZ.\nDevuelve un vector: [X, Z].", 
+	"Convertit les coordonnées de chromaticité CIE xy et une luminance Y en valeurs de couleur XYZ.\nRetourne un vecteur : [X, Z].", 
+	"Converte le coordinate di cromaticità CIE xy e un valore di luminanza Y in valori di colore XYZ.\nRestituisce un vettore: [X, Z].", 
+	"Converte coordenadas de cromaticidade CIE xy e um valor de luminância Y em valores de cor XYZ.\nRetorna um vetor: [X, Z].", 
+	"يحول إحداثيات اللونية CIE xy وقيمة النصوع Y إلى قيم ألوان XYZ.\nيعيد متجهًا: [X, Z].", 
+	"Преобразует координаты цветности CIE xy и значение яркости Y в цветовые значения XYZ.\nВозвращает вектор: [X, Z].", 
+	"Konvertiert CIE-xy-Farbwertanteile und einen Y-Luminanzwert in XYZ-Farbwerte.\nGibt einen Vektor zurück: [X, Z].", 
+	"Converteert CIE xy-chromaticiteitscoördinaten en een Y-luminantiewaarde naar XYZ-kleurwaarden.\nRetourneert een vector: [X, Z].", 
+	"CIE xy 색도 좌표와 Y 휘도 값을 XYZ 색상 값으로 변환합니다.\n벡터를 반환합니다: [X, Z].", 
+	"แปลงพิกัดสี CIE xy และค่าความสว่าง Y เป็นค่าสี XYZ\nส่งคืนเวกเตอร์: [X, Z]", 
+	"CIE xy क्रोमैटिकिटी निर्देशांक और Y ल्यूमिनेंस मान को XYZ रंग मानों में परिवर्तित करता है。\nएक सदिश लौटाता है: [X, Z]。", 
+	"CIE xy kromatiklik koordinatlarını ve Y parlaklık değerini XYZ renk değerlerine dönüştürür.\nBir vektör döndürür: [X, Z]."
+)
+
+VE_STR( Desc_Param_XyzX, 
+	"The input X value.", "入力X値。", "输入X值。", "El valor X de entrada.", "La valeur d'entrée X.", "Il valore X di input.", "O valor X de entrada.", "قيمة X المدخلة.", "Входное значение X.", "Der Eingabe-X-Wert.", "De invoer X-waarde.", "입력 X 값.", "ค่า X ที่ป้อน", "इनपुट X मान।", "Giriş X değeri."
+)
+VE_STR( Desc_Param_XyzY, 
+	"The input Y value.", "入力Y値。", "输入Y值。", "El valor Y de entrada.", "La valeur d'entrée Y.", "Il valore Y di input.", "O valor Y de entrada.", "قيمة Y المدخلة.", "Входное значение Y.", "Der Eingabe-Y-Wert.", "De invoer Y-waarde.", "입력 Y 값.", "ค่า Y ที่ป้อน", "इनपुट Y मान।", "Giriş Y değeri."
+)
+VE_STR( Desc_Param_XyzZ, 
+	"The input Z value.", "入力Z値。", "输入Z值。", "El valor Z de entrada.", "La valeur d'entrée Z.", "Il valore Z di input.", "O valor Z de entrada.", "قيمة Z المدخلة.", "Входное значение Z.", "Der Eingabe-Z-Wert.", "De invoer Z-waarde.", "입력 Z 값.", "ค่า Z ที่ป้อน", "इनपुट Z मान।", "Giriş Z değeri."
+)
+VE_STR( Desc_Param_ChromaX, 
+	"The input chromaticity X.", "入力色度X。", "输入色度X。", "La cromaticidad X de entrada.", "La chromaticité X d'entrée.", "La cromaticità X di input.", "A cromaticidade X de entrada.", "اللونية X المدخلة.", "Входная цветность X.", "Die Eingabe-Farbwertanteil X.", "De invoer chromaticiteit X.", "입력 색도 X.", "ค่าความคลาดเคลื่อนสี X ที่ป้อน", "इनपुट क्रोमैटिकिटी X।", "Giriş kromatiklik X."
+)
+VE_STR( Desc_Param_ChromaY, 
+	"The input chromaticity Y.", "入力色度Y。", "输入色度Y。", "La cromaticidad Y de entrada.", "La chromaticité Y d'entrée.", "La cromaticità Y di input.", "A cromaticidade Y de entrada.", "اللونية Y المدخلة.", "Входная цветность Y.", "Die Eingabe-Farbwertanteil Y.", "De invoer chromaticiteit Y.", "입력 색도 Y.", "ค่าความคลาดเคลื่อนสี Y ที่ป้อน", "इनपुट क्रोमैटिकिटी Y।", "Giriş kromatiklik Y."
+)
+
 // =======================================================================================================
 // CONSTANTS CATEGORIES
 // =======================================================================================================
@@ -6466,6 +6518,24 @@ VE_STR( Desc_Category_DSP,
     "การประมวลผลสัญญาณ (DSP)", 
     "सिग्नल प्रोसेसिंग (DSP)", 
     "Sinyal İşleme (DSP)" 
+)
+
+VE_STR( Desc_Category_ColorSpace, 
+	"Color Space Conversions", 
+	"色空間変換", 
+	"色彩空间转换", 
+	"Conversiones de espacio de color", 
+	"Conversions d'espace colorimétrique", 
+	"Conversioni di spazio colore", 
+	"Conversões de espaço de cores", 
+	"تحويلات مساحة الألوان", 
+	"Преобразования цветового пространства", 
+	"Farbraumkonvertierungen", 
+	"Kleurruimteconversies", 
+	"색 공간 변환", 
+	"การแปลงปริภูมิสี", 
+	"रंग स्थान रूपांतरण", 
+	"Renk Uzayı Dönüşümleri"
 )
 
 #include "SimdDescriptions.inl"

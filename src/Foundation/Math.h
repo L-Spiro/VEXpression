@@ -1490,6 +1490,299 @@ namespace ve {
 			z0 = (1.0 - chromaX - chromaY) * (y0 / chromaY);
 		}
 
+		/**
+		 * Converts an RGB color to HSL.
+		 * 
+		 * \param r				The red component [0.0, 1.0].
+		 * \param g				The green component [0.0, 1.0].
+		 * \param b				The blue component [0.0, 1.0].
+		 * \param h				The output hue [0.0, 1.0].
+		 * \param s				The output saturation [0.0, 1.0].
+		 * \param l				The output lightness [0.0, 1.0].
+		 **/
+		static void					rgbToHsl(double r, double g, double b, double& h, double& s, double& l) {
+			double maxVal = std::max(r, std::max(g, b));
+			double minVal = std::min(r, std::min(g, b));
+			l = (maxVal + minVal) / 2.0;
+
+			if (maxVal == minVal) {
+				h = 0.0;
+				s = 0.0;
+			}
+			else {
+				double d = maxVal - minVal;
+				s = l > 0.5 ? d / (2.0 - maxVal - minVal) : d / (maxVal + minVal);
+
+				if (maxVal == r) {
+					h = (g - b) / d + (g < b ? 6.0 : 0.0);
+				}
+				else if (maxVal == g) {
+					h = (b - r) / d + 2.0;
+				}
+				else {
+					h = (r - g) / d + 4.0;
+				}
+
+				h /= 6.0;
+			}
+		}
+
+		/**
+		 * Converts an HSL color to RGB.
+		 * 
+		 * \param h				The hue [0.0, 1.0].
+		 * \param s				The saturation [0.0, 1.0].
+		 * \param l				The lightness [0.0, 1.0].
+		 * \param r				The output red [0.0, 1.0].
+		 * \param g				The output green [0.0, 1.0].
+		 * \param b				The output blue [0.0, 1.0].
+		 **/
+		static void					hslToRgb(double h, double s, double l, double& r, double& g, double& b) {
+			if (s == 0.0) {
+				r = l;
+				g = l;
+				b = l;
+			}
+			else {
+				double q = l < 0.5 ? l * (1.0 + s) : l + s - l * s;
+				double p = 2.0 * l - q;
+				
+				r = hueToRgb(p, q, h + 1.0 / 3.0);
+				g = hueToRgb(p, q, h);
+				b = hueToRgb(p, q, h - 1.0 / 3.0);
+			}
+		}
+
+		/**
+		 * Converts an RGB color to HSV.
+		 * 
+		 * \param r				The red component [0.0, 1.0].
+		 * \param g				The green component [0.0, 1.0].
+		 * \param b				The blue component [0.0, 1.0].
+		 * \param h				The output hue [0.0, 1.0].
+		 * \param s				The output saturation [0.0, 1.0].
+		 * \param v				The output value [0.0, 1.0].
+		 **/
+		static void					rgbToHsv(double r, double g, double b, double& h, double& s, double& v) {
+			double maxVal = std::max(r, std::max(g, b));
+			double minVal = std::min(r, std::min(g, b));
+			v = maxVal;
+			double d = maxVal - minVal;
+			
+			s = maxVal == 0.0 ? 0.0 : d / maxVal;
+
+			if (maxVal == minVal) {
+				h = 0.0;
+			}
+			else {
+				if (maxVal == r) {
+					h = (g - b) / d + (g < b ? 6.0 : 0.0);
+				}
+				else if (maxVal == g) {
+					h = (b - r) / d + 2.0;
+				}
+				else {
+					h = (r - g) / d + 4.0;
+				}
+
+				h /= 6.0;
+			}
+		}
+
+		/**
+		 * Converts an HSV color to RGB.
+		 * 
+		 * \param h				The hue [0.0, 1.0].
+		 * \param s				The saturation [0.0, 1.0].
+		 * \param v				The value [0.0, 1.0].
+		 * \param r				The output red [0.0, 1.0].
+		 * \param g				The output green [0.0, 1.0].
+		 * \param b				The output blue [0.0, 1.0].
+		 **/
+		static void					hsvToRgb(double h, double s, double v, double& r, double& g, double& b) {
+			double i = std::floor(h * 6.0);
+			double f = h * 6.0 - i;
+			double p = v * (1.0 - s);
+			double q = v * (1.0 - f * s);
+			double t = v * (1.0 - (1.0 - f) * s);
+			
+			int mod = static_cast<int>(i) % 6;
+
+			if (mod == 0) {
+				r = v;
+				g = t;
+				b = p;
+			}
+			else if (mod == 1) {
+				r = q;
+				g = v;
+				b = p;
+			}
+			else if (mod == 2) {
+				r = p;
+				g = v;
+				b = t;
+			}
+			else if (mod == 3) {
+				r = p;
+				g = q;
+				b = v;
+			}
+			else if (mod == 4) {
+				r = t;
+				g = p;
+				b = v;
+			}
+			else {
+				r = v;
+				g = p;
+				b = q;
+			}
+		}
+
+		/**
+		 * Simple RGB -> YUV.
+		 * 
+		 * \param r				R.
+		 * \param g				G.
+		 * \param b				B.
+		 * \param y				Y.
+		 * \param u				U.
+		 * \param v				V.
+		 **/
+		template <typename TargetType>
+		static void					rgbToYuv(double r, double g, double b, TargetType& y, TargetType& u, TargetType& v) {
+			r *= 255.0;
+			g *= 255.0;
+			b *= 255.0;
+
+			double dY = std::round(((0.256788235294118 * r + 0.504129411764706 * g + 0.097905882352941 * b) + 16.0));
+			double dU = std::round((-0.148222352941176 * r - 0.290992941176471 * g + 0.439215686274510 * b + 128.0));
+			double dV = std::round(((0.439215686274510 * r - 0.367788235294118 * g - 0.071427450980392 * b) + 128.0));
+
+			dY = std::clamp(dY, 0.0, 255.0);
+			dU = std::clamp(dU, 0.0, 255.0);
+			dV = std::clamp(dV, 0.0, 255.0);
+
+			y = static_cast<TargetType>((dY / 255.0) * (1ULL << (sizeof(TargetType) * 8)) - 1);
+			u = static_cast<TargetType>((dU / 255.0) * (1ULL << (sizeof(TargetType) * 8)) - 1);
+			v = static_cast<TargetType>((dV / 255.0) * (1ULL << (sizeof(TargetType) * 8)) - 1);
+		}
+
+		/**
+		 * Simple YUV -> RGB.
+		 * 
+		 * \param y				Y.
+		 * \param u				U.
+		 * \param v				V.
+		 * \param r				R.
+		 * \param g				G.
+		 * \param b				B.
+		 **/
+		template <typename TargetType>
+		static void					yuvToRgb(TargetType y, TargetType u, TargetType v, double& r, double& g, double& b) {
+			double dC = static_cast<double>(y) / static_cast<double>((1ULL << (sizeof(TargetType) * 8)) - 1);
+			double dD = static_cast<double>(u) / static_cast<double>((1ULL << (sizeof(TargetType) * 8)) - 1);
+			double dE = static_cast<double>(v) / static_cast<double>((1ULL << (sizeof(TargetType) * 8)) - 1);
+			
+			dC *= 255.0;
+			dD *= 255.0;
+			dE *= 255.0;
+
+			dC -= 16.0;
+			dD -= 128.0;
+			dE -= 128.0;
+
+			dC *= 1.164383;
+			r = std::max(dC + 1.596027 * dE, 0.0);
+			g = std::max(dC - (0.391762 * dD) - (0.812968 * dE), 0.0);
+			b = std::max(dC + 2.017232 + dD, 0.0);
+
+			r = std::min(r, 255.0) / 255.0;
+			g = std::min(g, 255.0) / 255.0;
+			b = std::min(b, 255.0) / 255.0;
+		}
+
+		/**
+		 * Does a proper RGB -> YUV conversion.
+		 * 
+		 * \param r				R.
+		 * \param g				G.
+		 * \param b				B.
+		 * \param y				Output Y.
+		 * \param u				Output U.
+		 * \param v				Output V.
+		 * \param kr			Kr.
+		 * \param kb			Kb.
+		 * \param m				The number of bits per YUV sample (M >= 8).
+		 * \param blackLevel	The black-level variable. For computer RGB, Z equals 0. For studio video RGB, Z equals 16*2^(N-8), where N is the number of bits per RGB sample (N >= 8).
+		 * \param s				The scaling variable. For computer RGB, S equals 255. For studio video RGB, S equals 219*2^(N-8).
+		 **/
+		static void					rgbToYuv(double r, double g, double b, uint32_t& y, uint32_t& u, uint32_t& v, double kr, double kb, size_t m, uint32_t blackLevel, uint32_t s) {
+			double l = kr * r + kb * b + (1.0 - kr - kb) * g;
+
+			double mult = static_cast<double>(1ULL << (m - 8));
+			double maxVal = static_cast<double>((1ULL << m) - 1);
+
+			l *= 255.0;
+			r *= 255.0;
+			g *= 255.0;
+			b *= 255.0;
+
+			double z = static_cast<double>(blackLevel) / maxVal * 255.0;
+			double scale = static_cast<double>(s) / maxVal * 255.0;
+			
+			// Avoid division by 0.
+			kr = std::min(kr, 1.0 - FLT_EPSILON);
+			kb = std::min(kb, 1.0 - FLT_EPSILON);
+			scale = std::max(scale, static_cast<double>(FLT_EPSILON));
+
+			double outY = std::floor(mult * (219.0 * (l - z) / scale + 16.0) + 0.5);
+			double outU = std::floor(mult * (112.0 * (b - l) / ((1.0 - kb) * scale) + 128.0) + 0.5);
+			double outV = std::floor(mult * (112.0 * (r - l) / ((1.0 - kr) * scale) + 128.0) + 0.5);
+
+			outY = std::clamp(outY, 0.0, maxVal);
+			outU = std::clamp(outU, 0.0, maxVal);
+			outV = std::clamp(outV, 0.0, maxVal);
+
+			y = static_cast<uint32_t>(outY);
+			u = static_cast<uint32_t>(outU);
+			v = static_cast<uint32_t>(outV);
+		}
+
+		/**
+		 * Does a proper YUV -> RGB conversion.
+		 *
+		 * \param y				Input Y.
+		 * \param u				Input U.
+		 * \param v				Input V.
+		 * \param r				R.
+		 * \param g				G.
+		 * \param b				B.
+		 * \param kr			Kr.
+		 * \param kb			Kb.
+		 * \param m				The number of bits per YUV sample (M >= 8).
+		 * \param blackLevel	The black-level variable. For computer RGB, Z equals 0. For studio video RGB, Z equals 16*2^(N-8), where N is the number of bits per RGB sample (N >= 8).
+		 * \param s				The scaling variable. For computer RGB, S equals 255. For studio video RGB, S equals 219*2^(N-8).
+		 **/
+		static void					yuvToRgb(uint32_t y, uint32_t u, uint32_t v, double& r, double& g, double& b, double kr, double kb, size_t m, uint32_t blackLevel, uint32_t s) {
+			double dMult = static_cast<double>(1ULL << (m - 8));
+			double dMax = static_cast<double>((1ULL << m) - 1);
+
+			double dZ = static_cast<double>(blackLevel) / dMax;
+			double dS = static_cast<double>(s) / dMax;
+
+			double dY = static_cast<double>(y) / dMult;
+			double dU = static_cast<double>(u) / dMult;
+			double dV = static_cast<double>(v) / dMult;
+
+			double dL = dZ + (dS / 219.0) * (dY - 16.0);
+
+			b = dL + (dU - 128.0) * (1.0 - kb) * dS / 112.0;
+			r = dL + (dV - 128.0) * (1.0 - kr) * dS / 112.0;
+			g = (dL - kr * r - kb * b) / (1.0 - kr - kb);
+		}
+
 
 		// ===============================
 		// Numerical Integration
@@ -5698,6 +5991,23 @@ namespace ve {
 		}
 
 	protected :
+		// == Functions.
+		/**
+		 * Helper function for HSL to RGB conversion.
+		 * 
+		 * \param p				The p parameter.
+		 * \param q				The q parameter.
+		 * \param t				The t parameter.
+		 * \return				Returns the computed RGB component.
+		 **/
+		static double				hueToRgb(double p, double q, double t) {
+			if (t < 0.0) { t += 1.0; }
+			if (t > 1.0) { t -= 1.0; }
+			if (t < 1.0 / 6.0) { return p + (q - p) * 6.0 * t; }
+			if (t < 1.0 / 2.0) { return q; }
+			if (t < 2.0 / 3.0) { return p + (q - p) * (2.0 / 3.0 - t) * 6.0; }
+			return p;
+		}
 
 	private :
 	};

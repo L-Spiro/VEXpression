@@ -345,7 +345,8 @@ namespace ve {
 
 		/**
 		 * Visits a scope expression node.
-		 * * \param ctx		The parse tree context.
+		 * 
+		 * \param ctx		The parse tree context.
 		 * \return			Returns the arena index of the allocated ScopeNode.
 		 **/
 		virtual std::any			visitScopeExpr(ExprParser::ScopeExprContext *ctx) override {

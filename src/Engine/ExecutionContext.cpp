@@ -994,6 +994,10 @@ namespace ve {
 		{ StringId::Desc_Category_Gamma,					"crtProper2ToLinear", StringId::Desc_Math_CrtProper2ToLinear, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::crtProper2ToLinearBridge, false, true },
 		{ StringId::Desc_Category_Gamma,					"linearToCrtProper2", StringId::Desc_Math_LinearToCrtProper2, { { DataType::Double, "x", StringId::Math_Param_X } }, IntrinsicBridges::linearToCrtProper2Bridge, false, true },
 
+		// == Colorspace Conversions.
+		{ StringId::Desc_Category_ColorSpace,				"xyzToChromaticity", StringId::Desc_Func_XyzToChromaticity, { { DataType::Double, "x", StringId::Desc_Param_XyzX }, { DataType::Double, "y", StringId::Desc_Param_XyzY }, { DataType::Double, "z", StringId::Desc_Param_XyzZ } }, IntrinsicBridges::xyzToChromaticityBridge },
+		{ StringId::Desc_Category_ColorSpace,				"chromaticityToXyz", StringId::Desc_Func_ChromaticityToXyz, { { DataType::Double, "chromaX", StringId::Desc_Param_ChromaX }, { DataType::Double, "chromaY", StringId::Desc_Param_ChromaY }, { DataType::Double, "y0", StringId::Desc_Param_XyzY } }, IntrinsicBridges::chromaticityToXyzBridge },
+
 		// == SciPy.
 		{ StringId::Desc_Category_SciPyIntegrate,			"simpson", StringId::Desc_Math_Simpson, { { DataType::Object, "y", StringId::Math_Param_Y } }, IntrinsicBridges::simpsonBridge },
 		{ StringId::Desc_Category_SciPyIntegrate,			"simpson", StringId::Desc_Math_Simpson, { { DataType::Object, "y", StringId::Math_Param_Y }, { DataType::Any, "dx", StringId::Math_Param_Dx } }, IntrinsicBridges::simpsonBridge },

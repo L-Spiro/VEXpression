@@ -4022,6 +4022,68 @@ namespace ve {
 			return Result::make(Math::linearToCrtProper(val, lw, b));
 		}
 
+		/**
+		 * Bridge for Math::xyzToChromaticity.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (x, y, z).
+		 * \return			Returns a Vector Result containing [chromaX, chromaY].
+		 **/
+		static Result		xyzToChromaticityBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) {
+				return Result{};
+			}
+
+			double x = args[0].value.doubleVal;
+			double y = args[1].value.doubleVal;
+			double z = args[2].value.doubleVal;
+			
+			double chromaX = 0.0;
+			double chromaY = 0.0;
+			
+			Math::xyzToChromaticity(x, y, z, chromaX, chromaY);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) {
+				return Result{};
+			}
+
+			outVec->resize(2);
+			outVec->directAccess(0) = Result::make(chromaX);
+			outVec->directAccess(1) = Result::make(chromaY);
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::chromaticityToXyz.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (chromaX, chromaY, y0).
+		 * \return			Returns a Vector Result containing [X, Z].
+		 **/
+		static Result		chromaticityToXyzBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double chromaX = args[0].value.doubleVal;
+			double chromaY = args[1].value.doubleVal;
+			double y0 = args[2].value.doubleVal;
+			
+			double x0 = 0.0;
+			double z0 = 0.0;
+			
+			Math::chromaticityToXyz(chromaX, chromaY, y0, x0, z0);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(2);
+			outVec->directAccess(0) = Result::make(x0);
+			outVec->directAccess(1) = Result::make(z0);
+
+			return outVec->createResult();
+		}
+
 
 		// =======================================================================================================
 		// SCIPY BRIDGES
