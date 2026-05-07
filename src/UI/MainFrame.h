@@ -84,6 +84,16 @@ namespace vex {
 		void					populateFunctions();
 
 		/**
+		 * Restores the window size, position, and layout from the registry/config.
+		 **/
+		void					restoreState();
+
+		/**
+		 * Saves the window size, position, and layout to the registry/config.
+		 **/
+		void					saveState();
+
+		/**
 		 * Extracts the code from the editor and evaluates it.
 		 **/
 		void					evaluateScript();
@@ -108,6 +118,13 @@ namespace vex {
 		 * \param event			The timer event.
 		 **/
 		void					onReplTimer(wxTimerEvent& event);
+
+		/**
+		 * Event handler for when the window is closed.
+		 *
+		 * \param event			The close event.
+		 **/
+		void					onCloseWindow(wxCloseEvent& event);
 
 		/**
 		 * Event handler for the Run button.

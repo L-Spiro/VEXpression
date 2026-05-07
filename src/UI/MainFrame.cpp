@@ -4,6 +4,7 @@
 #include <map>
 #include <wx/artprov.h>
 #include <wx/clipbrd.h>
+#include <wx/config.h>
 #include <wx/toplevel.h>
 
 #ifdef __WXMSW__
@@ -93,12 +94,15 @@ namespace vex {
 
 		auiManager.AddPane(outputArea, wxAuiPaneInfo().Name("Output").Caption("Output").Bottom().MinSize(100, 100).PaneBorder(false));
 
+		restoreState();
+
 		auiManager.Update();
 
 		Bind(wxEVT_STC_CHANGE, &MainFrame::onEditorTextChanged, this, ID_EDITOR);
 		Bind(wxEVT_MENU, &MainFrame::onReplToggled, this, ID_TOGGLE_REPL);
 		Bind(wxEVT_MENU, &MainFrame::onRunClicked, this, ID_RUN_SCRIPT);
 		Bind(wxEVT_TIMER, &MainFrame::onReplTimer, this, ID_REPL_TIMER);
+		Bind(wxEVT_CLOSE_WINDOW, &MainFrame::onCloseWindow, this);
 		
 		Bind(wxEVT_MENU, &MainFrame::onMenuThemeToggle, this, ID_VIEW_DARK_THEME);
 		
@@ -506,6 +510,74 @@ namespace vex {
 	}
 
 	/**
+	 * Restores the window size, position, and layout from the registry/config.
+	 **/
+	void MainFrame::restoreState() {
+		wxConfig config("VEXpression");
+		
+		int x = -1, y = -1, w = 1280, h = 720;
+		config.Read("MainFrame/X", &x);
+		config.Read("MainFrame/Y", &y);
+		config.Read("MainFrame/W", &w);
+		config.Read("MainFrame/H", &h);
+		bool maximized = false;
+		config.Read("MainFrame/Maximized", &maximized);
+
+		if (x != -1 && y != -1) {
+			SetSize(x, y, w, h);
+		}
+		if (maximized) {
+			Maximize();
+		}
+
+		wxString perspective;
+		if (config.Read("MainFrame/AuiPerspective", &perspective)) {
+			auiManager.LoadPerspective(perspective);
+		}
+
+		int colW = 120;
+		if (config.Read("MainFrame/ConstantsTreeCol0", &colW)) {
+			constantsTree->SetColumnWidth(0, colW);
+		}
+		if (config.Read("MainFrame/ConstantsTreeCol1", &colW)) {
+			constantsTree->SetColumnWidth(1, colW);
+		}
+		
+		colW = 120;
+		if (config.Read("MainFrame/FunctionsTreeCol0", &colW)) {
+			functionsTree->SetColumnWidth(0, colW);
+		}
+		if (config.Read("MainFrame/FunctionsTreeCol1", &colW)) {
+			functionsTree->SetColumnWidth(1, colW);
+		}
+	}
+
+	/**
+	 * Saves the window size, position, and layout to the registry/config.
+	 **/
+	void MainFrame::saveState() {
+		wxConfig config("VEXpression");
+		config.Write("MainFrame/AuiPerspective", auiManager.SavePerspective());
+		
+		if (!IsMaximized() && !IsIconized()) {
+			wxPoint pos = GetPosition();
+			wxSize size = GetSize();
+			config.Write("MainFrame/X", pos.x);
+			config.Write("MainFrame/Y", pos.y);
+			config.Write("MainFrame/W", size.x);
+			config.Write("MainFrame/H", size.y);
+		}
+		config.Write("MainFrame/Maximized", IsMaximized());
+
+		config.Write("MainFrame/ConstantsTreeCol0", constantsTree->GetColumnWidth(0));
+		config.Write("MainFrame/ConstantsTreeCol1", constantsTree->GetColumnWidth(1));
+		config.Write("MainFrame/FunctionsTreeCol0", functionsTree->GetColumnWidth(0));
+		config.Write("MainFrame/FunctionsTreeCol1", functionsTree->GetColumnWidth(1));
+
+		config.Flush();
+	}
+
+	/**
 	 * Extracts the code from the editor and evaluates it.
 	 **/
 	void MainFrame::evaluateScript() {
@@ -638,6 +710,16 @@ namespace vex {
 	 **/
 	void MainFrame::onReplTimer(wxTimerEvent& event) {
 		evaluateScript();
+	}
+
+	/**
+	 * Event handler for when the window is closed.
+	 *
+	 * \param event			The close event.
+	 **/
+	void MainFrame::onCloseWindow(wxCloseEvent& event) {
+		saveState();
+		event.Skip();
 	}
 
 	/**

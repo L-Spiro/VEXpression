@@ -2581,7 +2581,8 @@ namespace ve {
 				for (size_t i = foundPos + sepLen; i < sourceLen; ++i) {
 					s3->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
 				}
-			} else {
+			}
+			else {
 				for (size_t i = 0; i < sourceLen; ++i) {
 					s1->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
 				}
@@ -2906,7 +2907,8 @@ namespace ve {
 				for (size_t i = foundPos + sepLen; i < sourceLen; ++i) {
 					s3->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
 				}
-			} else {
+			}
+			else {
 				for (size_t i = 0; i < sourceLen; ++i) {
 					s3->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
 				}
@@ -3035,7 +3037,8 @@ namespace ve {
 						parts.push_back(part);
 						startPos = foundPos + sepLen;
 						splits++;
-					} else {
+					}
+					else {
 						for (size_t i = startPos; i < sourceLen; ++i) {
 							part->operator+=(strObj->arrayAccess(static_cast<int64_t>(i)));
 						}
@@ -3043,7 +3046,8 @@ namespace ve {
 						break;
 					}
 				}
-			} else {
+			}
+			else {
 				size_t i = 0;
 				int64_t splits = 0;
 
@@ -3164,7 +3168,8 @@ namespace ve {
 					parts.push_back(part);
 					i += breakLen;
 					startPos = i;
-				} else {
+				}
+				else {
 					i++;
 				}
 			}
@@ -5425,7 +5430,8 @@ namespace ve {
 				if (innerVec && innerVec->fromPrimitiveArray(vvRet[i])) {
 					outerVec->directAccess(i) = innerVec->createResult();
 					innerVec->incRef();
-				} else {
+				}
+				else {
 					if (innerVec) {
 						ctx->deallocateObject(innerVec);
 					}
@@ -5664,11 +5670,14 @@ namespace ve {
 			bool norm = false;
 			if (args[3].type == NumericConstant::Signed) {
 				norm = (args[3].value.intVal != 0);
-			} else if (args[3].type == NumericConstant::Unsigned) {
+			}
+			else if (args[3].type == NumericConstant::Unsigned) {
 				norm = (args[3].value.uintVal != 0);
-			} else if (args[3].type == NumericConstant::Floating) {
+			}
+			else if (args[3].type == NumericConstant::Floating) {
 				norm = (args[3].value.doubleVal != 0.0);
-			} else if (args[3].type == NumericConstant::Object && args[3].value.objectVal != nullptr) {
+			}
+			else if (args[3].type == NumericConstant::Object && args[3].value.objectVal != nullptr) {
 				return Result{};
 			}
 

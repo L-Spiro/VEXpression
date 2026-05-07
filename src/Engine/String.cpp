@@ -135,14 +135,16 @@ namespace ve {
 			for (size_t j = 0; j < charCount; ++j) {
 				p[j] = static_cast<char8_t>(codePoints[j]);
 			}
-		} else if (maxCp <= 0xFFFF) {
+		}
+		else if (maxCp <= 0xFFFF) {
 			bufferWidth = Width_16;
 			buffer.resize(charCount * sizeof(char16_t));
 			char16_t* p = reinterpret_cast<char16_t*>(buffer.data());
 			for (size_t j = 0; j < charCount; ++j) {
 				p[j] = static_cast<char16_t>(codePoints[j]);
 			}
-		} else {
+		}
+		else {
 			bufferWidth = Width_32;
 			buffer.resize(charCount * sizeof(char32_t));
 			char32_t* p = reinterpret_cast<char32_t*>(buffer.data());
