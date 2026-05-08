@@ -6128,6 +6128,354 @@ VE_STR( Desc_Param_ChromaY,
 	"The input chromaticity Y.", "入力色度Y。", "输入色度Y。", "La cromaticidad Y de entrada.", "La chromaticité Y d'entrée.", "La cromaticità Y di input.", "A cromaticidade Y de entrada.", "اللونية Y المدخلة.", "Входная цветность Y.", "Die Eingabe-Farbwertanteil Y.", "De invoer chromaticiteit Y.", "입력 색도 Y.", "ค่าความคลาดเคลื่อนสี Y ที่ป้อน", "इनपुट क्रोमैटिकिटी Y।", "Giriş kromatiklik Y."
 )
 
+VE_STR( Desc_Func_RgbToHsl, 
+	"Converts an RGB color to HSL.\nReturns a vector: [h, s, l].", 
+	"RGB色をHSLに変換します。\nベクトルを返します: [h, s, l]。", 
+	"将RGB颜色转换为HSL。\n返回一个向量：[h, s, l]。", 
+	"Convierte un color RGB a HSL.\nDevuelve un vector: [h, s, l].", 
+	"Convertit une couleur RGB en HSL.\nRetourne un vecteur : [h, s, l].", 
+	"Converte un colore RGB in HSL.\nRestituisce un vettore: [h, s, l].", 
+	"Converte uma cor RGB em HSL.\nRetorna um vetor: [h, s, l].", 
+	"يحول لون RGB إلى HSL.\nيعيد متجهًا: [h, s, l].", 
+	"Преобразует цвет RGB в HSL.\nВозвращает вектор: [h, s, l].", 
+	"Konvertiert eine RGB-Farbe in HSL.\nGibt einen Vektor zurück: [h, s, l].", 
+	"Converteert een RGB-kleur naar HSL.\nRetourneert een vector: [h, s, l].", 
+	"RGB 색상을 HSL로 변환합니다.\n벡터를 반환합니다: [h, s, l].", 
+	"แปลงสี RGB เป็น HSL\nส่งคืนเวกเตอร์: [h, s, l]", 
+	"RGB रंग को HSL में परिवर्तित करता है।\nएक सदिश लौटाता है: [h, s, l]।", 
+	"Bir RGB rengini HSL'ye dönüştürür.\nBir vektör döndürür: [h, s, l]."
+)
+
+VE_STR( Desc_Func_HslToRgb, 
+	"Converts an HSL color to RGB.\nReturns a vector: [r, g, b].", 
+	"HSL色をRGBに変換します。\nベクトルを返します: [r, g, b]。", 
+	"将HSL颜色转换为RGB。\n返回一个向量：[r, g, b]。", 
+	"Convierte un color HSL a RGB.\nDevuelve un vector: [r, g, b].", 
+	"Convertit une couleur HSL en RGB.\nRetourne un vecteur : [r, g, b].", 
+	"Converte un colore HSL in RGB.\nRestituisce un vettore: [r, g, b].", 
+	"Converte uma cor HSL em RGB.\nRetorna um vetor: [r, g, b].", 
+	"يحول لون HSL إلى RGB.\nيعيد متجهًا: [r, g, b].", 
+	"Преобразует цвет HSL в RGB.\nВозвращает вектор: [r, g, b].", 
+	"Konvertiert eine HSL-Farbe in RGB.\nGibt einen Vektor zurück: [r, g, b].", 
+	"Converteert een HSL-kleur naar RGB.\nRetourneert een vector: [r, g, b].", 
+	"HSL 색상을 RGB로 변환합니다.\n벡터를 반환합니다: [r, g, b].", 
+	"แปลงสี HSL เป็น RGB\nส่งคืนเวกเตอร์: [r, g, b]", 
+	"HSL रंग को RGB में परिवर्तित करता है।\nएक सदिश लौटाता है: [r, g, b]।", 
+	"Bir HSL rengini RGB'ye dönüştürür.\nBir vektör döndürür: [r, g, b]."
+)
+
+VE_STR( Desc_Func_RgbToHsv, 
+	"Converts an RGB color to HSV.\nReturns a vector: [h, s, v].", 
+	"RGB色をHSVに変換します。\nベクトルを返します: [h, s, v]。", 
+	"将RGB颜色转换为HSV。\n返回一个向量：[h, s, v]。", 
+	"Convierte un color RGB a HSV.\nDevuelve un vector: [h, s, v].", 
+	"Convertit une couleur RGB en HSV.\nRetourne un vecteur : [h, s, v].", 
+	"Converte un colore RGB in HSV.\nRestituisce un vettore: [h, s, v].", 
+	"Converte uma cor RGB em HSV.\nRetorna um vetor: [h, s, v].", 
+	"يحول لون RGB إلى HSV.\nيعيد متجهًا: [h, s, v].", 
+	"Преобразует цвет RGB в HSV.\nВозвращает вектор: [h, s, v].", 
+	"Konvertiert eine RGB-Farbe in HSV.\nGibt einen Vektor zurück: [h, s, v].", 
+	"Converteert een RGB-kleur naar HSV.\nRetourneert een vector: [h, s, v].", 
+	"RGB 색상을 HSV로 변환합니다.\n벡터를 반환합니다: [h, s, v].", 
+	"แปลงสี RGB เป็น HSV\nส่งคืนเวกเตอร์: [h, s, v]", 
+	"RGB रंग को HSV में परिवर्तित करता है।\nएक सदिश लौटाता है: [h, s, v]।", 
+	"Bir RGB rengini HSV'ye dönüştürür.\nBir vektör döndürür: [h, s, v]."
+)
+
+VE_STR( Desc_Func_HsvToRgb, 
+	"Converts an HSV color to RGB.\nReturns a vector: [r, g, b].", 
+	"HSV色をRGBに変換します。\nベクトルを返します: [r, g, b]。", 
+	"将HSV颜色转换为RGB。\n返回一个向量：[r, g, b]。", 
+	"Convierte un color HSV a RGB.\nDevuelve un vector: [r, g, b].", 
+	"Convertit une couleur HSV en RGB.\nRetourne un vecteur : [r, g, b].", 
+	"Converte un colore HSV in RGB.\nRestituisce un vettore: [r, g, b].", 
+	"Converte uma cor HSV em RGB.\nRetorna um vetor: [r, g, b].", 
+	"يحول لون HSV إلى RGB.\nيعيد متجهًا: [r, g, b].", 
+	"Преобразует цвет HSV в RGB.\nВозвращает вектор: [r, g, b].", 
+	"Konvertiert eine HSV-Farbe in RGB.\nGibt einen Vektor zurück: [r, g, b].", 
+	"Converteert een HSV-kleur naar RGB.\nRetourneert een vector: [r, g, b].", 
+	"HSV 색상을 RGB로 변환합니다.\n벡터를 반환합니다: [r, g, b].", 
+	"แปลงสี HSV เป็น RGB\nส่งคืนเวกเตอร์: [r, g, b]", 
+	"HSV रंग को RGB में परिवर्तित करता है।\nएक सदिश लौटाता है: [r, g, b]।", 
+	"Bir HSV rengini RGB'ye dönüştürür.\nBir vektör döndürür: [r, g, b]."
+)
+
+VE_STR( Desc_Func_RgbToYcbcr, 
+	"Converts an RGB color to Y'CbCr. Supports Studio (TV limited) and PC (Full) ranges.\nReturns a vector: [y, u, v].", 
+	"RGB色をY'CbCrに変換します。Studio（TVリミテッド）およびPC（フル）レンジをサポートします。\nベクトルを返します: [y, u, v]。", 
+	"将RGB颜色转换为Y'CbCr。支持演播室（电视受限）和PC（全）范围。\n返回一个向量：[y, u, v]。", 
+	"Convierte un color RGB a Y'CbCr. Admite rangos de Estudio (TV limitada) y PC (Completo).\nDevuelve un vector: [y, u, v].", 
+	"Convertit une couleur RGB en Y'CbCr. Prend en charge les plages Studio (TV limitée) et PC (Complète).\nRetourne un vecteur : [y, u, v].", 
+	"Converte un colore RGB in Y'CbCr. Supporta gli intervalli Studio (TV limitata) e PC (Completo).\nRestituisce un vettore: [y, u, v].", 
+	"Converte uma cor RGB em Y'CbCr. Suporta intervalos de Estúdio (TV limitada) e PC (Completo).\nRetorna um vetor: [y, u, v].", 
+	"يحول لون RGB إلى Y'CbCr. يدعم نطاقات الاستوديو (التلفزيون المحدود) والكمبيوتر الشخصي (الكامل).\nيعيد متجهًا: [y, u, v].", 
+	"Преобразует цвет RGB в Y'CbCr. Поддерживает диапазоны Studio (ограниченный ТВ) и PC (полный).\nВозвращает вектор: [y, u, v].", 
+	"Konvertiert eine RGB-Farbe in Y'CbCr. Unterstützt Studio- (TV-limitiert) und PC- (Voll) Bereiche.\nGibt einen Vektor zurück: [y, u, v].", 
+	"Converteert een RGB-kleur naar Y'CbCr. Ondersteunt Studio (TV beperkt) en PC (Volledig) bereiken.\nRetourneert een vector: [y, u, v].", 
+	"RGB 색상을 Y'CbCr로 변환합니다. 스튜디오(TV 제한) 및 PC(전체) 범위를 지원합니다.\n벡터를 반환합니다: [y, u, v].", 
+	"แปลงสี RGB เป็น Y'CbCr รองรับช่วง Studio (TV limited) และ PC (Full)\nส่งคืนเวกเตอร์: [y, u, v]", 
+	"RGB रंग को Y'CbCr में परिवर्तित करता है। स्टूडियो (टीवी सीमित) और पीसी (पूर्ण) श्रेणियों का समर्थन करता है।\nएक सदिश लौटाता है: [y, u, v]।", 
+	"Bir RGB rengini Y'CbCr'ye dönüştürür. Stüdyo (sınırlı TV) ve PC (Tam) aralıklarını destekler.\nBir vektör döndürür: [y, u, v]."
+)
+
+VE_STR( Desc_Func_YcbcrToRgb, 
+	"Converts a Y'CbCr color to RGB. Supports Studio (TV limited) and PC (Full) ranges.\nReturns a vector: [r, g, b].", 
+	"Y'CbCr色をRGBに変換します。Studio（TVリミテッド）およびPC（フル）レンジをサポートします。\nベクトルを返します: [r, g, b]。", 
+	"将Y'CbCr颜色转换为RGB。支持演播室（电视受限）和PC（全）范围。\n返回一个向量：[r, g, b]。", 
+	"Convierte un color Y'CbCr a RGB. Admite rangos de Estudio (TV limitada) y PC (Completo).\nDevuelve un vector: [r, g, b].", 
+	"Convertit une couleur Y'CbCr en RGB. Prend en charge les plages Studio (TV limitée) et PC (Complète).\nRetourne un vecteur : [r, g, b].", 
+	"Converte un colore Y'CbCr in RGB. Supporta gli intervalli Studio (TV limitata) e PC (Completo).\nRestituisce un vettore: [r, g, b].", 
+	"Converte uma cor Y'CbCr em RGB. Suporta intervalos de Estúdio (TV limitada) e PC (Completo).\nRetorna um vetor: [r, g, b].", 
+	"يحول لون Y'CbCr إلى RGB. يدعم نطاقات الاستوديو (التلفزيون المحدود) والكمبيوتر الشخصي (الكامل).\nيعيد متجهًا: [r, g, b].", 
+	"Преобразует цвет Y'CbCr в RGB. Поддерживает диапазоны Studio (ограниченный ТВ) и PC (полный).\nВозвращает вектор: [r, g, b].", 
+	"Konvertiert eine Y'CbCr-Farbe in RGB. Unterstützt Studio- (TV-limitiert) und PC- (Voll) Bereiche.\nGibt einen Vektor zurück: [r, g, b].", 
+	"Converteert een Y'CbCr-kleur naar RGB. Ondersteunt Studio (TV beperkt) en PC (Volledig) bereiken.\nRetourneert een vector: [r, g, b].", 
+	"Y'CbCr 색상을 RGB로 변환합니다. 스튜디오(TV 제한) 및 PC(전체) 범위를 지원합니다.\n벡터를 반환합니다: [r, g, b].", 
+	"แปลงสี Y'CbCr เป็น RGB รองรับช่วง Studio (TV limited) และ PC (Full)\nส่งคืนเวกเตอร์: [r, g, b]", 
+	"Y'CbCr रंग को RGB में परिवर्तित करता है। स्टूडियो (टीवी सीमित) और पीसी (पूर्ण) श्रेणियों का समर्थन करता है।\nएक सदिश लौटाता है: [r, g, b]।", 
+	"Bir Y'CbCr rengini RGB'ye dönüştürür. Stüdyo (sınırlı TV) ve PC (Tam) aralıklarını destekler.\nBir vektör döndürür: [r, g, b]."
+)
+
+
+VE_STR( Desc_Param_YcbcrKr, 
+	"The Kr weight. (Default: 0.212639005871510)", 
+	"Krの重み。(デフォルト: 0.212639005871510)", 
+	"Kr权重。(默认值：0.212639005871510)", 
+	"El peso Kr. (Valor predeterminado: 0.212639005871510)", 
+	"Le poids Kr. (Par défaut : 0.212639005871510)", 
+	"Il peso Kr. (Predefinito: 0.212639005871510)", 
+	"O peso Kr. (Padrão: 0.212639005871510)", 
+	"وزن Kr. (الافتراضي: 0.212639005871510)", 
+	"Вес Kr. (По умолчанию: 0.212639005871510)", 
+	"Das Kr-Gewicht. (Standard: 0.212639005871510)", 
+	"Het Kr-gewicht. (Standaard: 0.212639005871510)", 
+	"Kr 가중치. (기본값: 0.212639005871510)", 
+	"น้ำหนัก Kr (ค่าเริ่มต้น: 0.212639005871510)", 
+	"Kr वजन। (डिफ़ॉल्ट: 0.212639005871510)", 
+	"Kr ağırlığı. (Varsayılan: 0.212639005871510)"
+)
+VE_STR( Desc_Param_YcbcrKb, 
+	"The Kb weight. (Default: 0.072192315360734)", 
+	"Kbの重み。(デフォルト: 0.072192315360734)", 
+	"Kb权重。(默认值：0.072192315360734)", 
+	"El peso Kb. (Valor predeterminado: 0.072192315360734)", 
+	"Le poids Kb. (Par défaut : 0.072192315360734)", 
+	"Il peso Kb. (Predefinito: 0.072192315360734)", 
+	"O peso Kb. (Padrão: 0.072192315360734)", 
+	"وزن Kb. (الافتراضي: 0.072192315360734)", 
+	"Вес Kb. (По умолчанию: 0.072192315360734)", 
+	"Das Kb-Gewicht. (Standard: 0.072192315360734)", 
+	"Het Kb-gewicht. (Standaard: 0.072192315360734)", 
+	"Kb 가중치. (기본값: 0.072192315360734)", 
+	"น้ำหนัก Kb (ค่าเริ่มต้น: 0.072192315360734)", 
+	"Kb वजन। (डिफ़ॉल्ट: 0.072192315360734)", 
+	"Kb ağırlığı. (Varsayılan: 0.072192315360734)"
+)
+VE_STR( Desc_Param_LumaRange, 
+	"The total valid luma swing. TV: 219.0, PC: 255.0. (Default: 219.0)", 
+	"有効な輝度の合計スイング。TV: 219.0、PC: 255.0。(デフォルト: 219.0)", 
+	"总有效亮度摆幅。电视：219.0，PC：255.0。（默认值：219.0）", 
+	"La oscilación total de luma válida. TV: 219.0, PC: 255.0. (Valor predeterminado: 219.0)", 
+	"L'oscillation totale valide de la luminance. TV : 219.0, PC : 255.0. (Par défaut : 219.0)", 
+	"L'oscillazione totale valida della luminanza. TV: 219.0, PC: 255.0. (Predefinito: 219.0)", 
+	"A oscilação total válida de luminância. TV: 219.0, PC: 255.0. (Padrão: 219.0)", 
+	"إجمالي تأرجح النصوع الصالح. التلفزيون: 219.0، الكمبيوتر الشخصي: 255.0. (الافتراضي: 219.0)", 
+	"Общий допустимый размах яркости. ТВ: 219.0, ПК: 255.0. (По умолчанию: 219.0)", 
+	"Der gesamte gültige Luma-Schwung. TV: 219.0, PC: 255.0. (Standard: 219.0)", 
+	"De totale geldige luma-zwaai. TV: 219.0, PC: 255.0. (Standaard: 219.0)", 
+	"총 유효 휘도 스윙. TV: 219.0, PC: 255.0. (기본값: 219.0)", 
+	"การแกว่งความสว่างที่ถูกต้องทั้งหมด TV: 219.0, PC: 255.0 (ค่าเริ่มต้น: 219.0)", 
+	"कुल वैध ल्यूमा स्विंग। टीवी: 219.0, पीसी: 255.0। (डिफ़ॉल्ट: 219.0)", 
+	"Toplam geçerli luma salınımı. TV: 219.0, PC: 255.0. (Varsayılan: 219.0)"
+)
+VE_STR( Desc_Param_LumaOffset, 
+	"The black level offset. TV: 16.0, PC: 0.0. (Default: 16.0)", 
+	"黒レベルのオフセット。TV: 16.0、PC: 0.0。(デフォルト: 16.0)", 
+	"黑电平偏移。电视：16.0，PC：0.0。（默认值：16.0）", 
+	"El desplazamiento del nivel de negro. TV: 16.0, PC: 0.0. (Valor predeterminado: 16.0)", 
+	"Le décalage du niveau de noir. TV : 16.0, PC : 0.0. (Par défaut : 16.0)", 
+	"L'offset del livello del nero. TV: 16.0, PC: 0.0. (Predefinito: 16.0)", 
+	"O deslocamento do nível de preto. TV: 16.0, PC: 0.0. (Padrão: 16.0)", 
+	"إزاحة مستوى الأسود. التلفزيون: 16.0، الكمبيوتر الشخصي: 0.0. (الافتراضي: 16.0)", 
+	"Смещение уровня черного. ТВ: 16.0, ПК: 0.0. (По умолчанию: 16.0)", 
+	"Der Schwarzpegel-Offset. TV: 16.0, PC: 0.0. (Standard: 16.0)", 
+	"De zwartniveau-offset. TV: 16.0, PC: 0.0. (Standaard: 16.0)", 
+	"블랙 레벨 오프셋. TV: 16.0, PC: 0.0. (기본값: 16.0)", 
+	"ออฟเซ็ตระดับสีดำ TV: 16.0, PC: 0.0 (ค่าเริ่มต้น: 16.0)", 
+	"ब्लैक लेवल ऑफसेट। टीवी: 16.0, पीसी: 0.0। (डिफ़ॉल्ट: 16.0)", 
+	"Siyah seviyesi ofseti. TV: 16.0, PC: 0.0. (Varsayılan: 16.0)"
+)
+VE_STR( Desc_Param_ChromaRange, 
+	"The total valid chroma swing. TV: 224.0, PC: 255.0. (Default: 224.0)", 
+	"有効なクロマの合計スイング。TV: 224.0、PC: 255.0。(デフォルト: 224.0)", 
+	"总有效色度摆幅。电视：224.0，PC：255.0。（默认值：224.0）", 
+	"La oscilación total de croma válida. TV: 224.0, PC: 255.0. (Valor predeterminado: 224.0)", 
+	"L'oscillation totale valide de la chrominance. TV : 224.0, PC : 255.0. (Par défaut : 224.0)", 
+	"L'oscillazione totale valida della crominanza. TV: 224.0, PC: 255.0. (Predefinito: 224.0)", 
+	"A oscilação total válida de crominância. TV: 224.0, PC: 255.0. (Padrão: 224.0)", 
+	"إجمالي تأرجح التلوين الصالح. التلفزيون: 224.0، الكمبيوتر الشخصي: 255.0. (الافتراضي: 224.0)", 
+	"Общий допустимый размах цветности. ТВ: 224.0, ПК: 255.0. (По умолчанию: 224.0)", 
+	"Der gesamte gültige Chrominanz-Schwung. TV: 224.0, PC: 255.0. (Standard: 224.0)", 
+	"De totale geldige chrominantie-zwaai. TV: 224.0, PC: 255.0. (Standaard: 224.0)", 
+	"총 유효 색차 스윙. TV: 224.0, PC: 255.0. (기본값: 224.0)", 
+	"การแกว่งสีที่ถูกต้องทั้งหมด TV: 224.0, PC: 255.0 (ค่าเริ่มต้น: 224.0)", 
+	"कुल वैध क्रोमा स्विंग। टीवी: 224.0, पीसी: 255.0। (डिफ़ॉल्ट: 224.0)", 
+	"Toplam geçerli kroma salınımı. TV: 224.0, PC: 255.0. (Varsayılan: 224.0)"
+)
+VE_STR( Desc_Param_ChromaOffset, 
+	"The chroma zero point. (Default: 128.0)", 
+	"クロマのゼロ点。(デフォルト: 128.0)", 
+	"色度零点。（默认值：128.0）", 
+	"El punto cero de croma. (Valor predeterminado: 128.0)", 
+	"Le point zéro de la chrominance. (Par défaut : 128.0)", 
+	"Il punto zero della crominanza. (Predefinito: 128.0)", 
+	"O ponto zero de crominância. (Padrão: 128.0)", 
+	"نقطة الصفر للتلوين. (الافتراضي: 128.0)", 
+	"Нулевая точка цветности. (По умолчанию: 128.0)", 
+	"Der Chrominanz-Nullpunkt. (Standard: 128.0)", 
+	"Het chrominantie nulpunt. (Standaard: 128.0)", 
+	"색차 영점. (기본값: 128.0)", 
+	"จุดศูนย์ของสี (ค่าเริ่มต้น: 128.0)", 
+	"क्रोमा शून्य बिंदु। (डिफ़ॉल्ट: 128.0)", 
+	"Kroma sıfır noktası. (Varsayılan: 128.0)"
+)
+
+VE_STR( Desc_Func_RgbToYuv, 
+	"Converts an RGB color to analog Y'UV (PAL).\nReturns a vector: [y, u, v].", 
+	"RGB色をアナログY'UV (PAL) に変換します。\nベクトルを返します: [y, u, v]。", 
+	"将RGB颜色转换为模拟Y'UV (PAL)。\n返回一个向量：[y, u, v]。", 
+	"Convierte un color RGB a Y'UV analógico (PAL).\nDevuelve un vector: [y, u, v].", 
+	"Convertit une couleur RGB en Y'UV analogique (PAL).\nRetourne un vecteur : [y, u, v].", 
+	"Converte un colore RGB in Y'UV analogico (PAL).\nRestituisce un vettore: [y, u, v].", 
+	"Converte uma cor RGB em Y'UV analógico (PAL).\nRetorna um vetor: [y, u, v].", 
+	"يحول لون RGB إلى Y'UV تناظري (PAL).\nيعيد متجهًا: [y, u, v].", 
+	"Преобразует цвет RGB в аналоговый Y'UV (PAL).\nВозвращает вектор: [y, u, v].", 
+	"Konvertiert eine RGB-Farbe in analoges Y'UV (PAL).\nGibt einen Vektor zurück: [y, u, v].", 
+	"Converteert een RGB-kleur naar analoog Y'UV (PAL).\nRetourneert een vector: [y, u, v].", 
+	"RGB 색상을 아날로그 Y'UV (PAL)로 변환합니다.\n벡터를 반환합니다: [y, u, v].", 
+	"แปลงสี RGB เป็นอนาล็อก Y'UV (PAL)\nส่งคืนเวกเตอร์: [y, u, v]", 
+	"RGB रंग को एनालॉग Y'UV (PAL) में परिवर्तित करता है।\nएक सदिश लौटाता है: [y, u, v]।", 
+	"Bir RGB rengini analog Y'UV'ye (PAL) dönüştürür.\nBir vektör döndürür: [y, u, v]."
+)
+
+VE_STR( Desc_Func_YuvToRgb, 
+	"Converts an analog Y'UV (PAL) color to RGB.\nReturns a vector: [r, g, b].", 
+	"アナログY'UV (PAL) 色をRGBに変換します。\nベクトルを返します: [r, g, b]。", 
+	"将模拟Y'UV (PAL) 颜色转换为RGB。\n返回一个向量：[r, g, b]。", 
+	"Convierte un color Y'UV analógico (PAL) a RGB.\nDevuelve un vector: [r, g, b].", 
+	"Convertit une couleur Y'UV analogique (PAL) en RGB.\nRetourne un vecteur : [r, g, b].", 
+	"Converte un colore Y'UV analogico (PAL) in RGB.\nRestituisce un vettore: [r, g, b].", 
+	"Converte uma cor Y'UV analógica (PAL) em RGB.\nRetorna um vetor: [r, g, b].", 
+	"يحول لون Y'UV التناظري (PAL) إلى RGB.\nيعيد متجهًا: [r, g, b].", 
+	"Преобразует аналоговый цвет Y'UV (PAL) в RGB.\nВозвращает вектор: [r, g, b].", 
+	"Konvertiert eine analoge Y'UV-Farbe (PAL) in RGB.\nGibt einen Vektor zurück: [r, g, b].", 
+	"Converteert een analoge Y'UV (PAL) kleur naar RGB.\nRetourneert een vector: [r, g, b].", 
+	"아날로그 Y'UV (PAL) 색상을 RGB로 변환합니다.\n벡터를 반환합니다: [r, g, b].", 
+	"แปลงสีอนาล็อก Y'UV (PAL) เป็น RGB\nส่งคืนเวกเตอร์: [r, g, b]", 
+	"एनालॉग Y'UV (PAL) रंग को RGB में परिवर्तित करता है।\nएक सदिश लौटाता है: [r, g, b]।", 
+	"Analog bir Y'UV (PAL) rengini RGB'ye dönüştürür.\nBir vektör döndürür: [r, g, b]."
+)
+
+VE_STR( Desc_Param_AnalogYuvKr, 
+	"The Kr weight. (Default: 0.2988390)", 
+	"Krの重み。(デフォルト: 0.2988390)", 
+	"Kr权重。(默认值：0.2988390)", 
+	"El peso Kr. (Valor predeterminado: 0.2988390)", 
+	"Le poids Kr. (Par défaut : 0.2988390)", 
+	"Il peso Kr. (Predefinito: 0.2988390)", 
+	"O peso Kr. (Padrão: 0.2988390)", 
+	"وزن Kr. (الافتراضي: 0.2988390)", 
+	"Вес Kr. (По умолчанию: 0.2988390)", 
+	"Das Kr-Gewicht. (Standard: 0.2988390)", 
+	"Het Kr-gewicht. (Standaard: 0.2988390)", 
+	"Kr 가중치. (기본값: 0.2988390)", 
+	"น้ำหนัก Kr (ค่าเริ่มต้น: 0.2988390)", 
+	"Kr वजन। (डिफ़ॉल्ट: 0.2988390)", 
+	"Kr ağırlığı. (Varsayılan: 0.2988390)"
+)
+VE_STR( Desc_Param_AnalogYuvKb, 
+	"The Kb weight. (Default: 0.1143500)", 
+	"Kbの重み。(デフォルト: 0.1143500)", 
+	"Kb权重。(默认值：0.1143500)", 
+	"El peso Kb. (Valor predeterminado: 0.1143500)", 
+	"Le poids Kb. (Par défaut : 0.1143500)", 
+	"Il peso Kb. (Predefinito: 0.1143500)", 
+	"O peso Kb. (Padrão: 0.1143500)", 
+	"وزن Kb. (الافتراضي: 0.1143500)", 
+	"Вес Kb. (По умолчанию: 0.1143500)", 
+	"Das Kb-Gewicht. (Standard: 0.1143500)", 
+	"Het Kb-gewicht. (Standaard: 0.1143500)", 
+	"Kb 가중치. (기본값: 0.1143500)", 
+	"น้ำหนัก Kb (ค่าเริ่มต้น: 0.1143500)", 
+	"Kb वजन। (डिफ़ॉल्ट: 0.1143500)", 
+	"Kb ağırlığı. (Varsayılan: 0.1143500)"
+)
+VE_STR( Desc_Param_YuvWu, 
+	"The U scaling factor. (Default: 0.492111)", 
+	"Uスケーリング係数。(デフォルト: 0.492111)", 
+	"U缩放系数。(默认值：0.492111)", 
+	"El factor de escala U. (Valor predeterminado: 0.492111)", 
+	"Le facteur de mise à l'échelle U. (Par défaut : 0.492111)", 
+	"Il fattore di scala U. (Predefinito: 0.492111)", 
+	"O fator de escala U. (Padrão: 0.492111)", 
+	"عامل المقياس U. (الافتراضي: 0.492111)", 
+	"Коэффициент масштабирования U. (По умолчанию: 0.492111)", 
+	"Der U-Skalierungsfaktor. (Standard: 0.492111)", 
+	"De U-schaalfactor. (Standaard: 0.492111)", 
+	"U 스케일링 계수. (기본값: 0.492111)", 
+	"ปัจจัยการปรับมาตราส่วน U (ค่าเริ่มต้น: 0.492111)", 
+	"U स्केलिंग कारक। (डिफ़ॉल्ट: 0.492111)", 
+	"U ölçeklendirme faktörü. (Varsayılan: 0.492111)"
+)
+VE_STR( Desc_Param_YuvWv, 
+	"The V scaling factor. (Default: 0.877283)", 
+	"Vスケーリング係数。(デフォルト: 0.877283)", 
+	"V缩放系数。(默认值：0.877283)", 
+	"El factor de escala V. (Valor predeterminado: 0.877283)", 
+	"Le facteur de mise à l'échelle V. (Par défaut : 0.877283)", 
+	"Il fattore di scala V. (Predefinito: 0.877283)", 
+	"O fator de escala V. (Padrão: 0.877283)", 
+	"عامل المقياس V. (الافتراضي: 0.877283)", 
+	"Коэффициент масштабирования V. (По умолчанию: 0.877283)", 
+	"Der V-Skalierungsfaktor. (Standard: 0.877283)", 
+	"De V-schaalfactor. (Standaard: 0.877283)", 
+	"V 스케일링 계수. (기본값: 0.877283)", 
+	"ปัจจัยการปรับมาตราส่วน V (ค่าเริ่มต้น: 0.877283)", 
+	"V स्केलिंग कारक। (डिफ़ॉल्ट: 0.877283)", 
+	"V ölçeklendirme faktörü. (Varsayılan: 0.877283)"
+)
+
+VE_STR( Desc_Param_ColorR, 
+	"The red component.", "赤成分。", "红色的组成部分。", "El componente rojo.", "La composante rouge.", "Il componente rosso.", "O componente vermelho.", "المكون الأحمر.", "Красный компонент.", "Die rote Komponente.", "De rode component.", "빨간색 구성 요소.", "ส่วนประกอบสีแดง", "लाल घटक।", "Kırmızı bileşen."
+)
+VE_STR( Desc_Param_ColorG, 
+	"The green component.", "緑成分。", "绿色的组成部分。", "El componente verde.", "La composante verte.", "Il componente verde.", "O componente verde.", "المكون الأخضر.", "Зеленый компонент.", "Die grüne Komponente.", "De groene component.", "녹색 구성 요소.", "ส่วนประกอบสีเขียว", "हरा घटक।", "Yeşil bileşen."
+)
+VE_STR( Desc_Param_ColorB, 
+	"The blue component.", "青成分。", "蓝色的组成部分。", "El componente azul.", "La composante bleue.", "Il componente blu.", "O componente azul.", "المكون الأزرق.", "Синий компонент.", "Die blaue Komponente.", "De blauwe component.", "파란색 구성 요소.", "ส่วนประกอบสีน้ำเงิน", "नीला घटक।", "Mavi bileşen."
+)
+VE_STR( Desc_Param_ColorH, 
+	"The hue.", "色相。", "色相。", "El matiz.", "La teinte.", "La tonalità.", "A matiz.", "الصبغة.", "Оттенок.", "Der Farbton.", "De tint.", "색조.", "เฉดสี", "रंग।", "Renk tonu."
+)
+VE_STR( Desc_Param_ColorS, 
+	"The saturation.", "彩度。", "饱和度。", "La saturación.", "La saturation.", "La saturazione.", "A saturação.", "التشبع.", "Насыщенность.", "Die Sättigung.", "De verzadiging.", "채도.", "ความอิ่มตัว", "संतृप्ति।", "Doygunluk."
+)
+VE_STR( Desc_Param_ColorL, 
+	"The lightness.", "明度。", "亮度。", "La luminosidad.", "La clarté.", "La luminosità.", "A leveza.", "الخفة.", "Светлота.", "Die Helligkeit.", "De lichtheid.", "밝기.", "ความสว่าง", "हल्कापन।", "Açıklık."
+)
+VE_STR( Desc_Param_ColorV, 
+	"The value.", "明度 (Value)。", "明度 (Value)。", "El valor.", "La valeur.", "Il valore.", "O valor.", "القيمة.", "Значение.", "Der Wert.", "De waarde.", "값.", "มูลค่า", "मान।", "Değer."
+)
+VE_STR( Desc_Param_ColorYuvY, 
+	"The Y (luminance) component.", "Y (輝度) 成分。", "Y（亮度）分量。", "El componente Y (luminancia).", "La composante Y (luminance).", "Il componente Y (luminanza).", "O componente Y (luminância).", "مكون Y (النصوع).", "Компонент Y (яркость).", "Die Y-Komponente (Luminanz).", "De Y-component (luminantie).", "Y (휘도) 구성 요소.", "ส่วนประกอบ Y (ความสว่าง)", "Y (ल्यूमिनेंस) घटक।", "Y (parlaklık) bileşeni."
+)
+VE_STR( Desc_Param_ColorYuvU, 
+	"The U (chrominance) component.", "U (色差) 成分。", "U（色度）分量。", "El componente U (crominancia).", "La composante U (chrominance).", "Il componente U (crominanza).", "O componente U (crominância).", "مكون U (التلوين).", "Компонент U (хроминантность).", "Die U-Komponente (Chrominanz).", "De U-component (chrominantie).", "U (색차) 구성 요소.", "ส่วนประกอบ U (ความอิ่มตัวของสี)", "U (क्रोमिनेंस) घटक।", "U (krominans) bileşeni."
+)
+VE_STR( Desc_Param_ColorYuvV, 
+	"The V (chrominance) component.", "V (色差) 成分。", "V（色度）分量。", "El componente V (crominancia).", "La composante V (chrominance).", "Il componente V (crominanza).", "O componente V (crominância).", "مكون V (التلوين).", "Компонент V (хроминантность).", "Die V-Komponente (Chrominanz).", "De V-component (chrominantie).", "V (색차) 구성 요소.", "ส่วนประกอบ V (ความอิ่มตัวของสี)", "V (क्रोमिनेंस) घटक।", "V (krominans) bileşeni."
+)
+
 // =======================================================================================================
 // CONSTANTS CATEGORIES
 // =======================================================================================================

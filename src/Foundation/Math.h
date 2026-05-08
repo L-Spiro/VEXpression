@@ -1693,10 +1693,10 @@ namespace ve {
 			dD -= 128.0;
 			dE -= 128.0;
 
-			dC *= 1.164383;
-			r = std::max(dC + 1.596027 * dE, 0.0);
-			g = std::max(dC - (0.391762 * dD) - (0.812968 * dE), 0.0);
-			b = std::max(dC + 2.017232 + dD, 0.0);
+			dC *= 1.1643836;
+			r = std::max(dC + 1.5960268 * dE, 0.0);
+			g = std::max(dC - (0.39176229 * dD) - (0.81296765 * dE), 0.0);
+			b = std::max(dC + 2.0172321 + dD, 0.0);
 
 			r = std::min(r, 255.0) / 255.0;
 			g = std::min(g, 255.0) / 255.0;
@@ -1704,83 +1704,111 @@ namespace ve {
 		}
 
 		/**
-		 * Does a proper RGB -> YUV conversion.
+		 * Generalized RGB -> Y'CbCr conversion.
+		 * Works in pure normalized 0.0 - 1.0 space.
 		 * 
-		 * \param r				R.
-		 * \param g				G.
-		 * \param b				B.
-		 * \param y				Output Y.
-		 * \param u				Output U.
-		 * \param v				Output V.
-		 * \param kr			Kr.
-		 * \param kb			Kb.
-		 * \param m				The number of bits per YUV sample (M >= 8).
-		 * \param blackLevel	The black-level variable. For computer RGB, Z equals 0. For studio video RGB, Z equals 16*2^(N-8), where N is the number of bits per RGB sample (N >= 8).
-		 * \param s				The scaling variable. For computer RGB, S equals 255. For studio video RGB, S equals 219*2^(N-8).
+		 * \param r				R [0.0, 1.0]
+		 * \param g				G [0.0, 1.0]
+		 * \param b				B [0.0, 1.0]
+		 * \param y				Output Y [0.0, 1.0]
+		 * \param u				Output Cb [0.0, 1.0]
+		 * \param v				Output Cr [0.0, 1.0]
+		 * \param kr			The Kr weight. Default is 0.212639005871510 (BT.709).
+		 * \param kb			The Kb weight. Default is 0.072192315360734 (BT.709).
+		 * \param lumaRange		The total valid luma swing (e.g., 219.0 for TV, 255.0 for PC)
+		 * \param lumaOffset	The black level offset (e.g., 16.0 for TV, 0.0 for PC)
+		 * \param chromaRange	The total valid chroma swing (e.g., 224.0 for TV, 255.0 for PC)
+		 * \param chromaOffset	The chroma zero point (e.g., 128.0)
 		 **/
-		static void					rgbToYuv(double r, double g, double b, uint32_t& y, uint32_t& u, uint32_t& v, double kr, double kb, size_t m, uint32_t blackLevel, uint32_t s) {
-			double l = kr * r + kb * b + (1.0 - kr - kb) * g;
-
-			double mult = static_cast<double>(1ULL << (m - 8));
-			double maxVal = static_cast<double>((1ULL << m) - 1);
-
-			l *= 255.0;
-			r *= 255.0;
-			g *= 255.0;
-			b *= 255.0;
-
-			double z = static_cast<double>(blackLevel) / maxVal * 255.0;
-			double scale = static_cast<double>(s) / maxVal * 255.0;
+		static void					rgbToYcbcr(double r, double g, double b, double& y, double& u, double& v, 
+			double kr = 0.212639005871510, double kb = 0.072192315360734, 
+			double lumaRange = 219.0, double lumaOffset = 16.0, 
+			double chromaRange = 224.0, double chromaOffset = 128.0) {
 			
-			// Avoid division by 0.
-			kr = std::min(kr, 1.0 - FLT_EPSILON);
-			kb = std::min(kb, 1.0 - FLT_EPSILON);
-			scale = std::max(scale, static_cast<double>(FLT_EPSILON));
+			double l = kr * r + (1.0 - kr - kb) * g + kb * b;
+			
+			double pb = 0.5 * (b - l) / (1.0 - kb);
+			double pr = 0.5 * (r - l) / (1.0 - kr);
 
-			double outY = std::floor(mult * (219.0 * (l - z) / scale + 16.0) + 0.5);
-			double outU = std::floor(mult * (112.0 * (b - l) / ((1.0 - kb) * scale) + 128.0) + 0.5);
-			double outV = std::floor(mult * (112.0 * (r - l) / ((1.0 - kr) * scale) + 128.0) + 0.5);
-
-			outY = std::clamp(outY, 0.0, maxVal);
-			outU = std::clamp(outU, 0.0, maxVal);
-			outV = std::clamp(outV, 0.0, maxVal);
-
-			y = static_cast<uint32_t>(outY);
-			u = static_cast<uint32_t>(outU);
-			v = static_cast<uint32_t>(outV);
+			y = std::clamp((lumaRange * l + lumaOffset) / 255.0, 0.0, 1.0);
+			u = std::clamp(((chromaRange * pb) + chromaOffset) / 255.0, 0.0, 1.0);
+			v = std::clamp(((chromaRange * pr) + chromaOffset) / 255.0, 0.0, 1.0);
 		}
 
 		/**
-		 * Does a proper YUV -> RGB conversion.
+		 * Generalized Y'CbCr -> RGB conversion.
+		 * Works in pure normalized 0.0 - 1.0 space, supporting both Full (PC) and Limited (TV) ranges.
+		 * 
+		 * \param y				Input Y' (Luma) [0.0, 1.0].
+		 * \param u				Input Cb (Blue-difference chroma) [0.0, 1.0].
+		 * \param v				Input Cr (Red-difference chroma) [0.0, 1.0].
+		 * \param r				Output Red [0.0, 1.0].
+		 * \param g				Output Green [0.0, 1.0].
+		 * \param b				Output Blue [0.0, 1.0].
+		 * \param kr			The Kr weight. Default is 0.212639005871510 (BT.709).
+		 * \param kb			The Kb weight. Default is 0.072192315360734 (BT.709).
+		 * \param lumaRange		The total valid luma swing. Default is 219.0 (TV Limited). Use 255.0 for PC Full.
+		 * \param lumaOffset	The black level offset. Default is 16.0 (TV Limited). Use 0.0 for PC Full.
+		 * \param chromaRange	The total valid chroma swing. Default is 224.0 (TV Limited). Use 255.0 for PC Full.
+		 * \param chromaOffset	The chroma zero point. Default is 128.0.
+		 **/
+		static void					ycbcrToRgb(double y, double u, double v, double& r, double& g, double& b, double kr = 0.212639005871510, double kb = 0.072192315360734, double lumaRange = 219.0, double lumaOffset = 16.0, double chromaRange = 224.0, double chromaOffset = 128.0) {
+			double l  = (y * 255.0 - lumaOffset) / lumaRange;
+			double pb = (u * 255.0 - chromaOffset) / chromaRange;
+			double pr = (v * 255.0 - chromaOffset) / chromaRange;
+
+			b = std::clamp(l + pb * 2.0 * (1.0 - kb), 0.0, 1.0);
+			r = std::clamp(l + pr * 2.0 * (1.0 - kr), 0.0, 1.0);
+			g = std::clamp((l - kr * r - kb * b) / (1.0 - kr - kb), 0.0, 1.0);
+		}
+
+		/**
+		 * Generalized RGB -> Y'UV (Analog PAL) conversion.
+		 * Works in pure continuous space. U and V are bipolar.
+		 * 
+		 * \param r				R [0.0, 1.0].
+		 * \param g				G [0.0, 1.0].
+		 * \param b				B [0.0, 1.0].
+		 * \param y				Output Y' [0.0, 1.0].
+		 * \param u				Output U.
+		 * \param v				Output V.
+		 * \param kr			The Kr weight. Default is 0.2988390 (BT.601).
+		 * \param kb			The Kb weight. Default is 0.1143500 (BT.601).
+		 * \param wu			The U scaling factor. Default is 0.492111.
+		 * \param wv			The V scaling factor. Default is 0.877283.
+		 **/
+		static void					rgbToYuv(double r, double g, double b, double& y, double& u, double& v, double kr = 0.2988390, double kb = 0.1143500, double wu = 0.492111, double wv = 0.877283) {
+			double l = kr * r + (1.0 - kr - kb) * g + kb * b;
+			
+			y = std::clamp(l, 0.0, 1.0);
+			u = wu * (b - l);
+			v = wv * (r - l);
+		}
+
+		/**
+		 * Generalized Y'UV (Analog PAL) -> RGB conversion.
 		 *
-		 * \param y				Input Y.
+		 * \param y				Input Y' [0.0, 1.0].
 		 * \param u				Input U.
 		 * \param v				Input V.
-		 * \param r				R.
-		 * \param g				G.
-		 * \param b				B.
-		 * \param kr			Kr.
-		 * \param kb			Kb.
-		 * \param m				The number of bits per YUV sample (M >= 8).
-		 * \param blackLevel	The black-level variable. For computer RGB, Z equals 0. For studio video RGB, Z equals 16*2^(N-8), where N is the number of bits per RGB sample (N >= 8).
-		 * \param s				The scaling variable. For computer RGB, S equals 255. For studio video RGB, S equals 219*2^(N-8).
+		 * \param r				Output Red [0.0, 1.0].
+		 * \param g				Output Green [0.0, 1.0].
+		 * \param b				Output Blue [0.0, 1.0].
+		 * \param kr			The Kr weight. Default is 0.2988390 (BT.601).
+		 * \param kb			The Kb weight. Default is 0.1143500 (BT.601).
+		 * \param wu			The U scaling factor. Default is 0.492111.
+		 * \param wv			The V scaling factor. Default is 0.877283.
 		 **/
-		static void					yuvToRgb(uint32_t y, uint32_t u, uint32_t v, double& r, double& g, double& b, double kr, double kb, size_t m, uint32_t blackLevel, uint32_t s) {
-			double dMult = static_cast<double>(1ULL << (m - 8));
-			double dMax = static_cast<double>((1ULL << m) - 1);
+		static void					yuvToRgb(double y, double u, double v, double& r, double& g, double& b, double kr = 0.2988390, double kb = 0.1143500, double wu = 0.492111, double wv = 0.877283) {
+			double invWu = std::abs(wu) > DBL_EPSILON ? 1.0 / wu : 0.0;
+			double invWv = std::abs(wv) > DBL_EPSILON ? 1.0 / wv : 0.0;
 
-			double dZ = static_cast<double>(blackLevel) / dMax;
-			double dS = static_cast<double>(s) / dMax;
+			double b_minus_y = u * invWu;
+			double r_minus_y = v * invWv;
 
-			double dY = static_cast<double>(y) / dMult;
-			double dU = static_cast<double>(u) / dMult;
-			double dV = static_cast<double>(v) / dMult;
-
-			double dL = dZ + (dS / 219.0) * (dY - 16.0);
-
-			b = dL + (dU - 128.0) * (1.0 - kb) * dS / 112.0;
-			r = dL + (dV - 128.0) * (1.0 - kr) * dS / 112.0;
-			g = (dL - kr * r - kb * b) / (1.0 - kr - kb);
+			b = std::clamp(y + b_minus_y, 0.0, 1.0);
+			r = std::clamp(y + r_minus_y, 0.0, 1.0);
+			g = std::clamp((y - kr * r - kb * b) / (1.0 - kr - kb), 0.0, 1.0);
 		}
 
 

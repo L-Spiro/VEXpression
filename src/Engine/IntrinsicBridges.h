@@ -4084,6 +4084,278 @@ namespace ve {
 			return outVec->createResult();
 		}
 
+		/**
+		 * Bridge for Math::rgbToHsl.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (r, g, b).
+		 * \return			Returns a Vector Result containing [h, s, l].
+		 **/
+		static Result		rgbToHslBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double r = args[0].value.doubleVal;
+			double g = args[1].value.doubleVal;
+			double b = args[2].value.doubleVal;
+			
+			double h = 0.0;
+			double s = 0.0;
+			double l = 0.0;
+			
+			Math::rgbToHsl(r, g, b, h, s, l);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(3);
+			outVec->directAccess(0) = Result::make(h);
+			outVec->directAccess(1) = Result::make(s);
+			outVec->directAccess(2) = Result::make(l);
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::hslToRgb.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (h, s, l).
+		 * \return			Returns a Vector Result containing [r, g, b].
+		 **/
+		static Result		hslToRgbBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double h = args[0].value.doubleVal;
+			double s = args[1].value.doubleVal;
+			double l = args[2].value.doubleVal;
+			
+			double r = 0.0;
+			double g = 0.0;
+			double b = 0.0;
+			
+			Math::hslToRgb(h, s, l, r, g, b);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(3);
+			outVec->directAccess(0) = Result::make(r);
+			outVec->directAccess(1) = Result::make(g);
+			outVec->directAccess(2) = Result::make(b);
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::rgbToHsv.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (r, g, b).
+		 * \return			Returns a Vector Result containing [h, s, v].
+		 **/
+		static Result		rgbToHsvBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double r = args[0].value.doubleVal;
+			double g = args[1].value.doubleVal;
+			double b = args[2].value.doubleVal;
+			
+			double h = 0.0;
+			double s = 0.0;
+			double v = 0.0;
+			
+			Math::rgbToHsv(r, g, b, h, s, v);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(3);
+			outVec->directAccess(0) = Result::make(h);
+			outVec->directAccess(1) = Result::make(s);
+			outVec->directAccess(2) = Result::make(v);
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::hsvToRgb.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (h, s, v).
+		 * \return			Returns a Vector Result containing [r, g, b].
+		 **/
+		static Result		hsvToRgbBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double h = args[0].value.doubleVal;
+			double s = args[1].value.doubleVal;
+			double v = args[2].value.doubleVal;
+			
+			double r = 0.0;
+			double g = 0.0;
+			double b = 0.0;
+			
+			Math::hsvToRgb(h, s, v, r, g, b);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(3);
+			outVec->directAccess(0) = Result::make(r);
+			outVec->directAccess(1) = Result::make(g);
+			outVec->directAccess(2) = Result::make(b);
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::rgbToYcbcr.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (r, g, b, [kr, [kb, [lumaRange, [lumaOffset, [chromaRange, [chromaOffset]]]]]]).
+		 * \return			Returns a Vector Result containing [y, u, v].
+		 **/
+		static Result		rgbToYcbcrBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double r = args[0].value.doubleVal;
+			double g = args[1].value.doubleVal;
+			double b = args[2].value.doubleVal;
+			
+			double kr = args.size() > 3 ? args[3].value.doubleVal : 0.212639005871510;
+			double kb = args.size() > 4 ? args[4].value.doubleVal : 0.072192315360734;
+			double lumaRange = args.size() > 5 ? args[5].value.doubleVal : 219.0;
+			double lumaOffset = args.size() > 6 ? args[6].value.doubleVal : 16.0;
+			double chromaRange = args.size() > 7 ? args[7].value.doubleVal : 224.0;
+			double chromaOffset = args.size() > 8 ? args[8].value.doubleVal : 128.0;
+			
+			double y = 0.0;
+			double u = 0.0;
+			double v = 0.0;
+			
+			Math::rgbToYcbcr(r, g, b, y, u, v, kr, kb, lumaRange, lumaOffset, chromaRange, chromaOffset);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(3);
+			outVec->directAccess(0) = Result::make(y);
+			outVec->directAccess(1) = Result::make(u);
+			outVec->directAccess(2) = Result::make(v);
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::ycbcrToRgb.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (y, u, v, [kr, [kb, [lumaRange, [lumaOffset, [chromaRange, [chromaOffset]]]]]]).
+		 * \return			Returns a Vector Result containing [r, g, b].
+		 **/
+		static Result		ycbcrToRgbBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double y = args[0].value.doubleVal;
+			double u = args[1].value.doubleVal;
+			double v = args[2].value.doubleVal;
+			
+			double kr = args.size() > 3 ? args[3].value.doubleVal : 0.212639005871510;
+			double kb = args.size() > 4 ? args[4].value.doubleVal : 0.072192315360734;
+			double lumaRange = args.size() > 5 ? args[5].value.doubleVal : 219.0;
+			double lumaOffset = args.size() > 6 ? args[6].value.doubleVal : 16.0;
+			double chromaRange = args.size() > 7 ? args[7].value.doubleVal : 224.0;
+			double chromaOffset = args.size() > 8 ? args[8].value.doubleVal : 128.0;
+			
+			double r = 0.0;
+			double g = 0.0;
+			double b = 0.0;
+			
+			Math::ycbcrToRgb(y, u, v, r, g, b, kr, kb, lumaRange, lumaOffset, chromaRange, chromaOffset);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(3);
+			outVec->directAccess(0) = Result::make(r);
+			outVec->directAccess(1) = Result::make(g);
+			outVec->directAccess(2) = Result::make(b);
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::rgbToYuv.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (r, g, b, [kr, [kb, [wu, [wv]]]]).
+		 * \return			Returns a Vector Result containing [y, u, v].
+		 **/
+		static Result		rgbToYuvBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double r = args[0].value.doubleVal;
+			double g = args[1].value.doubleVal;
+			double b = args[2].value.doubleVal;
+			
+			double kr = args.size() > 3 ? args[3].value.doubleVal : 0.299;
+			double kb = args.size() > 4 ? args[4].value.doubleVal : 0.114;
+			double wu = args.size() > 5 ? args[5].value.doubleVal : 0.492111;
+			double wv = args.size() > 6 ? args[6].value.doubleVal : 0.877283;
+			
+			double y = 0.0;
+			double u = 0.0;
+			double v = 0.0;
+			
+			Math::rgbToYuv(r, g, b, y, u, v, kr, kb, wu, wv);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(3);
+			outVec->directAccess(0) = Result::make(y);
+			outVec->directAccess(1) = Result::make(u);
+			outVec->directAccess(2) = Result::make(v);
+
+			return outVec->createResult();
+		}
+
+		/**
+		 * Bridge for Math::yuvToRgb.
+		 * 
+		 * \param ctx		The runtime execution context.
+		 * \param args		A vector containing the evaluated arguments (y, u, v, [kr, [kb, [wu, [wv]]]]).
+		 * \return			Returns a Vector Result containing [r, g, b].
+		 **/
+		static Result		yuvToRgbBridge(ExecutionContext* ctx, const std::vector<Result>& args) {
+			if (args.size() < 3) { return Result{}; }
+
+			double y = args[0].value.doubleVal;
+			double u = args[1].value.doubleVal;
+			double v = args[2].value.doubleVal;
+			
+			double kr = args.size() > 3 ? args[3].value.doubleVal : 0.299;
+			double kb = args.size() > 4 ? args[4].value.doubleVal : 0.114;
+			double wu = args.size() > 5 ? args[5].value.doubleVal : 0.492111;
+			double wv = args.size() > 6 ? args[6].value.doubleVal : 0.877283;
+			
+			double r = 0.0;
+			double g = 0.0;
+			double b = 0.0;
+			
+			Math::yuvToRgb(y, u, v, r, g, b, kr, kb, wu, wv);
+
+			Vector* outVec = ctx->allocateObject<Vector>();
+			if (!outVec) { return Result{}; }
+
+			outVec->resize(3);
+			outVec->directAccess(0) = Result::make(r);
+			outVec->directAccess(1) = Result::make(g);
+			outVec->directAccess(2) = Result::make(b);
+
+			return outVec->createResult();
+		}
+
 
 		// =======================================================================================================
 		// SCIPY BRIDGES
