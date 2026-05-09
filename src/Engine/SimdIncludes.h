@@ -18,3 +18,27 @@
 #include <simde/x86/ssse3.h>
 #include <simde/x86/svml.h>
 #include <simde/x86/xop.h>
+
+
+// Inlude our extension of SIMDeX.
+#include "../SIMDeX/mips/asub.h"
+#include "../SIMDeX/mips/ave.h"
+#include "../SIMDeX/mips/aver.h"
+#include "../SIMDeX/mips/bclr.h"
+#include "../SIMDeX/mips/bclri.h"
+#include "../SIMDeX/mips/binsl.h"
+#include "../SIMDeX/mips/binsli.h"
+#include "../SIMDeX/mips/binsr.h"
+#include "../SIMDeX/mips/binsri.h"
+#include "../SIMDeX/mips/bmnz_v.h"
+#include "../SIMDeX/mips/bmnzi.h"
+#include "../SIMDeX/mips/bmz_v.h"
+#include "../SIMDeX/mips/bmzi.h"
+#include "../SIMDeX/mips/bneg.h"
+#include "../SIMDeX/mips/bnegi.h"
+#include "../SIMDeX/mips/bsel_v.h"
+#include "../SIMDeX/mips/bseli.h"
+#include "../SIMDeX/mips/bset.h"
+#include "../SIMDeX/mips/bseti.h"
+#include "../SIMDeX/mips/cast_to_scalar_double.h"
+#include "../SIMDeX/mips/cast_to_scalar_float.h"

@@ -215,6 +215,37 @@ set(APP_HEADERS
     src/Strings/Strings.h
     src/Strings/StringEnum.inl
     src/Strings/SimdDescriptions.inl
+	src/SIMDeX/mips/asub.h
+	src/SIMDeX/mips/ave.h
+	src/SIMDeX/mips/aver.h
+	src/SIMDeX/mips/bclr.h
+	src/SIMDeX/mips/bclri.h
+	src/SIMDeX/mips/binsl.h
+	src/SIMDeX/mips/binsli.h
+	src/SIMDeX/mips/binsr.h
+	src/SIMDeX/mips/binsri.h
+	src/SIMDeX/mips/bmnz_v.h
+	src/SIMDeX/mips/bmnzi.h
+	src/SIMDeX/mips/bmz_v.h
+	src/SIMDeX/mips/bmzi.h
+	src/SIMDeX/mips/bneg.h
+	src/SIMDeX/mips/bnegi.h
+	src/SIMDeX/mips/bsel_v.h
+	src/SIMDeX/mips/bseli.h
+	src/SIMDeX/mips/bset.h
+	src/SIMDeX/mips/bseti.h
+	src/SIMDeX/mips/cast_to_scalar_double.h
+	src/SIMDeX/mips/cast_to_scalar_float.h
+	src/SIMDeX/mips/cast_to_vector_double.h
+	src/SIMDeX/mips/cast_to_vector_float.h
+	src/SIMDeX/mips/ceq.h
+	src/SIMDeX/mips/ceqi.h
+	src/SIMDeX/mips/cfcmsa.h
+	src/SIMDeX/mips/cle.h
+	src/SIMDeX/mips/clei.h
+	src/SIMDeX/mips/clt.h
+	src/SIMDeX/mips/clti.h
+	src/SIMDeX/mips/copy.h
 )
 
 set(CORE_SOURCES
