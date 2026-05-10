@@ -246,6 +246,61 @@ set(APP_HEADERS
 	src/SIMDeX/mips/clt.h
 	src/SIMDeX/mips/clti.h
 	src/SIMDeX/mips/copy.h
+	src/SIMDeX/mips/div.h
+	src/SIMDeX/mips/dotp.h
+	src/SIMDeX/mips/dpadd.h
+	src/SIMDeX/mips/dpsub.h
+	src/SIMDeX/mips/fadd.h
+	src/SIMDeX/mips/fcaf.h
+	src/SIMDeX/mips/fceq.h
+	src/SIMDeX/mips/fclass.h
+	src/SIMDeX/mips/fcle.h
+	src/SIMDeX/mips/fclt.h
+	src/SIMDeX/mips/fcne.h
+	src/SIMDeX/mips/fcor.h
+	src/SIMDeX/mips/fcueq.h
+	src/SIMDeX/mips/fcule.h
+	src/SIMDeX/mips/fcult.h
+	src/SIMDeX/mips/fcun.h
+	src/SIMDeX/mips/fcune.h
+	src/SIMDeX/mips/fdiv.h
+	src/SIMDeX/mips/fexdo.h
+	src/SIMDeX/mips/fexp2.h
+	src/SIMDeX/mips/fexupl.h
+	src/SIMDeX/mips/fexupr.h
+	src/SIMDeX/mips/ffint.h
+	src/SIMDeX/mips/ffql.h
+	src/SIMDeX/mips/ffqr.h
+	src/SIMDeX/mips/fill.h
+	src/SIMDeX/mips/flog2.h
+	src/SIMDeX/mips/fmax.h
+	src/SIMDeX/mips/fmax_a.h
+	src/SIMDeX/mips/fmin.h
+	src/SIMDeX/mips/fmin_a.h
+	src/SIMDeX/mips/fmsub.h
+	src/SIMDeX/mips/fmul.h
+	src/SIMDeX/mips/frcp.h
+	src/SIMDeX/mips/frint.h
+	src/SIMDeX/mips/frsqrt.h
+	src/SIMDeX/mips/fsaf.h
+	src/SIMDeX/mips/fseq.h
+	src/SIMDeX/mips/fsle.h
+	src/SIMDeX/mips/fslt.h
+	src/SIMDeX/mips/fsne.h
+	src/SIMDeX/mips/fsor.h
+	src/SIMDeX/mips/fsqrt.h
+	src/SIMDeX/mips/fsub.h
+	src/SIMDeX/mips/fsueq.h
+	src/SIMDeX/mips/fsule.h
+	src/SIMDeX/mips/fsult.h
+	src/SIMDeX/mips/fsun.h
+	src/SIMDeX/mips/fsune.h
+	src/SIMDeX/mips/ftint.h
+	src/SIMDeX/mips/ftq.h
+	src/SIMDeX/mips/ftrunc.h
+	src/SIMDeX/mips/hadd.h
+	src/SIMDeX/mips/hsub.h
+	src/SIMDeX/mips/ilvev.h
 )
 
 set(CORE_SOURCES

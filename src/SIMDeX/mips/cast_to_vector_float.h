@@ -11,7 +11,7 @@ SIMDE_BEGIN_DECLS_
   #define simde_msa_cast_to_vector_float(a) __msa_cast_to_vector_float(a)
 #endif
 
-// Generate explicit strongly-typed helper functions
+/* Generate explicit strongly-typed helper functions */
 #define SIMDE_MSA_CAST_TO_VECTOR_FLOAT_IMPL(T, T_name) \
   SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_x_msa_cast_to_vector_float_##T_name(T a) { \
     simde_v4f32_private r_; \
@@ -32,19 +32,17 @@ SIMDE_MSA_CAST_TO_VECTOR_FLOAT_IMPL(simde_v2f64, v2f64)
 
 #undef SIMDE_MSA_CAST_TO_VECTOR_FLOAT_IMPL
 
-
 #if !defined(simde_msa_cast_to_vector_float)
   #if defined(__cplusplus)
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v16i8 a) { return simde_x_msa_cast_to_vector_float_v16i8(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v16u8 a) { return simde_x_msa_cast_to_vector_float_v16u8(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v8i16 a) { return simde_x_msa_cast_to_vector_float_v8i16(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v8u16 a) { return simde_x_msa_cast_to_vector_float_v8u16(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v4i32 a) { return simde_x_msa_cast_to_vector_float_v4i32(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v4u32 a) { return simde_x_msa_cast_to_vector_float_v4u32(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v2i64 a) { return simde_x_msa_cast_to_vector_float_v2i64(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v2u64 a) { return simde_x_msa_cast_to_vector_float_v2u64(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v4f32 a) { return simde_x_msa_cast_to_vector_float_v4f32(a); }
-    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(simde_v2f64 a) { return simde_x_msa_cast_to_vector_float_v2f64(a); }
+    SIMDE_END_DECLS_
+    /* Use a C++ template to gracefully handle identical underlying SIMD types */
+    template <typename T>
+    SIMDE_FUNCTION_ATTRIBUTES simde_v4f32 simde_msa_cast_to_vector_float(T a) {
+      simde_v4f32_private r_;
+      simde_memcpy(&r_, &a, sizeof(r_));
+      return simde_v4f32_from_private(r_);
+    }
+    SIMDE_BEGIN_DECLS_
   #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
     #define simde_msa_cast_to_vector_float(a) \
       _Generic((a), \
@@ -62,7 +60,7 @@ SIMDE_MSA_CAST_TO_VECTOR_FLOAT_IMPL(simde_v2f64, v2f64)
   #elif defined(SIMDE_VECTOR_SUBSCRIPT)
     #define simde_msa_cast_to_vector_float(a) HEDLEY_REINTERPRET_CAST(simde_v4f32, (a))
   #else
-    #define simde_msa_cast_to_vector_float(a) simde_x_msa_cast_to_vector_float_v4i32(a) 
+    #define simde_msa_cast_to_vector_float(a) simde_x_msa_cast_to_vector_float_v4i32(a)
   #endif
 #endif
 
