@@ -301,6 +301,65 @@ set(APP_HEADERS
 	src/SIMDeX/mips/hadd.h
 	src/SIMDeX/mips/hsub.h
 	src/SIMDeX/mips/ilvev.h
+	src/SIMDeX/mips/ilvl.h
+	src/SIMDeX/mips/ilvod.h
+	src/SIMDeX/mips/ilvr.h
+	src/SIMDeX/mips/insert.h
+	src/SIMDeX/mips/insve.h
+	src/SIMDeX/mips/ldi.h
+	src/SIMDeX/mips/madd_q.h
+	src/SIMDeX/mips/maddr_q.h
+	src/SIMDeX/mips/maddv.h
+	src/SIMDeX/mips/max.h
+	src/SIMDeX/mips/max_a.h
+	src/SIMDeX/mips/maxi.h
+	src/SIMDeX/mips/min.h
+	src/SIMDeX/mips/min_a.h
+	src/SIMDeX/mips/mini.h
+	src/SIMDeX/mips/mod.h
+	src/SIMDeX/mips/move_v.h
+	src/SIMDeX/mips/msub_q.h
+	src/SIMDeX/mips/msubr_q.h
+	src/SIMDeX/mips/msubv.h
+	src/SIMDeX/mips/mul_q.h
+	src/SIMDeX/mips/mulr_q.h
+	src/SIMDeX/mips/mulv.h
+	src/SIMDeX/mips/nloc.h
+	src/SIMDeX/mips/nlzc.h
+	src/SIMDeX/mips/nor_v.h
+	src/SIMDeX/mips/nori.h
+	src/SIMDeX/mips/or_v.h
+	src/SIMDeX/mips/ori.h
+	src/SIMDeX/mips/pckev.h
+	src/SIMDeX/mips/pckod.h
+	src/SIMDeX/mips/pcnt.h
+	src/SIMDeX/mips/sat.h
+	src/SIMDeX/mips/shf.h
+	src/SIMDeX/mips/sld.h
+	src/SIMDeX/mips/sldi.h
+	src/SIMDeX/mips/sll.h
+	src/SIMDeX/mips/slli.h
+	src/SIMDeX/mips/splat.h
+	src/SIMDeX/mips/splati.h
+	src/SIMDeX/mips/sra.h
+	src/SIMDeX/mips/srai.h
+	src/SIMDeX/mips/srar.h
+	src/SIMDeX/mips/srari.h
+	src/SIMDeX/mips/srl.h
+	src/SIMDeX/mips/srli.h
+	src/SIMDeX/mips/srlr.h
+	src/SIMDeX/mips/srlri.h
+	src/SIMDeX/mips/subs.h
+	src/SIMDeX/mips/subsus.h
+	src/SIMDeX/mips/subsuu.h
+	src/SIMDeX/mips/subvi.h
+	src/SIMDeX/mips/test_bnz.h
+	src/SIMDeX/mips/test_bnz_v.h
+	src/SIMDeX/mips/test_bz.h
+	src/SIMDeX/mips/test_bz_v.h
+	src/SIMDeX/mips/vshf.h
+	src/SIMDeX/mips/xor_v.h
+	src/SIMDeX/mips/xori.h
 )
 
 set(CORE_SOURCES
