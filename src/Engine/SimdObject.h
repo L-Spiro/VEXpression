@@ -10,6 +10,7 @@
 
 namespace ve {
 
+
 	// == Enumerations.
 	/**
 	 * Identifies the instruction set architecture associated with a SIMD register type.
@@ -20,7 +21,8 @@ namespace ve {
 		AVX,
 		AVX512,
 		WASM,
-		NEON
+		NEON,
+		MSA
 	};
 
 	/**
@@ -57,9 +59,21 @@ namespace ve {
 		Simd_uint32x4,
 		Simd_uint64x2,
 		Simd_float32x4,
-		Simd_float64x2
+		Simd_float64x2,
+		Simd_v16i8,
+		Simd_v8i16,
+		Simd_v4i32,
+		Simd_v2i64,
+		Simd_v16u8,
+		Simd_v8u16,
+		Simd_v4u32,
+		Simd_v2u64,
+		Simd_v4f32,
+		Simd_v2f64
 	};
 
+
+	// == Types.
 	/**
 	 * Union encapsulating the underlying SIMDe register types.
 	 **/
@@ -95,6 +109,16 @@ namespace ve {
 		simde_uint64x2_t					uint64x2;
 		simde_float32x4_t					float32x4;
 		simde_float64x2_t					float64x2;
+		simde_v16i8							v16i8;
+		simde_v8i16							v8i16;
+		simde_v4i32							v4i32;
+		simde_v2i64							v2i64;
+		simde_v16u8							v16u8;
+		simde_v8u16							v8u16;
+		simde_v4u32							v4u32;
+		simde_v2u64							v2u64;
+		simde_v4f32							v4f32;
+		simde_v2f64							v2f64;
 	};
 
 	/**

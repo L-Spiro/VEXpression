@@ -108,6 +108,9 @@ TYPE_SIMD           : '__m64' | '__m128' | '__m128d' | '__m128i'
                     | 'int8x16_t' | 'int16x8_t' | 'int32x4_t' | 'int64x2_t'
                     | 'uint8x16_t' | 'uint16x8_t' | 'uint32x4_t' | 'uint64x2_t'
                     | 'float32x4_t' | 'float64x2_t'
+					| 'v16i8' | 'v8i16' | 'v4i32' | 'v2i64'
+					| 'v16u8' | 'v8u16' | 'v4u32' | 'v2u64'
+					| 'v4f32' | 'v2f64'
                     ;
 
 IDENTIFIER          : L (L | D)* ;

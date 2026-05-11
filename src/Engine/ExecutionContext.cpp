@@ -1154,7 +1154,435 @@ namespace ve {
 		{ StringId::Desc_Category_DSP,						"sinc_filter_hpf", StringId::Desc_Math_SincFilterHpf, { { DataType::Double, "hz", StringId::Desc_Param_Hz }, { DataType::Double, "fc", StringId::Desc_Param_Fc }, { DataType::UInt64, "m", StringId::Desc_Param_FilterWidthM } }, IntrinsicBridges::sincFilterHpfBridge },
 		{ StringId::Desc_Category_DSP,						"sinc_filter_bpf", StringId::Desc_Math_SincFilterBpf, { { DataType::Double, "hz", StringId::Desc_Param_Hz }, { DataType::Double, "f1", StringId::Desc_Param_F1 }, { DataType::Double, "f2", StringId::Desc_Param_F2 }, { DataType::UInt64, "m", StringId::Desc_Param_FilterWidthM } }, IntrinsicBridges::sincFilterBpfBridge },
 
+
+
 #include "SimdBridgeTable.inl"
+
+		// MIPS SIMD (__msa_*).
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_add_a_b",	StringId::Desc_Simd_MsaAddA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddAB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_add_a_h",	StringId::Desc_Simd_MsaAddA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddAH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_add_a_w",	StringId::Desc_Simd_MsaAddA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddAW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_add_a_d",	StringId::Desc_Simd_MsaAddA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddAD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_s_b",	StringId::Desc_Simd_MsaAddsS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_s_h",	StringId::Desc_Simd_MsaAddsS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_s_w",	StringId::Desc_Simd_MsaAddsS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_s_d",	StringId::Desc_Simd_MsaAddsS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsSD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_u_b",	StringId::Desc_Simd_MsaAddsU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_u_h",	StringId::Desc_Simd_MsaAddsU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_u_w",	StringId::Desc_Simd_MsaAddsU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_u_d",	StringId::Desc_Simd_MsaAddsU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_a_b",	StringId::Desc_Simd_MsaAddsA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsAB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_a_h",	StringId::Desc_Simd_MsaAddsA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsAH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_a_w",	StringId::Desc_Simd_MsaAddsA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsAW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_adds_a_d",	StringId::Desc_Simd_MsaAddsA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddsAD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_addv_b",		StringId::Desc_Simd_MsaAddv,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddvB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_addv_h",		StringId::Desc_Simd_MsaAddv,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddvH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_addv_w",		StringId::Desc_Simd_MsaAddv,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddvW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_addv_d",		StringId::Desc_Simd_MsaAddv,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAddvD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_addvi_b",	StringId::Desc_Simd_MsaAddvi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaAddviB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_addvi_h",	StringId::Desc_Simd_MsaAddvi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaAddviH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_addvi_w",	StringId::Desc_Simd_MsaAddvi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaAddviW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_addvi_d",	StringId::Desc_Simd_MsaAddvi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaAddviD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_and_v",		StringId::Desc_Simd_MsaAndV,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAndV },
+		
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_andi_b",		StringId::Desc_Simd_MsaAndi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaAndiB },
+		
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_asub_s_b",	StringId::Desc_Simd_MsaAsubS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAsubSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_asub_s_h",	StringId::Desc_Simd_MsaAsubS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAsubSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_asub_s_w",	StringId::Desc_Simd_MsaAsubS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAsubSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_asub_s_d",	StringId::Desc_Simd_MsaAsubS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAsubSD },
+		
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_asub_u_b",	StringId::Desc_Simd_MsaAsubU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAsubUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_asub_u_h",	StringId::Desc_Simd_MsaAsubU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAsubUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_asub_u_w",	StringId::Desc_Simd_MsaAsubU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAsubUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_asub_u_d",	StringId::Desc_Simd_MsaAsubU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAsubUD },
+		
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ave_s_b",	StringId::Desc_Simd_MsaAveS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAveSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ave_s_h",	StringId::Desc_Simd_MsaAveS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAveSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ave_s_w",	StringId::Desc_Simd_MsaAveS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAveSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ave_s_d",	StringId::Desc_Simd_MsaAveS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAveSD },
+		
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ave_u_b",	StringId::Desc_Simd_MsaAveU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAveUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ave_u_h",	StringId::Desc_Simd_MsaAveU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAveUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ave_u_w",	StringId::Desc_Simd_MsaAveU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAveUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ave_u_d",	StringId::Desc_Simd_MsaAveU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAveUD },
+		
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_aver_s_b",	StringId::Desc_Simd_MsaAverS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAverSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_aver_s_h",	StringId::Desc_Simd_MsaAverS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAverSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_aver_s_w",	StringId::Desc_Simd_MsaAverS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAverSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_aver_s_d",	StringId::Desc_Simd_MsaAverS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAverSD },
+		
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_aver_u_b",	StringId::Desc_Simd_MsaAverU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAverUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_aver_u_h",	StringId::Desc_Simd_MsaAverU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAverUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_aver_u_w",	StringId::Desc_Simd_MsaAverU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAverUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_aver_u_d",	StringId::Desc_Simd_MsaAverU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaAverUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bclr_b",		StringId::Desc_Simd_MsaBclr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBclrB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bclr_h",		StringId::Desc_Simd_MsaBclr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBclrH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bclr_w",		StringId::Desc_Simd_MsaBclr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBclrW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bclr_d",		StringId::Desc_Simd_MsaBclr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBclrD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bclri_b",	StringId::Desc_Simd_MsaBclri,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBclriB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bclri_h",	StringId::Desc_Simd_MsaBclri,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBclriH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bclri_w",	StringId::Desc_Simd_MsaBclri,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBclriW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bclri_d",	StringId::Desc_Simd_MsaBclri,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBclriD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsl_b",	StringId::Desc_Simd_MsaBinsl,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBinslB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsl_h",	StringId::Desc_Simd_MsaBinsl,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBinslH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsl_w",	StringId::Desc_Simd_MsaBinsl,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBinslW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsl_d",	StringId::Desc_Simd_MsaBinsl,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBinslD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsli_b",	StringId::Desc_Simd_MsaBinsli,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBinsliB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsli_h",	StringId::Desc_Simd_MsaBinsli,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBinsliH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsli_w",	StringId::Desc_Simd_MsaBinsli,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBinsliW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsli_d",	StringId::Desc_Simd_MsaBinsli,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBinsliD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsr_b",	StringId::Desc_Simd_MsaBinsr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBinsrB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsr_h",	StringId::Desc_Simd_MsaBinsr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBinsrH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsr_w",	StringId::Desc_Simd_MsaBinsr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBinsrW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsr_d",	StringId::Desc_Simd_MsaBinsr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBinsrD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsri_b",	StringId::Desc_Simd_MsaBinsri,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBinsriB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsri_h",	StringId::Desc_Simd_MsaBinsri,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBinsriH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsri_w",	StringId::Desc_Simd_MsaBinsri,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBinsriW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_binsri_d",	StringId::Desc_Simd_MsaBinsri,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBinsriD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bmnz_v",		StringId::Desc_Simd_MsaBmnz,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBmnzV },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bmnzi_b",	StringId::Desc_Simd_MsaBmnzi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBmnziB },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bmz_v",		StringId::Desc_Simd_MsaBmz,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBmzV },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bmzi_b",		StringId::Desc_Simd_MsaBmzi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBmziB },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bneg_b",		StringId::Desc_Simd_MsaBneg,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBnegB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bneg_h",		StringId::Desc_Simd_MsaBneg,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBnegH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bneg_w",		StringId::Desc_Simd_MsaBneg,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBnegW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bneg_d",		StringId::Desc_Simd_MsaBneg,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBnegD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bnegi_b",	StringId::Desc_Simd_MsaBnegi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Int64, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBnegiB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bnegi_h",	StringId::Desc_Simd_MsaBnegi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Int64, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBnegiH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bnegi_w",	StringId::Desc_Simd_MsaBnegi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Int64, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBnegiW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bnegi_d",	StringId::Desc_Simd_MsaBnegi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Int64, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBnegiD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bsel_v",		StringId::Desc_Simd_MsaBsel,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaBselV },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bseli_b",	StringId::Desc_Simd_MsaBseli,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBseliB },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bset_b",		StringId::Desc_Simd_MsaBset,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBsetB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bset_h",		StringId::Desc_Simd_MsaBset,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBsetH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bset_w",		StringId::Desc_Simd_MsaBset,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBsetW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bset_d",		StringId::Desc_Simd_MsaBset,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaBsetD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bseti_b",	StringId::Desc_Simd_MsaBseti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Int64, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBsetiB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bseti_h",	StringId::Desc_Simd_MsaBseti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Int64, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBsetiH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bseti_w",	StringId::Desc_Simd_MsaBseti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Int64, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBsetiW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_bseti_d",	StringId::Desc_Simd_MsaBseti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Int64, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaBsetiD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cast_to_scalar_double",	StringId::Desc_Simd_MsaCastToScalarDouble,	{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaCastToScalarDouble },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cast_to_scalar_float",		StringId::Desc_Simd_MsaCastToScalarFloat,	{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaCastToScalarFloat },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cast_to_vector_double",	StringId::Desc_Simd_MsaCastToVectorDouble,	{ { DataType::Double, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaCastToVectorDouble },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cast_to_vector_float",		StringId::Desc_Simd_MsaCastToVectorFloat,	{ { DataType::Float, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaCastToVectorFloat },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ceq_b",		StringId::Desc_Simd_MsaCeq,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCeqB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ceq_h",		StringId::Desc_Simd_MsaCeq,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCeqH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ceq_w",		StringId::Desc_Simd_MsaCeq,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCeqW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ceq_d",		StringId::Desc_Simd_MsaCeq,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCeqD },
+	
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ceqi_b",		StringId::Desc_Simd_MsaCeqi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCeqiB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ceqi_h",		StringId::Desc_Simd_MsaCeqi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCeqiH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ceqi_w",		StringId::Desc_Simd_MsaCeqi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCeqiW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ceqi_d",		StringId::Desc_Simd_MsaCeqi,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCeqiD },
+		
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cfcmsa",		StringId::Desc_Simd_MsaCfcmsa,		{ { DataType::Integer, "cs", StringId::Simd_Param_Cs } }, IntrinsicBridges::bridgeMsaCfcmsa },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cle_s_b",	StringId::Desc_Simd_MsaCleS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCleSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cle_s_h",	StringId::Desc_Simd_MsaCleS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCleSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cle_s_w",	StringId::Desc_Simd_MsaCleS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCleSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cle_s_d",	StringId::Desc_Simd_MsaCleS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCleSD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cle_u_b",	StringId::Desc_Simd_MsaCleU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCleUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cle_u_h",	StringId::Desc_Simd_MsaCleU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCleUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cle_u_w",	StringId::Desc_Simd_MsaCleU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCleUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_cle_u_d",	StringId::Desc_Simd_MsaCleU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCleUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clei_s_b",	StringId::Desc_Simd_MsaCleiS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCleiSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clei_s_h",	StringId::Desc_Simd_MsaCleiS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCleiSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clei_s_w",	StringId::Desc_Simd_MsaCleiS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCleiSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clei_s_d",	StringId::Desc_Simd_MsaCleiS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCleiSD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clei_u_b",	StringId::Desc_Simd_MsaCleiU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCleiUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clei_u_h",	StringId::Desc_Simd_MsaCleiU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCleiUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clei_u_w",	StringId::Desc_Simd_MsaCleiU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCleiUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clei_u_d",	StringId::Desc_Simd_MsaCleiU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCleiUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clt_s_b",	StringId::Desc_Simd_MsaClt,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCltSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clt_s_h",	StringId::Desc_Simd_MsaClt,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCltSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clt_s_w",	StringId::Desc_Simd_MsaClt,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCltSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clt_s_d",	StringId::Desc_Simd_MsaClt,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCltSD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clt_u_b",	StringId::Desc_Simd_MsaClt,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCltUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clt_u_h",	StringId::Desc_Simd_MsaClt,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCltUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clt_u_w",	StringId::Desc_Simd_MsaClt,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCltUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clt_u_d",	StringId::Desc_Simd_MsaClt,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaCltUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clti_s_b",	StringId::Desc_Simd_MsaClti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCltiSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clti_s_h",	StringId::Desc_Simd_MsaClti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCltiSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clti_s_w",	StringId::Desc_Simd_MsaClti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCltiSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clti_s_d",	StringId::Desc_Simd_MsaClti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCltiSD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clti_u_b",	StringId::Desc_Simd_MsaClti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCltiUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clti_u_h",	StringId::Desc_Simd_MsaClti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCltiUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clti_u_w",	StringId::Desc_Simd_MsaClti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCltiUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_clti_u_d",	StringId::Desc_Simd_MsaClti,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "imm", StringId::Simd_Param_Imm } }, IntrinsicBridges::bridgeMsaCltiUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_copy_s_b",	StringId::Desc_Simd_MsaCopy,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "index", StringId::Simd_Param_Index } }, IntrinsicBridges::bridgeMsaCopySB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_copy_s_h",	StringId::Desc_Simd_MsaCopy,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "index", StringId::Simd_Param_Index } }, IntrinsicBridges::bridgeMsaCopySH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_copy_s_w",	StringId::Desc_Simd_MsaCopy,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "index", StringId::Simd_Param_Index } }, IntrinsicBridges::bridgeMsaCopySW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_copy_s_d",	StringId::Desc_Simd_MsaCopy,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "index", StringId::Simd_Param_Index } }, IntrinsicBridges::bridgeMsaCopySD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_copy_u_b",	StringId::Desc_Simd_MsaCopy,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "index", StringId::Simd_Param_Index } }, IntrinsicBridges::bridgeMsaCopyUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_copy_u_h",	StringId::Desc_Simd_MsaCopy,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "index", StringId::Simd_Param_Index } }, IntrinsicBridges::bridgeMsaCopyUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_copy_u_w",	StringId::Desc_Simd_MsaCopy,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "index", StringId::Simd_Param_Index } }, IntrinsicBridges::bridgeMsaCopyUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_copy_u_d",	StringId::Desc_Simd_MsaCopy,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Integer, "index", StringId::Simd_Param_Index } }, IntrinsicBridges::bridgeMsaCopyUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_div_s_b",	StringId::Desc_Simd_MsaDiv,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDivSB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_div_s_h",	StringId::Desc_Simd_MsaDiv,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDivSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_div_s_w",	StringId::Desc_Simd_MsaDiv,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDivSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_div_s_d",	StringId::Desc_Simd_MsaDiv,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDivSD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_div_u_b",	StringId::Desc_Simd_MsaDiv,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDivUB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_div_u_h",	StringId::Desc_Simd_MsaDiv,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDivUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_div_u_w",	StringId::Desc_Simd_MsaDiv,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDivUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_div_u_d",	StringId::Desc_Simd_MsaDiv,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDivUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dotp_s_h",	StringId::Desc_Simd_MsaDotpS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDotpSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dotp_s_w",	StringId::Desc_Simd_MsaDotpS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDotpSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dotp_s_d",	StringId::Desc_Simd_MsaDotpS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDotpSD },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dotp_u_h",	StringId::Desc_Simd_MsaDotpU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDotpUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dotp_u_w",	StringId::Desc_Simd_MsaDotpU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDotpUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dotp_u_d",	StringId::Desc_Simd_MsaDotpU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDotpUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpadd_s_h",	StringId::Desc_Simd_MsaDpaddS,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpaddSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpadd_s_w",	StringId::Desc_Simd_MsaDpaddS,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpaddSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpadd_s_d",	StringId::Desc_Simd_MsaDpaddS,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpaddSD },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpadd_u_h",	StringId::Desc_Simd_MsaDpaddU,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpaddUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpadd_u_w",	StringId::Desc_Simd_MsaDpaddU,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpaddUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpadd_u_d",	StringId::Desc_Simd_MsaDpaddU,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpaddUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpsub_s_h",	StringId::Desc_Simd_MsaDpsubS,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpsubSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpsub_s_w",	StringId::Desc_Simd_MsaDpsubS,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpsubSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpsub_s_d",	StringId::Desc_Simd_MsaDpsubS,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpsubSD },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpsub_u_h",	StringId::Desc_Simd_MsaDpsubU,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpsubUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpsub_u_w",	StringId::Desc_Simd_MsaDpsubU,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpsubUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_dpsub_u_d",	StringId::Desc_Simd_MsaDpsubU,		{ { DataType::Object, "c", StringId::Simd_Param_C }, { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaDpsubUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fadd_w",		StringId::Desc_Simd_MsaFadd,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFaddW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fadd_d",		StringId::Desc_Simd_MsaFadd,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFaddD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcaf_w",		StringId::Desc_Simd_MsaFcaf,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcafW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcaf_d",		StringId::Desc_Simd_MsaFcaf,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcafD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fceq_w",		StringId::Desc_Simd_MsaFceq,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFceqW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fceq_d",		StringId::Desc_Simd_MsaFceq,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFceqD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fclass_w",	StringId::Desc_Simd_MsaFclass,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFclassW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fclass_d",	StringId::Desc_Simd_MsaFclass,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFclassD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcle_w",		StringId::Desc_Simd_MsaFcle,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcleW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcle_d",		StringId::Desc_Simd_MsaFcle,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcleD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fclt_w",		StringId::Desc_Simd_MsaFclt,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcltW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fclt_d",		StringId::Desc_Simd_MsaFclt,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcltD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcne_w",		StringId::Desc_Simd_MsaFcne,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcneW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcne_d",		StringId::Desc_Simd_MsaFcne,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcneD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcor_w",		StringId::Desc_Simd_MsaFcor,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcorW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcor_d",		StringId::Desc_Simd_MsaFcor,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcorD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcueq_w",	StringId::Desc_Simd_MsaFcueq,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcueqW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcueq_d",	StringId::Desc_Simd_MsaFcueq,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcueqD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcule_w",	StringId::Desc_Simd_MsaFcule,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFculeW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcule_d",	StringId::Desc_Simd_MsaFcule,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFculeD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcult_w",	StringId::Desc_Simd_MsaFcult,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcultW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcult_d",	StringId::Desc_Simd_MsaFcult,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcultD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcun_w",		StringId::Desc_Simd_MsaFcun,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcunW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcun_d",		StringId::Desc_Simd_MsaFcun,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcunD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcune_w",	StringId::Desc_Simd_MsaFcune,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcuneW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fcune_d",	StringId::Desc_Simd_MsaFcune,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFcuneD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fdiv_w",		StringId::Desc_Simd_MsaFdiv,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFdivW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fdiv_d",		StringId::Desc_Simd_MsaFdiv,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFdivD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fexdo_h",	StringId::Desc_Simd_MsaFexdo,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFexdoH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fexdo_w",	StringId::Desc_Simd_MsaFexdo,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFexdoW },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fexp2_w",	StringId::Desc_Simd_MsaFexp2,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFexp2W },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fexp2_d",	StringId::Desc_Simd_MsaFexp2,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFexp2D },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fexupl_w",	StringId::Desc_Simd_MsaFexupl,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFexuplW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fexupl_d",	StringId::Desc_Simd_MsaFexupl,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFexuplD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fexupr_w",	StringId::Desc_Simd_MsaFexupr,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFexuprW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fexupr_d",	StringId::Desc_Simd_MsaFexupr,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFexuprD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ffint_s_w",	StringId::Desc_Simd_MsaFfintS,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFfintSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ffint_s_d",	StringId::Desc_Simd_MsaFfintS,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFfintSD },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ffint_u_w",	StringId::Desc_Simd_MsaFfintU,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFfintUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ffint_u_d",	StringId::Desc_Simd_MsaFfintU,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFfintUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ffql_w",		StringId::Desc_Simd_MsaFfql,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFfqlW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ffql_d",		StringId::Desc_Simd_MsaFfql,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFfqlD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ffqr_w",		StringId::Desc_Simd_MsaFfqr,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFfqrW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ffqr_d",		StringId::Desc_Simd_MsaFfqr,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFfqrD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fill_b",		StringId::Desc_Simd_MsaFill,		{ { DataType::Int64, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaFillB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fill_h",		StringId::Desc_Simd_MsaFill,		{ { DataType::Int64, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaFillH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fill_w",		StringId::Desc_Simd_MsaFill,		{ { DataType::Int64, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaFillW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fill_d",		StringId::Desc_Simd_MsaFill,		{ { DataType::Int64, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaFillD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_flog2_w",	StringId::Desc_Simd_MsaFlog2,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFlog2W },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_flog2_d",	StringId::Desc_Simd_MsaFlog2,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFlog2D },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmadd_w",	StringId::Desc_Simd_MsaFmadd,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaFmaddW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmadd_d",	StringId::Desc_Simd_MsaFmadd,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaFmaddD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmax_w",		StringId::Desc_Simd_MsaFmax,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFmaxW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmax_d",		StringId::Desc_Simd_MsaFmax,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFmaxD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmax_a_w",	StringId::Desc_Simd_MsaFmaxA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFmaxAW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmax_a_d",	StringId::Desc_Simd_MsaFmaxA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFmaxAD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmin_w",		StringId::Desc_Simd_MsaFmin,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFminW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmin_d",		StringId::Desc_Simd_MsaFmin,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFminD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmin_a_w",	StringId::Desc_Simd_MsaFminA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFminAW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmin_a_d",	StringId::Desc_Simd_MsaFminA,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFminAD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmsub_w",	StringId::Desc_Simd_MsaFmsub,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaFmsubW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmsub_d",	StringId::Desc_Simd_MsaFmsub,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B }, { DataType::Object, "c", StringId::Simd_Param_C } }, IntrinsicBridges::bridgeMsaFmsubD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmul_w",		StringId::Desc_Simd_MsaFmul,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFmulW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fmul_d",		StringId::Desc_Simd_MsaFmul,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFmulD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_frcp_w",		StringId::Desc_Simd_MsaFrcp,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFrcpW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_frcp_d",		StringId::Desc_Simd_MsaFrcp,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFrcpD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_frint_w",	StringId::Desc_Simd_MsaFrint,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFrintW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_frint_d",	StringId::Desc_Simd_MsaFrint,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFrintD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_frsqrt_w",	StringId::Desc_Simd_MsaFrsqrt,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFrsqrtW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_frsqrt_d",	StringId::Desc_Simd_MsaFrsqrt,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFrsqrtD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsaf_w",		StringId::Desc_Simd_MsaFsaf,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsafW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsaf_d",		StringId::Desc_Simd_MsaFsaf,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsafD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fseq_w",		StringId::Desc_Simd_MsaFseq,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFseqW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fseq_d",		StringId::Desc_Simd_MsaFseq,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFseqD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsle_w",		StringId::Desc_Simd_MsaFsle,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsleW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsle_d",		StringId::Desc_Simd_MsaFsle,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsleD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fslt_w",		StringId::Desc_Simd_MsaFslt,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsltW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fslt_d",		StringId::Desc_Simd_MsaFslt,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsltD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsne_w",		StringId::Desc_Simd_MsaFsne,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsneW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsne_d",		StringId::Desc_Simd_MsaFsne,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsneD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsor_w",		StringId::Desc_Simd_MsaFsor,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsorW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsor_d",		StringId::Desc_Simd_MsaFsor,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsorD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsqrt_w",	StringId::Desc_Simd_MsaFsqrt,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFsqrtW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsqrt_d",	StringId::Desc_Simd_MsaFsqrt,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFsqrtD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsub_w",		StringId::Desc_Simd_MsaFsub,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsubW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsub_d",		StringId::Desc_Simd_MsaFsub,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsubD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsueq_w",	StringId::Desc_Simd_MsaFsueq,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsueqW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsueq_d",	StringId::Desc_Simd_MsaFsueq,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsueqD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsule_w",	StringId::Desc_Simd_MsaFsule,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsuleW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsule_d",	StringId::Desc_Simd_MsaFsule,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsuleD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsult_w",		StringId::Desc_Simd_MsaFsult,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsultW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsult_d",		StringId::Desc_Simd_MsaFsult,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsultD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsun_w",			StringId::Desc_Simd_MsaFsun,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsunW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsun_d",			StringId::Desc_Simd_MsaFsun,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsunD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsune_w",		StringId::Desc_Simd_MsaFsune,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsuneW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_fsune_d",		StringId::Desc_Simd_MsaFsune,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFsuneD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftint_s_w",		StringId::Desc_Simd_MsaFtintS,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFtintSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftint_s_d",		StringId::Desc_Simd_MsaFtintS,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFtintSD },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftint_u_w",		StringId::Desc_Simd_MsaFtintU,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFtintUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftint_u_d",		StringId::Desc_Simd_MsaFtintU,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFtintUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftq_h",			StringId::Desc_Simd_MsaFtq,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFtqH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftq_w",			StringId::Desc_Simd_MsaFtq,			{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaFtqW },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftrunc_s_w",		StringId::Desc_Simd_MsaFtruncS,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFtruncSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftrunc_s_d",		StringId::Desc_Simd_MsaFtruncS,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFtruncSD },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftrunc_u_w",		StringId::Desc_Simd_MsaFtruncU,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFtruncUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ftrunc_u_d",		StringId::Desc_Simd_MsaFtruncU,		{ { DataType::Object, "a", StringId::Simd_Param_A } }, IntrinsicBridges::bridgeMsaFtruncUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hadd_s_h",		StringId::Desc_Simd_MsaHaddS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHaddSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hadd_s_w",		StringId::Desc_Simd_MsaHaddS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHaddSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hadd_s_d",		StringId::Desc_Simd_MsaHaddS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHaddSD },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hadd_u_h",		StringId::Desc_Simd_MsaHaddU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHaddUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hadd_u_w",		StringId::Desc_Simd_MsaHaddU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHaddUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hadd_u_d",		StringId::Desc_Simd_MsaHaddU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHaddUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hsub_s_h",		StringId::Desc_Simd_MsaHsubS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHsubSH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hsub_s_w",		StringId::Desc_Simd_MsaHsubS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHsubSW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hsub_s_d",		StringId::Desc_Simd_MsaHsubS,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHsubSD },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hsub_u_h",		StringId::Desc_Simd_MsaHsubU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHsubUH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hsub_u_w",		StringId::Desc_Simd_MsaHsubU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHsubUW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_hsub_u_d",		StringId::Desc_Simd_MsaHsubU,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaHsubUD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvev_b",	StringId::Desc_Simd_MsaIlvev,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvevB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvev_h",	StringId::Desc_Simd_MsaIlvev,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvevH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvev_w",	StringId::Desc_Simd_MsaIlvev,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvevW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvev_d",	StringId::Desc_Simd_MsaIlvev,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvevD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvl_b",		StringId::Desc_Simd_MsaIlvl,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvlB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvl_h",		StringId::Desc_Simd_MsaIlvl,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvlH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvl_w",		StringId::Desc_Simd_MsaIlvl,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvlW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvl_d",		StringId::Desc_Simd_MsaIlvl,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvlD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvod_b",	StringId::Desc_Simd_MsaIlvod,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvodB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvod_h",	StringId::Desc_Simd_MsaIlvod,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvodH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvod_w",	StringId::Desc_Simd_MsaIlvod,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvodW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvod_d",	StringId::Desc_Simd_MsaIlvod,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvodD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvr_b",		StringId::Desc_Simd_MsaIlvr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvrB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvr_h",		StringId::Desc_Simd_MsaIlvr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvrH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvr_w",		StringId::Desc_Simd_MsaIlvr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvrW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ilvr_d",		StringId::Desc_Simd_MsaIlvr,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaIlvrD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_insert_b",	StringId::Desc_Simd_MsaInsert,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Any, "lane", StringId::Simd_Param_Lane }, { DataType::Any, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaInsertB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_insert_h",	StringId::Desc_Simd_MsaInsert,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Any, "lane", StringId::Simd_Param_Lane }, { DataType::Any, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaInsertH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_insert_w",	StringId::Desc_Simd_MsaInsert,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Any, "lane", StringId::Simd_Param_Lane }, { DataType::Any, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaInsertW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_insert_d",	StringId::Desc_Simd_MsaInsert,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Any, "lane", StringId::Simd_Param_Lane }, { DataType::Any, "val", StringId::Simd_Param_Val } }, IntrinsicBridges::bridgeMsaInsertD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_insve_b",	StringId::Desc_Simd_MsaInsve,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Any, "lane", StringId::Simd_Param_Lane }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaInsveB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_insve_h",	StringId::Desc_Simd_MsaInsve,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Any, "lane", StringId::Simd_Param_Lane }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaInsveH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_insve_w",	StringId::Desc_Simd_MsaInsve,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Any, "lane", StringId::Simd_Param_Lane }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaInsveW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_insve_d",	StringId::Desc_Simd_MsaInsve,		{ { DataType::Object, "a", StringId::Simd_Param_A }, { DataType::Any, "lane", StringId::Simd_Param_Lane }, { DataType::Object, "b", StringId::Simd_Param_B } }, IntrinsicBridges::bridgeMsaInsveD },
+
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ld_b",		StringId::Desc_Simd_MsaLd,			{ { DataType::Pointer, "ptr", StringId::Simd_Param_Ptr }, { DataType::Any, "offset", StringId::Simd_Param_Offset } }, IntrinsicBridges::bridgeMsaLdB },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ld_h",		StringId::Desc_Simd_MsaLd,			{ { DataType::Pointer, "ptr", StringId::Simd_Param_Ptr }, { DataType::Any, "offset", StringId::Simd_Param_Offset } }, IntrinsicBridges::bridgeMsaLdH },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ld_w",		StringId::Desc_Simd_MsaLd,			{ { DataType::Pointer, "ptr", StringId::Simd_Param_Ptr }, { DataType::Any, "offset", StringId::Simd_Param_Offset } }, IntrinsicBridges::bridgeMsaLdW },
+		{ StringId::Desc_Category_SimdMipsMsa,				"__msa_ld_d",		StringId::Desc_Simd_MsaLd,			{ { DataType::Pointer, "ptr", StringId::Simd_Param_Ptr }, { DataType::Any, "offset", StringId::Simd_Param_Offset } }, IntrinsicBridges::bridgeMsaLdD },
 	};
 
 	// == Functions.

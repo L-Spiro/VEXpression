@@ -103,9 +103,9 @@ SIMDE_BEGIN_DECLS_
   #define simde_msa_clei_u_b(a, imm) __msa_clei_u_b((a), (imm))
 #else
   SIMDE_FUNCTION_ATTRIBUTES
-  simde_v16i8
+  simde_v16u8
   simde_msa_clei_u_b(simde_v16u8 a, const int imm) {
-    simde_v16i8_private r_;
+    simde_v16u8_private r_;
     simde_v16u8_private a_ = simde_v16u8_to_private(a);
 
     SIMDE_VECTORIZE
@@ -113,7 +113,7 @@ SIMDE_BEGIN_DECLS_
       r_.values[i] = (a_.values[i] <= HEDLEY_STATIC_CAST(uint8_t, imm)) ? ~HEDLEY_STATIC_CAST(int8_t, 0) : 0;
     }
 
-    return simde_v16i8_from_private(r_);
+    return simde_v16u8_from_private(r_);
   }
 #endif
 #if defined(SIMDE_MIPS_MSA_ENABLE_NATIVE_ALIASES)
@@ -125,9 +125,9 @@ SIMDE_BEGIN_DECLS_
   #define simde_msa_clei_u_h(a, imm) __msa_clei_u_h((a), (imm))
 #else
   SIMDE_FUNCTION_ATTRIBUTES
-  simde_v8i16
+  simde_v8u16
   simde_msa_clei_u_h(simde_v8u16 a, const int imm) {
-    simde_v8i16_private r_;
+    simde_v8u16_private r_;
     simde_v8u16_private a_ = simde_v8u16_to_private(a);
 
     SIMDE_VECTORIZE
@@ -135,7 +135,7 @@ SIMDE_BEGIN_DECLS_
       r_.values[i] = (a_.values[i] <= HEDLEY_STATIC_CAST(uint16_t, imm)) ? ~HEDLEY_STATIC_CAST(int16_t, 0) : 0;
     }
 
-    return simde_v8i16_from_private(r_);
+    return simde_v8u16_from_private(r_);
   }
 #endif
 #if defined(SIMDE_MIPS_MSA_ENABLE_NATIVE_ALIASES)
@@ -147,9 +147,9 @@ SIMDE_BEGIN_DECLS_
   #define simde_msa_clei_u_w(a, imm) __msa_clei_u_w((a), (imm))
 #else
   SIMDE_FUNCTION_ATTRIBUTES
-  simde_v4i32
+  simde_v4u32
   simde_msa_clei_u_w(simde_v4u32 a, const int imm) {
-    simde_v4i32_private r_;
+    simde_v4u32_private r_;
     simde_v4u32_private a_ = simde_v4u32_to_private(a);
 
     SIMDE_VECTORIZE
@@ -157,7 +157,7 @@ SIMDE_BEGIN_DECLS_
       r_.values[i] = (a_.values[i] <= HEDLEY_STATIC_CAST(uint32_t, imm)) ? ~HEDLEY_STATIC_CAST(int32_t, 0) : 0;
     }
 
-    return simde_v4i32_from_private(r_);
+    return simde_v4u32_from_private(r_);
   }
 #endif
 #if defined(SIMDE_MIPS_MSA_ENABLE_NATIVE_ALIASES)
@@ -169,9 +169,9 @@ SIMDE_BEGIN_DECLS_
   #define simde_msa_clei_u_d(a, imm) __msa_clei_u_d((a), (imm))
 #else
   SIMDE_FUNCTION_ATTRIBUTES
-  simde_v2i64
+  simde_v2u64
   simde_msa_clei_u_d(simde_v2u64 a, const int imm) {
-    simde_v2i64_private r_;
+    simde_v2u64_private r_;
     simde_v2u64_private a_ = simde_v2u64_to_private(a);
 
     SIMDE_VECTORIZE
@@ -179,7 +179,7 @@ SIMDE_BEGIN_DECLS_
       r_.values[i] = (a_.values[i] <= HEDLEY_STATIC_CAST(uint64_t, imm)) ? ~HEDLEY_STATIC_CAST(int64_t, 0) : 0;
     }
 
-    return simde_v2i64_from_private(r_);
+    return simde_v2u64_from_private(r_);
   }
 #endif
 #if defined(SIMDE_MIPS_MSA_ENABLE_NATIVE_ALIASES)

@@ -6,6 +6,7 @@
 
 namespace ve {
 
+
 	// == Members.
 	const SimdRegisterInfo SimdObject::simdRegisterProperties[] = {
 		//name				componentType		componentCount	registerSize				alignment					instructionSet
@@ -39,9 +40,21 @@ namespace ve {
 		{ "uint32x4_t",		DataType::UInt32,	4,				sizeof(simde_uint32x4_t),	alignof(simde_uint32x4_t),	InstructionSet::NEON },
 		{ "uint64x2_t",		DataType::UInt64,	2,				sizeof(simde_uint64x2_t),	alignof(simde_uint64x2_t),	InstructionSet::NEON },
 		{ "float32x4_t",	DataType::Float,	4,				sizeof(simde_float32x4_t),	alignof(simde_float32x4_t),	InstructionSet::NEON },
-		{ "float64x2_t",	DataType::Double,	2,				sizeof(simde_float64x2_t),	alignof(simde_float64x2_t),	InstructionSet::NEON }
+		{ "float64x2_t",	DataType::Double,	2,				sizeof(simde_float64x2_t),	alignof(simde_float64x2_t),	InstructionSet::NEON },
+		{ "v16i8",			DataType::Int8,		16,				sizeof(simde_v16i8),		alignof(simde_v16i8),		InstructionSet::MSA },
+		{ "v8i16",			DataType::Int16,	8,				sizeof(simde_v8i16),		alignof(simde_v8i16),		InstructionSet::MSA },
+		{ "v4i32",			DataType::Int32,	4,				sizeof(simde_v4i32),		alignof(simde_v4i32),		InstructionSet::MSA },
+		{ "v2i64",			DataType::Int64,	2,				sizeof(simde_v2i64),		alignof(simde_v2i64),		InstructionSet::MSA },
+		{ "v16u8",			DataType::UInt8,	16,				sizeof(simde_v16u8),		alignof(simde_v16u8),		InstructionSet::MSA },
+		{ "v8u16",			DataType::UInt16,	8,				sizeof(simde_v8u16),		alignof(simde_v8u16),		InstructionSet::MSA },
+		{ "v4u32",			DataType::UInt32,	4,				sizeof(simde_v4u32),		alignof(simde_v4u32),		InstructionSet::MSA },
+		{ "v2u64",			DataType::UInt64,	2,				sizeof(simde_v2u64),		alignof(simde_v2u64),		InstructionSet::MSA },
+		{ "v4f32",			DataType::Float,	4,				sizeof(simde_v4f32),		alignof(simde_v4f32),		InstructionSet::MSA },
+		{ "v2f64",			DataType::Double,	2,				sizeof(simde_v2f64),		alignof(simde_v2f64),		InstructionSet::MSA }
 	};
 
+
+	// == Functions.
 	/**
 	 * Serializes the object into a string representation.
 	 *
@@ -258,6 +271,66 @@ namespace ve {
 				formatArray("float64x2_t", vals, 2);
 				return true;
 			}
+			case Simd_v16i8 : {
+				int8_t vals[16];
+				std::memcpy(vals, &reg.v16i8, sizeof(vals));
+				formatArray("v16i8", vals, 16);
+				return true;
+			}
+			case Simd_v8i16 : {
+				int16_t vals[8];
+				std::memcpy(vals, &reg.v8i16, sizeof(vals));
+				formatArray("v8i16", vals, 8);
+				return true;
+			}
+			case Simd_v4i32 : {
+				int32_t vals[4];
+				std::memcpy(vals, &reg.v4i32, sizeof(vals));
+				formatArray("v4i32", vals, 4);
+				return true;
+			}
+			case Simd_v2i64 : {
+				int64_t vals[2];
+				std::memcpy(vals, &reg.v2i64, sizeof(vals));
+				formatArray("v2i64", vals, 2);
+				return true;
+			}
+			case Simd_v16u8 : {
+				uint8_t vals[16];
+				std::memcpy(vals, &reg.v16u8, sizeof(vals));
+				formatArray("v16u8", vals, 16);
+				return true;
+			}
+			case Simd_v8u16 : {
+				uint16_t vals[8];
+				std::memcpy(vals, &reg.v8u16, sizeof(vals));
+				formatArray("v8u16", vals, 8);
+				return true;
+			}
+			case Simd_v4u32 : {
+				uint32_t vals[4];
+				std::memcpy(vals, &reg.v4u32, sizeof(vals));
+				formatArray("v4u32", vals, 4);
+				return true;
+			}
+			case Simd_v2u64 : {
+				uint64_t vals[2];
+				std::memcpy(vals, &reg.v2u64, sizeof(vals));
+				formatArray("v2u64", vals, 2);
+				return true;
+			}
+			case Simd_v4f32 : {
+				float vals[4];
+				std::memcpy(vals, &reg.v4f32, sizeof(vals));
+				formatArray("v4f32", vals, 4);
+				return true;
+			}
+			case Simd_v2f64 : {
+				double vals[2];
+				std::memcpy(vals, &reg.v2f64, sizeof(vals));
+				formatArray("v2f64", vals, 2);
+				return true;
+			}
 			default : {
 				return false;
 			}
@@ -462,6 +535,7 @@ namespace ve {
 		return simdRegisterProperties[regType].componentCount;
 	}
 
+
 	// == Operators.
 #define VE_SIMD_CMP_CASE(REG_ENUM, REG_MEM, FUNC)																					\
 	case REG_ENUM : {																												\
@@ -480,7 +554,10 @@ namespace ve {
 		FN_F32X2, FN_F64X1,																											\
 		FN_I8X16, FN_I16X8, FN_I32X4, FN_I64X2,																						\
 		FN_U8X16, FN_U16X8, FN_U32X4, FN_U64X2,																						\
-		FN_F32X4, FN_F64X2)																											\
+		FN_F32X4, FN_F64X2,																											\
+		FN_MSA_I8, FN_MSA_I16, FN_MSA_I32, FN_MSA_I64,																				\
+		FN_MSA_U8, FN_MSA_U16, FN_MSA_U32, FN_MSA_U64,																				\
+		FN_MSA_F32, FN_MSA_F64)																										\
 	Result SimdObject::OP_NAME(const Result& rhs) const {																			\
 		if (rhs.type != NumericConstant::Object || !rhs.value.objectVal || !(rhs.value.objectVal->type() & BuiltInType_Simd)) {		\
 			return Result{};																										\
@@ -526,6 +603,16 @@ namespace ve {
 			VE_SIMD_CMP_CASE(Simd_uint64x2, uint64x2, FN_U64X2)																		\
 			VE_SIMD_CMP_CASE(Simd_float32x4, float32x4, FN_F32X4)																	\
 			VE_SIMD_CMP_CASE(Simd_float64x2, float64x2, FN_F64X2)																	\
+			VE_SIMD_CMP_CASE(Simd_v16i8, v16i8, FN_MSA_I8)																			\
+			VE_SIMD_CMP_CASE(Simd_v8i16, v8i16, FN_MSA_I16)																			\
+			VE_SIMD_CMP_CASE(Simd_v4i32, v4i32, FN_MSA_I32)																			\
+			VE_SIMD_CMP_CASE(Simd_v2i64, v2i64, FN_MSA_I64)																			\
+			VE_SIMD_CMP_CASE(Simd_v16u8, v16u8, FN_MSA_U8)																			\
+			VE_SIMD_CMP_CASE(Simd_v8u16, v8u16, FN_MSA_U16)																			\
+			VE_SIMD_CMP_CASE(Simd_v4u32, v4u32, FN_MSA_U32)																			\
+			VE_SIMD_CMP_CASE(Simd_v2u64, v2u64, FN_MSA_U64)																			\
+			VE_SIMD_CMP_CASE(Simd_v4f32, v4f32, FN_MSA_F32)																			\
+			VE_SIMD_CMP_CASE(Simd_v2f64, v2f64, FN_MSA_F64)																			\
 			default : {																												\
 				context->deallocateObject(outObj);																					\
 				return Result{};																									\
@@ -544,7 +631,10 @@ namespace ve {
 		simde_vceq_f32, veUnsupported,
 		simde_vceqq_s8, simde_vceqq_s16, simde_vceqq_s32, veUnsupported,
 		simde_vceqq_u8, simde_vceqq_u16, simde_vceqq_u32, veUnsupported,
-		simde_vceqq_f32, veUnsupported
+		simde_vceqq_f32, veUnsupported,
+		simde_msa_ceq_b, simde_msa_ceq_h, simde_msa_ceq_w, simde_msa_ceq_d,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		simde_msa_fceq_w, simde_msa_fceq_d
 	)
 
 	VE_SIMD_CMP_OP(operator!=,
@@ -552,6 +642,9 @@ namespace ve {
 		ve_mm256_cmpneq_ps, ve_mm256_cmpneq_pd, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported,
@@ -570,7 +663,10 @@ namespace ve {
 		simde_vclt_f32, veUnsupported,
 		simde_vcltq_s8, simde_vcltq_s16, simde_vcltq_s32, veUnsupported,
 		simde_vcltq_u8, simde_vcltq_u16, simde_vcltq_u32, veUnsupported,
-		simde_vcltq_f32, veUnsupported
+		simde_vcltq_f32, veUnsupported,
+		simde_msa_clt_s_b, simde_msa_clt_s_h, simde_msa_clt_s_w, simde_msa_clt_s_d,
+		simde_msa_clt_u_b, simde_msa_clt_u_h, simde_msa_clt_u_w, simde_msa_clt_u_d,
+		simde_msa_fclt_w, simde_msa_fclt_d
 	)
 
 	VE_SIMD_CMP_OP(operator>,
@@ -583,7 +679,10 @@ namespace ve {
 		simde_vcgt_f32, veUnsupported,
 		simde_vcgtq_s8, simde_vcgtq_s16, simde_vcgtq_s32, veUnsupported,
 		simde_vcgtq_u8, simde_vcgtq_u16, simde_vcgtq_u32, veUnsupported,
-		simde_vcgtq_f32, veUnsupported
+		simde_vcgtq_f32, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported
 	)
 
 	VE_SIMD_CMP_OP(operator<=,
@@ -596,7 +695,10 @@ namespace ve {
 		simde_vcle_f32, veUnsupported,
 		simde_vcleq_s8, simde_vcleq_s16, simde_vcleq_s32, veUnsupported,
 		simde_vcleq_u8, simde_vcleq_u16, simde_vcleq_u32, veUnsupported,
-		simde_vcleq_f32, veUnsupported
+		simde_vcleq_f32, veUnsupported,
+		simde_msa_cle_s_b, simde_msa_cle_s_h, simde_msa_cle_s_w, simde_msa_cle_s_d,
+		simde_msa_cle_u_b, simde_msa_cle_u_h, simde_msa_cle_u_w, simde_msa_cle_u_d,
+		simde_msa_fcle_w, simde_msa_fcle_d
 	)
 
 	VE_SIMD_CMP_OP(operator>=,
@@ -609,7 +711,10 @@ namespace ve {
 		simde_vcge_f32, veUnsupported,
 		simde_vcgeq_s8, simde_vcgeq_s16, simde_vcgeq_s32, veUnsupported,
 		simde_vcgeq_u8, simde_vcgeq_u16, simde_vcgeq_u32, veUnsupported,
-		simde_vcgeq_f32, veUnsupported
+		simde_vcgeq_f32, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported
 	)
 
 #undef VE_SIMD_CMP_OP
@@ -632,7 +737,10 @@ namespace ve {
 		FN_F32X2, FN_F64X1,																											\
 		FN_I8X16, FN_I16X8, FN_I32X4, FN_I64X2,																						\
 		FN_U8X16, FN_U16X8, FN_U32X4, FN_U64X2,																						\
-		FN_F32X4, FN_F64X2)																											\
+		FN_F32X4, FN_F64X2,																											\
+		FN_MSA_I8, FN_MSA_I16, FN_MSA_I32, FN_MSA_I64,																				\
+		FN_MSA_U8, FN_MSA_U16, FN_MSA_U32, FN_MSA_U64,																				\
+		FN_MSA_F32, FN_MSA_F64)																										\
 	Result SimdObject::OP_NAME(const Result& rhs) const {																			\
 		if (rhs.type != NumericConstant::Object || !rhs.value.objectVal || !(rhs.value.objectVal->type() & BuiltInType_Simd)) {		\
 			return Result{};																										\
@@ -678,6 +786,16 @@ namespace ve {
 			VE_SIMD_BINARY_CASE(Simd_uint64x2, uint64x2, FN_U64X2)																	\
 			VE_SIMD_BINARY_CASE(Simd_float32x4, float32x4, FN_F32X4)																\
 			VE_SIMD_BINARY_CASE(Simd_float64x2, float64x2, FN_F64X2)																\
+			VE_SIMD_BINARY_CASE(Simd_v16i8, v16i8, FN_MSA_I8)																		\
+			VE_SIMD_BINARY_CASE(Simd_v8i16, v8i16, FN_MSA_I16)																		\
+			VE_SIMD_BINARY_CASE(Simd_v4i32, v4i32, FN_MSA_I32)																		\
+			VE_SIMD_BINARY_CASE(Simd_v2i64, v2i64, FN_MSA_I64)																		\
+			VE_SIMD_BINARY_CASE(Simd_v16u8, v16u8, FN_MSA_U8)																		\
+			VE_SIMD_BINARY_CASE(Simd_v8u16, v8u16, FN_MSA_U16)																		\
+			VE_SIMD_BINARY_CASE(Simd_v4u32, v4u32, FN_MSA_U32)																		\
+			VE_SIMD_BINARY_CASE(Simd_v2u64, v2u64, FN_MSA_U64)																		\
+			VE_SIMD_BINARY_CASE(Simd_v4f32, v4f32, FN_MSA_F32)																		\
+			VE_SIMD_BINARY_CASE(Simd_v2f64, v2f64, FN_MSA_F64)																		\
 			default : {																												\
 				context->deallocateObject(outObj);																					\
 				return Result{};																									\
@@ -696,7 +814,10 @@ namespace ve {
 		simde_vadd_f32, veUnsupported,
 		simde_vaddq_s8, simde_vaddq_s16, simde_vaddq_s32, simde_vaddq_s64,
 		simde_vaddq_u8, simde_vaddq_u16, simde_vaddq_u32, simde_vaddq_u64,
-		simde_vaddq_f32, simde_vaddq_f64
+		simde_vaddq_f32, simde_vaddq_f64,
+		simde_msa_addv_b, simde_msa_addv_h, simde_msa_addv_w, simde_msa_addv_d,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		simde_msa_fadd_w, simde_msa_fadd_d
 	)
 
 	VE_SIMD_BINARY_OP(operator-,
@@ -709,7 +830,10 @@ namespace ve {
 		simde_vsub_f32, veUnsupported,
 		simde_vsubq_s8, simde_vsubq_s16, simde_vsubq_s32, simde_vsubq_s64,
 		simde_vsubq_u8, simde_vsubq_u16, simde_vsubq_u32, simde_vsubq_u64,
-		simde_vsubq_f32, simde_vsubq_f64
+		simde_vsubq_f32, simde_vsubq_f64,
+		simde_msa_subv_b, simde_msa_subv_h, simde_msa_subv_w, simde_msa_subv_d,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		simde_msa_fsub_w, simde_msa_fsub_d
 	)
 
 	VE_SIMD_BINARY_OP(operator*,
@@ -722,7 +846,10 @@ namespace ve {
 		simde_vmul_f32, veUnsupported,
 		simde_vmulq_s8, simde_vmulq_s16, simde_vmulq_s32, veUnsupported,
 		simde_vmulq_u8, simde_vmulq_u16, simde_vmulq_u32, veUnsupported,
-		simde_vmulq_f32, simde_vmulq_f64
+		simde_vmulq_f32, simde_vmulq_f64,
+		simde_msa_mulv_b, simde_msa_mulv_h, simde_msa_mulv_w, simde_msa_mulv_d,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		simde_msa_fmul_w, simde_msa_fmul_d
 	)
 
 	VE_SIMD_BINARY_OP(operator/,
@@ -735,7 +862,10 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
-		veUnsupported, veUnsupported
+		veUnsupported, veUnsupported,
+		simde_msa_div_s_b, simde_msa_div_s_h, simde_msa_div_s_w, simde_msa_div_s_d,
+		simde_msa_div_u_b, simde_msa_div_u_h, simde_msa_div_u_w, simde_msa_div_u_d,
+		simde_msa_fdiv_w, simde_msa_fdiv_d
 	)
 
 	VE_SIMD_BINARY_OP(operator%,
@@ -748,6 +878,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported,
+		simde_msa_mod_s_b, simde_msa_mod_s_h, simde_msa_mod_s_w, simde_msa_mod_s_d,
+		simde_msa_mod_u_b, simde_msa_mod_u_h, simde_msa_mod_u_w, simde_msa_mod_u_d,
 		veUnsupported, veUnsupported
 	)
 
@@ -761,6 +894,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		simde_vandq_s8, simde_vandq_s16, simde_vandq_s32, simde_vandq_s64,
 		simde_vandq_u8, simde_vandq_u16, simde_vandq_u32, simde_vandq_u64,
+		veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported
 	)
 
@@ -774,6 +910,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		simde_vorrq_s8, simde_vorrq_s16, simde_vorrq_s32, simde_vorrq_s64,
 		simde_vorrq_u8, simde_vorrq_u16, simde_vorrq_u32, simde_vorrq_u64,
+		veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported
 	)
 
@@ -787,6 +926,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		simde_veorq_s8, simde_veorq_s16, simde_veorq_s32, simde_veorq_s64,
 		simde_veorq_u8, simde_veorq_u16, simde_veorq_u32, simde_veorq_u64,
+		veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported
 	)
 
@@ -800,6 +942,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		simde_vshlq_s8, simde_vshlq_s16, simde_vshlq_s32, simde_vshlq_s64,
 		ve_vshlq_u8, ve_vshlq_u16, ve_vshlq_u32, ve_vshlq_u64,
+		veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported
 	)
 
@@ -808,6 +953,9 @@ namespace ve {
 		veUnsupported, veUnsupported, simde_mm256_srlv_epi32,
 		veUnsupported, veUnsupported, simde_mm512_srlv_epi32,
 		veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported,
@@ -836,7 +984,10 @@ namespace ve {
 		FN_F32X2, FN_F64X1,																											\
 		FN_I8X16, FN_I16X8, FN_I32X4, FN_I64X2,																						\
 		FN_U8X16, FN_U16X8, FN_U32X4, FN_U64X2,																						\
-		FN_F32X4, FN_F64X2)																											\
+		FN_F32X4, FN_F64X2,																											\
+		FN_MSA_I8, FN_MSA_I16, FN_MSA_I32, FN_MSA_I64,																				\
+		FN_MSA_U8, FN_MSA_U16, FN_MSA_U32, FN_MSA_U64,																				\
+		FN_MSA_F32, FN_MSA_F64)																										\
 	Result SimdObject::OP_NAME(const Result& rhs) {																					\
 		if (rhs.type != NumericConstant::Object || !rhs.value.objectVal || !(rhs.value.objectVal->type() & BuiltInType_Simd)) {		\
 			return Result{};																										\
@@ -875,6 +1026,16 @@ namespace ve {
 			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_uint64x2, uint64x2, FN_U64X2)															\
 			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_float32x4, float32x4, FN_F32X4)														\
 			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_float64x2, float64x2, FN_F64X2)														\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v16i8, v16i8, FN_MSA_I8)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v8i16, v8i16, FN_MSA_I16)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v4i32, v4i32, FN_MSA_I32)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v2i64, v2i64, FN_MSA_I64)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v16u8, v16u8, FN_MSA_U8)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v8u16, v8u16, FN_MSA_U16)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v4u32, v4u32, FN_MSA_U32)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v2u64, v2u64, FN_MSA_U64)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v4f32, v4f32, FN_MSA_F32)																\
+			VE_SIMD_COMPOUND_ASSIGN_CASE(Simd_v2f64, v2f64, FN_MSA_F64)																\
 			default : {																												\
 				return Result{};																									\
 			}																														\
@@ -892,7 +1053,10 @@ namespace ve {
 		simde_vadd_f32, veUnsupported,
 		simde_vaddq_s8, simde_vaddq_s16, simde_vaddq_s32, simde_vaddq_s64,
 		simde_vaddq_u8, simde_vaddq_u16, simde_vaddq_u32, simde_vaddq_u64,
-		simde_vaddq_f32, simde_vaddq_f64
+		simde_vaddq_f32, simde_vaddq_f64,
+		simde_msa_addv_b, simde_msa_addv_h, simde_msa_addv_w, simde_msa_addv_d,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		simde_msa_fadd_w, simde_msa_fadd_d
 	)
 
 	VE_SIMD_COMPOUND_ASSIGN_OP(operator-=,
@@ -905,7 +1069,10 @@ namespace ve {
 		simde_vsub_f32, veUnsupported,
 		simde_vsubq_s8, simde_vsubq_s16, simde_vsubq_s32, simde_vsubq_s64,
 		simde_vsubq_u8, simde_vsubq_u16, simde_vsubq_u32, simde_vsubq_u64,
-		simde_vsubq_f32, simde_vsubq_f64
+		simde_vsubq_f32, simde_vsubq_f64,
+		simde_msa_subv_b, simde_msa_subv_h, simde_msa_subv_w, simde_msa_subv_d,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		simde_msa_fsub_w, simde_msa_fsub_d
 	)
 
 	VE_SIMD_COMPOUND_ASSIGN_OP(operator*=,
@@ -918,7 +1085,10 @@ namespace ve {
 		simde_vmul_f32, veUnsupported,
 		simde_vmulq_s8, simde_vmulq_s16, simde_vmulq_s32, veUnsupported,
 		simde_vmulq_u8, simde_vmulq_u16, simde_vmulq_u32, veUnsupported,
-		simde_vmulq_f32, simde_vmulq_f64
+		simde_vmulq_f32, simde_vmulq_f64,
+		simde_msa_mulv_b, simde_msa_mulv_h, simde_msa_mulv_w, simde_msa_mulv_d,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		simde_msa_fmul_w, simde_msa_fmul_d
 	)
 
 	VE_SIMD_COMPOUND_ASSIGN_OP(operator/=,
@@ -931,7 +1101,10 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
-		veUnsupported, veUnsupported
+		veUnsupported, veUnsupported,
+		simde_msa_div_s_b, simde_msa_div_s_h, simde_msa_div_s_w, simde_msa_div_s_d,
+		simde_msa_div_u_b, simde_msa_div_u_h, simde_msa_div_u_w, simde_msa_div_u_d,
+		simde_msa_fdiv_w, simde_msa_fdiv_d
 	)
 
 	VE_SIMD_COMPOUND_ASSIGN_OP(operator%=,
@@ -944,6 +1117,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported,
+		simde_msa_mod_s_b, simde_msa_mod_s_h, simde_msa_mod_s_w, simde_msa_mod_s_d,
+		simde_msa_mod_u_b, simde_msa_mod_u_h, simde_msa_mod_u_w, simde_msa_mod_u_d,
 		veUnsupported, veUnsupported
 	)
 
@@ -957,6 +1133,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		simde_vandq_s8, simde_vandq_s16, simde_vandq_s32, simde_vandq_s64,
 		simde_vandq_u8, simde_vandq_u16, simde_vandq_u32, simde_vandq_u64,
+		veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported
 	)
 
@@ -970,6 +1149,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		simde_vorrq_s8, simde_vorrq_s16, simde_vorrq_s32, simde_vorrq_s64,
 		simde_vorrq_u8, simde_vorrq_u16, simde_vorrq_u32, simde_vorrq_u64,
+		veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported
 	)
 
@@ -983,6 +1165,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		simde_veorq_s8, simde_veorq_s16, simde_veorq_s32, simde_veorq_s64,
 		simde_veorq_u8, simde_veorq_u16, simde_veorq_u32, simde_veorq_u64,
+		veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported
 	)
 
@@ -996,6 +1181,9 @@ namespace ve {
 		veUnsupported, veUnsupported,
 		simde_vshlq_s8, simde_vshlq_s16, simde_vshlq_s32, simde_vshlq_s64,
 		ve_vshlq_u8, ve_vshlq_u16, ve_vshlq_u32, ve_vshlq_u64,
+		veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported
 	)
 
@@ -1004,6 +1192,9 @@ namespace ve {
 		veUnsupported, veUnsupported, simde_mm256_srlv_epi32,
 		veUnsupported, veUnsupported, simde_mm512_srlv_epi32,
 		veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
+		veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported, veUnsupported, veUnsupported,
 		veUnsupported, veUnsupported,

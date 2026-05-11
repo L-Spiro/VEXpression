@@ -1499,7 +1499,10 @@ namespace ve {
 				{ "float32x2_t", Simd_float32x2 }, { "float64x1_t", Simd_float64x1 },
 				{ "int8x16_t", Simd_int8x16 }, { "int16x8_t", Simd_int16x8 }, { "int32x4_t", Simd_int32x4 }, { "int64x2_t", Simd_int64x2 },
 				{ "uint8x16_t", Simd_uint8x16 }, { "uint16x8_t", Simd_uint16x8 }, { "uint32x4_t", Simd_uint32x4 }, { "uint64x2_t", Simd_uint64x2 },
-				{ "float32x4_t", Simd_float32x4 }, { "float64x2_t", Simd_float64x2 }
+				{ "float32x4_t", Simd_float32x4 }, { "float64x2_t", Simd_float64x2 },
+				{ "v16i8", Simd_v16i8 }, { "v8i16", Simd_v8i16 }, { "v4i32", Simd_v4i32 }, { "v2i64", Simd_v2i64 },
+				{ "v16u8", Simd_v16u8 }, { "v8u16", Simd_v8u16 }, { "v4u32", Simd_v4u32 }, { "v2u64", Simd_v2u64 },
+				{ "v4f32", Simd_v4f32 }, { "v2f64", Simd_v2f64 }
 			};
 
 			auto it = typeMap.find(typeName);
