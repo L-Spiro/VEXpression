@@ -13879,7 +13879,6 @@ namespace ve {
 			return outObj->createResult();
 		}
 
-		// == Functions.
 		/**
 		 * Bridge for simde_msa_ilvev_b.
 		 *
@@ -14589,6 +14588,5160 @@ namespace ve {
 
 			outObj->regType = Simd_v2i64;
 			outObj->reg.v2i64 = simde_msa_ld_d(ptr, static_cast<int>(offset));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_ldi_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaLdiB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (!args[0].isPrimitive()) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[0], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_ldi_b(imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_ldi_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaLdiH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (!args[0].isPrimitive()) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[0], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_ldi_h(imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_ldi_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaLdiW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (!args[0].isPrimitive()) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[0], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_ldi_w(imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_ldi_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaLdiD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (!args[0].isPrimitive()) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[0], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_ldi_d(imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_madd_q_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaddQH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16 || simdArg2->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_madd_q_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, simdArg2->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_madd_q_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaddQW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32 || simdArg2->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_madd_q_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, simdArg2->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maddr_q_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaddrQH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16 || simdArg2->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_maddr_q_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, simdArg2->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maddr_q_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaddrQW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32 || simdArg2->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_maddr_q_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, simdArg2->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maddv_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaddvB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8 || simdArg2->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_maddv_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8, simdArg2->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maddv_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaddvH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16 || simdArg2->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_maddv_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, simdArg2->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maddv_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaddvW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32 || simdArg2->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_maddv_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, simdArg2->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maddv_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaddvD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64 || simdArg2->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_maddv_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64, simdArg2->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_s_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxSB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_max_s_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_s_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxSH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_max_s_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_s_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxSW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_max_s_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_s_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxSD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_max_s_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_u_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxUB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16u8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_max_u_b(simdArg0->reg.v16u8, simdArg1->reg.v16u8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_u_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxUH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8u16 || simdArg1->regType != Simd_v8u16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8u16;
+			outObj->reg.v8u16 = simde_msa_max_u_h(simdArg0->reg.v8u16, simdArg1->reg.v8u16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_u_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxUW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4u32 || simdArg1->regType != Simd_v4u32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4u32;
+			outObj->reg.v4u32 = simde_msa_max_u_w(simdArg0->reg.v4u32, simdArg1->reg.v4u32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_u_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxUD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2u64 || simdArg1->regType != Simd_v2u64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2u64;
+			outObj->reg.v2u64 = simde_msa_max_u_d(simdArg0->reg.v2u64, simdArg1->reg.v2u64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_a_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxAB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_max_a_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_a_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxAH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_max_a_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_a_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxAW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_max_a_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_max_a_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxAD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_max_a_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maxi_s_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxiSB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_maxi_s_b(simdArg0->reg.v16i8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maxi_s_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxiSH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_maxi_s_h(simdArg0->reg.v8i16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maxi_s_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxiSW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_maxi_s_w(simdArg0->reg.v4i32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maxi_s_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxiSD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_maxi_s_d(simdArg0->reg.v2i64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maxi_u_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxiUB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16u8) { return Result{}; }
+
+			uint64_t imm = context->convertResult(args[1], NumericConstant::Unsigned).value.uintVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_maxi_u_b(simdArg0->reg.v16u8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maxi_u_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxiUH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8u16) { return Result{}; }
+
+			uint64_t imm = context->convertResult(args[1], NumericConstant::Unsigned).value.uintVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8u16;
+			outObj->reg.v8u16 = simde_msa_maxi_u_h(simdArg0->reg.v8u16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maxi_u_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxiUW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4u32) { return Result{}; }
+
+			uint64_t imm = context->convertResult(args[1], NumericConstant::Unsigned).value.uintVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4u32;
+			outObj->reg.v4u32 = simde_msa_maxi_u_w(simdArg0->reg.v4u32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_maxi_u_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMaxiUD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2u64) { return Result{}; }
+
+			uint64_t imm = context->convertResult(args[1], NumericConstant::Unsigned).value.uintVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2u64;
+			outObj->reg.v2u64 = simde_msa_maxi_u_d(simdArg0->reg.v2u64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_s_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinSB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_min_s_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_s_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinSH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_min_s_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_s_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinSW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_min_s_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_s_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinSD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_min_s_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_u_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinUB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16u8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_min_u_b(simdArg0->reg.v16u8, simdArg1->reg.v16u8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_u_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinUH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8u16 || simdArg1->regType != Simd_v8u16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8u16;
+			outObj->reg.v8u16 = simde_msa_min_u_h(simdArg0->reg.v8u16, simdArg1->reg.v8u16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_u_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinUW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4u32 || simdArg1->regType != Simd_v4u32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4u32;
+			outObj->reg.v4u32 = simde_msa_min_u_w(simdArg0->reg.v4u32, simdArg1->reg.v4u32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_u_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinUD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2u64 || simdArg1->regType != Simd_v2u64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2u64;
+			outObj->reg.v2u64 = simde_msa_min_u_d(simdArg0->reg.v2u64, simdArg1->reg.v2u64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_a_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinAB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_min_a_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_a_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinAH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_min_a_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_a_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinAW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_min_a_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_min_a_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMinAD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_min_a_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mini_s_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMiniSB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_mini_s_b(simdArg0->reg.v16i8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mini_s_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMiniSH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_mini_s_h(simdArg0->reg.v8i16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mini_s_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMiniSW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_mini_s_w(simdArg0->reg.v4i32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mini_s_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMiniSD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_mini_s_d(simdArg0->reg.v2i64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mini_u_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMiniUB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16u8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_mini_u_b(simdArg0->reg.v16u8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mini_u_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMiniUH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8u16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8u16;
+			outObj->reg.v8u16 = simde_msa_mini_u_h(simdArg0->reg.v8u16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mini_u_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMiniUW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4u32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4u32;
+			outObj->reg.v4u32 = simde_msa_mini_u_w(simdArg0->reg.v4u32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mini_u_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMiniUD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2u64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2u64;
+			outObj->reg.v2u64 = simde_msa_mini_u_d(simdArg0->reg.v2u64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mod_s_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaModSB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_mod_s_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mod_s_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaModSH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_mod_s_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mod_s_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaModSW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_mod_s_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mod_s_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaModSD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_mod_s_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mod_u_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaModUB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16u8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_mod_u_b(simdArg0->reg.v16u8, simdArg1->reg.v16u8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mod_u_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaModUH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8u16 || simdArg1->regType != Simd_v8u16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8u16;
+			outObj->reg.v8u16 = simde_msa_mod_u_h(simdArg0->reg.v8u16, simdArg1->reg.v8u16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mod_u_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaModUW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4u32 || simdArg1->regType != Simd_v4u32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4u32;
+			outObj->reg.v4u32 = simde_msa_mod_u_w(simdArg0->reg.v4u32, simdArg1->reg.v4u32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mod_u_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaModUD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2u64 || simdArg1->regType != Simd_v2u64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2u64;
+			outObj->reg.v2u64 = simde_msa_mod_u_d(simdArg0->reg.v2u64, simdArg1->reg.v2u64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_move_v.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMoveV(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_move_v(simdArg0->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_msub_q_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMsubQH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16 || simdArg2->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_msub_q_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, simdArg2->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_msub_q_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMsubQW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32 || simdArg2->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_msub_q_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, simdArg2->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_msubr_q_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMsubrQH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16 || simdArg2->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_msubr_q_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, simdArg2->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_msubr_q_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMsubrQW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32 || simdArg2->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_msubr_q_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, simdArg2->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_msubv_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMsubvB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8 || simdArg2->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_msubv_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8, simdArg2->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_msubv_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMsubvH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16 || simdArg2->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_msubv_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, simdArg2->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_msubv_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMsubvW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32 || simdArg2->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_msubv_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, simdArg2->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_msubv_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMsubvD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64 || simdArg2->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_msubv_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64, simdArg2->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mul_q_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMulQH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_mul_q_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mul_q_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMulQW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_mul_q_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mulr_q_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMulrQH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_mulr_q_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mulr_q_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMulrQW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_mulr_q_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mulv_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMulvB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_mulv_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mulv_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMulvH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_mulv_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mulv_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMulvW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_mulv_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_mulv_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaMulvD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_mulv_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nloc_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNlocB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_nloc_b(simdArg0->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nloc_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNlocH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_nloc_h(simdArg0->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nloc_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNlocW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_nloc_w(simdArg0->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nloc_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNlocD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_nloc_d(simdArg0->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nlzc_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNlzcB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_nlzc_b(simdArg0->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nlzc_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNlzcH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_nlzc_h(simdArg0->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nlzc_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNlzcW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_nlzc_w(simdArg0->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nlzc_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNlzcD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_nlzc_d(simdArg0->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nor_v.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNorV(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16u8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_nor_v(simdArg0->reg.v16u8, simdArg1->reg.v16u8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_nori_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaNoriB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_nori_b(simdArg0->reg.v16u8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_or_v.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaOrV(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16u8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_or_v(simdArg0->reg.v16u8, simdArg1->reg.v16u8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_ori_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaOriB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_ori_b(simdArg0->reg.v16u8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pckev_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPckevB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_pckev_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pckev_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPckevH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_pckev_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pckev_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPckevW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_pckev_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pckev_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPckevD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_pckev_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pckod_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPckodB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_pckod_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pckod_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPckodH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_pckod_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pckod_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPckodW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_pckod_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pckod_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPckodD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_pckod_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pcnt_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPcntB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_pcnt_b(simdArg0->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pcnt_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPcntH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_pcnt_h(simdArg0->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pcnt_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPcntW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_pcnt_w(simdArg0->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_pcnt_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaPcntD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_pcnt_d(simdArg0->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sat_s_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSatSB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_sat_s_b(simdArg0->reg.v16i8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sat_s_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSatSH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_sat_s_h(simdArg0->reg.v8i16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sat_s_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSatSW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_sat_s_w(simdArg0->reg.v4i32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sat_s_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSatSD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_sat_s_d(simdArg0->reg.v2i64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sat_u_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSatUB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16u8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_sat_u_b(simdArg0->reg.v16u8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sat_u_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSatUH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8u16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8u16;
+			outObj->reg.v8u16 = simde_msa_sat_u_h(simdArg0->reg.v8u16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sat_u_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSatUW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4u32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4u32;
+			outObj->reg.v4u32 = simde_msa_sat_u_w(simdArg0->reg.v4u32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sat_u_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSatUD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2u64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2u64;
+			outObj->reg.v2u64 = simde_msa_sat_u_d(simdArg0->reg.v2u64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_shf_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaShfB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (!args[0].isPrimitive()) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[0], NumericConstant::Signed).value.intVal;
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_shf_b(simdArg1->reg.v16i8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_shf_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaShfH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (!args[0].isPrimitive()) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[0], NumericConstant::Signed).value.intVal;
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_shf_h(simdArg1->reg.v8i16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_shf_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaShfW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (!args[0].isPrimitive()) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[0], NumericConstant::Signed).value.intVal;
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_shf_w(simdArg1->reg.v4i32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sld_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSldB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[2].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t c = context->convertResult(args[2], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_sld_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8, c);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sld_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSldH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[2].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t c = context->convertResult(args[2], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_sld_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, c);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sld_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSldW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[2].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t c = context->convertResult(args[2], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_sld_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, c);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sld_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSldD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[2].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t c = context->convertResult(args[2], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_sld_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64, c);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sldi_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSldiB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[2].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[2], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_sldi_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sldi_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSldiH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[2].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[2], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_sldi_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sldi_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSldiW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[2].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[2], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_sldi_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sldi_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSldiD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[2].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[2], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_sldi_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sll_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSllB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_sll_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sll_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSllH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_sll_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sll_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSllW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_sll_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sll_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSllD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_sll_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_slli_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSlliB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_slli_b(simdArg0->reg.v16i8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_slli_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSlliH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_slli_h(simdArg0->reg.v8i16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_slli_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSlliW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_slli_w(simdArg0->reg.v4i32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_slli_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSlliD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_slli_d(simdArg0->reg.v2i64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_splat_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSplatB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t idx = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_splat_b(simdArg0->reg.v16i8, idx);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_splat_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSplatH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t idx = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_splat_h(simdArg0->reg.v8i16, idx);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_splat_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSplatW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t idx = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_splat_w(simdArg0->reg.v4i32, idx);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_splat_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSplatD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t idx = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_splat_d(simdArg0->reg.v2i64, idx);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_splati_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSplatiB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_splati_b(simdArg0->reg.v16i8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_splati_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSplatiH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_splati_h(simdArg0->reg.v8i16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_splati_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSplatiW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_splati_w(simdArg0->reg.v4i32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_splati_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSplatiD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_splati_d(simdArg0->reg.v2i64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sra_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSraB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_sra_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sra_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSraH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_sra_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sra_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSraW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_sra_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_sra_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSraD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_sra_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srai_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSraiB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_srai_b(simdArg0->reg.v16i8, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srai_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSraiH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_srai_h(simdArg0->reg.v8i16, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srai_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSraiW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_srai_w(simdArg0->reg.v4i32, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srai_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSraiD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_srai_d(simdArg0->reg.v2i64, imm);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srar_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrarB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_srar_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srar_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrarH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_srar_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srar_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrarW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_srar_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srar_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrarD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_srar_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srari_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrariB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_srari_b(simdArg0->reg.v16i8, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srari_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrariH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_srari_h(simdArg0->reg.v8i16, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srari_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrariW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_srari_w(simdArg0->reg.v4i32, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srari_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrariD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_srari_d(simdArg0->reg.v2i64, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srl_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_srl_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srl_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_srl_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srl_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_srl_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srl_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_srl_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srli_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrliB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_srli_b(simdArg0->reg.v16i8, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srli_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrliH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_srli_h(simdArg0->reg.v8i16, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srli_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrliW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_srli_w(simdArg0->reg.v4i32, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srli_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrliD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_srli_d(simdArg0->reg.v2i64, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srlr_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlrB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_srlr_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srlr_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlrH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_srlr_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srlr_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlrW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_srlr_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srlr_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlrD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_srlr_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srlri_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlriB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_srlri_b(simdArg0->reg.v16i8, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srlri_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlriH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_srlri_h(simdArg0->reg.v8i16, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srlri_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlriW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_srlri_w(simdArg0->reg.v4i32, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_srlri_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSrlriD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_srlri_d(simdArg0->reg.v2i64, static_cast<int>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subs_s_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsSB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_subs_s_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subs_s_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsSH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_subs_s_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subs_s_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsSW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_subs_s_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subs_s_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsSD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_subs_s_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subs_u_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsUB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16u8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_subs_u_b(simdArg0->reg.v16u8, simdArg1->reg.v16u8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subs_u_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsUH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8u16 || simdArg1->regType != Simd_v8u16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8u16;
+			outObj->reg.v8u16 = simde_msa_subs_u_h(simdArg0->reg.v8u16, simdArg1->reg.v8u16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subs_u_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsUW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4u32 || simdArg1->regType != Simd_v4u32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4u32;
+			outObj->reg.v4u32 = simde_msa_subs_u_w(simdArg0->reg.v4u32, simdArg1->reg.v4u32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subs_u_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsUD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2u64 || simdArg1->regType != Simd_v2u64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2u64;
+			outObj->reg.v2u64 = simde_msa_subs_u_d(simdArg0->reg.v2u64, simdArg1->reg.v2u64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subsus_u_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsusUB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_subsus_u_b(simdArg0->reg.v16u8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subsus_u_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsusUH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8u16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8u16;
+			outObj->reg.v8u16 = simde_msa_subsus_u_h(simdArg0->reg.v8u16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subsus_u_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsusUW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4u32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4u32;
+			outObj->reg.v4u32 = simde_msa_subsus_u_w(simdArg0->reg.v4u32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subsus_u_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsusUD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2u64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2u64;
+			outObj->reg.v2u64 = simde_msa_subsus_u_d(simdArg0->reg.v2u64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subsuu_s_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsuuSB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16u8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_subsuu_s_b(simdArg0->reg.v16u8, simdArg1->reg.v16u8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subsuu_s_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsuuSH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8u16 || simdArg1->regType != Simd_v8u16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_subsuu_s_h(simdArg0->reg.v8u16, simdArg1->reg.v8u16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subsuu_s_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsuuSW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4u32 || simdArg1->regType != Simd_v4u32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_subsuu_s_w(simdArg0->reg.v4u32, simdArg1->reg.v4u32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subsuu_s_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubsuuSD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2u64 || simdArg1->regType != Simd_v2u64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_subsuu_s_d(simdArg0->reg.v2u64, simdArg1->reg.v2u64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subv_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubvB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_subv_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subv_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubvH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_subv_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subv_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubvW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_subv_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subv_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubvD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_subv_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subvi_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubviB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_subvi_b(simdArg0->reg.v16i8, static_cast<uint8_t>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subvi_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubviH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_subvi_h(simdArg0->reg.v8i16, static_cast<uint16_t>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subvi_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubviW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_subvi_w(simdArg0->reg.v4i32, static_cast<uint32_t>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_subvi_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaSubviD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_subvi_d(simdArg0->reg.v2i64, static_cast<uint64_t>(imm));
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bnz_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBnzB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int res = simde_msa_test_bnz_b(simdArg0->reg.v16i8);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bnz_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBnzH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int res = simde_msa_test_bnz_h(simdArg0->reg.v8i16);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bnz_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBnzW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int res = simde_msa_test_bnz_w(simdArg0->reg.v4i32);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bnz_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBnzD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int res = simde_msa_test_bnz_d(simdArg0->reg.v2i64);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bnz_v.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBnzV(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16u8) { return Result{}; }
+
+			int res = simde_msa_test_bnz_v(simdArg0->reg.v16u8);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bz_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBzB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16i8) { return Result{}; }
+
+			int res = simde_msa_test_bz_b(simdArg0->reg.v16i8);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bz_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBzH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v8i16) { return Result{}; }
+
+			int res = simde_msa_test_bz_h(simdArg0->reg.v8i16);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bz_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBzW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v4i32) { return Result{}; }
+
+			int res = simde_msa_test_bz_w(simdArg0->reg.v4i32);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bz_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBzD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v2i64) { return Result{}; }
+
+			int res = simde_msa_test_bz_d(simdArg0->reg.v2i64);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_test_bz_v.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns an integer Result indicating the test outcome.
+		 **/
+		static Result		bridgeMsaTestBzV(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 1) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16u8) { return Result{}; }
+
+			int res = simde_msa_test_bz_v(simdArg0->reg.v16u8);
+			return Result::make(static_cast<int64_t>(res));
+		}
+
+		/**
+		 * Bridge for simde_msa_vshf_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaVshfB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16i8 || simdArg1->regType != Simd_v16i8 || simdArg2->regType != Simd_v16i8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16i8;
+			outObj->reg.v16i8 = simde_msa_vshf_b(simdArg0->reg.v16i8, simdArg1->reg.v16i8, simdArg2->reg.v16i8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_vshf_h.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaVshfH(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v8i16 || simdArg1->regType != Simd_v8i16 || simdArg2->regType != Simd_v8i16) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v8i16;
+			outObj->reg.v8i16 = simde_msa_vshf_h(simdArg0->reg.v8i16, simdArg1->reg.v8i16, simdArg2->reg.v8i16);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_vshf_w.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaVshfW(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v4i32 || simdArg1->regType != Simd_v4i32 || simdArg2->regType != Simd_v4i32) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v4i32;
+			outObj->reg.v4i32 = simde_msa_vshf_w(simdArg0->reg.v4i32, simdArg1->reg.v4i32, simdArg2->reg.v4i32);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_vshf_d.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaVshfD(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 3) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[2].type != NumericConstant::Object || !args[2].value.objectVal || !(args[2].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+			SimdObject* simdArg2 = static_cast<SimdObject*>(args[2].value.objectVal);
+
+			if (simdArg0->regType != Simd_v2i64 || simdArg1->regType != Simd_v2i64 || simdArg2->regType != Simd_v2i64) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v2i64;
+			outObj->reg.v2i64 = simde_msa_vshf_d(simdArg0->reg.v2i64, simdArg1->reg.v2i64, simdArg2->reg.v2i64);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_xor_v.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaXorV(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (args[1].type != NumericConstant::Object || !args[1].value.objectVal || !(args[1].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			SimdObject* simdArg1 = static_cast<SimdObject*>(args[1].value.objectVal);
+
+			if (simdArg0->regType != Simd_v16u8 || simdArg1->regType != Simd_v16u8) { return Result{}; }
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_xor_v(simdArg0->reg.v16u8, simdArg1->reg.v16u8);
+			return outObj->createResult();
+		}
+
+		/**
+		 * Bridge for simde_msa_xori_b.
+		 *
+		 * \param context		The execution context containing variables and runtime states.
+		 * \param args			The list of arguments passed to the intrinsic.
+		 * \return				Returns the result of the intrinsic, or an invalid Result on failure.
+		 **/
+		static Result		bridgeMsaXoriB(ExecutionContext* context, const std::vector<Result>& args) {
+			if (args.size() != 2) { return Result{}; }
+			if (args[0].type != NumericConstant::Object || !args[0].value.objectVal || !(args[0].value.objectVal->type() & BuiltInType_Simd)) { return Result{}; }
+			if (!args[1].isPrimitive()) { return Result{}; }
+
+			SimdObject* simdArg0 = static_cast<SimdObject*>(args[0].value.objectVal);
+			if (simdArg0->regType != Simd_v16u8) { return Result{}; }
+
+			int64_t imm = context->convertResult(args[1], NumericConstant::Signed).value.intVal;
+
+			SimdObject* outObj = context->allocateObject<SimdObject>();
+			if (!outObj) { return Result{}; }
+
+			outObj->regType = Simd_v16u8;
+			outObj->reg.v16u8 = simde_msa_xori_b(simdArg0->reg.v16u8, static_cast<uint8_t>(imm));
 			return outObj->createResult();
 		}
 	};
