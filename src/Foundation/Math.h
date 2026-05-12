@@ -93,8 +93,8 @@ namespace ve {
 		 **/
 		template <typename Type>
 		static Type					clamp(Type value, Type low, Type high) {
-			if (value < low) { return low; }
-			if (value > high) { return high; }
+			if veUnlikely(value < low) { return low; }
+			if veUnlikely(value > high) { return high; }
 			return value;
 		}
 
@@ -146,7 +146,7 @@ namespace ve {
 		 **/
 		static inline double		sinc(double x) {
 			x = std::fabs(x * std::numbers::pi);
-			if (x < 0.01) {
+			if veUnlikely(x < 0.01) {
 				double xSq = x * x;
 				return 1.0 + xSq * ((-1.0 / 6.0) + xSq * (1.0 / 120.0));
 			}
@@ -164,9 +164,7 @@ namespace ve {
 		 * \return			Returns true if the values are within the scaled epsilon distance.
 		 **/
 		static inline bool			relativeEpsilon(double left, double right, double epsilon) {
-			if (left == right) {
-				return true;
-			}
+			if (left == right) { return true; }
 			else {
 				double diff = std::abs(left - right);
 				double absLeft = std::abs(left);
@@ -265,14 +263,14 @@ namespace ve {
 		 * \return			Returns the sine of the angle, snapping to exactly 0.0 or +/-1.0 at cardinal points.
 		 **/
 		static inline double		sinExact(double x) {
-			if (x == 0.0) {
+			if veUnlikely(x == 0.0) {
 				return 0.0;
 			}
 
 			double halfRatio = x / (std::numbers::pi * 0.5);
 			double nearestHalf = std::round(halfRatio);
 
-			if (std::fabs(halfRatio - nearestHalf) <= 2.22044604925031308e-16) {	// Tuned on Windows.  TODO: Verify on other platforms.
+			if veUnlikely(std::fabs(halfRatio - nearestHalf) <= 2.22044604925031308e-16) {	// Tuned on Windows.  TODO: Verify on other platforms.
 				int64_t n = static_cast<int64_t>(nearestHalf);
 				if (n % 2 == 0) {
 					return 0.0;
@@ -293,14 +291,12 @@ namespace ve {
 		 * \return			Returns the cosine of the angle, snapping to exactly 0.0 or +/-1.0 at cardinal points.
 		 **/
 		static inline double		cosExact(double x) {
-			if (x == 0.0) {
-				return 1.0;
-			}
+			if veUnlikely(x == 0.0) { return 1.0; }
 
 			double halfRatio = x / (std::numbers::pi * 0.5);
 			double nearestHalf = std::round(halfRatio);
 
-			if (std::fabs(halfRatio - nearestHalf) <= 1.11022302462515654e-16) {	// Tuned on Windows.  TODO: Verify on other platforms.
+			if veUnlikely(std::fabs(halfRatio - nearestHalf) <= 1.11022302462515654e-16) {	// Tuned on Windows.  TODO: Verify on other platforms.
 				int64_t n = static_cast<int64_t>(nearestHalf);
 				if ((n & 1) != 0) {
 					return 0.0;
@@ -312,6 +308,74 @@ namespace ve {
 			}
 
 			return std::cos(x);
+		}
+
+		/**
+		 * Computes the cotangent of a given value.
+		 * 
+		 * \param x			The whose cotangent is to be calculated.
+		 * \return			The cotangent of x.
+		 **/
+		static inline double		cot(double x) {
+			return 1.0 / std::tan(x);
+		}
+
+		/**
+		 * \brief Computes the Digamma function (\f$\psi(x)\f$).
+		 *
+		 * The function implements:
+		 * - Reflection formula (\f$\psi(1 - x) - \psi(x) = \pi \cot(\pi x)\f$) 
+		 *   for negative values.
+		 * - Recurrence relation (\f$\psi(x+1) = \psi(x) + 1/x\f$) 
+		 *   to shift small values of x to a larger range.
+		 * - Asymptotic expansion for \f$x \ge 10\f$:
+		 *   \f[
+		 *   \psi(x) \approx \ln(x) - \frac{1}{2x} - \frac{1}{12x^2} + 
+		 *   \frac{1}{120x^4} - \frac{1}{252x^6} + \cdots
+		 *   \f]
+		 *
+		 * \param x The input value for which Digamma is to be calculated.
+		 * \return The computed Digamma value, \f$\psi(dX)\f$.
+		 */
+		static inline double		digamma(double x) {
+			// Poles at non-positive integers.
+			if veUnlikely(x <= 0.0 && std::floor(x) == x) {
+				// Return +∞ for poles at x = 0, -1, -2, ...
+				return std::numeric_limits<double>::infinity();
+			}
+
+			// For negative values, use reflection formula:
+			// ψ(x) = ψ(1 - x) - π cot(π x).
+			if (x < 0.0) {
+				return digamma(1.0 - x) - std::numbers::pi * cot(std::numbers::pi * x);
+			}
+
+			// Use recurrence relation to shift x up to at least 10.
+			double result = 0.0;
+			while (x < 10.0) {
+				result -= 1.0 / x;
+				x += 1.0;
+			}
+
+			// Asymptotic expansion.
+			double invX  = 1.0 / x;
+			double invX2 = invX * invX;
+    
+			// 
+			// Standard expansion up to the 1/(x^6) term:
+			// digamma(x) ≈ ln(x) - 1/(2x) - 1/(12x^2) + 1/(120x^4) - 1/(252x^6) ...
+			//
+			constexpr double c1 = 1.0 / 12.0;
+			constexpr double c2 = 1.0 / 120.0;
+			constexpr double c3 = 1.0 / 252.0;
+
+			result += std::log(x) -
+				0.5 * invX -
+				invX2 * c1 +
+				(invX2 * invX2) * c2 -
+				(invX2 * invX2 * invX2) * c3;
+
+			return result;
 		}
 
 
