@@ -53,10 +53,14 @@ namespace ve {
 					resVec->directAccess(i) = castedElement;
 				}
 
-				return resVec->createResult();
+				Result out = resVec->createResult();
+				VE_DELETE_SWAP(out, lastObject);
+				return out;
 			}
 
-			return context.castArgument(val, targetType);
+			Result out = context.castArgument(val, targetType);
+			VE_DELETE_SWAP(out, lastObject);
+			return out;
 		}
 
 		/**
@@ -69,6 +73,7 @@ namespace ve {
 	private :
 		size_t						exprIndex;
 		DataType					targetType;
+		mutable Object*				lastObject = nullptr;
 	};
 
 }	// namespace ve

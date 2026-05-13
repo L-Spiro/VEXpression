@@ -2176,7 +2176,7 @@ namespace ve {
 			return static_cast<uint64_t>(rawVal.value.doubleVal);
 		};
 
-		switch (targetType) {
+		switch (DataType(uint32_t(targetType) & 0xFF)) {
 			case DataType::Int8 : {
 				out.type = NumericConstant::Signed;
 				out.value.intVal = static_cast<int8_t>(getAsInt64());
@@ -2271,6 +2271,15 @@ namespace ve {
 						out.type = NumericConstant::Invalid;
 						out.value.uintVal = 0;
 					}
+				}
+				break;
+			}
+			case DataType::Simd : {
+				if (rawVal.type == NumericConstant::Object && rawVal.value.objectVal != nullptr && (rawVal.value.objectVal->type() & BuiltInType_Simd)) {
+					out = static_cast<SimdObject*>(rawVal.value.objectVal)->castTo(SimdRegisterType(uint32_t(targetType) >> 8));
+				}
+				else {
+					out = Result{};
 				}
 				break;
 			}

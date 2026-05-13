@@ -69,7 +69,9 @@ namespace ve {
 		Simd_v4u32,
 		Simd_v2u64,
 		Simd_v4f32,
-		Simd_v2f64
+		Simd_v2f64,
+
+		Simd_Invalid = UINT32_MAX
 	};
 
 
@@ -192,6 +194,14 @@ namespace ve {
 		 * \return				Returns a Result containing the converted value, or an error state if invalid.
 		 **/
 		virtual Result						convertTo(NumericConstant targetType) const override;
+
+		/**
+		 * A more presice conversion used in cast operations.  Only applies to SIMD registers.
+		 * 
+		 * \param type			The new register type to which to convert.
+		 * \return				Returns a new instance of the requested register type or an invalid Result object.
+		 **/
+		Result								castTo(SimdRegisterType type);
 
 		/**
 		 * Initializes the internal state of the object using a raw Result value.

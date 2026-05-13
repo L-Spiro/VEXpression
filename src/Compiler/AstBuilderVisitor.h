@@ -672,7 +672,7 @@ namespace ve {
 		 **/
 		virtual std::any			visitCCastExpr(ExprParser::CCastExprContext* ctx) override {
 			std::string typeStr = ctx->type_name()->getText();
-			DataType targetType = resolveDataType(typeStr); 
+			DataType targetType = resolveDataType(typeStr);
 			
 			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
 			
@@ -688,7 +688,7 @@ namespace ve {
 		 **/
 		virtual std::any			visitStaticCastExpr(ExprParser::StaticCastExprContext* ctx) override {
 			std::string typeStr = ctx->type_name()->getText();
-			DataType targetType = resolveDataType(typeStr); 
+			DataType targetType = resolveDataType(typeStr);
 			
 			size_t exprNode = std::any_cast<size_t>(visit(ctx->expr()));
 			
@@ -1478,6 +1478,11 @@ namespace ve {
 			
 			if (typeStr == "float"    || typeStr == "f32") { return DataType::Float; }
 			if (typeStr == "double"   || typeStr == "f64") { return DataType::Double; }
+
+			auto simdType = getSimdTypeFromString(typeStr);
+			if (simdType != Simd_Invalid) {
+				return DataType(uint32_t(DataType::Simd) | (simdType << 8));
+			}
 			
 			return DataType::Any; 
 		}
@@ -1510,7 +1515,7 @@ namespace ve {
 				return it->second;
 			}
 		
-			return Simd_m128;
+			return Simd_Invalid;
 		}
 
 		/**

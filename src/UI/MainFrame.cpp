@@ -233,12 +233,32 @@ namespace vex {
 		wxColour marginFg = isDarkMode ? wxColour(133, 133, 133) : wxColour(128, 128, 128);
 		wxColour caret = isDarkMode ? wxColour(255, 255, 255) : wxColour(0, 0, 0);
 
+		if (isDarkMode) {
+			editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(106, 153, 85));
+			editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(106, 153, 85));
+			editor->StyleSetForeground(wxSTC_C_WORD, wxColour(86, 156, 214));
+			editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(220, 220, 170));
+			editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(79, 193, 255));
+			editor->StyleSetForeground(wxSTC_C_STRING, wxColour(206, 145, 120));
+			editor->StyleSetForeground(wxSTC_C_OPERATOR, wxColour(180, 180, 180));
+		}
+		else {
+			editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
+			editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
+			editor->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
+			editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(43, 145, 175));
+			editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(128, 0, 128));
+			editor->StyleSetForeground(wxSTC_C_STRING, wxColour(163, 21, 21));
+			editor->StyleSetForeground(wxSTC_C_OPERATOR, wxColour(100, 100, 100));
+		}
+		return;
+
 		this->SetBackgroundColour(bg);
 		this->SetForegroundColour(fg);
-		if (GetToolBar()) {
+		/*if (GetToolBar()) {
 			GetToolBar()->SetBackgroundColour(bg);
 			GetToolBar()->SetForegroundColour(fg);
-		}
+		}*/
 
 		wxAuiDockArt* art = auiManager.GetArtProvider();
 		art->SetColour(wxAUI_DOCKART_BACKGROUND_COLOUR, bg);
@@ -261,24 +281,7 @@ namespace vex {
 		editor->StyleSetBackground(wxSTC_STYLE_LINENUMBER, marginBg);
 		editor->StyleSetForeground(wxSTC_STYLE_LINENUMBER, marginFg);
 
-		if (isDarkMode) {
-			editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(106, 153, 85));
-			editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(106, 153, 85));
-			editor->StyleSetForeground(wxSTC_C_WORD, wxColour(86, 156, 214));
-			editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(220, 220, 170));
-			editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(79, 193, 255));
-			editor->StyleSetForeground(wxSTC_C_STRING, wxColour(206, 145, 120));
-			editor->StyleSetForeground(wxSTC_C_OPERATOR, wxColour(180, 180, 180));
-		}
-		else {
-			editor->StyleSetForeground(wxSTC_C_COMMENT, wxColour(0, 128, 0));
-			editor->StyleSetForeground(wxSTC_C_COMMENTLINE, wxColour(0, 128, 0));
-			editor->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
-			editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(43, 145, 175));
-			editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(128, 0, 128));
-			editor->StyleSetForeground(wxSTC_C_STRING, wxColour(163, 21, 21));
-			editor->StyleSetForeground(wxSTC_C_OPERATOR, wxColour(100, 100, 100));
-		}
+		
 
 		outputArea->StyleSetBackground(wxSTC_STYLE_DEFAULT, bg);
 		outputArea->StyleSetForeground(wxSTC_STYLE_DEFAULT, fg);

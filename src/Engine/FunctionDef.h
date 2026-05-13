@@ -28,6 +28,7 @@ namespace ve {
 		Pointer,
 		Object,
 		String,
+		Simd,
 		Integer,
 		Any,
 		Variadic

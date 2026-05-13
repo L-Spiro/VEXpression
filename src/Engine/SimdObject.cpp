@@ -348,6 +348,29 @@ namespace ve {
 	}
 
 	/**
+	 * A more presice conversion used in cast operations.  Only applies to SIMD registers.
+	 * 
+	 * \param type			The new register type to which to convert.
+	 * \return				Returns a new instance of the requested register type or an invalid Result object.
+	 **/
+	Result SimdObject::castTo(SimdRegisterType type) {
+		if (type == Simd_Invalid) { return Result{}; }
+		if (type == regType) { return createResult(); }
+
+		// The target type must have the same number of elements and elements of the same sizes.
+		//if (simdRegisterProperties[type].componentCount == simdRegisterProperties[regType].componentCount) {
+			if (simdRegisterProperties[type].registerSize == simdRegisterProperties[regType].registerSize) {
+				SimdObject* outObj = context->allocateObject<SimdObject>();
+				if (!outObj) { return Result{}; }
+				outObj->regType = type;
+				std::memcpy(&outObj->reg, &reg, sizeof(reg));
+				return outObj->createResult();
+			}
+		//}
+		return Result{};
+	}
+
+	/**
 	 * Initializes the internal state of the object using a raw Result value.
 	 *
 	 * \param val			The Result value to initialize from.
