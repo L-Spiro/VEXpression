@@ -240,6 +240,7 @@ namespace vex {
 			editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(220, 220, 170));
 			editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(79, 193, 255));
 			editor->StyleSetForeground(wxSTC_C_STRING, wxColour(206, 145, 120));
+			editor->StyleSetForeground(wxSTC_C_CHARACTER, wxColour(206, 145, 120));
 			editor->StyleSetForeground(wxSTC_C_OPERATOR, wxColour(180, 180, 180));
 		}
 		else {
@@ -249,6 +250,7 @@ namespace vex {
 			editor->StyleSetForeground(wxSTC_C_WORD2, wxColour(43, 145, 175));
 			editor->StyleSetForeground(wxSTC_C_GLOBALCLASS, wxColour(128, 0, 128));
 			editor->StyleSetForeground(wxSTC_C_STRING, wxColour(163, 21, 21));
+			editor->StyleSetForeground(wxSTC_C_CHARACTER, wxColour(163, 21, 21));
 			editor->StyleSetForeground(wxSTC_C_OPERATOR, wxColour(100, 100, 100));
 		}
 		return;

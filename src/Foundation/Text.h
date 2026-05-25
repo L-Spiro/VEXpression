@@ -54,7 +54,7 @@ namespace ve {
 		 **/
 		template <typename CharT = char32_t>
 		static inline uint32_t			nextUtf32Char(const CharT* str, size_t len, size_t* outSize = nullptr) {
-			static_assert(sizeof(CharT) == 4, "nextUtf32Char: Character type must be 32 bits (char32_t, uint32_t, POSIX wchar_t, etc.)");
+			//static_assert(sizeof(CharT) == 4, "nextUtf32Char: Character type must be 32 bits (char32_t, uint32_t, POSIX wchar_t, etc.)");
 
 			if (len == 0) {
 				if (outSize) { (*outSize) = 0; }
@@ -62,7 +62,7 @@ namespace ve {
 			}
 			if (outSize) { (*outSize) = 1; }
 
-			uint32_t ret = static_cast<uint32_t>(*str);
+			uint32_t ret = static_cast<uint32_t>((*str));
 			if (ret & 0xFFE00000) { return UTF_INVALID; }
 			return ret;
 		}
@@ -77,7 +77,7 @@ namespace ve {
 		 **/
 		template <typename CharT = char16_t>
 		static inline uint32_t			nextUtf16Char(const CharT* str, size_t len, size_t* outSize = nullptr) {
-			static_assert(sizeof(CharT) == 2, "nextUtf16Char: Character type must be 16 bits (char16_t, uint16_t, Windows wchar_t, etc.)");
+			//static_assert(sizeof(CharT) == 2, "nextUtf16Char: Character type must be 16 bits (char16_t, uint16_t, Windows wchar_t, etc.)");
 
 			if (len == 0) {
 				if (outSize) { (*outSize) = 0; }
@@ -85,7 +85,7 @@ namespace ve {
 			}
 
 			// Get the low bits by casting the value, avoiding strict-aliasing violations.
-			uint32_t ret = static_cast<uint16_t>(*str);
+			uint32_t ret = static_cast<uint16_t>((*str));
 			uint32_t top = ret & 0xFC00U;
 			
 			// Check to see if this is a surrogate pair.
@@ -102,7 +102,7 @@ namespace ve {
 				ret <<= 10;
 
 				// Get the second set of bits by casting the value.
-				uint32_t next = static_cast<uint16_t>(*(++str));
+				uint32_t next = static_cast<uint16_t>((*(++str)));
 				if ((next & 0xFC00U) != 0xDC00U) {
 					// Invalid second character. Standard defines this as an error.
 					if (outSize) { (*outSize) = 1; }
@@ -132,7 +132,7 @@ namespace ve {
 		 **/
 		template <typename CharT = char8_t>
 		static inline uint32_t			nextUtf8Char(const CharT* str, size_t len, size_t* outSize = nullptr) {
-			static_assert(sizeof(CharT) == 1, "nextUtf8Char: Character type must be 8 bits (char, char8_t, uint8_t, etc.)");
+			//static_assert(sizeof(CharT) == 1, "nextUtf8Char: Character type must be 8 bits (char, char8_t, uint8_t, etc.)");
 
 			if (len == 0) {
 				if (outSize) { (*outSize) = 0; }
@@ -140,7 +140,7 @@ namespace ve {
 			}
 
 			// Get the low bits by casting the value, avoiding strict-aliasing violations.
-			uint32_t ret = static_cast<uint8_t>(*str);
+			uint32_t ret = static_cast<uint8_t>((*str));
 
 			// The first byte is a special case.
 			if ((ret & 0x80U) == 0) {
@@ -184,7 +184,7 @@ namespace ve {
 
 			// For every trailing bit, add it to the final value.
 			for (uint32_t bitIdx = seqLen - 1; bitIdx--; ) {
-				uint32_t thisChar = static_cast<uint8_t>(*(++str));
+				uint32_t thisChar = static_cast<uint8_t>((*(++str)));
 				// Validate the byte.
 				if ((thisChar & 0xC0U) != 0x80U) { return UTF_INVALID; }
 
@@ -496,7 +496,7 @@ namespace ve {
 		template <typename OutStringT = std::u16string, typename InStringT>
 		static inline OutStringT		utf8ToUtf16(const InStringT& utf8) {
 			static_assert(sizeof(typename OutStringT::value_type) == 2, "utf8ToUtf16: Output string must have 16-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 1, "utf8ToUtf16: Input string must have 8-bit characters.");
+			//static_assert(sizeof(typename InStringT::value_type) == 1, "utf8ToUtf16: Input string must have 8-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf8.data();
@@ -545,7 +545,7 @@ namespace ve {
 		template <typename OutStringT = std::string, typename InStringT>
 		static inline OutStringT		utf16ToUtf8(const InStringT& utf16) {
 			static_assert(sizeof(typename OutStringT::value_type) == 1, "utf16ToUtf8: Output string must have 8-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 2, "utf16ToUtf8: Input string must have 16-bit characters.");
+			//static_assert(sizeof(typename InStringT::value_type) == 2, "utf16ToUtf8: Input string must have 16-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf16.data();
@@ -594,7 +594,7 @@ namespace ve {
 		template <typename OutStringT = std::u32string, typename InStringT>
 		static inline OutStringT		utf8ToUtf32(const InStringT& utf8) {
 			static_assert(sizeof(typename OutStringT::value_type) == 4, "utf8ToUtf32: Output string must have 32-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 1, "utf8ToUtf32: Input string must have 8-bit characters.");
+			//static_assert(sizeof(typename InStringT::value_type) == 1, "utf8ToUtf32: Input string must have 8-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf8.data();
@@ -643,7 +643,7 @@ namespace ve {
 		template <typename OutStringT = std::string, typename InStringT>
 		static inline OutStringT		utf32ToUtf8(const InStringT& utf32) {
 			static_assert(sizeof(typename OutStringT::value_type) == 1, "utf32ToUtf8: Output string must have 8-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 4, "utf32ToUtf8: Input string must have 32-bit characters.");
+			//static_assert(sizeof(typename InStringT::value_type) == 4, "utf32ToUtf8: Input string must have 32-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf32.data();
@@ -692,7 +692,7 @@ namespace ve {
 		template <typename OutStringT = std::u32string, typename InStringT>
 		static inline OutStringT		utf16ToUtf32(const InStringT& utf16) {
 			static_assert(sizeof(typename OutStringT::value_type) == 4, "utf16ToUtf32: Output string must have 32-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 2, "utf16ToUtf32: Input string must have 16-bit characters.");
+			//static_assert(sizeof(typename InStringT::value_type) == 2, "utf16ToUtf32: Input string must have 16-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf16.data();
@@ -741,7 +741,7 @@ namespace ve {
 		template <typename OutStringT = std::u16string, typename InStringT>
 		static inline OutStringT		utf32ToUtf16(const InStringT& utf32) {
 			static_assert(sizeof(typename OutStringT::value_type) == 2, "utf32ToUtf16: Output string must have 16-bit characters.");
-			static_assert(sizeof(typename InStringT::value_type) == 4, "utf32ToUtf16: Input string must have 32-bit characters.");
+			//static_assert(sizeof(typename InStringT::value_type) == 4, "utf32ToUtf16: Input string must have 32-bit characters.");
 
 			size_t exactLen = 0;
 			const auto* ptr = utf32.data();

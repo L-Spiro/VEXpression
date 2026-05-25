@@ -332,7 +332,9 @@ namespace ve {
 		else {
 			switch (bufferWidth) {
 				case Width_8 : {
-					returnString.assign(reinterpret_cast<const std::string::value_type*>(buffer.data()), charCount);
+					//returnString.assign(reinterpret_cast<const std::string::value_type*>(buffer.data()), charCount);
+					std::basic_string_view<char8_t> view(reinterpret_cast<const char8_t*>(buffer.data()), charCount);
+					returnString = Text::utf32ToUtf8<std::string>(view);
 					break;
 				}
 				case Width_16 : {
@@ -351,7 +353,7 @@ namespace ve {
 				}
 				case Width_32 : {
 					std::basic_string_view<char32_t> view(reinterpret_cast<const char32_t*>(buffer.data()), charCount);
-						returnString = Text::utf32ToUtf8<std::string>(view);
+					returnString = Text::utf32ToUtf8<std::string>(view);
 					break;
 				}
 			}

@@ -49,7 +49,7 @@ namespace ve {
 	 **/
 	inline const wchar_t*	StrL(StringId id, Languages language) {
 		switch ( id ) {
-#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { const wchar_t* strings[] = { L##en, L##ja/*, L##zh, L##es, L##fr, L##it, L##pt, L##ar, L##ru, L##de, L##nl, L##ko, L##th, L##hi, L##tr*/ }; return strings[size_t(language)]; }
+#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { const wchar_t* strings[] = { L##en/*, L##ja, L##zh, L##es, L##fr, L##it, L##pt, L##ar, L##ru, L##de, L##nl, L##ko, L##th, L##hi, L##tr*/ }; return strings[size_t(language)]; }
 
 #include "StringEnum.inl"
 #undef VE_STR
@@ -66,7 +66,7 @@ namespace ve {
 	 **/
 	inline const char16_t*	StrU(StringId id, Languages language) {
 		switch ( id ) {
-#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { const char16_t* strings[] = { u##en, u##ja/*, u##zh, u##es, u##fr, u##it, u##pt, u##ar, u##ru, u##de, u##nl, u##ko, u##th, u##hi, u##tr*/ }; return strings[size_t(language)]; }
+#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { const char16_t* strings[] = { u##en/*, u##ja, u##zh, u##es, u##fr, u##it, u##pt, u##ar, u##ru, u##de, u##nl, u##ko, u##th, u##hi, u##tr*/ }; return strings[size_t(language)]; }
 
 #include "StringEnum.inl"
 #undef VE_STR
@@ -83,7 +83,7 @@ namespace ve {
 	 **/
 	inline const char8_t*	StrU8(StringId id, Languages language) {
 		switch ( id ) {
-#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { const char8_t* strings[] = { u8##en, u8##ja/*, u8##zh, u8##es, u8##fr, u8##it, u8##pt, u8##ar, u8##ru, u8##de, u8##nl, u8##ko, u8##th, u8##hi, u8##tr*/ }; return strings[size_t(language)]; }
+#define VE_STR( id, en, ja, zh, es, fr, it, pt, ar, ru, de, nl, ko, th, hi, tr )						case StringId::id : { const char8_t* strings[] = { u8##en/*, u8##ja, u8##zh, u8##es, u8##fr, u8##it, u8##pt, u8##ar, u8##ru, u8##de, u8##nl, u8##ko, u8##th, u8##hi, u8##tr*/ }; return strings[size_t(language)]; }
 
 #include "StringEnum.inl"
 #undef VE_STR
