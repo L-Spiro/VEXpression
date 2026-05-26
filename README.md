@@ -36,6 +36,5 @@ Enumerate all HTML escapes.<br>
 <img width="1920" height="1040" alt="image" src="https://github.com/user-attachments/assets/92480476-2497-45c2-8d1f-20f63e3e8d0d" />
 Researching/prototyping the SPC-700 `DIV` instruction’s true algorithm.<br>
 <img width="1266" height="631" alt="image" src="https://github.com/user-attachments/assets/cdd7cd4a-d3a9-4e45-8f24-49ce9168508d" />
-
-
-
+Generating code.<br>
+<img width="1003" height="643" alt="image" src="https://github.com/user-attachments/assets/54f11915-b06c-43f9-acec-1894f9ab2153" />
