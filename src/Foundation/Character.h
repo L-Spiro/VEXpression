@@ -43,8 +43,8 @@ namespace ve {
 			if (!str) {
 				return false;
 			}
-			while (*str) {
-				if (!validHex(*str)) {
+			while ((*str)) {
+				if (!validHex((*str))) {
 					return false;
 				}
 				++str;

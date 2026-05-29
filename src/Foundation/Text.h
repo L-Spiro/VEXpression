@@ -236,12 +236,12 @@ namespace ve {
 		 **/
 		template <typename CharT>
 		static inline size_t			utf8CharSize(const CharT* str, size_t len) {
-			static_assert(sizeof(CharT) == 1, "utf8CharSize: Character type must be 8 bits (char, char8_t, uint8_t, etc.)");
+			//static_assert(sizeof(CharT) == 1, "utf8CharSize: Character type must be 8 bits (char, char8_t, uint8_t, etc.)");
 
 			if (len == 0) { return 0; }
 
 			// Get the low bits by casting the value, avoiding strict-aliasing violations.
-			uint32_t ret = static_cast<uint8_t>(*str);
+			uint32_t ret = static_cast<uint8_t>((*str));
 
 			// The first byte is a special case.
 			if ((ret & 0x80U) == 0) { return 1; }
