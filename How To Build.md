@@ -1,6 +1,16 @@
 # HOW TO BUILD
 
+## Prerequisite for ANTLR: Java 11+
+ANTLR requires at least Java 11.
+
 ## Generate a Microsoft® Visual Studio® Project
+
+### Install Java
+There are multiple ways to install the latest Java.  The easiest method is to use Microsoft® Visual Studio®’s PowerShell or Command Prompt and run the following command:
+```bash
+winget install Microsoft.OpenJDK.21
+```
+Once this is installed you will need to refresh your environment (close and restart Microsoft® Visual Studio® and start a new PowerShell/Command Prompt session).
 
 ### Prerequisite: Install wxWidgets
 This project requires wxWidgets for its graphical interface. On Windows, it is recommended to install it using the `vcpkg` package manager. Because VEXpression compiles using the static C++ runtime (`/MT`), you must install the static triplet for your target architecture.

@@ -147,7 +147,7 @@ namespace ve {
 		if ((*text) == '0') {
 			++text;
 				
-			if ((*text) == 'b' || (*text) == 'B') {
+			if (((*text) == 'b' || (*text) == 'B') && base < 12) {
 				++text;
 				base = 2;
 			}
