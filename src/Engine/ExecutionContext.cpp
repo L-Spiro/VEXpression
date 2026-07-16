@@ -2326,181 +2326,189 @@ namespace ve {
 	 * \return				Returns the resulting evaluation.
 	 **/
 	Result ExecutionContext::evaluateMath(const Result& leftVal, const Result& rightVal, int opType) const {
-		if (leftVal.type == NumericConstant::Object) {
-			if (!leftVal.value.objectVal) { return Result{}; }
-			switch (opType) {
-				case ExprLexer::ADD_ASSIGN : { return leftVal.value.objectVal->operator+=(rightVal); }
-				case ExprLexer::SUB_ASSIGN : { return leftVal.value.objectVal->operator-=(rightVal); }
-				case ExprLexer::MUL_ASSIGN : { return leftVal.value.objectVal->operator*=(rightVal); }
-				case ExprLexer::DIV_ASSIGN : { return leftVal.value.objectVal->operator/=(rightVal); }
-				case ExprLexer::MOD_ASSIGN : { return leftVal.value.objectVal->operator%=(rightVal); }
-				case ExprLexer::AND_ASSIGN : { return leftVal.value.objectVal->operator&=(rightVal); }
-				case ExprLexer::XOR_ASSIGN : { return leftVal.value.objectVal->operator^=(rightVal); }
-				case ExprLexer::OR_ASSIGN :  { return leftVal.value.objectVal->operator|=(rightVal); }
-				case ExprLexer::SHL_ASSIGN : { return leftVal.value.objectVal->operator<<=(rightVal); }
-				case ExprLexer::SHR_ASSIGN : { return leftVal.value.objectVal->operator>>=(rightVal); }
-				case ExprLexer::ADD : { return leftVal.value.objectVal->operator+(rightVal); }
-				case ExprLexer::SUB : { return leftVal.value.objectVal->operator-(rightVal); }
-				case ExprLexer::MUL : { return leftVal.value.objectVal->operator*(rightVal); }
-				case ExprLexer::DIV : { return leftVal.value.objectVal->operator/(rightVal); }
-				case ExprLexer::MOD : { return leftVal.value.objectVal->operator%(rightVal); }
-				case ExprLexer::BIT_AND : { return leftVal.value.objectVal->operator&(rightVal); }
-				case ExprLexer::BIT_XOR : { return leftVal.value.objectVal->operator^(rightVal); }
-				case ExprLexer::BIT_OR :  { return leftVal.value.objectVal->operator|(rightVal); }
-				case ExprLexer::SHL : { return leftVal.value.objectVal->operator<<(rightVal); }
-				case ExprLexer::SHR : { return leftVal.value.objectVal->operator>>(rightVal); }
-				default : { return Result{}; }
-			}
-		}
-		if (rightVal.type == NumericConstant::Object && rightVal.value.objectVal && (rightVal.value.objectVal->type() & BuiltInType_Vector)) {
-			// Arithmatic applied to each element in the vector.
-			Vector* vec = static_cast<Vector*>(rightVal.value.objectVal);
-			switch (opType) {
-				// In-place assignment.
-				case ExprLexer::ADD_ASSIGN : {}
-				case ExprLexer::SUB_ASSIGN : {}
-				case ExprLexer::MUL_ASSIGN : {}
-				case ExprLexer::DIV_ASSIGN : {}
-				case ExprLexer::MOD_ASSIGN : {}
-				case ExprLexer::AND_ASSIGN : {}
-				case ExprLexer::XOR_ASSIGN : {}
-				case ExprLexer::OR_ASSIGN : {}
-				case ExprLexer::SHL_ASSIGN : {}
-				case ExprLexer::SHR_ASSIGN : {
-					for (auto i = vec->arrayLength(); i--; ) {
-						vec->directAccess(i) = evaluateMath(leftVal, vec->directAccess(i), opType);
-					}
-					return vec->createResult();
+		try {
+			if (leftVal.type == NumericConstant::Object) {
+				if (!leftVal.value.objectVal) { return Result{}; }
+				switch (opType) {
+					case ExprLexer::ADD_ASSIGN : { return leftVal.value.objectVal->operator+=(rightVal); }
+					case ExprLexer::SUB_ASSIGN : { return leftVal.value.objectVal->operator-=(rightVal); }
+					case ExprLexer::MUL_ASSIGN : { return leftVal.value.objectVal->operator*=(rightVal); }
+					case ExprLexer::DIV_ASSIGN : { return leftVal.value.objectVal->operator/=(rightVal); }
+					case ExprLexer::MOD_ASSIGN : { return leftVal.value.objectVal->operator%=(rightVal); }
+					case ExprLexer::AND_ASSIGN : { return leftVal.value.objectVal->operator&=(rightVal); }
+					case ExprLexer::XOR_ASSIGN : { return leftVal.value.objectVal->operator^=(rightVal); }
+					case ExprLexer::OR_ASSIGN :  { return leftVal.value.objectVal->operator|=(rightVal); }
+					case ExprLexer::SHL_ASSIGN : { return leftVal.value.objectVal->operator<<=(rightVal); }
+					case ExprLexer::SHR_ASSIGN : { return leftVal.value.objectVal->operator>>=(rightVal); }
+					case ExprLexer::ADD : { return leftVal.value.objectVal->operator+(rightVal); }
+					case ExprLexer::SUB : { return leftVal.value.objectVal->operator-(rightVal); }
+					case ExprLexer::MUL : { return leftVal.value.objectVal->operator*(rightVal); }
+					case ExprLexer::DIV : { return leftVal.value.objectVal->operator/(rightVal); }
+					case ExprLexer::MOD : { return leftVal.value.objectVal->operator%(rightVal); }
+					case ExprLexer::BIT_AND : { return leftVal.value.objectVal->operator&(rightVal); }
+					case ExprLexer::BIT_XOR : { return leftVal.value.objectVal->operator^(rightVal); }
+					case ExprLexer::BIT_OR :  { return leftVal.value.objectVal->operator|(rightVal); }
+					case ExprLexer::SHL : { return leftVal.value.objectVal->operator<<(rightVal); }
+					case ExprLexer::SHR : { return leftVal.value.objectVal->operator>>(rightVal); }
+					default : { return Result{}; }
 				}
-				case ExprLexer::ADD : {}
-				case ExprLexer::SUB : {}
-				case ExprLexer::MUL : {}
-				case ExprLexer::DIV : {}
-				case ExprLexer::MOD : {}
-				case ExprLexer::BIT_AND : {}
-				case ExprLexer::BIT_XOR : {}
-				case ExprLexer::BIT_OR :  {}
-				case ExprLexer::SHL : {}
-				case ExprLexer::SHR : {
-					// Make a copy of the vector.
-					Vector* copy = const_cast<ExecutionContext*>(this)->allocateObject<Vector>();
-					if (!copy) { throw ErrorCode::Out_Of_Memory; }
-					if (!copy->resize(vec->arrayLength())) {
-						const_cast<ExecutionContext*>(this)->deallocateObject(copy);
-						return Result{};
-					}
-					for (auto i = vec->arrayLength(); i--; ) {
-						copy->directAccess(i) = evaluateMath(leftVal, vec->directAccess(i), opType);
-					}
-					return copy->createResult();
-				}
-				default : { return Result{}; }
 			}
+			if (rightVal.type == NumericConstant::Object && rightVal.value.objectVal && (rightVal.value.objectVal->type() & BuiltInType_Vector)) {
+				// Arithmatic applied to each element in the vector.
+				Vector* vec = static_cast<Vector*>(rightVal.value.objectVal);
+				switch (opType) {
+					// In-place assignment.
+					case ExprLexer::ADD_ASSIGN : {}
+					case ExprLexer::SUB_ASSIGN : {}
+					case ExprLexer::MUL_ASSIGN : {}
+					case ExprLexer::DIV_ASSIGN : {}
+					case ExprLexer::MOD_ASSIGN : {}
+					case ExprLexer::AND_ASSIGN : {}
+					case ExprLexer::XOR_ASSIGN : {}
+					case ExprLexer::OR_ASSIGN : {}
+					case ExprLexer::SHL_ASSIGN : {}
+					case ExprLexer::SHR_ASSIGN : {
+						for (auto i = vec->arrayLength(); i--; ) {
+							vec->directAccess(i) = evaluateMath(leftVal, vec->directAccess(i), opType);
+						}
+						return vec->createResult();
+					}
+					case ExprLexer::ADD : {}
+					case ExprLexer::SUB : {}
+					case ExprLexer::MUL : {}
+					case ExprLexer::DIV : {}
+					case ExprLexer::MOD : {}
+					case ExprLexer::BIT_AND : {}
+					case ExprLexer::BIT_XOR : {}
+					case ExprLexer::BIT_OR :  {}
+					case ExprLexer::SHL : {}
+					case ExprLexer::SHR : {
+						// Make a copy of the vector.
+						Vector* copy = const_cast<ExecutionContext*>(this)->allocateObject<Vector>();
+						if (!copy) { throw ErrorCode::Out_Of_Memory; }
+						if (!copy->resize(vec->arrayLength())) {
+							const_cast<ExecutionContext*>(this)->deallocateObject(copy);
+							return Result{};
+						}
+						for (auto i = vec->arrayLength(); i--; ) {
+							copy->directAccess(i) = evaluateMath(leftVal, vec->directAccess(i), opType);
+						}
+						return copy->createResult();
+					}
+					default : { return Result{}; }
+				}
 			
-		}
+			}
 
-		NumericConstant common = getCastType(leftVal.type, rightVal.type);
-		Result l = const_cast<ExecutionContext*>(this)->convertResult(leftVal, common);
-		Result r = const_cast<ExecutionContext*>(this)->convertResult(rightVal, common);
-		Result out;
-		out.type = common;
+			NumericConstant common = getCastType(leftVal.type, rightVal.type);
+			Result l = const_cast<ExecutionContext*>(this)->convertResult(leftVal, common);
+			Result r = const_cast<ExecutionContext*>(this)->convertResult(rightVal, common);
+			Result out;
+			out.type = common;
 
-		if (common == NumericConstant::Floating) {
-			switch (opType) {
-				case ExprLexer::ADD_ASSIGN : {}
-				case ExprLexer::ADD : { out.value.doubleVal = l.value.doubleVal + r.value.doubleVal; break; }
-				case ExprLexer::SUB_ASSIGN : {}
-				case ExprLexer::SUB : { out.value.doubleVal = l.value.doubleVal - r.value.doubleVal; break; }
-				case ExprLexer::MUL_ASSIGN : {}
-				case ExprLexer::MUL : { out.value.doubleVal = l.value.doubleVal * r.value.doubleVal; break; }
-				case ExprLexer::DIV_ASSIGN : {}
-				case ExprLexer::DIV : { out.value.doubleVal = l.value.doubleVal / r.value.doubleVal; break; }
-				case ExprLexer::MOD_ASSIGN : {}
-				case ExprLexer::MOD : { out.value.doubleVal = std::fmod(l.value.doubleVal, r.value.doubleVal); break; }
-				default : { return Result{}; }
+			if (common == NumericConstant::Floating) {
+				switch (opType) {
+					case ExprLexer::ADD_ASSIGN : {}
+					case ExprLexer::ADD : { out.value.doubleVal = l.value.doubleVal + r.value.doubleVal; break; }
+					case ExprLexer::SUB_ASSIGN : {}
+					case ExprLexer::SUB : { out.value.doubleVal = l.value.doubleVal - r.value.doubleVal; break; }
+					case ExprLexer::MUL_ASSIGN : {}
+					case ExprLexer::MUL : { out.value.doubleVal = l.value.doubleVal * r.value.doubleVal; break; }
+					case ExprLexer::DIV_ASSIGN : {}
+					case ExprLexer::DIV : { out.value.doubleVal = l.value.doubleVal / r.value.doubleVal; break; }
+					case ExprLexer::MOD_ASSIGN : {}
+					case ExprLexer::MOD : { out.value.doubleVal = std::fmod(l.value.doubleVal, r.value.doubleVal); break; }
+					default : { return Result{}; }
+				}
 			}
-		}
-		else if (common == NumericConstant::Signed) {
-			switch (opType) {
-				case ExprLexer::ADD_ASSIGN : {}
-				case ExprLexer::ADD : { out.value.intVal = l.value.intVal + r.value.intVal; break; }
-				case ExprLexer::SUB_ASSIGN : {}
-				case ExprLexer::SUB : { out.value.intVal = l.value.intVal - r.value.intVal; break; }
-				case ExprLexer::MUL_ASSIGN : {}
-				case ExprLexer::MUL : { out.value.intVal = l.value.intVal * r.value.intVal; break; }
-				case ExprLexer::DIV_ASSIGN : {}
-				case ExprLexer::DIV : { out.value.intVal = l.value.intVal / r.value.intVal; break; }
-				case ExprLexer::MOD_ASSIGN : {}
-				case ExprLexer::MOD : { out.value.intVal = l.value.intVal % r.value.intVal; break; }
-				case ExprLexer::AND_ASSIGN : {}
-				case ExprLexer::BIT_AND : { out.value.intVal = l.value.intVal & r.value.intVal; break; }
-				case ExprLexer::XOR_ASSIGN : {}
-				case ExprLexer::BIT_XOR : { out.value.intVal = l.value.intVal ^ r.value.intVal; break; }
-				case ExprLexer::OR_ASSIGN :  {}
-				case ExprLexer::BIT_OR :  { out.value.intVal = l.value.intVal | r.value.intVal; break; }
-				case ExprLexer::SHL_ASSIGN : {}
-				case ExprLexer::SHL : { out.value.intVal = l.value.intVal << r.value.intVal; break; }
-				case ExprLexer::SHR_ASSIGN : {}
-				case ExprLexer::SHR : { out.value.intVal = l.value.intVal >> r.value.intVal; break; }
-				default : { return Result{}; }
+			else if (common == NumericConstant::Signed) {
+				switch (opType) {
+					case ExprLexer::ADD_ASSIGN : {}
+					case ExprLexer::ADD : { out.value.intVal = l.value.intVal + r.value.intVal; break; }
+					case ExprLexer::SUB_ASSIGN : {}
+					case ExprLexer::SUB : { out.value.intVal = l.value.intVal - r.value.intVal; break; }
+					case ExprLexer::MUL_ASSIGN : {}
+					case ExprLexer::MUL : { out.value.intVal = l.value.intVal * r.value.intVal; break; }
+					case ExprLexer::DIV_ASSIGN : {}
+					case ExprLexer::DIV : {
+						if (!r.value.intVal) { return Result{}; }
+						out.value.intVal = l.value.intVal / r.value.intVal; break;
+					}
+					case ExprLexer::MOD_ASSIGN : {}
+					case ExprLexer::MOD : { out.value.intVal = l.value.intVal % r.value.intVal; break; }
+					case ExprLexer::AND_ASSIGN : {}
+					case ExprLexer::BIT_AND : { out.value.intVal = l.value.intVal & r.value.intVal; break; }
+					case ExprLexer::XOR_ASSIGN : {}
+					case ExprLexer::BIT_XOR : { out.value.intVal = l.value.intVal ^ r.value.intVal; break; }
+					case ExprLexer::OR_ASSIGN :  {}
+					case ExprLexer::BIT_OR :  { out.value.intVal = l.value.intVal | r.value.intVal; break; }
+					case ExprLexer::SHL_ASSIGN : {}
+					case ExprLexer::SHL : { out.value.intVal = l.value.intVal << r.value.intVal; break; }
+					case ExprLexer::SHR_ASSIGN : {}
+					case ExprLexer::SHR : { out.value.intVal = l.value.intVal >> r.value.intVal; break; }
+					default : { return Result{}; }
+				}
 			}
-		}
-		else if (common == NumericConstant::Unsigned) {
-			switch (opType) {
-				case ExprLexer::ADD_ASSIGN : {}
-				case ExprLexer::ADD : { out.value.uintVal = l.value.uintVal + r.value.uintVal; break; }
-				case ExprLexer::SUB_ASSIGN : {}
-				case ExprLexer::SUB : { out.value.uintVal = l.value.uintVal - r.value.uintVal; break; }
-				case ExprLexer::MUL_ASSIGN : {}
-				case ExprLexer::MUL : { out.value.uintVal = l.value.uintVal * r.value.uintVal; break; }
-				case ExprLexer::DIV_ASSIGN : {}
-				case ExprLexer::DIV : { out.value.uintVal = l.value.uintVal / r.value.uintVal; break; }
-				case ExprLexer::MOD_ASSIGN : {}
-				case ExprLexer::MOD : { out.value.uintVal = l.value.uintVal % r.value.uintVal; break; }
-				case ExprLexer::AND_ASSIGN : {}
-				case ExprLexer::BIT_AND : { out.value.uintVal = l.value.uintVal & r.value.uintVal; break; }
-				case ExprLexer::XOR_ASSIGN : {}
-				case ExprLexer::BIT_XOR : { out.value.uintVal = l.value.uintVal ^ r.value.uintVal; break; }
-				case ExprLexer::OR_ASSIGN :  {}
-				case ExprLexer::BIT_OR :  { out.value.uintVal = l.value.uintVal | r.value.uintVal; break; }
-				case ExprLexer::SHL_ASSIGN : {}
-				case ExprLexer::SHL : { out.value.uintVal = l.value.uintVal << r.value.uintVal; break; }
-				case ExprLexer::SHR_ASSIGN : {}
-				case ExprLexer::SHR : { out.value.uintVal = l.value.uintVal >> r.value.uintVal; break; }
-				default : { return Result{}; }
+			else if (common == NumericConstant::Unsigned) {
+				switch (opType) {
+					case ExprLexer::ADD_ASSIGN : {}
+					case ExprLexer::ADD : { out.value.uintVal = l.value.uintVal + r.value.uintVal; break; }
+					case ExprLexer::SUB_ASSIGN : {}
+					case ExprLexer::SUB : { out.value.uintVal = l.value.uintVal - r.value.uintVal; break; }
+					case ExprLexer::MUL_ASSIGN : {}
+					case ExprLexer::MUL : { out.value.uintVal = l.value.uintVal * r.value.uintVal; break; }
+					case ExprLexer::DIV_ASSIGN : {}
+					case ExprLexer::DIV : {
+						if (!r.value.uintVal) { return Result{}; }
+						out.value.uintVal = l.value.uintVal / r.value.uintVal; break;
+					}
+					case ExprLexer::MOD_ASSIGN : {}
+					case ExprLexer::MOD : { out.value.uintVal = l.value.uintVal % r.value.uintVal; break; }
+					case ExprLexer::AND_ASSIGN : {}
+					case ExprLexer::BIT_AND : { out.value.uintVal = l.value.uintVal & r.value.uintVal; break; }
+					case ExprLexer::XOR_ASSIGN : {}
+					case ExprLexer::BIT_XOR : { out.value.uintVal = l.value.uintVal ^ r.value.uintVal; break; }
+					case ExprLexer::OR_ASSIGN :  {}
+					case ExprLexer::BIT_OR :  { out.value.uintVal = l.value.uintVal | r.value.uintVal; break; }
+					case ExprLexer::SHL_ASSIGN : {}
+					case ExprLexer::SHL : { out.value.uintVal = l.value.uintVal << r.value.uintVal; break; }
+					case ExprLexer::SHR_ASSIGN : {}
+					case ExprLexer::SHR : { out.value.uintVal = l.value.uintVal >> r.value.uintVal; break; }
+					default : { return Result{}; }
+				}
 			}
-		}
-		else if (common == NumericConstant::Object) {
-			if (!l.value.objectVal || !r.value.objectVal) { return Result{}; }
-			switch (opType) {
-				case ExprLexer::ADD_ASSIGN : { return l.value.objectVal->operator+=(r); }
-				case ExprLexer::SUB_ASSIGN : { return l.value.objectVal->operator-=(r); }
-				case ExprLexer::MUL_ASSIGN : { return l.value.objectVal->operator*=(r); }
-				case ExprLexer::DIV_ASSIGN : { return l.value.objectVal->operator/=(r); }
-				case ExprLexer::MOD_ASSIGN : { return l.value.objectVal->operator%=(r); }
-				case ExprLexer::AND_ASSIGN : { return l.value.objectVal->operator&=(r); }
-				case ExprLexer::XOR_ASSIGN : { return l.value.objectVal->operator^=(r); }
-				case ExprLexer::OR_ASSIGN :  { return l.value.objectVal->operator|=(r); }
-				case ExprLexer::SHL_ASSIGN : { return l.value.objectVal->operator<<=(r); }
-				case ExprLexer::SHR_ASSIGN : { return l.value.objectVal->operator>>=(r); }
-				case ExprLexer::ADD : { return l.value.objectVal->operator+(r); }
-				case ExprLexer::SUB : { return l.value.objectVal->operator-(r); }
-				case ExprLexer::MUL : { return l.value.objectVal->operator*(r); }
-				case ExprLexer::DIV : { return l.value.objectVal->operator/(r); }
-				case ExprLexer::MOD : { return l.value.objectVal->operator%(r); }
-				case ExprLexer::BIT_AND : { return l.value.objectVal->operator&(r); }
-				case ExprLexer::BIT_XOR : { return l.value.objectVal->operator^(r); }
-				case ExprLexer::BIT_OR :  { return l.value.objectVal->operator|(r); }
-				case ExprLexer::SHL : { return l.value.objectVal->operator<<(r); }
-				case ExprLexer::SHR : { return l.value.objectVal->operator>>(r); }
-				default : { return Result{}; }
+			else if (common == NumericConstant::Object) {
+				if (!l.value.objectVal || !r.value.objectVal) { return Result{}; }
+				switch (opType) {
+					case ExprLexer::ADD_ASSIGN : { return l.value.objectVal->operator+=(r); }
+					case ExprLexer::SUB_ASSIGN : { return l.value.objectVal->operator-=(r); }
+					case ExprLexer::MUL_ASSIGN : { return l.value.objectVal->operator*=(r); }
+					case ExprLexer::DIV_ASSIGN : { return l.value.objectVal->operator/=(r); }
+					case ExprLexer::MOD_ASSIGN : { return l.value.objectVal->operator%=(r); }
+					case ExprLexer::AND_ASSIGN : { return l.value.objectVal->operator&=(r); }
+					case ExprLexer::XOR_ASSIGN : { return l.value.objectVal->operator^=(r); }
+					case ExprLexer::OR_ASSIGN :  { return l.value.objectVal->operator|=(r); }
+					case ExprLexer::SHL_ASSIGN : { return l.value.objectVal->operator<<=(r); }
+					case ExprLexer::SHR_ASSIGN : { return l.value.objectVal->operator>>=(r); }
+					case ExprLexer::ADD : { return l.value.objectVal->operator+(r); }
+					case ExprLexer::SUB : { return l.value.objectVal->operator-(r); }
+					case ExprLexer::MUL : { return l.value.objectVal->operator*(r); }
+					case ExprLexer::DIV : { return l.value.objectVal->operator/(r); }
+					case ExprLexer::MOD : { return l.value.objectVal->operator%(r); }
+					case ExprLexer::BIT_AND : { return l.value.objectVal->operator&(r); }
+					case ExprLexer::BIT_XOR : { return l.value.objectVal->operator^(r); }
+					case ExprLexer::BIT_OR :  { return l.value.objectVal->operator|(r); }
+					case ExprLexer::SHL : { return l.value.objectVal->operator<<(r); }
+					case ExprLexer::SHR : { return l.value.objectVal->operator>>(r); }
+					default : { return Result{}; }
+				}
 			}
+			else {
+				return Result{};
+			}
+			return out;
 		}
-		else {
-			return Result{};
-		}
-
-		return out;
+		catch (...) { return Result{}; }
 	}
 
 	/**
