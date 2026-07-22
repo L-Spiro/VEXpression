@@ -200,25 +200,27 @@ namespace ve {
 		 * \return			Returns an std::any containing the allocated AstNode index.
 		 **/
 		virtual std::any			visitIfElseStmt(ExprParser::IfElseStmtContext* ctx) override {
-			size_t condNode = std::any_cast<size_t>(visit(ctx->expr()));
+			size_t cConditions = ctx->expr().size();
+			size_t idFalseBlock = static_cast<size_t>(-1);
 			
-			size_t trueBlockNode = static_cast<size_t>(-1);
-			if (ctx->block(0)) {
-				if (!ctx->block(0)->statement_list()->children.empty()) {
-					trueBlockNode = std::any_cast<size_t>(visit(ctx->block(0)));
+			if (ctx->block().size() > cConditions) {
+				if (!ctx->block( cConditions )->statement_list()->children.empty()) {
+					idFalseBlock = std::any_cast<size_t>(visit(ctx->block(cConditions)));
 				}
 			}
 			
-			size_t falseBlockNode = static_cast<size_t>(-1);
-			if (ctx->ELSE()) {
-				if (ctx->block(1)) {
-					if (!ctx->block(1)->statement_list()->children.empty()) {
-						falseBlockNode = std::any_cast<size_t>(visit(ctx->block(1)));
-					}
+			for (size_t i = cConditions; i-- > 0;) {
+				size_t idCondNode = std::any_cast<size_t>(visit(ctx->expr(i)));
+				
+				size_t idTrueBlock = static_cast<size_t>(-1);
+				if (!ctx->block( i )->statement_list()->children.empty()) {
+					idTrueBlock = std::any_cast<size_t>(visit(ctx->block(i)));
 				}
+				
+				idFalseBlock = context.addNode<IfNode>(idCondNode, idTrueBlock, idFalseBlock);
 			}
 			
-			return context.addNode<IfNode>(condNode, trueBlockNode, falseBlockNode);
+			return idFalseBlock;
 		}
 
 		/**

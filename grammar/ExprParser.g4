@@ -14,13 +14,13 @@ statement_list
 
 // A statement strictly demands a semicolon, terminating the greedy loops above.
 statement
-    : expr SEMI                                                           # exprStmt
-    | IF LPAREN expr RPAREN block (ELSE block)?                           # ifElseStmt
-    | FOR LPAREN init=expr? ';' cond=expr? ';' step=expr? RPAREN block    # forStandardStmt
-    | FOR LPAREN IDENTIFIER KW_IN expr RPAREN block                       # forRangeStmt
-    | FOR LPAREN IDENTIFIER ':' expr RPAREN block                         # forCppRangeStmt
-    | WHILE LPAREN expr RPAREN block                                      # whileStmt
-    | SEMI                                                                # emptyStmt
+    : expr SEMI                                                                     # exprStmt
+    | IF LPAREN expr RPAREN block (ELSE IF LPAREN expr RPAREN block)* (ELSE block)? # ifElseStmt
+    | FOR LPAREN init=expr? ';' cond=expr? ';' step=expr? RPAREN block              # forStandardStmt
+    | FOR LPAREN IDENTIFIER KW_IN expr RPAREN block                                 # forRangeStmt
+    | FOR LPAREN IDENTIFIER ':' expr RPAREN block                                   # forCppRangeStmt
+    | WHILE LPAREN expr RPAREN block                                                # whileStmt
+    | SEMI                                                                          # emptyStmt
     ;
 
 block
